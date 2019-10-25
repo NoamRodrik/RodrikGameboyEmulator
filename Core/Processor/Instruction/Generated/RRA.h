@@ -29,6 +29,7 @@ auto RRA_0x1F = []()
 	A >>= 1;
 	already_carried_bit <<= 7;
 	A |= already_carried_bit;
+	return true;
 };
 } // Core
 

@@ -16,6 +16,7 @@ namespace Core
 auto EI_0xFB = []()
 {
 	memory.Write(ON, InterruptSwitch::START_ADDRESS);
+	return true;
 };
 } // Core
 

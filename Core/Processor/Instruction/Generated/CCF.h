@@ -18,6 +18,8 @@ auto CCF_0x3F = []()
 	F.Clear(Flag::HALF_CARRY);
 	F.Clear(Flag::SUB);
 	F.MutateByCondition(F.IsSet(Flag::CARRY), Flag::CARRY);
+
+	return true;
 };
 } // Core
 

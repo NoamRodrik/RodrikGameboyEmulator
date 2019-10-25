@@ -16,13 +16,14 @@ namespace Core
 class Instruction
 {
 public:
-	inline void Execute() const { this->m_func(); }
+	inline bool Execute() const { return this->m_func(); }
 
 public:
-	const std::function<void()> m_func{nullptr};
+	const std::function<bool()> m_func{nullptr};
 	const uint8_t				bytes_size{0};
 	const uint8_t				cycles_amount{0};
 	const uint8_t				extended_cycles_amount{cycles_amount};
+	const std::string			operation_string;
 };
 #pragma pack(pop)
 } // Core

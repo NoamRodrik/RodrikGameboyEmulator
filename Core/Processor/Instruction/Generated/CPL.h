@@ -20,6 +20,8 @@ auto CPL_0x2F = []()
 
 	// Flip A
 	A = ~A;
+
+	return true;
 };
 } // Core
 

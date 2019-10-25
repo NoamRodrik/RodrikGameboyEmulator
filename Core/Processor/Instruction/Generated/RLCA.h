@@ -27,6 +27,7 @@ auto RLCA_0x07 = []()
 	// Restore shifted_bit's position.
 	A <<= 1;
 	A |= shifted_bit;
+	return true;
 };
 } // Core
 

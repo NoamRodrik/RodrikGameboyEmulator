@@ -15,7 +15,7 @@ namespace Core
 // - - - -
 auto NOP_0x00 = []()
 {
-
+	return true;
 };
 } // Core
 

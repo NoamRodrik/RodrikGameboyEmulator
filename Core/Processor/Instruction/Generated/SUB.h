@@ -21,69 +21,70 @@ auto SUB_DATA_FROM_REG = [](auto& io_reg, const auto& data)
 	F.MutateByCondition(Tools::CarryOnSubtraction(io_reg, data), Flag::CARRY);
 
 	io_reg += data;
+	return true;
 };
 
 // 0x90 SUB B
 // Z 1 H C
 auto SUB_0x90 = []()
 {
-	SUB_DATA_FROM_REG(A, B_const);
+	return SUB_DATA_FROM_REG(A, B_const);
 };
 
 // 0x91 SUB C
 // Z 1 H C
 auto SUB_0x91 = []()
 {
-	SUB_DATA_FROM_REG(A, C_const);
+	return SUB_DATA_FROM_REG(A, C_const);
 };
 
 // 0x92 SUB D
 // Z 1 H C
 auto SUB_0x92 = []()
 {
-	SUB_DATA_FROM_REG(A, C_const);
+	return SUB_DATA_FROM_REG(A, C_const);
 };
 
 // 0x93 SUB E
 // Z 1 H C
 auto SUB_0x93 = []()
 {
-	SUB_DATA_FROM_REG(A, E_const);
+	return SUB_DATA_FROM_REG(A, E_const);
 };
 
 // 0x94 SUB H
 // Z 1 H C
 auto SUB_0x94 = []()
 {
-	SUB_DATA_FROM_REG(A, H_const);
+	return SUB_DATA_FROM_REG(A, H_const);
 };
 
 // 0x95 SUB L
 // Z 1 H C
 auto SUB_0x95 = []()
 {
-	SUB_DATA_FROM_REG(A, L_const);
+	return SUB_DATA_FROM_REG(A, L_const);
 };
 
 // 0x96 SUB (HL)
 // Z 1 H C
 auto SUB_0x96 = []()
 {
-	SUB_DATA_FROM_REG(A, DataAt(HL_const));
+	return SUB_DATA_FROM_REG(A, DataAt(HL_const));
 };
 
 // 0x97 SUB A
 // Z 1 H C
 auto SUB_0x97 = []()
 {
-	SUB_DATA_FROM_REG(A, A_const);
+	return SUB_DATA_FROM_REG(A, A_const);
 };
 
 // 0xD6 SUB d8
 // Z 1 H C
 auto SUB_0xD6 = []()
 {
-	SUB_DATA_FROM_REG(A, DataAt(IP_const + 1));
+	return SUB_DATA_FROM_REG(A, DataAt(IP_const + 1));
 };
 } // Core
 

@@ -23,96 +23,98 @@ auto INC_REG = [](data_t& o_reg)
 	F.Clear(Flag::SUB);
 
 	o_reg += INCREMENT_VALUE;
+	return true;
 };
 
 // INC o_reg
 auto INC_LONG_REG = [](auto& o_reg)
 {
 	o_reg += INCREMENT_VALUE;
+	return true;
 };
 
 // 0x03 INC BC
 // - - - -
 auto INC_0x03 = []()
 {
-	INC_LONG_REG(BC);
+	return INC_LONG_REG(BC);
 };
 
 // 0x04 INC B
 // Z 0 H -
 auto INC_0x04 = []()
 {
-	INC_REG(B);
+	return INC_REG(B);
 };
 
 // 0x0C INC C
 // Z 0 H -
 auto INC_0x0C = []()
 {
-	INC_REG(C);
+	return INC_REG(C);
 };
 
 // 0x13 INC DE
 // - - - -
 auto INC_0x13 = []()
 {
-	INC_LONG_REG(DE);
+	return INC_LONG_REG(DE);
 };
 
 // 0x14 INC D
 // Z 0 H -
 auto INC_0x14 = []()
 {
-	INC_REG(D);
+	return INC_REG(D);
 };
 
 // 0x1C INC E
 // Z 0 H -
 auto INC_0x1C = []()
 {
-	INC_REG(E);
+	return INC_REG(E);
 };
 
 // 0x23 INC HL
 // - - - -
 auto INC_0x23 = []()
 {
-	INC_LONG_REG(HL);
+	return INC_LONG_REG(HL);
 };
 
 // 0x24 INC H
 // Z 0 H -
 auto INC_0x24 = []()
 {
-	INC_REG(H);
+	return INC_REG(H);
 };
 
 // 0x2C INC L
 // Z 0 H -
 auto INC_0x2C = []()
 {
-	INC_REG(L);
+	return INC_REG(L);
 };
 
 // 0x33 INC SP
 // - - - -
 auto INC_0x33 = []()
 {
-	INC_LONG_REG(SP);
+	return INC_LONG_REG(SP);
 };
 
 // 0x34 INC (HL)
 // Z 0 H -
 auto INC_0x34 = []()
 {
-	RunCommandAtAddress(HL_const, INC_REG);
+	return RunCommandAtAddress(HL_const, INC_REG);
 };
 
 // 0x3C INC A
 // Z 0 H -
 auto INC_0x3C = []()
 {
-	INC_REG(A);
+	return INC_REG(A);
 };
 } // Core
 

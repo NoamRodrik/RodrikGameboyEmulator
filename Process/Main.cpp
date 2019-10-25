@@ -49,14 +49,16 @@ int main()
 	while(IP_const < load_game.GetFileSize())
 	{
 		const Instruction& command_to_execute = INSTRUCTION_LOOKUP_TABLE[DataAt(IP_const)];
-		printf("Running command at %04X: ", (uint16_t)IP_const);
+		printf("%04X) %s | ", (uint16_t)IP_const, command_to_execute.operation_string.c_str());
 		for (auto index = 0; index < command_to_execute.bytes_size; ++index)
 		{
 			printf("%02X", DataAt(IP_const + index));
 		}
 		printf("\r\n");
-		command_to_execute.Execute();
-		IP += command_to_execute.bytes_size;
+		if (command_to_execute.Execute())
+		{
+			IP += command_to_execute.bytes_size;
+		}
 	}
 	
 	PrintRegs();

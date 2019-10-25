@@ -15,7 +15,7 @@ namespace Core
 // - - - -
 auto PREFIX_0xCB = []()
 {
-
+	return true;
 };
 } // Core
 

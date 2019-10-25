@@ -40,7 +40,13 @@ with open("InstructionLookupTable.h", 'w+') as our_file:
   our_file.write('\n')
   our_file.write('namespace Core\n')
   our_file.write('{\n')
-  our_file.write("""Message("Complete the prefix table!");
+  our_file.write("""auto TERMINATE = []()
+{
+	STOP_RUNNING("An error has occurred!");
+};
+""")
+  our_file.write("""
+Message("Complete the prefix table!");
 Message("Need to increment PC after each instruction!");
 static const std::array<Instruction, 0x10 * 0x10> INSTRUCTION_LOOKUP_TABLE =
 """)
@@ -58,16 +64,20 @@ static const std::array<Instruction, 0x10 * 0x10> INSTRUCTION_LOOKUP_TABLE =
         flags = c[-7:]
         bytes_size = s[0][-1:]
         cycles_amount = s[2][:-7]
-        str_cycles_amount = ', '.join(cycles_amount.split('/'))
+
+        if (len(cycles_amount.split('/')) > 1):
+          str_cycles_amount = ', '.join(cycles_amount.split('/'))
+        else:
+          str_cycles_amount = ", ".join(cycles_amount.split('/')) + ", 0"
 
         short_name = operation_name.split(' ')[0]
         our_file.write("    // " + ident + " " + operation_name + "\n")
         our_file.write("    // " + flags + "\n")
-        our_file.write("    Instruction{" + short_name + "_" + ident + ", " + str(bytes_size) + ", " + str(str_cycles_amount) + "}")
+        our_file.write("    Instruction{" + short_name + "_" + ident + ", " + str(bytes_size) + ", " + str(str_cycles_amount) + ", " + "\"" + str(operation_name) + "\"" + "}")
 
       except:
         our_file.write("    // " + ident + " INVALID\n")
-        our_file.write("    Instruction{NOP_0x00, 1, 4}")
+        our_file.write("    Instruction{TERMINATE, 0, 0, 0, \"ERROR\"}")
 
       if (ident != "0xFF"):
         our_file.write(',\n')

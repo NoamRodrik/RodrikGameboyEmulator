@@ -21,96 +21,98 @@ auto DEC_REG = [](data_t& o_reg)
 	F.Set(Flag::SUB);
 
 	o_reg -= 1;
+	return true;
 };
 
 // DEC o_long_reg
 auto DEC_LONG_REG = [](auto& o_long_reg)
 {
 	o_long_reg -= 1;
+	return true;
 };
 
 // 0x05 DEC B
 // Z 1 H -
 auto DEC_0x05 = []()
 {
-	DEC_REG(B);
+	return DEC_REG(B);
 };
 
 // 0x0B DEC BC
 // - - - -
 auto DEC_0x0B = []()
 {
-	DEC_LONG_REG(BC);
+	return DEC_LONG_REG(BC);
 };
 
 // 0x0D DEC C
 // Z 1 H -
 auto DEC_0x0D = []()
 {
-	DEC_REG(C);
+	return DEC_REG(C);
 };
 
 // 0x15 DEC D
 // Z 1 H -
 auto DEC_0x15 = []()
 {
-	DEC_REG(D);
+	return DEC_REG(D);
 };
 
 // 0x1B DEC DE
 // - - - -
 auto DEC_0x1B = []()
 {
-	DEC_LONG_REG(DE);
+	return DEC_LONG_REG(DE);
 };
 
 // 0x1D DEC E
 // Z 1 H -
 auto DEC_0x1D = []()
 {
-	DEC_REG(E);
+	return DEC_REG(E);
 };
 
 // 0x25 DEC H
 // Z 1 H -
 auto DEC_0x25 = []()
 {
-	DEC_REG(H);
+	return DEC_REG(H);
 };
 
 // 0x2B DEC HL
 // - - - -
 auto DEC_0x2B = []()
 {
-	DEC_LONG_REG(HL);
+	return DEC_LONG_REG(HL);
 };
 
 // 0x2D DEC L
 // Z 1 H -
 auto DEC_0x2D = []()
 {
-	DEC_REG(L);
+	return DEC_REG(L);
 };
 
 // 0x35 DEC (HL)
 // Z 1 H -
 auto DEC_0x35 = []()
 {
-	RunCommandAtAddress(HL_const, DEC_REG);
+	return RunCommandAtAddress(HL_const, DEC_REG);
 };
 
 // 0x3B DEC SP
 // - - - -
 auto DEC_0x3B = []()
 {
-	DEC_LONG_REG(SP);
+	return DEC_LONG_REG(SP);
 };
 
 // 0x3D DEC A
 // Z 1 H -
 auto DEC_0x3D = []()
 {
-	DEC_REG(A);
+	return DEC_REG(A);
 };
 } // Core
 

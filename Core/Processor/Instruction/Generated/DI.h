@@ -17,6 +17,7 @@ namespace Core
 auto DI_0xF3 = []()
 {
 	memory.Write(OFF, InterruptSwitch::START_ADDRESS);
+	return true;
 };
 } // Core
 

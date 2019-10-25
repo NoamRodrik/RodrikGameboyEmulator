@@ -16,6 +16,7 @@ namespace Core
 auto PUSH_0xC5 = []()
 {
 	SP.Push(BC_const);
+	return true;
 };
 
 // 0xD5 PUSH DE
@@ -23,6 +24,7 @@ auto PUSH_0xC5 = []()
 auto PUSH_0xD5 = []()
 {
 	SP.Push(DE_const);
+	return true;
 };
 
 // 0xE5 PUSH HL
@@ -30,6 +32,7 @@ auto PUSH_0xD5 = []()
 auto PUSH_0xE5 = []()
 {
 	SP.Push(HL_const);
+	return true;
 };
 
 // 0xF5 PUSH AF
@@ -37,6 +40,7 @@ auto PUSH_0xE5 = []()
 auto PUSH_0xF5 = []()
 {
 	SP.Push(AF_const);
+	return true;
 };
 } // Core
 

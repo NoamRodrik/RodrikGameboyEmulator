@@ -28,6 +28,7 @@ auto RRCA_0x0F = []()
 	A >>= 1;
 	shifted_bit <<= 7;
 	A |= shifted_bit;
+	return true;
 };
 } // Core
 

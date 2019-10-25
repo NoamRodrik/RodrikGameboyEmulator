@@ -28,6 +28,7 @@ auto RLA_0x17 = []()
 	// The shifted bit goes into the carry flag, the carry flag goes into A.
 	A <<= 1;
 	A |= already_carried_bit;
+	return true;
 };
 } // Core
 

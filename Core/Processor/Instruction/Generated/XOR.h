@@ -21,69 +21,70 @@ auto XOR_WITH_A = [](const auto data)
 	F.Clear(Flag::SUB);
 	F.Clear(Flag::CARRY);
 	F.Clear(Flag::HALF_CARRY);
+	return true;
 };
 
 // 0xA8 XOR B
 // Z 0 0 0
 auto XOR_0xA8 = []()
 {
-	XOR_WITH_A(B_const);
+	return XOR_WITH_A(B_const);
 };
 
 // 0xA9 XOR C
 // Z 0 0 0
 auto XOR_0xA9 = []()
 {
-	XOR_WITH_A(C_const);
+	return XOR_WITH_A(C_const);
 };
 
 // 0xAA XOR D
 // Z 0 0 0
 auto XOR_0xAA = []()
 {
-	XOR_WITH_A(D_const);
+	return XOR_WITH_A(D_const);
 };
 
 // 0xAB XOR E
 // Z 0 0 0
 auto XOR_0xAB = []()
 {
-	XOR_WITH_A(E_const);
+	return XOR_WITH_A(E_const);
 };
 
 // 0xAC XOR H
 // Z 0 0 0
 auto XOR_0xAC = []()
 {
-	XOR_WITH_A(H_const);
+	return XOR_WITH_A(H_const);
 };
 
 // 0xAD XOR L
 // Z 0 0 0
 auto XOR_0xAD = []()
 {
-	XOR_WITH_A(L_const);
+	return XOR_WITH_A(L_const);
 };
 
 // 0xAE XOR (HL)
 // Z 0 0 0
 auto XOR_0xAE = []()
 {
-	XOR_WITH_A(DataAt(HL_const));
+	return XOR_WITH_A(DataAt(HL_const));
 };
 
 // 0xAF XOR A
 // Z 0 0 0
 auto XOR_0xAF = []()
 {
-	XOR_WITH_A(A_const);
+	return XOR_WITH_A(A_const);
 };
 
 // 0xEE XOR d8
 // Z 0 0 0
 auto XOR_0xEE = []()
 {
-	XOR_WITH_A(DataAt(IP_const + 1));
+	return XOR_WITH_A(DataAt(IP_const + 1));
 };
 } // Core
 

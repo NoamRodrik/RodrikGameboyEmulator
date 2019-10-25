@@ -18,6 +18,7 @@ auto SCF_0x37 = []()
 	F.Clear(Flag::SUB);
 	F.Clear(Flag::HALF_CARRY);
 	F.Set(Flag::CARRY);
+	return true;
 };
 } // Core
 

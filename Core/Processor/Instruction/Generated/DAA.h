@@ -31,6 +31,7 @@ auto DAA_0x27 = []()
 
 	F.MutateByCondition(A_const == 0, Flag::ZERO);
 	F.Clear(Flag::HALF_CARRY);
+	return true;
 };
 } // Core
 

@@ -15,7 +15,7 @@ namespace Core
 // - - - -
 auto RETI_0xD9 = []()
 {
-
+	return true;
 };
 } // Core
 

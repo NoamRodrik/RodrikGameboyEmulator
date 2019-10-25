@@ -15,14 +15,18 @@ namespace Core
 // - - - -
 auto LDH_0xE0 = []()
 {
-
+	const address_t address = DataAt(IP_const + 1) + 0xFF00;
+	memory.Write(A_const, address);
+	return true;
 };
 
 // 0xF0 LDH A,(a8)
 // - - - -
 auto LDH_0xF0 = []()
 {
-
+	const address_t address = DataAt(IP_const + 1) + 0xFF00;
+	SANITY(memory.Read(address, A), "Failed reading from memory!");
+	return true;
 };
 } // Core
 

@@ -61,8 +61,9 @@ const auto DataAt = [](const auto& address)
 const auto RunCommandAtAddress = [](const auto& address, const auto& command)
 {
 	data_t data{DataAt(address)};
-	command(data);
+	bool result = command(data);
 	memory.Write(address, data);
+	return result;
 };
 } // Core
 

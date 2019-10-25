@@ -16,6 +16,7 @@ namespace Core
 auto STOP_0x10 = []()
 {
 	Processor::GetInstance().Stop();
+	return true;
 };
 } // Core
 

@@ -28,6 +28,13 @@
 			}								   \
 		} while (false)
 
+#define STOP_RUNNING(fmt, ...)				   \
+		do									   \
+		{									   \
+			LOG(fmt, __VA_ARGS__);			   \
+			std::exit(1);					   \
+		} while (false)
+
 #define RET_FALSE_IF_FAIL(cond, fmt, ...)	   \
 		do									   \
 		{									   \

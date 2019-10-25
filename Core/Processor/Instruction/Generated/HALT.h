@@ -16,6 +16,7 @@ namespace Core
 auto HALT_0x76 = []()
 {
 	Processor::GetInstance().Halt();
+	return true;
 };
 } // Core
 

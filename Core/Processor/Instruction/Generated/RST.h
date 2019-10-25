@@ -16,64 +16,63 @@ auto RST_OFFSET = [](const address_t offset)
 	SP.Push(static_cast<const address_t>(IP_const + 1));
 	IP = offset;
 
-	// Returning it back for RST.
-	IP -= 1;
+	return false;
 };
 
 // 0xC7 RST 00H
 // - - - -
 auto RST_0xC7 = []()
 {
-	RST_OFFSET(0x00);
+	return RST_OFFSET(0x00);
 };
 
 // 0xCF RST 08H
 // - - - -
 auto RST_0xCF = []()
 {
-	RST_OFFSET(0x08);
+	return RST_OFFSET(0x08);
 };
 
 // 0xD7 RST 10H
 // - - - -
 auto RST_0xD7 = []()
 {
-	RST_OFFSET(0x10);
+	return RST_OFFSET(0x10);
 };
 
 // 0xDF RST 18H
 // - - - -
 auto RST_0xDF = []()
 {
-	RST_OFFSET(0x18);
+	return RST_OFFSET(0x18);
 };
 
 // 0xE7 RST 20H
 // - - - -
 auto RST_0xE7 = []()
 {
-	RST_OFFSET(0x20);
+	return RST_OFFSET(0x20);
 };
 
 // 0xEF RST 28H
 // - - - -
 auto RST_0xEF = []()
 {
-	RST_OFFSET(0x28);
+	return RST_OFFSET(0x28);
 };
 
 // 0xF7 RST 30H
 // - - - -
 auto RST_0xF7 = []()
 {
-	RST_OFFSET(0x30);
+	return RST_OFFSET(0x30);
 };
 
 // 0xFF RST 38H
 // - - - -
 auto RST_0xFF = []()
 {
-	RST_OFFSET(0x38);
+	return RST_OFFSET(0x38);
 };
 } // Core
 

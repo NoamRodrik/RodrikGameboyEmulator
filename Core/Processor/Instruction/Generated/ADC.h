@@ -15,63 +15,63 @@ namespace Core
 // Z 0 H C
 auto ADC_0x88 = []()
 {
-
+	return true;
 };
 
 // 0x89 ADC A,C
 // Z 0 H C
 auto ADC_0x89 = []()
 {
-
+	return true;
 };
 
 // 0x8A ADC A,D
 // Z 0 H C
 auto ADC_0x8A = []()
 {
-
+	return true;
 };
 
 // 0x8B ADC A,E
 // Z 0 H C
 auto ADC_0x8B = []()
 {
-
+	return true;
 };
 
 // 0x8C ADC A,H
 // Z 0 H C
 auto ADC_0x8C = []()
 {
-
+	return true;
 };
 
 // 0x8D ADC A,L
 // Z 0 H C
 auto ADC_0x8D = []()
 {
-
+	return true;
 };
 
 // 0x8E ADC A,(HL)
 // Z 0 H C
 auto ADC_0x8E = []()
 {
-
+	return true;
 };
 
 // 0x8F ADC A,A
 // Z 0 H C
 auto ADC_0x8F = []()
 {
-
+	return true;
 };
 
 // 0xCE ADC A,d8
 // Z 0 H C
 auto ADC_0xCE = []()
 {
-
+	return true;
 };
 } // Core
 
