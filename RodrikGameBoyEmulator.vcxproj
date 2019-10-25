@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <ProjectGuid>{215D6A67-E137-45D7-ACAC-00F4ABD3E992}</ProjectGuid>
+    <RootNamespace>RodrikGameBoyEmulator</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+    <SpectreMitigation>false</SpectreMitigation>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+    <SpectreMitigation>false</SpectreMitigation>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>C:\Users\User\source\repos\RodrikGameBoyEmulator;$(IncludePath)</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>C:\Users\User\source\repos\RodrikGameBoyEmulator;$(IncludePath)</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>C:\Users\User\source\repos\RodrikGameBoyEmulator;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>C:\Users\User\source\repos\RodrikGameBoyEmulator;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <SDLCheck>false</SDLCheck>
+      <ConformanceMode>false</ConformanceMode>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <EnableModules>true</EnableModules>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <ExceptionHandling>false</ExceptionHandling>
+      <ControlFlowGuard>false</ControlFlowGuard>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <FloatingPointExceptions>false</FloatingPointExceptions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <CompileAsManaged>false</CompileAsManaged>
+      <AssemblerOutput>NoListing</AssemblerOutput>
+      <PrecompiledHeaderFile />
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <StackReserveSize>1048576</StackReserveSize>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>false</SDLCheck>
+      <ConformanceMode>false</ConformanceMode>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>false</SDLCheck>
+      <ConformanceMode>false</ConformanceMode>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <EnableModules>true</EnableModules>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <ExceptionHandling>false</ExceptionHandling>
+      <ControlFlowGuard>false</ControlFlowGuard>
+      <FloatingPointExceptions>false</FloatingPointExceptions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <CompileAsManaged>false</CompileAsManaged>
+      <AssemblerOutput>NoListing</AssemblerOutput>
+      <PrecompiledHeaderFile />
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <StackReserveSize>1048576</StackReserveSize>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>false</SDLCheck>
+      <ConformanceMode>false</ConformanceMode>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="Core\API\Registers\RegisterPair.h" />
+    <ClInclude Include="Core\Bus\Bus.h" />
+    <ClInclude Include="Core\Bus\Devices\DeviceManager.h" />
+    <ClInclude Include="Core\GameLoader\GameLoader.h" />
+    <ClInclude Include="Core\LR35902\Definitions.h" />
+    <ClInclude Include="Core\Memory\Device\CartridgeRAM.h" />
+    <ClInclude Include="Core\Memory\Device\CloneWorkRAM.h" />
+    <ClInclude Include="Core\Memory\Device\ExternalRAM.h" />
+    <ClInclude Include="Core\Memory\Device\HighRAM.h" />
+    <ClInclude Include="Core\Memory\Device\InterruptSwitch.h" />
+    <ClInclude Include="Core\Memory\Device\IORAM.h" />
+    <ClInclude Include="Core\Memory\Device\OAMRAM.h" />
+    <ClInclude Include="Core\Memory\Device\VideoRAM.h" />
+    <ClInclude Include="Core\Memory\Device\WorkRAM.h" />
+    <ClInclude Include="Core\Memory\Memory.h" />
+    <ClInclude Include="Core\API\Definitions.h" />
+    <ClInclude Include="Core\API\Memory\Device\IMemoryDeviceAccess.h" />
+    <ClInclude Include="Core\API\Memory\Device\MemoryDeviceBase.h" />
+    <ClInclude Include="Core\API\Memory\Device\MemoryDeviceOperations.h" />
+    <ClInclude Include="Core\API\Memory\IMemoryAccess.h" />
+    <ClInclude Include="Core\API\Memory\MemoryBase.h" />
+    <ClInclude Include="Core\Processor\Instruction\Generated\ADC.h" />
+    <ClInclude Include="Core\Processor\Instruction\Generated\ADD.h" />
+    <ClInclude Include="Core\Processor\Instruction\Generated\AND.h" />
+    <ClInclude Include="Core\Processor\Instruction\Generated\CALL.h" />
+    <ClInclude Include="Core\Processor\Instruction\Generated\CCF.h" />
+    <ClInclude Include="Core\Processor\Instruction\Generated\CP.h" />
+    <ClInclude Include="Core\Processor\Instruction\Generated\CPL.h" />
+    <ClInclude Include="Core\Processor\Instruction\Generated\DAA.h" />
+    <ClInclude Include="Core\Processor\Instruction\Generated\DEC.h" />
+    <ClInclude Include="Core\Processor\Instruction\Generated\DI.h" />
+    <ClInclude Include="Core\Processor\Instruction\Generated\EI.h" />
+    <ClInclude Include="Core\Processor\Instruction\Generated\HALT.h" />
+    <ClInclude Include="Core\Processor\Instruction\Generated\INC.h" />
+    <ClInclude Include="Core\Processor\Instruction\Generated\JP.h" />
+    <ClInclude Include="Core\Processor\Instruction\Generated\JR.h" />
+    <ClInclude Include="Core\Processor\Instruction\Generated\LD.h" />
+    <ClInclude Include="Core\Processor\Instruction\Generated\LDH.h" />
+    <ClInclude Include="Core\Processor\Instruction\Generated\NOP.h" />
+    <ClInclude Include="Core\Processor\Instruction\Generated\OR.h" />
+    <ClInclude Include="Core\Processor\Instruction\Generated\POP.h" />
+    <ClInclude Include="Core\Processor\Instruction\Generated\PREFIX.h" />
+    <ClInclude Include="Core\Processor\Instruction\Generated\PUSH.h" />
+    <ClInclude Include="Core\Processor\Instruction\Generated\RET.h" />
+    <ClInclude Include="Core\Processor\Instruction\Generated\RETI.h" />
+    <ClInclude Include="Core\Processor\Instruction\Generated\RLA.h" />
+    <ClInclude Include="Core\Processor\Instruction\Generated\RLCA.h" />
+    <ClInclude Include="Core\Processor\Instruction\Generated\RRA.h" />
+    <ClInclude Include="Core\Processor\Instruction\Generated\RRCA.h" />
+    <ClInclude Include="Core\Processor\Instruction\Generated\RST.h" />
+    <ClInclude Include="Core\Processor\Instruction\Generated\SBC.h" />
+    <ClInclude Include="Core\Processor\Instruction\Generated\SCF.h" />
+    <ClInclude Include="Core\Processor\Instruction\Generated\STOP.h" />
+    <ClInclude Include="Core\Processor\Instruction\Generated\SUB.h" />
+    <ClInclude Include="Core\Processor\Instruction\Generated\XOR.h" />
+    <ClInclude Include="Core\Processor\Instruction\Instruction.h" />
+    <ClInclude Include="Core\Processor\Instruction\InstructionLookupTable.h" />
+    <ClInclude Include="Core\Processor\Instruction\Shortcuts.h" />
+    <ClInclude Include="Core\Processor\Processor.h" />
+    <ClInclude Include="Core\Registers\Types\LogicRegisters.h" />
+    <ClInclude Include="Core\Registers\Logic\RegisterEngine.h" />
+    <ClInclude Include="Core\Registers\Types\EFLRegisters.h" />
+    <ClInclude Include="Core\Registers\Types\ArithmeticRegisters.h" />
+    <ClInclude Include="Core\Registers\Types\InstructionRegisters.h" />
+    <ClInclude Include="Core\Registers\Types\StackRegisters.h" />
+    <ClInclude Include="Core\Registers\RegisterBase.h" />
+    <ClInclude Include="Tools\not_null.h" />
+    <ClInclude Include="Tools\Tools.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Core\Bus\Devices\DeviceManager.cpp" />
+    <ClCompile Include="Core\Bus\Devices\DeviceManagerBase.h" />
+    <ClCompile Include="Core\Processor\Processor.cpp" />
+    <ClCompile Include="Process\Main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Core\Processor\Instruction\Basic Scripts\GeneratingImplementationsScript.py" />
+    <None Include="Core\Processor\Instruction\Basic Scripts\GeneratingInstructionLookupScript.py" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets" />
+</Project>
