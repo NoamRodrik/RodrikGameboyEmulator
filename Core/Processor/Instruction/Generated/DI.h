@@ -8,6 +8,7 @@
 
 #include <Core/Processor/Processor.h>
 #include <Core/Processor/Instruction/Shortcuts.h>
+#include <Core/Memory/Device/InterruptSwitch.h>
 
 namespace Core
 {
@@ -15,7 +16,7 @@ namespace Core
 // - - - -
 auto DI_0xF3 = []()
 {
-	Processor::GetInstance().DisableInterruptHandling();
+	memory.Write(OFF, InterruptSwitch::START_ADDRESS);
 };
 } // Core
 

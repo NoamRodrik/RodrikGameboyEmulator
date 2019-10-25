@@ -50,6 +50,12 @@ public:
 	using RegisterBase::RegisterBase;
 	using RegisterBase::operator address_t&;
 	using RegisterBase::operator address_t;
+
+
+	void operator=(const address_t data)
+	{
+		this->m_data = data;
+	}
 };
 
 /**
@@ -62,12 +68,12 @@ public:
 	using RegisterBase::operator address_t&;
 	using RegisterBase::operator address_t;
 
-public:
 	void operator=(const address_t data)
 	{
 		this->m_data = data;
 	}
 
+public:
 	virtual void Push(const address_t data) = 0;
 	virtual void Push(const data_t data) = 0;
 	virtual void Pop(address_t& data) = 0;

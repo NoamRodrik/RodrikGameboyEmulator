@@ -36,7 +36,6 @@ public:
 		SANITY(fclose(this->m_game_file) == 0, "Failed closing game loader file ptr");
 	}
 
-private:
 	const long GetFileSize() const
 	{
 		// Seek to end of file

@@ -27,12 +27,9 @@ public:
 
 	void Stop() { this->m_stop_request = true; }
 	void Halt() { this->m_halted = true; }
-	void DisableInterruptHandling() { this->m_disable_interrupt_handling = true; }
-	void EnableInterruptHandling() { this->m_disable_interrupt_handling = false; }
 
 	inline bool IsStopped() { return this->m_stop_request; }
 	inline bool IsHalted() { return this->m_halted; }
-	inline bool IsInterruptHandlingDisabled() { return this->m_disable_interrupt_handling; }
 
 private:
 	Processor() = default;
@@ -46,7 +43,6 @@ private:
 	bool					 m_stop_request{false};
 	/* Wait until an interrupt is done executing! */
 	bool					 m_halted{false};
-	bool					 m_disable_interrupt_handling{false};
 };
 } // Core
 

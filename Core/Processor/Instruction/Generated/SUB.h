@@ -83,7 +83,7 @@ auto SUB_0x97 = []()
 // Z 1 H C
 auto SUB_0xD6 = []()
 {
-	SUB_DATA_FROM_REG(A, DataAt(IP_const));
+	SUB_DATA_FROM_REG(A, DataAt(IP_const + 1));
 };
 } // Core
 

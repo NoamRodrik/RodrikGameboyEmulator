@@ -48,6 +48,13 @@
 
 namespace Core
 {
+auto TERMINATE = []()
+{
+	Message("To change to macro!");
+	printf("An error has occurred!");
+	abort();
+};
+
 Message("Complete the prefix table!");
 Message("Need to increment PC after each instruction!");
 static const std::array<Instruction, 0x10 * 0x10> INSTRUCTION_LOOKUP_TABLE =
@@ -897,7 +904,7 @@ static const std::array<Instruction, 0x10 * 0x10> INSTRUCTION_LOOKUP_TABLE =
     Instruction{JP_0xD2, 3, 16, 12},
 
     // 0xD3 INVALID
-    Instruction{NOP_0x00, 1, 4},
+    Instruction{TERMINATE, 1, 4},
 
     // 0xD4 CALL NC,a16
     // - - - -
@@ -928,14 +935,14 @@ static const std::array<Instruction, 0x10 * 0x10> INSTRUCTION_LOOKUP_TABLE =
     Instruction{JP_0xDA, 3, 16, 12},
 
     // 0xDB INVALID
-    Instruction{NOP_0x00, 1, 4},
+    Instruction{TERMINATE, 1, 4},
 
     // 0xDC CALL C,a16
     // - - - -
     Instruction{CALL_0xDC, 3, 24, 12},
 
     // 0xDD INVALID
-    Instruction{NOP_0x00, 1, 4},
+    Instruction{TERMINATE, 1, 4},
 
     // 0xDE SBC A,d8
     // Z 1 H C
@@ -958,10 +965,10 @@ static const std::array<Instruction, 0x10 * 0x10> INSTRUCTION_LOOKUP_TABLE =
     Instruction{LD_0xE2, 2, 8},
 
     // 0xE3 INVALID
-    Instruction{NOP_0x00, 1, 4},
+    Instruction{TERMINATE, 1, 4},
 
     // 0xE4 INVALID
-    Instruction{NOP_0x00, 1, 4},
+    Instruction{TERMINATE, 1, 4},
 
     // 0xE5 PUSH HL
     // - - - -
@@ -988,13 +995,13 @@ static const std::array<Instruction, 0x10 * 0x10> INSTRUCTION_LOOKUP_TABLE =
     Instruction{LD_0xEA, 3, 16},
 
     // 0xEB INVALID
-    Instruction{NOP_0x00, 1, 4},
+    Instruction{TERMINATE, 1, 4},
 
     // 0xEC INVALID
-    Instruction{NOP_0x00, 1, 4},
+    Instruction{TERMINATE, 1, 4},
 
     // 0xED INVALID
-    Instruction{NOP_0x00, 1, 4},
+    Instruction{TERMINATE, 1, 4},
 
     // 0xEE XOR d8
     // Z 0 0 0
@@ -1021,7 +1028,7 @@ static const std::array<Instruction, 0x10 * 0x10> INSTRUCTION_LOOKUP_TABLE =
     Instruction{DI_0xF3, 1, 4},
 
     // 0xF4 INVALID
-    Instruction{NOP_0x00, 1, 4},
+    Instruction{TERMINATE, 1, 4},
 
     // 0xF5 PUSH AF
     // - - - -
@@ -1052,10 +1059,10 @@ static const std::array<Instruction, 0x10 * 0x10> INSTRUCTION_LOOKUP_TABLE =
     Instruction{EI_0xFB, 1, 4},
 
     // 0xFC INVALID
-    Instruction{NOP_0x00, 1, 4},
+    Instruction{TERMINATE, 1, 4},
 
     // 0xFD INVALID
-    Instruction{NOP_0x00, 1, 4},
+    Instruction{TERMINATE, 1, 4},
 
     // 0xFE CP d8
     // Z 1 H C

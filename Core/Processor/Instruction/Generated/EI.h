@@ -15,7 +15,7 @@ namespace Core
 // - - - -
 auto EI_0xFB = []()
 {
-	Processor::GetInstance().EnableInterruptHandling();
+	memory.Write(ON, InterruptSwitch::START_ADDRESS);
 };
 } // Core
 

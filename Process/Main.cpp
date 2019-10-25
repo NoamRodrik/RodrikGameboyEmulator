@@ -6,6 +6,7 @@
 #include <Core/Processor/Instruction/InstructionLookupTable.h>
 #include <Core/API/Registers/RegisterPair.h>
 #include <Core/Processor/Processor.h>
+#include <Core/Processor/Instruction/Shortcuts.h>
 #include <stdlib.h>
 
 using namespace Core;
@@ -35,19 +36,31 @@ void PrintRegs()
 int main()
 {
 #ifdef CHECK_REGS
+	BC = 0xABCD;
 	PrintRegs();
-	for (int i = 0; i < 14; ++i)
-	{
-		INSTRUCTION_LOOKUP_TABLE[0x04].Execute();
-	}
+	INSTRUCTION_LOOKUP_TABLE[0xC5].Execute();
+	BC = 0;
 	PrintRegs();
-	for (int i = 0; i < 2; ++i)
-	{
-		INSTRUCTION_LOOKUP_TABLE[0x09].Execute();
-	}
+	INSTRUCTION_LOOKUP_TABLE[0xC1].Execute();
 	PrintRegs();
 #else
+	IP = 0;
 	GameLoader load_game{"C:\\Users\\User\\source\\repos\\RodrikGameBoyEmulator\\BootROM\\dmg_boot.bin"};
+	while(IP_const < load_game.GetFileSize())
+	{
+		const Instruction& command_to_execute = INSTRUCTION_LOOKUP_TABLE[DataAt(IP_const)];
+		printf("Running command at %04X: ", (uint16_t)IP_const);
+		for (auto index = 0; index < command_to_execute.bytes_size; ++index)
+		{
+			printf("%02X", DataAt(IP_const + index));
+		}
+		printf("\r\n");
+		command_to_execute.Execute();
+		IP += command_to_execute.bytes_size;
+	}
+	
+	PrintRegs();
+
 	Message("Calculate game here!");
 #endif
 	return EXIT_SUCCESS;

@@ -17,30 +17,33 @@ namespace Core
 // LD reg, d8
 auto LD_D8 = [](auto& reg)
 {
-	SANITY(memory_const.Read(IP_const, reg), "Failed reading from memory!");
+	SANITY(memory_const.Read(IP_const + 1, reg), "Failed reading from memory!");
 };
 
 // LD lower_reg&upper_reg, d16
 auto LD_D16 = [](data_t& lower_reg, data_t& higher_reg)
 {
-	lower_reg = DataAt(IP_const);
-
-	IP += 1;
-
-	higher_reg = DataAt(IP_const);
+	lower_reg = DataAt(IP_const + 2);
+	higher_reg = DataAt(IP_const + 1);
 };
 
-// LD (a16), r16
-auto LD_A16 = [](const address_t& r16)
+// LD (a16), reg
+auto LD_A16 = [](const address_t& reg)
 {
-	Message("What is R16?!?!!?");
-	memory.Write(r16, IP_const);
+	const address_t immediate_address = DataAt(IP_const + 2) << 8 | DataAt(IP_const + 1);
+	memory.Write(reg, immediate_address);
 };
 
 // LD (reg_with_addr), reg_with_value
 auto LD_REG_ADDR_FROM_REG = [](const auto& reg_with_addr, const auto& reg_with_value)
 {
 	memory.Write(reg_with_value, reg_with_addr);
+};
+
+// LD o_reg, data
+auto LD_REG_FROM_DATA = [](auto& o_reg, const auto& data)
+{
+	o_reg = data;
 };
 
 // LD o_reg, (reg_with_addr)
@@ -52,7 +55,7 @@ auto LD_REG_FROM_REG_ADDR = [](const auto& reg_with_addr, auto& o_reg)
 // LD o_reg, reg
 auto LD_REG_FROM_REG = [](auto& o_reg, const auto& reg)
 {
-	o_reg = reg;
+	LD_REG_FROM_DATA(o_reg, reg);
 };
 
 // 0x01 LD BC, d16
@@ -144,7 +147,8 @@ auto LD_0x21 = []()
 auto LD_0x22 = []()
 {
 	// Put A into memory address HL. Increment HL.
-	// Same as : LD (HL), A - INC HL	LD_REG_ADDR_FROM_REG(HL_const, A_const);
+	// Same as : LD (HL), A - INC HL
+	LD_REG_ADDR_FROM_REG(HL_const, A_const);
 	INC_0x23();
 };
 
@@ -176,9 +180,8 @@ auto LD_0x2E = []()
 // - - - -
 auto LD_0x31 = []()
 {
-	LD_D8(SP);
-	IP += 1;
-	LD_D8(SP);
+	const address_t immediate_data = DataAt(IP_const + 2) << 8 | DataAt(IP_const + 1);
+	LD_REG_FROM_DATA(SP, immediate_data);
 };
 
 // 0x32 LD (HL-),A
@@ -186,7 +189,8 @@ auto LD_0x31 = []()
 auto LD_0x32 = []()
 {
 	// Put A into memory address HL. Decrement HL.
-	// Same as : LD (HL), A - DEC HL	LD_REG_ADDR_FROM_REG(HL_const, A_const);
+	// Same as : LD (HL), A - DEC HL
+	LD_REG_ADDR_FROM_REG(HL_const, A_const);
 	DEC_0x2B();
 };
 
@@ -666,12 +670,7 @@ auto LD_0xE2 = []()
 // - - - -
 auto LD_0xEA = []()
 {
-	Message("Endianty stuff need to check!");
-	address_t immediate_address = 0;
-	immediate_address = DataAt(IP) << 8;
-	IP += 1;
-	immediate_address |= DataAt(IP);
-
+	const address_t immediate_address = DataAt(IP_const + 2) << 8 | DataAt(IP_const + 1);
 	LD_REG_ADDR_FROM_REG(immediate_address, A_const);
 };
 
@@ -686,7 +685,7 @@ auto LD_0xF2 = []()
 // 0 0 H C
 auto LD_0xF8 = []()
 {
-	const r8_t right_hand_operand = D8_TO_R8(DataAt(IP_const));
+	const r8_t right_hand_operand = D8_TO_R8(DataAt(IP_const + 1));
 	F.Clear(Flag::ZERO);
 	F.Clear(Flag::SUB);
 
@@ -714,11 +713,7 @@ auto LD_0xF9 = []()
 auto LD_0xFA = []()
 {
 	Message("Endianty stuff need to check!");
-	address_t immediate_address = 0;
-	immediate_address = DataAt(IP) << 8;
-	IP += 1;
-	immediate_address |= DataAt(IP);
-
+	const address_t immediate_address = DataAt(IP_const + 2) << 8 | DataAt(IP_const + 1);
 	LD_REG_FROM_REG_ADDR(immediate_address, A);
 };
 } // Core

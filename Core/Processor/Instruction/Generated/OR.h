@@ -83,7 +83,7 @@ auto OR_0xB7 = []()
 // Z 0 0 0
 auto OR_0xF6 = []()
 {
-	OR_WITH_A(DataAt(IP_const));
+	OR_WITH_A(DataAt(IP_const + 1));
 };
 } // Core
 

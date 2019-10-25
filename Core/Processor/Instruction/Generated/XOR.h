@@ -83,7 +83,7 @@ auto XOR_0xAF = []()
 // Z 0 0 0
 auto XOR_0xEE = []()
 {
-	XOR_WITH_A(DataAt(IP_const));
+	XOR_WITH_A(DataAt(IP_const + 1));
 };
 } // Core
 

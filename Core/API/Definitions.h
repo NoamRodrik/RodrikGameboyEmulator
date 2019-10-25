@@ -17,6 +17,10 @@ namespace Core
 	using data_t = uint8_t;
 	using r8_t = int8_t;
 
+	/* Necessary switch */
+	static constexpr data_t OFF = 0;
+	static constexpr data_t ON = 1;
+
 	/* RAM */
 	static constexpr uint32_t MEMORY_SIZE = Tools::KilobitsToBits(std::numeric_limits<address_t>::digits);
 

@@ -120,7 +120,7 @@ auto ADD_0x87 = []()
 // Z 0 H C
 auto ADD_0xC6 = []()
 {
-	ADD_DATA_TO_REG_MUTATE_ZERO_FLAG(A, DataAt(IP_const));
+	ADD_DATA_TO_REG_MUTATE_ZERO_FLAG(A, DataAt(IP_const + 1));
 };
 
 // 0xE8 ADD SP,r8
@@ -128,7 +128,7 @@ auto ADD_0xC6 = []()
 auto ADD_0xE8 = []()
 {
 	// false means -> Always clear the zero flag!
-	ADD_DATA_TO_REG_MUTATE_ZERO_FLAG(SP, D8_TO_R8(DataAt(IP_const)), false);
+	ADD_DATA_TO_REG_MUTATE_ZERO_FLAG(SP, D8_TO_R8(DataAt(IP_const + 1)), false);
 };
 } // Core
 

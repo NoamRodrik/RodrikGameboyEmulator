@@ -30,8 +30,8 @@ public:
 		Message("Check endianity!");
 		data_t top_byte = 0;
 		data_t bottom_byte = 0;
-		this->Pop(bottom_byte);
 		this->Pop(top_byte);
+		this->Pop(bottom_byte);
 		data = ((top_byte << 8) & 0xFF00) | (bottom_byte & 0x00FF);
 	}
 
@@ -40,9 +40,9 @@ public:
 		this->m_memory_context.Read(this->m_data++, data);
 	}
 
-	void Push(const data_t data)
+	void Push(const data_t data) override
 	{
-		this->m_memory_context.Write(data, this->m_data--);
+		this->m_memory_context.Write(data, --this->m_data);
 	}
 
 private:

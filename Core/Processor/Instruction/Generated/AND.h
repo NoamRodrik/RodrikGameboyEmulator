@@ -83,7 +83,7 @@ auto AND_0xA7 = []()
 // Z 0 1 0
 auto AND_0xE6 = []()
 {
-	AND_WITH_A(DataAt(IP_const));
+	AND_WITH_A(DataAt(IP_const + 1));
 };
 } // Core
 
