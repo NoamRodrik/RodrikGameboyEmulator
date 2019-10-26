@@ -15,8 +15,7 @@ namespace Core
 // - - - -
 auto LDH_0xE0 = []()
 {
-	const address_t address = DataAt(IP_const + 1) + 0xFF00;
-	memory.Write(A_const, address);
+	memory.Write(A_const, D8() + 0xFF00);
 	return true;
 };
 
@@ -24,8 +23,7 @@ auto LDH_0xE0 = []()
 // - - - -
 auto LDH_0xF0 = []()
 {
-	const address_t address = DataAt(IP_const + 1) + 0xFF00;
-	SANITY(memory.Read(address, A), "Failed reading from memory!");
+	SANITY(memory.Read(D8() + 0xFF00, A), "Failed reading from memory!");
 	return true;
 };
 } // Core

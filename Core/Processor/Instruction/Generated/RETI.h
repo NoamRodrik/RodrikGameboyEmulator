@@ -8,14 +8,20 @@
 
 #include <Core/Processor/Processor.h>
 #include <Core/Processor/Instruction/Shortcuts.h>
-
+#include "EI.h"
 namespace Core
 {
 // 0xD9 RETI
 // - - - -
 auto RETI_0xD9 = []()
 {
-	return true;
+	// Pop two bytes from stack & jump to that address then
+	// enable interrupts
+	SP.Pop(IP);
+	EI_0xFB();
+
+	// Don't want to change IP!
+	return false;
 };
 } // Core
 

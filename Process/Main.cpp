@@ -4,6 +4,7 @@
  * @description Program entry point
  */
 #include <Core/Processor/Instruction/InstructionLookupTable.h>
+#include <Core/Processor/Prefix/PrefixLookupTable.h>
 #include <Core/API/Registers/RegisterPair.h>
 #include <Core/Processor/Processor.h>
 #include <Core/Processor/Instruction/Shortcuts.h>
@@ -31,8 +32,6 @@ void PrintRegs()
 		(address_t)RegisterPair((data_t&)arithmetic_regs.h, (data_t&)arithmetic_regs.l));
 }
 
-#include <Core/GameLoader/GameLoader.h>
-#include <errno.h>
 int main()
 {
 #ifdef CHECK_REGS
@@ -44,26 +43,32 @@ int main()
 	INSTRUCTION_LOOKUP_TABLE[0xC1].Execute();
 	PrintRegs();
 #else
-	IP = 0;
-	GameLoader load_game{"C:\\Users\\User\\source\\repos\\RodrikGameBoyEmulator\\BootROM\\dmg_boot.bin"};
-	while(IP_const < load_game.GetFileSize())
+	while ((IP_const - 0x100) < 0x100)
 	{
-		const Instruction& command_to_execute = INSTRUCTION_LOOKUP_TABLE[DataAt(IP_const)];
-		printf("%04X) %s | ", (uint16_t)IP_const, command_to_execute.operation_string.c_str());
-		for (auto index = 0; index < command_to_execute.bytes_size; ++index)
+		const Instruction* command_to_execute = nullptr;
+		if (Processor::GetInstance().IsPrefix())
+		{
+			command_to_execute = &PREFIX_LOOKUP_TABLE[DataAt(IP_const)];
+			Processor::GetInstance().ClearPrefixCommand();
+		}
+		else
+		{
+			command_to_execute = &INSTRUCTION_LOOKUP_TABLE[DataAt(IP_const)];
+		}
+
+		printf("%04X) %s | ", (uint16_t)IP_const, command_to_execute->operation_string.c_str());
+		for (auto index = 0; index < command_to_execute->bytes_size; ++index)
 		{
 			printf("%02X", DataAt(IP_const + index));
 		}
 		printf("\r\n");
-		if (command_to_execute.Execute())
+		if (command_to_execute->Execute())
 		{
-			IP += command_to_execute.bytes_size;
+			IP += command_to_execute->bytes_size;
 		}
 	}
 	
 	PrintRegs();
-
-	Message("Calculate game here!");
 #endif
 	return EXIT_SUCCESS;
 }

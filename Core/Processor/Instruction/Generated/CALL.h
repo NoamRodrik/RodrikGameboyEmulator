@@ -14,7 +14,7 @@ namespace Core
 auto CALL_A16 = []()
 {
 	SP.Push(IP);
-	IP = DataAt(IP_const + 2) << 8 | DataAt(IP_const + 1);
+	IP = D16();
 
 	// Don't change the IP.
 	return false;

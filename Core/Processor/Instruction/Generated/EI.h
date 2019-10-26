@@ -8,6 +8,7 @@
 
 #include <Core/Processor/Processor.h>
 #include <Core/Processor/Instruction/Shortcuts.h>
+#include <Core/Memory/Device/InterruptSwitch.h>
 
 namespace Core
 {

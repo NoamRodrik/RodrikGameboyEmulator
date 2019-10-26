@@ -9,6 +9,7 @@
 #include <Core/API/Memory/Device/MemoryDeviceBase.h>
 #include <Core/Memory/Memory.h>
 #include <Core/API/Definitions.h>
+#include <Core/Loader/BinaryLoader.h>
 
 namespace Core
 {
@@ -20,7 +21,10 @@ namespace Core
 class CartridgeRAM : public MemoryDeviceBase
 {
 public:
-	constexpr CartridgeRAM(DeviceManagerBase& device_manager) : MemoryDeviceBase{START_ADDRESS, END_ADDRESS, device_manager}, m_memory{} {}
+	CartridgeRAM(DeviceManagerBase& device_manager) : MemoryDeviceBase{START_ADDRESS, END_ADDRESS, device_manager}, m_memory{}
+	{
+		LoadDMGBoot();
+	}
 
 	virtual bool Read(const address_t absolute_address, data_t& result) const override
 	{
@@ -52,6 +56,12 @@ public:
 
 protected:
 	virtual uint8_t* GetMemoryPointer() override { return this->m_memory.GetMemoryPointer(); }
+
+private:
+	void LoadDMGBoot()
+	{
+		BinaryLoader load_dmg{DMG_LOADER_PATH, this->GetMemoryPointer() + 0x100, SIZE - 0x100};
+	}
 
 private:
 	Memory<SIZE> m_memory;

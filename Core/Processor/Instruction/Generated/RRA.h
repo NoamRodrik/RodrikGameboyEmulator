@@ -8,6 +8,7 @@
 
 #include <Core/Processor/Processor.h>
 #include <Core/Processor/Instruction/Shortcuts.h>
+#include <Core/Processor/Prefix/Generated/RR.h>
 
 namespace Core
 {
@@ -15,21 +16,9 @@ namespace Core
 // 0 0 0 C
 auto RRA_0x1F = []()
 {
+	const bool result = RR_0x1F();
 	F.Clear(Flag::ZERO);
-	F.Clear(Flag::SUB);
-	F.Clear(Flag::HALF_CARRY);
-
-	// Fetching the utmost left bit.
-	const uint8_t shifted_bit = A & 0x01;
-	uint8_t already_carried_bit = F.IsSet(Flag::CARRY) & 0x01;
-	F.MutateByCondition(shifted_bit == 0x01, Flag::CARRY);
-
-	// Rotate right A.
-	// The shifted bit goes into the carry flag, the carry flag goes into A.
-	A >>= 1;
-	already_carried_bit <<= 7;
-	A |= already_carried_bit;
-	return true;
+	return result;
 };
 } // Core
 

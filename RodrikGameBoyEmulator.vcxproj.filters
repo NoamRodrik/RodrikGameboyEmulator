@@ -230,12 +230,53 @@
     <ClInclude Include="Core\Processor\Instruction\Shortcuts.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Core\GameLoader\GameLoader.h">
+    <ClInclude Include="Core\Loader\BinaryLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Loader\GameLoader\GameLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Processor\Prefix\PrefixLookupTable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Processor\Prefix\Generated\BIT.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Processor\Prefix\Generated\RES.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Processor\Prefix\Generated\RL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Processor\Prefix\Generated\RLC.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Processor\Prefix\Generated\RR.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Processor\Prefix\Generated\RRC.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Processor\Prefix\Generated\SET.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Processor\Prefix\Generated\SLA.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Processor\Prefix\Generated\SRA.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Processor\Prefix\Generated\SRL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Processor\Prefix\Generated\SWAP.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Core\Processor\Instruction\Basic Scripts\GeneratingImplementationsScript.py" />
-    <None Include="Core\Processor\Instruction\Basic Scripts\GeneratingInstructionLookupScript.py" />
+    <None Include="Tools\Basic Scripts\GeneratingImplementationsScript.py" />
+    <None Include="Tools\Basic Scripts\GeneratingInstructionLookupScript.py" />
+    <None Include="Tools\Basic Scripts\GeneratingPrefixLookupTable.py" />
+    <None Include="Tools\Basic Scripts\GeneratingImplementationsPrefixScript.py" />
   </ItemGroup>
 </Project>

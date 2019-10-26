@@ -32,8 +32,7 @@ auto LD_D16 = [](data_t& lower_reg, data_t& higher_reg)
 // LD (a16), reg
 auto LD_A16 = [](const address_t& reg)
 {
-	const address_t immediate_address = DataAt(IP_const + 2) << 8 | DataAt(IP_const + 1);
-	memory.Write(reg, immediate_address);
+	memory.Write(reg, D16());
 	return true;
 };
 
@@ -188,8 +187,7 @@ auto LD_0x2E = []()
 // - - - -
 auto LD_0x31 = []()
 {
-	const address_t immediate_data = DataAt(IP_const + 2) << 8 | DataAt(IP_const + 1);
-	return LD_REG_FROM_DATA(SP, immediate_data);
+	return LD_REG_FROM_DATA(SP, D16());
 };
 
 // 0x32 LD (HL-),A
@@ -680,8 +678,7 @@ auto LD_0xE2 = []()
 // - - - -
 auto LD_0xEA = []()
 {
-	const address_t immediate_address = DataAt(IP_const + 2) << 8 | DataAt(IP_const + 1);
-	return LD_REG_ADDR_FROM_REG(immediate_address, A_const);
+	return LD_REG_ADDR_FROM_REG(D16(), A_const);
 };
 
 // 0xF2 LD A,(C)
@@ -695,7 +692,7 @@ auto LD_0xF2 = []()
 // 0 0 H C
 auto LD_0xF8 = []()
 {
-	const r8_t right_hand_operand = D8_TO_R8(DataAt(IP_const + 1));
+	const r8_t right_hand_operand = D8_TO_R8(D8());
 	F.Clear(Flag::ZERO);
 	F.Clear(Flag::SUB);
 
@@ -725,8 +722,7 @@ auto LD_0xF9 = []()
 // - - - -
 auto LD_0xFA = []()
 {
-	const address_t immediate_address = DataAt(IP_const + 2) << 8 | DataAt(IP_const + 1);
-	return LD_REG_FROM_REG_ADDR(immediate_address, A);
+	return LD_REG_FROM_REG_ADDR(D16(), A);
 };
 } // Core
 

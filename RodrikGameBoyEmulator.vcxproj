@@ -182,7 +182,8 @@
     <ClInclude Include="Core\API\Registers\RegisterPair.h" />
     <ClInclude Include="Core\Bus\Bus.h" />
     <ClInclude Include="Core\Bus\Devices\DeviceManager.h" />
-    <ClInclude Include="Core\GameLoader\GameLoader.h" />
+    <ClInclude Include="Core\Loader\GameLoader\GameLoader.h" />
+    <ClInclude Include="Core\Loader\BinaryLoader.h" />
     <ClInclude Include="Core\LR35902\Definitions.h" />
     <ClInclude Include="Core\Memory\Device\CartridgeRAM.h" />
     <ClInclude Include="Core\Memory\Device\CloneWorkRAM.h" />
@@ -237,6 +238,18 @@
     <ClInclude Include="Core\Processor\Instruction\Instruction.h" />
     <ClInclude Include="Core\Processor\Instruction\InstructionLookupTable.h" />
     <ClInclude Include="Core\Processor\Instruction\Shortcuts.h" />
+    <ClInclude Include="Core\Processor\Prefix\Generated\BIT.h" />
+    <ClInclude Include="Core\Processor\Prefix\Generated\RES.h" />
+    <ClInclude Include="Core\Processor\Prefix\Generated\RL.h" />
+    <ClInclude Include="Core\Processor\Prefix\Generated\RLC.h" />
+    <ClInclude Include="Core\Processor\Prefix\Generated\RR.h" />
+    <ClInclude Include="Core\Processor\Prefix\Generated\RRC.h" />
+    <ClInclude Include="Core\Processor\Prefix\Generated\SET.h" />
+    <ClInclude Include="Core\Processor\Prefix\Generated\SLA.h" />
+    <ClInclude Include="Core\Processor\Prefix\Generated\SRA.h" />
+    <ClInclude Include="Core\Processor\Prefix\Generated\SRL.h" />
+    <ClInclude Include="Core\Processor\Prefix\Generated\SWAP.h" />
+    <ClInclude Include="Core\Processor\Prefix\PrefixLookupTable.h" />
     <ClInclude Include="Core\Processor\Processor.h" />
     <ClInclude Include="Core\Registers\Types\LogicRegisters.h" />
     <ClInclude Include="Core\Registers\Logic\RegisterEngine.h" />
@@ -255,8 +268,10 @@
     <ClCompile Include="Process\Main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Core\Processor\Instruction\Basic Scripts\GeneratingImplementationsScript.py" />
-    <None Include="Core\Processor\Instruction\Basic Scripts\GeneratingInstructionLookupScript.py" />
+    <None Include="Tools\Basic Scripts\GeneratingImplementationsPrefixScript.py" />
+    <None Include="Tools\Basic Scripts\GeneratingImplementationsScript.py" />
+    <None Include="Tools\Basic Scripts\GeneratingInstructionLookupScript.py" />
+    <None Include="Tools\Basic Scripts\GeneratingPrefixLookupTable.py" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

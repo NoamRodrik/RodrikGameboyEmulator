@@ -83,7 +83,7 @@ auto CP_0xBF = []()
 // Z 1 H C
 auto CP_0xFE = []()
 {
-	return CP_WITH_A(DataAt(IP_const + 1));
+	return CP_WITH_A(D8());
 };
 } // Core
 

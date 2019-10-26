@@ -65,6 +65,16 @@ const auto RunCommandAtAddress = [](const auto& address, const auto& command)
 	memory.Write(address, data);
 	return result;
 };
+
+const auto D8 = []()
+{
+	return DataAt(IP_const + 1);
+};
+
+const auto D16 = []()
+{
+	return DataAt(IP_const + 2) << 8 | DataAt(IP_const + 1);
+};
 } // Core
 
 #endif // __SHORTCUTS_H__

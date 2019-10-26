@@ -27,9 +27,13 @@ public:
 
 	void Stop() { this->m_stop_request = true; }
 	void Halt() { this->m_halted = true; }
+	void SetPrefixCommand() { this->m_last_command_prefix = true; }
 
 	inline bool IsStopped() { return this->m_stop_request; }
 	inline bool IsHalted() { return this->m_halted; }
+	inline bool IsPrefix() { return this->m_last_command_prefix; }
+
+	void ClearPrefixCommand() { this->m_last_command_prefix = false; }
 
 private:
 	Processor() = default;
@@ -43,6 +47,8 @@ private:
 	bool					 m_stop_request{false};
 	/* Wait until an interrupt is done executing! */
 	bool					 m_halted{false};
+	/* If the last command was PREFIX */
+	bool					 m_last_command_prefix{false};
 };
 } // Core
 

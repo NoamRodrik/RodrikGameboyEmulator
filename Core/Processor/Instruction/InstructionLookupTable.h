@@ -54,7 +54,6 @@ auto TERMINATE = []()
 	return false;
 };
 
-Message("Complete the prefix table!");
 Message("Need to increment PC after each instruction!");
 static const std::array<Instruction, 0x10 * 0x10> INSTRUCTION_LOOKUP_TABLE =
 {

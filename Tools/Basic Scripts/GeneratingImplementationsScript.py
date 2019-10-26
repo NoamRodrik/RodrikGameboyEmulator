@@ -25,7 +25,7 @@ for row in range(1, 17):
 auto {}_{} = []()""".format(ident, operation_name, flags, short_name, ident)
       func += """
 {
-
+	return true;
 };"""
       short_name_table.get(short_name).append(func)
     except:
