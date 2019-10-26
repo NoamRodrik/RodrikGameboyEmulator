@@ -11,60 +11,72 @@
 
 namespace Core
 {
+// SRL reg
+// Z 0 0 C
+auto SRL_REG = [](auto& reg)
+{
+	F.MutateByCondition(reg == 0, Flag::ZERO);
+	F.Clear(Flag::SUB);
+	F.Clear(Flag::HALF_CARRY);
+	F.MutateByCondition(reg & 0x01, Flag::CARRY);
+	reg >>= 1;
+	return true;
+};
+
 // 0x38 SRL B
 // Z 0 0 C
 auto SRL_0x38 = []()
 {
-  return true;
+	return SRL_REG(B);
 };
 
 // 0x39 SRL C
 // Z 0 0 C
 auto SRL_0x39 = []()
 {
-  return true;
+	return SRL_REG(C);
 };
 
 // 0x3A SRL D
 // Z 0 0 C
 auto SRL_0x3A = []()
 {
-  return true;
+	return SRL_REG(D);
 };
 
 // 0x3B SRL E
 // Z 0 0 C
 auto SRL_0x3B = []()
 {
-  return true;
+	return SRL_REG(E);
 };
 
 // 0x3C SRL H
 // Z 0 0 C
 auto SRL_0x3C = []()
 {
-  return true;
+	return SRL_REG(H);
 };
 
 // 0x3D SRL L
 // Z 0 0 C
 auto SRL_0x3D = []()
 {
-  return true;
+	return SRL_REG(L);
 };
 
 // 0x3E SRL (HL)
 // Z 0 0 C
 auto SRL_0x3E = []()
 {
-  return true;
+	return RunCommandAtAddress(HL_const, SRL_REG);
 };
 
 // 0x3F SRL A
 // Z 0 0 C
 auto SRL_0x3F = []()
 {
-  return true;
+	return SRL_REG(A);
 };
 } // Core
 
