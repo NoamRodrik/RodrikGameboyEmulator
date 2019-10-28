@@ -13,21 +13,23 @@
 
 namespace Core
 {
+static constexpr data_t DECREMENT_VALUE = 1;
+
 // DEC o_reg
 auto DEC_REG = [](data_t& o_reg)
 {
-	F.MutateByCondition(Tools::HalfCarryOnSubtraction(o_reg, 1), Flag::HALF_CARRY);
-	F.MutateByCondition(o_reg - 1 == 0, Flag::ZERO);
+	F.MutateByCondition(Tools::HalfCarryOnSubtraction(o_reg, DECREMENT_VALUE), Flag::HALF_CARRY);
+	o_reg -= DECREMENT_VALUE;
+	F.MutateByCondition(o_reg == 0, Flag::ZERO);
 	F.Set(Flag::SUB);
 
-	o_reg -= 1;
 	return true;
 };
 
 // DEC o_long_reg
 auto DEC_LONG_REG = [](auto& o_long_reg)
 {
-	o_long_reg -= 1;
+	o_long_reg -= DECREMENT_VALUE;
 	return true;
 };
 

@@ -12,15 +12,14 @@
 namespace Core
 {
 // SLA reg
-// Z 0 0 0
-auto SLA_REG = [](auto& reg)
+// Z 0 0 C
+auto SLA_REG = [](data_t& reg)
 {
 	F.MutateByCondition(reg == 0, Flag::ZERO);
 	F.Clear(Flag::SUB);
 	F.Clear(Flag::HALF_CARRY);
-	F.Clear(Flag::CARRY);
+	F.MutateByCondition((reg >> 7) & 0x01, Flag::CARRY);
 	reg <<= 1;
-	reg |= static_cast<data_t>(1);
 	return true;
 };
 

@@ -17,7 +17,9 @@ namespace Core
 class GameLoader : public BinaryLoader
 {
 public:
-	GameLoader(const std::string& game_path) : BinaryLoader{game_path, Processor::GetInstance().GetMemory().GetDeviceAtAddress(CartridgeRAM::START_ADDRESS)->GetMemoryPointer(), CartridgeRAM::SIZE}
+	GameLoader(const std::string& game_path) : BinaryLoader{game_path,
+															Processor::GetInstance().GetMemory().GetDeviceAtAddress(CartridgeRAM::START_ADDRESS)->GetMemoryPointer() + 0x100,
+															CartridgeRAM::SIZE - 0x100}
 	{}
 
 	virtual ~GameLoader() = default;

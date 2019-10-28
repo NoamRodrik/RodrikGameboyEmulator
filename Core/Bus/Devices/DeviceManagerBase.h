@@ -32,7 +32,7 @@ public:
 			}
 		}
 
-		LOG("Didn't write anything to the devices.");
+		STOP_RUNNING("Didn't write anything to the devices.");
 	}
 
 	virtual bool Read(const address_t absolute_address, address_t& result) const override
@@ -45,7 +45,7 @@ public:
 			}
 		}
 
-		LOG("Failed reading from device -> The address is illegal and not in range!");
+		STOP_RUNNING("Failed reading from device -> The address is illegal and not in range!");
 		return false;
 	}
 
@@ -59,7 +59,7 @@ public:
 			}
 		}
 		
-		LOG("Didn't write anything to the devices.");
+		STOP_RUNNING("Didn't write anything to the devices.");
 	}
 
 	virtual bool Read(const address_t absolute_address, data_t& result) const override
@@ -72,7 +72,7 @@ public:
 			}
 		}
 
-		LOG("Failed reading from device -> The address is illegal and not in range!");
+		STOP_RUNNING("Failed reading from device -> The address is illegal and not in range!");
 		return false;
 	}
 

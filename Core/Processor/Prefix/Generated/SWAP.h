@@ -20,7 +20,7 @@ auto SWAP_REG = [](auto& reg)
 	F.Clear(Flag::HALF_CARRY);
 	F.Clear(Flag::CARRY);
 
-	reg = (reg & 0x0F << 4) | (reg & 0xF0 >> 4);
+	reg = ((reg & 0x0F) << 4) | ((reg & 0xF0) >> 4);
 	return true;
 };
 

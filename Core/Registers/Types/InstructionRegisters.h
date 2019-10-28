@@ -10,7 +10,7 @@
 
 namespace Core
 {
-class IP_Register : public AddressRegisterBase
+class PC_Register : public AddressRegisterBase
 {
 public:
 	using AddressRegisterBase::AddressRegisterBase;
@@ -20,7 +20,7 @@ public:
 	inline void Next() { this->m_data += 1; }
 };
 
-static_assert(sizeof(IP_Register) == sizeof(IP_Register::RegisterType));
+static_assert(sizeof(PC_Register) == sizeof(PC_Register::RegisterType));
 } // Core
 
 #endif // __LR35902_INSTRUCTION_REGISTERS_H__

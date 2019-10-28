@@ -17,10 +17,11 @@ auto RETI_0xD9 = []()
 {
 	// Pop two bytes from stack & jump to that address then
 	// enable interrupts
-	SP.Pop(IP);
+	SP.Pop(PC);
 	EI_0xFB();
 
-	// Don't want to change IP!
+	Message("IME = 1 here!");
+	// Don't want to change PC!
 	return false;
 };
 } // Core

@@ -60,7 +60,7 @@ protected:
 private:
 	void LoadDMGBoot()
 	{
-		BinaryLoader load_dmg{DMG_LOADER_PATH, this->GetMemoryPointer() + 0x100, SIZE - 0x100};
+		BinaryLoader load_dmg{DMG_LOADER_PATH, this->GetMemoryPointer(), SIZE};
 	}
 
 private:

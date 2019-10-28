@@ -12,15 +12,14 @@
 namespace Core
 {
 // SRA reg
-// Z 0 0 0
+// Z 0 0 C
 auto SRA_REG = [](auto& reg)
 {
 	F.MutateByCondition(reg == 0, Flag::ZERO);
 	F.Clear(Flag::SUB);
 	F.Clear(Flag::HALF_CARRY);
-	F.Clear(Flag::CARRY);
-	reg >>= 1;
-	reg |= static_cast<data_t>(~(-1 >> 1));
+	F.MutateByCondition(reg & 0x01, Flag::CARRY);
+	reg = ((reg & 128) | (reg >> 1));
 	return true;
 };
 

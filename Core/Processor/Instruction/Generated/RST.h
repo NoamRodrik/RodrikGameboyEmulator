@@ -13,8 +13,8 @@ namespace Core
 {
 auto RST_OFFSET = [](const address_t offset)
 {
-	SP.Push(static_cast<const address_t>(IP_const + 1));
-	IP = offset;
+	SP.Push(static_cast<const address_t>(PC_const + 1));
+	PC = offset;
 
 	return false;
 };

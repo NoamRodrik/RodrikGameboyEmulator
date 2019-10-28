@@ -31,6 +31,9 @@ public:
 	virtual void Write(const data_t data, const address_t absolute_address) override
 	{
 		this->m_memory[absolute_address - START_ADDRESS] = data;
+
+		// Clones to the WorkRAM.
+		this->m_device_manager.Write(data, absolute_address - SIZE);
 	}
 
 	virtual bool Read(const address_t absolute_address, address_t& result) const override
@@ -43,6 +46,10 @@ public:
 	{
 		this->m_memory[absolute_address - START_ADDRESS] = data & 0x00FF;
 		this->m_memory[absolute_address - START_ADDRESS + 1] = (data & 0xFF00 >> 8);
+
+		// Clones to the WorkRAM
+		this->m_device_manager.Write(static_cast<address_t>(data & 0x00FF), absolute_address - SIZE);
+		this->m_device_manager.Write(static_cast<address_t>((data & 0xFF00) >> 8), absolute_address - SIZE);
 	}
 
 public:

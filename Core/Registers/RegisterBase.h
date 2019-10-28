@@ -93,23 +93,17 @@ public:
 protected:
 	constexpr bool GetFlag(const data_t bit_index) const
 	{
-		return this->GetFlag(this->m_data & (0b00000001 << bit_index), bit_index);
+		return (this->m_data >> bit_index) & 0x01;
 	}
 
 	inline void SetFlag(const data_t flag)
 	{
-		this->m_data |= flag;
+		this->m_data |= (0x1 << flag);
 	}
 
 	inline void ClearFlag(const data_t flag)
 	{
-		this->m_data &= (flag ^ 0b11111111);
-	}
-
-private:
-	static constexpr bool GetFlag(const data_t flag, const data_t bit)
-	{
-		return (bit >> flag) & 0b00000001;
+		this->m_data &= ((0x1 << flag) ^ 0b11111111);
 	}
 };
 

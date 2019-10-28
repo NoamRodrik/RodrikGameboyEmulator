@@ -278,5 +278,7 @@
     <None Include="Tools\Basic Scripts\GeneratingInstructionLookupScript.py" />
     <None Include="Tools\Basic Scripts\GeneratingPrefixLookupTable.py" />
     <None Include="Tools\Basic Scripts\GeneratingImplementationsPrefixScript.py" />
+    <None Include="BootROM\tetris.gb" />
+    <None Include="BootROM\cpu_instrs.gb" />
   </ItemGroup>
 </Project>

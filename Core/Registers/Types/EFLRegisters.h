@@ -39,8 +39,10 @@ public:
 		{
 			this->Set(flag);
 		}
-
-		this->Clear(flag);
+		else
+		{
+			this->Clear(flag);
+		}
 	}
 };
 

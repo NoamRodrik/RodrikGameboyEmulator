@@ -10,7 +10,6 @@
 
 namespace Core
 {
-Message("To change to dynamic! [USING VECTOR INSTEAD!]");
 class DeviceManager : public DeviceManagerBase
 {
 public:

@@ -43,8 +43,8 @@ static const RegisterPair HL_const{H, L};
 
 static auto& SP{Processor::GetInstance().GetRegisters().GetStackRegister()};
 static const auto& SP_const{Processor::GetInstance().GetRegisters().GetStackRegister()};
-static auto& IP{Processor::GetInstance().GetRegisters().GetProgramCounter()};
-static const auto& IP_const{Processor::GetInstance().GetRegisters().GetProgramCounter()};
+static auto& PC{Processor::GetInstance().GetRegisters().GetProgramCounter()};
+static const auto& PC_const{Processor::GetInstance().GetRegisters().GetProgramCounter()};
 
 const auto D8_TO_R8 = [](const data_t number)
 {
@@ -68,12 +68,12 @@ const auto RunCommandAtAddress = [](const auto& address, const auto& command)
 
 const auto D8 = []()
 {
-	return DataAt(IP_const + 1);
+	return DataAt(PC_const + 1);
 };
 
 const auto D16 = []()
 {
-	return DataAt(IP_const + 2) << 8 | DataAt(IP_const + 1);
+	return DataAt(PC_const + 2) << 8 | DataAt(PC_const + 1);
 };
 } // Core
 

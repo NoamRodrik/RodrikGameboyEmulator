@@ -13,15 +13,15 @@ namespace Core
 {	
 auto JP_ADDR = [](const auto& address)
 {
-	IP = DataAt(address + 1) << 8 | DataAt(address);
+	PC = ((DataAt(address + 1) & 0xFF00) << 8) | (DataAt(address) & 0x00FF);
 
-	// Don't change IP.
+	// Don't change PC.
 	return false;
 };
 
 auto JP_A16 = []()
 {
-	return JP_ADDR(IP);
+	return JP_ADDR(PC_const);
 };
 
 // 0xC2 JP NZ,a16

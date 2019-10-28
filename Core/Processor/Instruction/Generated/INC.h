@@ -19,10 +19,10 @@ static constexpr data_t INCREMENT_VALUE = 1;
 auto INC_REG = [](data_t& o_reg)
 {
 	F.MutateByCondition(Tools::HalfCarryOnAddition(o_reg, INCREMENT_VALUE), Flag::HALF_CARRY);
-	F.MutateByCondition(Tools::ZeroOnAddition(o_reg, INCREMENT_VALUE), Flag::ZERO);
+	o_reg += INCREMENT_VALUE;
+	F.MutateByCondition(o_reg == 0, Flag::ZERO);
 	F.Clear(Flag::SUB);
 
-	o_reg += INCREMENT_VALUE;
 	return true;
 };
 

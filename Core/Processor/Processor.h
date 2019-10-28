@@ -13,11 +13,15 @@
 
 namespace Core
 {
+class Instruction;
+
 class Processor
 {
 public:
 	// The processor is a singleton instance.
 	static Processor& GetInstance();
+	void Run();
+	void Clock();
 
 	RegisterEngine& GetRegisters() { return this->m_registers; }
 	Bus& GetMemory() { return this->m_bus; }
@@ -34,10 +38,19 @@ public:
 	inline bool IsPrefix() { return this->m_last_command_prefix; }
 
 	void ClearPrefixCommand() { this->m_last_command_prefix = false; }
+	void ClearStop() { this->m_stop_request = false; }
+	void ClearHalt() { this->m_halted = false; }
 
 private:
 	Processor() = default;
 	~Processor() = default;
+
+#if _DEBUG
+private:
+	static void PrintInstruction(const Instruction& instruction_to_print);
+	static void PrintRegisters();
+	static void PrintFlags();
+#endif
 
 private:
 	inline static Processor* m_instance{nullptr};
@@ -49,6 +62,8 @@ private:
 	bool					 m_halted{false};
 	/* If the last command was PREFIX */
 	bool					 m_last_command_prefix{false};
+	/* CPU current clock operation */
+	size_t					 m_clock_cycle_compute_amount{0};
 };
 } // Core
 

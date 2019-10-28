@@ -54,7 +54,6 @@ auto TERMINATE = []()
 	return false;
 };
 
-Message("Need to increment PC after each instruction!");
 static const std::array<Instruction, 0x10 * 0x10> INSTRUCTION_LOOKUP_TABLE =
 {
     // 0x00 NOP
@@ -123,7 +122,7 @@ static const std::array<Instruction, 0x10 * 0x10> INSTRUCTION_LOOKUP_TABLE =
 
     // 0x10 STOP 0
     // - - - -
-    Instruction{STOP_0x10, 2, 4, 0, "STOP 0"},
+    Instruction{STOP_0x10, 1, 4, 0, "STOP 0"},
 
     // 0x11 LD DE,d16
     // - - - -
@@ -960,7 +959,7 @@ static const std::array<Instruction, 0x10 * 0x10> INSTRUCTION_LOOKUP_TABLE =
 
     // 0xE2 LD (C),A
     // - - - -
-    Instruction{LD_0xE2, 2, 8, 0, "LD (C),A"},
+    Instruction{LD_0xE2, 1, 8, 0, "LD (C),A"},
 
     // 0xE3 INVALID
     Instruction{TERMINATE, 0, 0, 0, "ERROR"},
@@ -1019,7 +1018,7 @@ static const std::array<Instruction, 0x10 * 0x10> INSTRUCTION_LOOKUP_TABLE =
 
     // 0xF2 LD A,(C)
     // - - - -
-    Instruction{LD_0xF2, 2, 8, 0, "LD A,(C)"},
+    Instruction{LD_0xF2, 1, 8, 0, "LD A,(C)"},
 
     // 0xF3 DI
     // - - - -

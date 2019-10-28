@@ -15,7 +15,7 @@ namespace Core
 class BinaryLoader
 {
 public:
-	BinaryLoader(const std::string& binary_path, data_t* destination, const long size) : m_binary_path{binary_path}, m_binary_file{fopen(binary_path.c_str(), FILE_READ_MODE)}
+	BinaryLoader(const std::string& binary_path, data_t* const destination, const long size) : m_binary_path{binary_path}, m_binary_file{fopen(binary_path.c_str(), FILE_READ_MODE)}
 	{
 		auto file_size = this->GetFileSize();
 

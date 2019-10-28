@@ -13,9 +13,9 @@ namespace Core
 {
 auto JR_R8 = []()
 {
-	IP += D8_TO_R8(IP_const + 1);
+	PC += D8_TO_R8(DataAt(PC_const + 1)) + 2;
 
-	// Don't change IP.
+	// Don't change the PC!
 	return false;
 };
 

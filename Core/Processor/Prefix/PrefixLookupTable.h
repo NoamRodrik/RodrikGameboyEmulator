@@ -25,7 +25,6 @@
 
 namespace Core
 {
-	Message("Complete the prefix table!");
 	static const std::array<Instruction, 0x10 * 0x10> PREFIX_LOOKUP_TABLE =
 	{
 		// 0x00 RLC B

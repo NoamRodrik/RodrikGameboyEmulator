@@ -12,10 +12,16 @@
 #define MacroStr2(x)  MacroStr(x)
 #define Message(desc) __pragma(message(__FILE__ "(" MacroStr2(__LINE__) ") : " desc))
 
-#define LOG(fmt, ...)						\
+#define LOG_NO_ENTER(fmt, ...)				\
 		do									\
 		{									\
-			printf(fmt "\n", __VA_ARGS__);	\
+			printf_s(fmt, __VA_ARGS__);		\
+		} while (false)
+
+#define LOG(fmt, ...)							 \
+		do										 \
+		{										 \
+			LOG_NO_ENTER(fmt "\n", __VA_ARGS__); \
 		} while (false)
 
 #define SANITY(cond, fmt, ...)				   \

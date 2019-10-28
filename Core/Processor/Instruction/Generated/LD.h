@@ -17,15 +17,15 @@ namespace Core
 // LD reg, d8
 auto LD_D8 = [](auto& reg)
 {
-	SANITY(memory_const.Read(IP_const + 1, reg), "Failed reading from memory!");
+	reg = DataAt(PC_const + 1);
 	return true;
 };
 
 // LD lower_reg&upper_reg, d16
 auto LD_D16 = [](data_t& lower_reg, data_t& higher_reg)
 {
-	lower_reg = DataAt(IP_const + 2);
-	higher_reg = DataAt(IP_const + 1);
+	lower_reg = DataAt(PC_const + 2);
+	higher_reg = DataAt(PC_const + 1);
 	return true;
 };
 

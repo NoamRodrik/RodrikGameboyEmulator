@@ -13,10 +13,10 @@ namespace Core
 {
 auto CALL_A16 = []()
 {
-	SP.Push(IP);
-	IP = D16();
+	SP.Push(static_cast<const address_t>(PC_const + 3));
+	PC = D16();
 
-	// Don't change the IP.
+	// Don't change the PC.
 	return false;
 };
 

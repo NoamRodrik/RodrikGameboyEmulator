@@ -13,7 +13,7 @@ namespace Core
 {
 auto RET = []()
 {
-	SP.Pop(IP);
+	SP.Pop(PC);
 	return false;
 };
 

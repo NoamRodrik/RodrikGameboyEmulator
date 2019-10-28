@@ -30,11 +30,11 @@ public:
 
 protected:
 	virtual uint8_t* GetMemoryPointer() = 0;
+	DeviceManagerBase& m_device_manager;
 
 private:
 	const uint32_t m_start_address;
 	const uint32_t m_end_address;
-	DeviceManagerBase& m_device_manager;
 
 private:
 	friend class GameLoader;
