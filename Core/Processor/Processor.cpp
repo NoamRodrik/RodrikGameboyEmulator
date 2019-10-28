@@ -77,7 +77,7 @@ void Processor::PrintFlags()
 void Processor::Clock()
 {
 #if _DEBUG
-	Sleep(3);
+	// Sleep(3);
 #endif
 
 	if (Processor::GetInstance().IsStopped())

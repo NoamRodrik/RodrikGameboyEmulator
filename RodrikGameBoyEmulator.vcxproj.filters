@@ -280,5 +280,6 @@
     <None Include="Tools\Basic Scripts\GeneratingImplementationsPrefixScript.py" />
     <None Include="BootROM\tetris.gb" />
     <None Include="BootROM\cpu_instrs.gb" />
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>
