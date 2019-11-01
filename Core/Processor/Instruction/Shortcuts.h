@@ -8,6 +8,7 @@
 #define __SHORTCUTS_H__
 
 #include <Core/Processor/Processor.h>
+#include <Core/API/Registers/RegisterPair.h>
 
 namespace Core
 {
@@ -61,7 +62,7 @@ const auto DataAt = [](const auto& address)
 const auto RunCommandAtAddress = [](const auto& address, const auto& command)
 {
 	data_t data{DataAt(address)};
-	bool result = command(data);
+	const bool result = command(data);
 	memory.Write(address, data);
 	return result;
 };

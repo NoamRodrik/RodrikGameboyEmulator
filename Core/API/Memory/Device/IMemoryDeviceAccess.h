@@ -13,6 +13,9 @@ namespace Core
 class IMemoryDeviceAccess
 {
 public:
+	virtual ~IMemoryDeviceAccess() = default;
+	
+public:
 	virtual bool Read(const address_t absolute_address, data_t& result) const = 0;
 	virtual bool Read(const address_t absolute_address, address_t& result) const = 0;
 

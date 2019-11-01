@@ -37,7 +37,6 @@ public:
 
 protected:
 	using RegisterType = T;
-	Message("Restore atomics if needed!");
 	T m_data;
 };
 

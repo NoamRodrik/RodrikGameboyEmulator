@@ -10,7 +10,7 @@
 #include <Core/API/Memory/MemoryBase.h>
 #include <Core/API/Definitions.h>
 #include <Tools/not_null.h>
-#include <stdint.h>
+#include <cstdint>
 
 namespace Core
 {
@@ -21,6 +21,8 @@ public:
 	{
 		this->ClearDevices();
 	}
+
+	virtual ~DeviceManagerBase() = default;
 
 	virtual void Write(const address_t data, const address_t absolute_address) override
 	{

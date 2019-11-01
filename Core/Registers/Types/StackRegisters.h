@@ -17,17 +17,17 @@ public:
 	SP_Register(RegisterType&& reg_value, IMemoryDeviceAccess& memory_context) :
 		StackRegisterBase{std::move(reg_value)}, m_memory_context{memory_context} {}
 
+	virtual ~SP_Register() = default;
+
 public:
 	virtual void Push(const address_t data) override
 	{
-		Message("Check endianity!");
 		this->Push(static_cast<const data_t>(data & 0x00FF));
 		this->Push(static_cast<const data_t>((data >> 8) & 0x00FF));
 	}
 
 	virtual void Pop(address_t& data) override
 	{
-		Message("Check endianity!");
 		data_t top_byte = 0;
 		data_t bottom_byte = 0;
 		this->Pop(top_byte);

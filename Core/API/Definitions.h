@@ -19,13 +19,16 @@ namespace Core
 
 	/* Necessary switch */
 	static constexpr data_t OFF = 0;
-	static constexpr data_t ON = 1;
+	static constexpr data_t ON  = 1;
 
 	/* RAM */
 	static constexpr uint32_t MEMORY_SIZE = Tools::KilobitsToBits(std::numeric_limits<address_t>::digits);
 
 	/* Devices on BUS */
 	static constexpr uint8_t DEVICES_ON_BUS = 9;
+
+	/* Interrupts */
+	static constexpr uint8_t INTERRUPT_COUNT = 5;
 
 } // Core
 

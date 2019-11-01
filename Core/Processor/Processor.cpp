@@ -7,6 +7,9 @@
 #include <Core/Processor/Instruction/InstructionLookupTable.h>
 #include <Core/Processor/Prefix/PrefixLookupTable.h>
 #include <Core/Processor/Instruction/Shortcuts.h>
+#include <Core/Interrupts/InterruptHandler.h>
+#include <Core/Processor/Timer/Timer.h>
+#include <time.h>
 
 #if _DEBUG
 #include <Windows.h>
@@ -14,16 +17,6 @@
 
 namespace Core
 {
-Processor& Processor::GetInstance()
-{
-	if (Processor::m_instance == nullptr)
-	{
-		Processor::m_instance = gsl::not_null<Processor*>(new Processor{});
-	}
-
-	return *gsl::not_null<Processor*>(Processor::m_instance);
-}
-
 #if _DEBUG
 void Processor::PrintInstruction(const Instruction& instruction_to_print)
 {
@@ -74,26 +67,24 @@ void Processor::PrintFlags()
 }
 #endif
 
-void Processor::Clock()
+const size_t Processor::Clock()
 {
-#if _DEBUG
-	// Sleep(3);
-#endif
+	/*
+// Increment timer.
+if (Timer::GetInstance().Increment())
+{
+	// Overflow occurred, call interrupt.
+	InterruptHandler::IRQ(EInterrupts::TIMER);
+	Timer::GetInstance().AssignCounterToModulo();
+	Timer::GetInstance().SetLoading();
+}
 
-	if (Processor::GetInstance().IsStopped())
-	{
-		LOG("STOP called!");
-		return;
-	}
+// Interrupts check.
+InterruptHandler::ProcessInterrupts();
+*/
 
-	if (this->m_clock_cycle_compute_amount > 0)
-	{
-		this->m_clock_cycle_compute_amount -= 1;
-		return;
-	}
-
-	const Instruction& command_to_execute = Processor::GetInstance().IsPrefix() ? PREFIX_LOOKUP_TABLE[DataAt(PC_const)] :
-							   													  INSTRUCTION_LOOKUP_TABLE[DataAt(PC_const)];
+	const auto& command_to_execute = Processor::GetInstance().IsPrefix() ? PREFIX_LOOKUP_TABLE[DataAt(PC_const)] :
+																		   INSTRUCTION_LOOKUP_TABLE[DataAt(PC_const)];
 #if _DEBUG
 	Processor::PrintInstruction(command_to_execute);
 	Processor::PrintFlags();
@@ -105,7 +96,7 @@ void Processor::Clock()
 	Processor::GetInstance().ClearPrefixCommand();
 
 	// The compute amount is the amount of cycles the command needs.
-	this->m_clock_cycle_compute_amount = command_to_execute.cycles_amount;
+	size_t clock_cycle = command_to_execute.cycles_amount;
 
 	// If the command wants to forward the PC, we need to add the bytes size.
 	if (command_to_execute.Execute())
@@ -116,32 +107,25 @@ void Processor::Clock()
 		if (command_to_execute.extended_cycles_amount != 0)
 		{
 			// Fetch the lower between the two, the operation didn't successfully happen.
-			this->m_clock_cycle_compute_amount = min(command_to_execute.cycles_amount,
-													 command_to_execute.extended_cycles_amount);
+			clock_cycle = min(command_to_execute.cycles_amount,
+							  command_to_execute.extended_cycles_amount);
 		}
 	}
 	else
 	{
 		if (command_to_execute.extended_cycles_amount != 0)
 		{
-			// Fetch the higher between the two, the operation did sucessfully happen.
-			this->m_clock_cycle_compute_amount = max(command_to_execute.cycles_amount,
-													 command_to_execute.extended_cycles_amount);
+			// Fetch the higher between the two, the operation did successfully happen.
+			clock_cycle = max(command_to_execute.cycles_amount,
+							  command_to_execute.extended_cycles_amount);
 		}
 	}
-
+	
 #if _DEBUG
 	Processor::PrintFlags();
 	LOG(" | ");
 #endif
-}
 
-void Processor::Run()
-{
-	while (true)
-	{
-		// CPU needs to clock.
-		this->Clock();
-	}
+	return clock_cycle;
 }
 } // Core

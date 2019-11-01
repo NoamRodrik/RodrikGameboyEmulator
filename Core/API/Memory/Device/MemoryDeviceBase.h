@@ -25,6 +25,8 @@ public:
 	{
 	}
 
+	virtual ~MemoryDeviceBase() = default;
+
 	constexpr uint32_t GetStartAddress() const { return this->m_start_address; }
 	constexpr uint32_t GetEndAddress() const { return this->m_end_address; }
 

@@ -13,7 +13,8 @@ namespace Core
 {
 auto RST_OFFSET = [](const address_t offset)
 {
-	SP.Push(static_cast<const address_t>(PC_const + 1));
+	Message("ADDED +1 to RST because we need to skip RST size.");
+	SP.Push(static_cast<const address_t>(PC_const + 1 + 1));
 	PC = offset;
 
 	return false;

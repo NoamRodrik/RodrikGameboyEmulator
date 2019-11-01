@@ -8,7 +8,6 @@
 
 #include <Core/Bus/Devices/DeviceManagerBase.h>
 #include <Core/Bus/Devices/DeviceManager.h>
-#include <Core/API/Memory/MemoryBase.h>
 
 namespace Core
 {

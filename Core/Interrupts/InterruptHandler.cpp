@@ -1,0 +1,113 @@
+#include "InterruptHandler.h"
+#include <Core/Interrupts/Registers/InterruptEnable.h>
+#include <Core/Interrupts/Registers/InterruptFlag.h>
+#include <Core/Processor/Instruction/Generated/DI.h>
+#include <Core/Processor/Instruction/Shortcuts.h>
+#include <Tools/Tools.h>
+
+#include "Types/HighLowPinNumber.h"
+#include "Types/Serial.h"
+#include "Types/LCDC.h"
+#include "Types/VBlank.h"
+#include "Types/Timer.h"
+#include <array>
+
+namespace Core
+{
+static const std::array<const Interrupt, INTERRUPT_COUNT> InterruptTable
+{
+	// Bit 0 : V - Blank
+	Interrupt{VBLANK_INTERRUPT, 0x40, EInterrupts::VBLANK},
+
+	// Bit 1 : LCDC (see STAT)
+	Interrupt{LCDC_INTERRUPT, 0x48, EInterrupts::LCDC},
+
+	// Bit 2 : Timer Overflow
+	Interrupt{TIMER_INTERRUPT, 0x50, EInterrupts::TIMER},
+
+	// Bit 3: Serial I / O transfer end
+	Interrupt{SERIAL_INTERRUPT, 0x58, EInterrupts::SERIAL},
+	
+	// Bit 4: Transition from High to Low of Pin number P10-P13
+	Interrupt{HIGH_LOW_PIN_NUMBER_INTERRUPT, 0x60, EInterrupts::H_L_P}
+};
+	
+void InterruptHandler::ProcessInterrupts()
+{
+	const auto* const interrupt_to_run = InterruptHandler::GetPrioritizedInterrupt();
+
+	// If there's an interrupt.
+	if (interrupt_to_run != nullptr)
+	{
+		// When any enabled interrupt is raised it will bring the CPU out of halt mode to service it, if required.
+		Processor::GetInstance().ClearHalt();
+		 
+		// Clear interrupt.
+		InterruptHandler::ClearInterrupt(interrupt_to_run->enum_value);
+
+		// Disable all interrupts.
+		DI_0xF3();
+		
+		// 1) Save PC
+		SP.Push(PC);
+
+		// 2) Acknowledge Interrupt
+		SANITY(interrupt_to_run->Execute(), "Failed executing interrupts.");
+
+		// 3) PC = Interrupt Service Routine
+		PC = interrupt_to_run->jump_address;
+	}
+}
+
+void InterruptHandler::ClearInterrupt(const EInterrupts interrupt)
+{
+	InterruptFlag interrupt_requests{};
+
+#if _DEBUG
+	if ((interrupt_requests >> static_cast<data_t>(interrupt)) == OFF)
+	{
+		LOG("Deleting interrupt even when the flag is off!");
+	}
+#endif
+
+	interrupt_requests = interrupt_requests & (static_cast<data_t>(interrupt) ^ 0b11111111);
+}
+
+void InterruptHandler::IRQ(const EInterrupts interrupt)
+{
+	InterruptFlag interrupt_requests{};
+
+#if _DEBUG
+	if ((interrupt_requests >> static_cast<data_t>(interrupt)) == ON)
+	{
+		LOG("Adding interrupt even when the flag is on!");
+	}
+#endif
+
+	interrupt_requests = interrupt_requests | static_cast<data_t>(interrupt);
+}
+
+const Interrupt* const InterruptHandler::GetPrioritizedInterrupt()
+{
+	const InterruptEnable interrupt_enable{};
+	const InterruptFlag interrupt_requests{};
+	data_t interrupts_pending = interrupt_enable & interrupt_requests;
+
+	// If there are no interrupts, return nullptr.
+	if ((interrupt_enable & interrupt_requests) == 0)
+	{
+		return nullptr;
+	}
+	
+	uint8_t chosen_interrupt = 0;
+	
+	while ((interrupts_pending & 0x01) == 0)
+	{
+		chosen_interrupt += 1;
+		interrupts_pending >>= 1;
+	}
+
+	SANITY(chosen_interrupt < sizeof(InterruptTable) / sizeof(InterruptTable[0]), "Got an invalid choice!");
+	return &InterruptTable[chosen_interrupt];
+}
+} // Core

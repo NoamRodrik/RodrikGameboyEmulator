@@ -7,21 +7,18 @@
 #define __PROCESSOR_H__
 
 #include <Core/Registers/Logic/RegisterEngine.h>
-#include <Core/API/Registers/RegisterPair.h>
-#include <Tools/not_null.h>
+#include <Core/API/StaticInstance.h>
 #include <Core/Bus/Bus.h>
 
 namespace Core
 {
 class Instruction;
 
-class Processor
+class Processor : public StaticInstance<Processor>
 {
 public:
-	// The processor is a singleton instance.
-	static Processor& GetInstance();
-	void Run();
-	void Clock();
+	/* Returns the amount of clocks the operation needs. */
+	static const size_t Clock();
 
 	RegisterEngine& GetRegisters() { return this->m_registers; }
 	Bus& GetMemory() { return this->m_bus; }
@@ -42,6 +39,7 @@ public:
 	void ClearHalt() { this->m_halted = false; }
 
 private:
+	friend class StaticInstance<Processor>;
 	Processor() = default;
 	~Processor() = default;
 
@@ -62,8 +60,6 @@ private:
 	bool					 m_halted{false};
 	/* If the last command was PREFIX */
 	bool					 m_last_command_prefix{false};
-	/* CPU current clock operation */
-	size_t					 m_clock_cycle_compute_amount{0};
 };
 } // Core
 

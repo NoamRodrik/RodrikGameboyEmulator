@@ -17,10 +17,9 @@ auto RETI_0xD9 = []()
 {
 	// Pop two bytes from stack & jump to that address then
 	// enable interrupts
-	SP.Pop(PC);
 	EI_0xFB();
+	SP.Pop(PC);
 
-	Message("IME = 1 here!");
 	// Don't want to change PC!
 	return false;
 };

@@ -8,7 +8,7 @@
 
 #include <Core/Processor/Processor.h>
 #include <Core/Processor/Instruction/Shortcuts.h>
-#include <Core/Memory/Device/InterruptSwitch.h>
+#include <Core/Interrupts/Registers/InterruptEnable.h>
 
 namespace Core
 {
@@ -16,7 +16,8 @@ namespace Core
 // - - - -
 auto EI_0xFB = []()
 {
-	memory.Write(ON, InterruptSwitch::START_ADDRESS);
+	// Changes memory.
+	InterruptEnable interrupt_enable = ON;
 	return true;
 };
 } // Core

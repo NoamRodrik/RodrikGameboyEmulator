@@ -7,6 +7,7 @@
 #define __TOOLS_H__
 
 #include <stdint.h>
+#include <stdio.h>
 
 #define MacroStr(x)   #x
 #define MacroStr2(x)  MacroStr(x)
@@ -15,7 +16,7 @@
 #define LOG_NO_ENTER(fmt, ...)				\
 		do									\
 		{									\
-			printf_s(fmt, __VA_ARGS__);		\
+			printf(fmt, __VA_ARGS__);		\
 		} while (false)
 
 #define LOG(fmt, ...)							 \

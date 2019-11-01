@@ -25,9 +25,30 @@ int main(int argc, char** argv)
 
 	SDL_Texture* texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STATIC, 160, 144);
 
+	Message("To remove!");
 	//GameLoader game_loader{"BootROM/cpu_instrs.gb"};
 	GameLoader game_loader{"BootROM/tetris.gb"};
-	Processor::GetInstance().Run();
+	
+	size_t clock_cycle = 0;
+	while (true)
+	{
+		if (Processor::GetInstance().IsStopped())
+		{
+			LOG("STOP called!");
+			break;
+		}
+		
+		//const time_t now = clock();
+		Message("Implement!");
+		if (clock_cycle > 0)
+		{
+			clock_cycle -= 1;
+			continue;
+		}
+
+		// CPU needs to clock.
+		clock_cycle = Processor::GetInstance().Clock();
+	}
 
 	// De-initialize.
 	SDL_DestroyRenderer(renderer);
