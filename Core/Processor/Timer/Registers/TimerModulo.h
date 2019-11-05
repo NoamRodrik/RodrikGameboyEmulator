@@ -15,25 +15,11 @@ class TimerModulo : public MemoryRegister<data_t>
 {
 public:
 	TimerModulo() : MemoryRegister{TIMER_MODULO_ADDRESS} {}
-	TimerModulo(const data_t value) : MemoryRegister{TIMER_MODULO_ADDRESS}
-	{
-		*this = value;
-
-		/* Whilst the modulo is being loaded any writes are effective immediately */
-		if (Timer::GetInstance().IsTimerLoading())
-		{
-			TimerCounter timer_counter{value};
-		}
-	}
+	TimerModulo(const data_t value) : MemoryRegister{TIMER_MODULO_ADDRESS} { *this = value; }
 
 public:
 	using MemoryRegister::operator data_t;
-
-private:
 	using MemoryRegister::operator=;
-
-private:
-	static constexpr address_t TIMER_MODULO_ADDRESS{0xFF06};
 };
 } // Core
 

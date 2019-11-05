@@ -19,7 +19,7 @@ class Processor : public StaticInstance<Processor>
 public:
 	/* Returns the amount of clocks the operation needs. */
 	static const size_t Clock();
-
+	void UpdateClockCycles();
 	RegisterEngine& GetRegisters() { return this->m_registers; }
 	Bus& GetMemory() { return this->m_bus; }
 
@@ -60,6 +60,8 @@ private:
 	bool					 m_halted{false};
 	/* If the last command was PREFIX */
 	bool					 m_last_command_prefix{false};
+	/* The global amount of cycles. */
+	size_t					 m_global_cycles{0};
 };
 } // Core
 

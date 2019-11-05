@@ -6,6 +6,7 @@
 #include <Core/Loader/GameLoader/GameLoader.h>
 #include <Core/Processor/Processor.h>
 #include <SDL.h>
+#include <Core/Processor/Timer/Timer.h>
 
 using namespace Core;
 
@@ -28,15 +29,22 @@ int main(int argc, char** argv)
 	Message("To remove!");
 	//GameLoader game_loader{"BootROM/cpu_instrs.gb"};
 	GameLoader game_loader{"BootROM/tetris.gb"};
-	
+
+	size_t global_clock_cycles = 0;
 	size_t clock_cycle = 0;
 	while (true)
 	{
+		// New cycle
+		global_clock_cycles += 1;
+		
 		if (Processor::GetInstance().IsStopped())
 		{
 			LOG("STOP called!");
 			break;
 		}
+
+		// Update timers.
+		Processor::GetInstance().UpdateClockCycles();
 		
 		//const time_t now = clock();
 		Message("Implement!");
@@ -48,6 +56,7 @@ int main(int argc, char** argv)
 
 		// CPU needs to clock.
 		clock_cycle = Processor::GetInstance().Clock();
+		clock_cycle += Timer::GetInstance().IncrementDivider();
 	}
 
 	// De-initialize.

@@ -7,6 +7,7 @@
 #define __TIMER_H__
 
 #include <Core/API/StaticInstance.h>
+#include <Core/API/Definitions.h>
 #include <cstdint>
 
 namespace Core
@@ -15,19 +16,26 @@ class Timer : public StaticInstance<Timer>
 {
 public:
 	/* Returns true if timer has overflown. */
-	static bool Increment();
+	inline static void IncrementCycles() { Timer::GetInstance().m_counter_cycles += 1;  Timer::GetInstance().m_divider_cycles += 1; }
+	static void IncrementCounter();
+	static size_t IncrementDivider();
+	static void UpdateTimerControl(const data_t data);
 
 	static void AssignCounterToModulo();
+	static void AssignDividerToZero();
 	inline static bool IsTimerLoading() { return Timer::GetInstance().m_timer_loading; }
 	inline static void SetLoading() { Timer::GetInstance().m_timer_loading = true; }
 	inline static void ClearLoading() { Timer::GetInstance().m_timer_loading = false; }
+	inline static bool IsTimerOverflowing() { return Timer::GetInstance().m_timer_overflow; }
+	inline static void SetOverflowing() { Timer::GetInstance().m_timer_overflow = true; }
+	inline static void ClearOverflowing() { Timer::GetInstance().m_timer_overflow = false; }
+	static bool TimerControlBit(const data_t timer_control, const address_t cycles);
 
 private:
-	static bool TimerControlBit();
-
-private:
-	uint16_t m_cycles{0};
+	address_t m_counter_cycles{0};
+	address_t m_divider_cycles{0};
 	bool	 m_timer_loading{false};
+	bool	 m_timer_overflow{false};
 };
 } // Core
 

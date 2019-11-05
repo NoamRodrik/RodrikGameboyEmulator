@@ -19,9 +19,6 @@ public:
 public:
 	using MemoryRegister::operator=;
 	using MemoryRegister::operator data_t;
-
-private:
-	static constexpr address_t TIMER_CONTROL_ADDRESS{0xFF07};
 };
 } // Core
 

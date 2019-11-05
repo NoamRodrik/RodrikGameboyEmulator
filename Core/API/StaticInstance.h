@@ -16,12 +16,12 @@ class StaticInstance
 public:
 	static T& GetInstance()
 	{
-		if (typename T::Instance == nullptr)
+		if (Instance == nullptr)
 		{
 			Instance = gsl::not_null<T*>(new T{});
 		}
 
-		return *gsl::not_null<T*>(typename T::Instance);
+		return *gsl::not_null<T*>(Instance);
 	}
 
 private:

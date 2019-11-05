@@ -30,6 +30,12 @@ namespace Core
 	/* Interrupts */
 	static constexpr uint8_t INTERRUPT_COUNT = 5;
 
+	/* Timers */
+	static constexpr address_t DIVIDER_REGISTER_ADDRESS{0xFF04};
+	static constexpr address_t TIMER_CONTROL_ADDRESS{0xFF07};
+	static constexpr address_t TIMER_COUNTER_ADDRESS{0xFF05};
+	static constexpr address_t TIMER_MODULO_ADDRESS{0xFF06};
+
 } // Core
 
 #endif // __API_DEFINITIONS_H__

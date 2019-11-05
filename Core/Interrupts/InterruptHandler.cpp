@@ -32,10 +32,10 @@ static const std::array<const Interrupt, INTERRUPT_COUNT> InterruptTable
 	Interrupt{HIGH_LOW_PIN_NUMBER_INTERRUPT, 0x60, EInterrupts::H_L_P}
 };
 	
-void InterruptHandler::ProcessInterrupts()
+size_t InterruptHandler::ProcessInterrupts()
 {
 	const auto* const interrupt_to_run = InterruptHandler::GetPrioritizedInterrupt();
-
+	
 	// If there's an interrupt.
 	if (interrupt_to_run != nullptr)
 	{
@@ -56,7 +56,12 @@ void InterruptHandler::ProcessInterrupts()
 
 		// 3) PC = Interrupt Service Routine
 		PC = interrupt_to_run->jump_address;
+
+		// It takes 5 MACHINE cycles to process this.
+		return 20;
 	}
+
+	return 0;
 }
 
 void InterruptHandler::ClearInterrupt(const EInterrupts interrupt)
@@ -64,7 +69,7 @@ void InterruptHandler::ClearInterrupt(const EInterrupts interrupt)
 	InterruptFlag interrupt_requests{};
 
 #if _DEBUG
-	if ((interrupt_requests >> static_cast<data_t>(interrupt)) == OFF)
+	if ((interrupt_requests / static_cast<data_t>(interrupt)) == OFF)
 	{
 		LOG("Deleting interrupt even when the flag is off!");
 	}
@@ -78,7 +83,7 @@ void InterruptHandler::IRQ(const EInterrupts interrupt)
 	InterruptFlag interrupt_requests{};
 
 #if _DEBUG
-	if ((interrupt_requests >> static_cast<data_t>(interrupt)) == ON)
+	if ((interrupt_requests / static_cast<data_t>(interrupt)) == ON)
 	{
 		LOG("Adding interrupt even when the flag is on!");
 	}
@@ -91,6 +96,7 @@ const Interrupt* const InterruptHandler::GetPrioritizedInterrupt()
 {
 	const InterruptEnable interrupt_enable{};
 	const InterruptFlag interrupt_requests{};
+
 	data_t interrupts_pending = interrupt_enable & interrupt_requests;
 
 	// If there are no interrupts, return nullptr.

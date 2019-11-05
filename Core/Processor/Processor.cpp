@@ -67,21 +67,23 @@ void Processor::PrintFlags()
 }
 #endif
 
-const size_t Processor::Clock()
+void Processor::UpdateClockCycles()
 {
-	/*
-// Increment timer.
-if (Timer::GetInstance().Increment())
-{
-	// Overflow occurred, call interrupt.
-	InterruptHandler::IRQ(EInterrupts::TIMER);
-	Timer::GetInstance().AssignCounterToModulo();
-	Timer::GetInstance().SetLoading();
+	Timer::GetInstance().IncrementCycles();
 }
+	
+const size_t Processor::Clock()
+{	
+	// Interrupts check.
+	size_t clock_cycle = InterruptHandler::ProcessInterrupts();
 
-// Interrupts check.
-InterruptHandler::ProcessInterrupts();
-*/
+	if (clock_cycle != 0)
+	{
+#if _DEBUG
+		LOG("Interrupt called!");
+		return clock_cycle;
+#endif
+	}
 
 	const auto& command_to_execute = Processor::GetInstance().IsPrefix() ? PREFIX_LOOKUP_TABLE[DataAt(PC_const)] :
 																		   INSTRUCTION_LOOKUP_TABLE[DataAt(PC_const)];
@@ -96,7 +98,7 @@ InterruptHandler::ProcessInterrupts();
 	Processor::GetInstance().ClearPrefixCommand();
 
 	// The compute amount is the amount of cycles the command needs.
-	size_t clock_cycle = command_to_execute.cycles_amount;
+	clock_cycle = command_to_execute.cycles_amount;
 
 	// If the command wants to forward the PC, we need to add the bytes size.
 	if (command_to_execute.Execute())
@@ -126,6 +128,17 @@ InterruptHandler::ProcessInterrupts();
 	LOG(" | ");
 #endif
 
+	// Increment timer counter.
+	Timer::GetInstance().ClearLoading();
+	if (Timer::GetInstance().IsTimerOverflowing())
+	{
+		// Overflow occurred, call interrupt.
+		InterruptHandler::IRQ(EInterrupts::TIMER);
+		Timer::GetInstance().AssignCounterToModulo();
+		Timer::GetInstance().ClearOverflowing();
+		Timer::GetInstance().SetLoading();
+	}
+	
 	return clock_cycle;
 }
 } // Core
