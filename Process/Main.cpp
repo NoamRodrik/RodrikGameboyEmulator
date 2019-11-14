@@ -56,7 +56,7 @@ int main(int argc, char** argv)
 
 		// CPU needs to clock.
 		clock_cycle = Processor::GetInstance().Clock();
-		clock_cycle += Timer::GetInstance().IncrementDivider();
+		clock_cycle += Timer::GetInstance().CountChange();
 	}
 
 	// De-initialize.

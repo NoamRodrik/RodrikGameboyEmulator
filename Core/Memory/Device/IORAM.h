@@ -66,39 +66,41 @@ private:
 	{
 		switch (address)
 		{
-		case (TIMER_MODULO_ADDRESS):
-		{
-			if (Timer::GetInstance().IsTimerLoading())
+			case (TIMER_MODULO_ADDRESS):
 			{
-				// Writing also onto the timer counter!
-				this->m_memory[TIMER_COUNTER_ADDRESS - START_ADDRESS] = data;
+				if (Timer::GetInstance().IsTimerLoading())
+				{
+					// Writing also onto the timer counter!
+					this->m_memory[TIMER_COUNTER_ADDRESS - START_ADDRESS] = data;
+				}
+
+				break;
 			}
 
-			return true;
-		}
-
-		case (TIMER_COUNTER_ADDRESS):
-		{
-			/* Writes to the timer counter whilst it is loading are ignored */
-			if (!Timer::GetInstance().IsTimerLoading())
+			case (TIMER_COUNTER_ADDRESS):
 			{
+				/* Writes to the timer counter whilst it is loading are ignored */
+				if (Timer::GetInstance().IsTimerLoading())
+				{
+					return false;
+				}
+
 				Timer::GetInstance().ClearOverflowing();
-				return true;
+				break;
 			}
 
-			return false;
-		}
+			case (TIMER_CONTROL_ADDRESS):
+			{
+				Timer::GetInstance().UpdateTimerControl(data);
+				break;
+			}
 
-		case (TIMER_CONTROL_ADDRESS):
-		{
-			Timer::GetInstance().UpdateTimerControl(data);
-			break;
-		}
-
-		case (DIVIDER_REGISTER_ADDRESS):
-		{
-			break;
-		}
+			case (DIVIDER_REGISTER_ADDRESS):
+			{
+				SANITY(Timer::GetInstance().CountChange(false) == 4, "Failed changing count!");
+				this->m_memory[address - START_ADDRESS] = 0;
+				return false;
+			}
 		}
 
 		return true;

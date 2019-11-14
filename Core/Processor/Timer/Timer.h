@@ -18,8 +18,8 @@ public:
 	/* Returns true if timer has overflown. */
 	inline static void IncrementCycles() { Timer::GetInstance().m_counter_cycles += 1;  Timer::GetInstance().m_divider_cycles += 1; }
 	static void IncrementCounter();
-	static size_t IncrementDivider();
 	static void UpdateTimerControl(const data_t data);
+	static size_t CountChange(const bool set_divider = true);
 
 	static void AssignCounterToModulo();
 	static void AssignDividerToZero();

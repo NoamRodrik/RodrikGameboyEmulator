@@ -30,6 +30,9 @@ namespace Core
 	/* Interrupts */
 	static constexpr uint8_t INTERRUPT_COUNT = 5;
 
+	/* Joypad */
+	static constexpr address_t JOYPAD_REGISTER_ADDRESS{0xFF00};
+	
 	/* Timers */
 	static constexpr address_t DIVIDER_REGISTER_ADDRESS{0xFF04};
 	static constexpr address_t TIMER_CONTROL_ADDRESS{0xFF07};

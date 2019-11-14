@@ -253,6 +253,8 @@
     <ClInclude Include="Core\Processor\Instruction\Instruction.h" />
     <ClInclude Include="Core\Processor\Instruction\InstructionLookupTable.h" />
     <ClInclude Include="Core\Processor\Instruction\Shortcuts.h" />
+    <ClInclude Include="Core\Processor\Joypad\Joypad.h" />
+    <ClInclude Include="Core\Processor\Joypad\Registers\JoypadRegister.h" />
     <ClInclude Include="Core\Processor\Prefix\Generated\BIT.h" />
     <ClInclude Include="Core\Processor\Prefix\Generated\RES.h" />
     <ClInclude Include="Core\Processor\Prefix\Generated\RL.h" />
@@ -287,6 +289,7 @@
     <ClCompile Include="Core\Bus\Devices\DeviceManager.cpp" />
     <ClCompile Include="Core\Bus\Devices\DeviceManagerBase.h" />
     <ClCompile Include="Core\Interrupts\InterruptHandler.cpp" />
+    <ClCompile Include="Core\Processor\Joypad\Joypad.cpp" />
     <ClCompile Include="Core\Processor\Processor.cpp" />
     <ClCompile Include="Core\Processor\Timer\Timer.cpp" />
     <ClCompile Include="Process\Main.cpp" />

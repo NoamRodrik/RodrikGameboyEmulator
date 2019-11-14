@@ -11,11 +11,34 @@ namespace Core
 void Timer::IncrementCounter()
 {
 	TimerCounter timer{};
-	const bool timer_overflow = (timer == 0xFF);
+	Timer::GetInstance().m_timer_overflow = (timer == 0xFF);
 	timer = timer + 1;
-	Timer::GetInstance().m_timer_overflow = timer_overflow;
 }
 
+size_t Timer::CountChange(bool set_divider)
+{
+	const address_t NEW_COUNT = set_divider ? 0 : Timer::GetInstance().m_divider_cycles + 4;
+	const TimerControl timer_control{};
+	if (timer_control & 0x04)
+	{
+		if (!Timer::GetInstance().TimerControlBit(timer_control, NEW_COUNT) &&
+			 Timer::GetInstance().TimerControlBit(timer_control, Timer::GetInstance().m_divider_cycles))
+		{
+			Timer::GetInstance().IncrementCounter();
+		}
+	}
+
+	Timer::GetInstance().m_divider_cycles = NEW_COUNT;
+
+	if (set_divider)
+	{
+		DividerRegister divider{static_cast<const data_t>(NEW_COUNT >> 8)};
+	}
+
+	// Takes 4 cycles.
+	return 4;
+}
+	
 void Timer::UpdateTimerControl(const data_t data)
 {
 	const data_t old_data = TimerControl{};
@@ -29,41 +52,6 @@ void Timer::UpdateTimerControl(const data_t data)
 	{
 		Timer::GetInstance().IncrementCounter();
 	}
-}
-
-size_t Timer::IncrementDivider()
-{
-	size_t clock_cycles = 0;
-	
-	// The divider timer updates every 256.
-	if (Timer::GetInstance().m_divider_cycles > 256)
-	{
-		Timer::GetInstance().m_divider_cycles -= 256;
-
-		const TimerControl timer_control{};
-
-		// If the timer is enabled.
-		if (timer_control & 0x04)
-		{
-			DividerRegister timer{};
-
-			// Check if there's an overflow.
-			if (!TimerControlBit(timer_control, 0) &&
-				 TimerControlBit(timer_control, Timer::GetInstance().m_counter_cycles))
-			{
-				Timer::GetInstance().IncrementCounter();
-			}
-			
-			timer = timer + 1;
-
-			// Every timer increment takes 4 cycles.
-			clock_cycles += 4;
-		}
-
-		return clock_cycles;
-	}
-
-	return 0;
 }
 
 void Timer::AssignCounterToModulo()
