@@ -6,14 +6,13 @@
 #ifndef __MEMORY_BASE_H__
 #define __MEMORY_BASE_H__
 
-#include <Core/API/Memory/IMemoryAccess.h>
 #include <stdint.h>
 #include <array>
 
 namespace Core
 {
 template <size_t SIZE>
-class MemoryBase : public IMemoryAccess
+class MemoryBase
 {
 public:
 	constexpr MemoryBase() : m_ram{}
@@ -21,22 +20,22 @@ public:
 		this->ClearRAM();
 	}
 
-	virtual data_t& operator[](const address_t address) override
+	constexpr data_t& operator[](const address_t address)
 	{
 		return this->m_ram[address];
 	}
 
-	virtual const data_t& operator[](const address_t address) const override
+	constexpr const data_t& operator[](const address_t address) const
 	{
 		return this->m_ram[address];
 	}
 
-	data_t* GetMemoryPointer() { return this->m_ram.data(); }
+	constexpr data_t* GetMemoryPointer() { return this->m_ram.data(); }
 
 private:
 	constexpr void ClearRAM()
 	{
-		for (auto& current_data : this->m_ram)
+		for (auto&& current_data : this->m_ram)
 		{
 			current_data = 0;
 		}

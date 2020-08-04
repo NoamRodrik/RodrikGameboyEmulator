@@ -14,14 +14,15 @@ class InterruptFlag : public MemoryRegister<data_t>
 {
 public:
 	InterruptFlag() : MemoryRegister{INTERRUPT_FLAG_ADDRESS} {}
-	InterruptFlag(const data_t value) : MemoryRegister{INTERRUPT_FLAG_ADDRESS} { *this = value; }
+	InterruptFlag(const data_t value) : MemoryRegister{INTERRUPT_FLAG_ADDRESS} {*this = value;}
 
 public:
 	using MemoryRegister::operator=;
 	using MemoryRegister::operator data_t;
 
-private:
+public:
 	static constexpr address_t INTERRUPT_FLAG_ADDRESS{0xFF0F};
+	static constexpr data_t    INTERRUPT_FLAG_DEFAULT_VALUE{0xE0};
 };
 } // Core
 

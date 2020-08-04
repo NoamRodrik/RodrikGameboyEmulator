@@ -7,6 +7,7 @@
 #include <Core/Processor/Processor.h>
 #include <SDL.h>
 #include <Core/Processor/Timer/Timer.h>
+#include <Core/Processor/Clock/Clock.h>
 
 using namespace Core;
 
@@ -37,16 +38,15 @@ int main(int argc, char** argv)
 		// New cycle
 		global_clock_cycles += 1;
 		
-		if (Processor::GetInstance().IsStopped())
+		if (Processor::IsStopped())
 		{
 			LOG("STOP called!");
 			break;
 		}
 
 		// Update timers.
-		Processor::GetInstance().UpdateClockCycles();
+		Processor::UpdateClockCycles();
 		
-		//const time_t now = clock();
 		Message("Implement!");
 		if (clock_cycle > 0)
 		{
@@ -55,8 +55,8 @@ int main(int argc, char** argv)
 		}
 
 		// CPU needs to clock.
-		clock_cycle = Processor::GetInstance().Clock();
-		clock_cycle += Timer::GetInstance().CountChange();
+		Clock::SyncClock();
+		clock_cycle = Processor::Clock();
 	}
 
 	// De-initialize.

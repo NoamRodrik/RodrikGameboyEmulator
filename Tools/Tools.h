@@ -13,6 +13,10 @@
 #define MacroStr2(x)  MacroStr(x)
 #define Message(desc) __pragma(message(__FILE__ "(" MacroStr2(__LINE__) ") : " desc))
 
+Message("If you want no print, uncomment this here");
+//#define NO_PRINT
+
+#ifndef NO_PRINT
 #define LOG_NO_ENTER(fmt, ...)				\
 		do									\
 		{									\
@@ -24,6 +28,10 @@
 		{										 \
 			LOG_NO_ENTER(fmt "\n", __VA_ARGS__); \
 		} while (false)
+#else
+#define LOG_NO_ENTER(fmt, ...)
+#define LOG(fmt, ...)	
+#endif
 
 #define SANITY(cond, fmt, ...)				   \
 		do									   \

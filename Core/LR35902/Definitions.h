@@ -11,9 +11,6 @@
 
 namespace Core
 {
-	/* Path definitions */
-	static constexpr char DMG_LOADER_PATH[] = "BootROM/dmg_boot.bin";
-
 	/* RAM definitions */
 	static constexpr uint8_t UNUSED_RAM_SPACE = 96;
 

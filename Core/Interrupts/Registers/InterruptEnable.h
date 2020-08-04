@@ -20,8 +20,9 @@ public:
 	using MemoryRegister::operator=;
 	using MemoryRegister::operator data_t;
 
-private:
+public:
 	static constexpr address_t INTERRUPT_ENABLE_ADDRESS{0xFFFF};
+	static constexpr data_t    INTERRUPT_ENABLE_DEFAULT_VALUE{0x00};
 };
 } // Core
 

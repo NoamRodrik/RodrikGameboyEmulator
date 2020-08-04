@@ -36,15 +36,15 @@
     <ClCompile Include="Core\Processor\Joypad\Joypad.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Core\Processor\Clock\Clock.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tools\Tools.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Tools\not_null.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\API\Memory\IMemoryAccess.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Core\API\Memory\Device\IMemoryDeviceAccess.h">
@@ -333,6 +333,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Core\Processor\Joypad\Joypad.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Processor\Clock\Clock.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Interrupts\Flags\IME.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\LR35902\Boot.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

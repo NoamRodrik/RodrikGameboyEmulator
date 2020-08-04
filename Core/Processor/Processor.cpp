@@ -3,13 +3,18 @@
  * @author		Noam Rodrik
  * @description Main logic of processor
  */
-#include <Core/Processor/Processor.h>
+
 #include <Core/Processor/Instruction/InstructionLookupTable.h>
+#include <Core\Interrupts\Registers\InterruptEnable.h>
+#include <Core\Interrupts\Registers\InterruptFlag.h>
 #include <Core/Processor/Prefix/PrefixLookupTable.h>
 #include <Core/Processor/Instruction/Shortcuts.h>
 #include <Core/Interrupts/InterruptHandler.h>
 #include <Core/Processor/Timer/Timer.h>
+#include <Core/Processor/Clock/Clock.h>
+#include <Core/Processor/Processor.h>
 #include <time.h>
+#include <cmath>
 
 #if _DEBUG
 #include <Windows.h>
@@ -22,7 +27,7 @@ void Processor::PrintInstruction(const Instruction& instruction_to_print)
 {
 	LOG_NO_ENTER("%04X) %-10s | ", static_cast<const address_t>(PC_const), instruction_to_print.operation_string.c_str());
 
-	const auto WRITE_AMOUNT = instruction_to_print.bytes_size - Processor::GetInstance().IsPrefix();
+	const auto WRITE_AMOUNT = instruction_to_print.bytes_size - Processor::IsPrefix();
 	for (int32_t index = 0; index < WRITE_AMOUNT; ++index)
 	{
 		LOG_NO_ENTER("%02X", DataAt(PC_const + index));
@@ -81,12 +86,13 @@ const size_t Processor::Clock()
 	{
 #if _DEBUG
 		LOG("Interrupt called!");
-		return clock_cycle;
 #endif
+		return clock_cycle;
 	}
 
-	const auto& command_to_execute = Processor::GetInstance().IsPrefix() ? PREFIX_LOOKUP_TABLE[DataAt(PC_const)] :
-																		   INSTRUCTION_LOOKUP_TABLE[DataAt(PC_const)];
+	const auto& command_to_execute = Processor::IsPrefix() ?
+										PREFIX_LOOKUP_TABLE[DataAt(PC_const)] :
+										INSTRUCTION_LOOKUP_TABLE[DataAt(PC_const)];
 #if _DEBUG
 	Processor::PrintInstruction(command_to_execute);
 	Processor::PrintFlags();
@@ -94,8 +100,8 @@ const size_t Processor::Clock()
 #endif
 
 	// If prefix is enabled, we need to disable it.
-	PC -= Processor::GetInstance().IsPrefix();
-	Processor::GetInstance().ClearPrefixCommand();
+	PC -= Processor::IsPrefix();
+	Processor::ClearPrefixCommand();
 
 	// The compute amount is the amount of cycles the command needs.
 	clock_cycle = command_to_execute.cycles_amount;
@@ -109,8 +115,9 @@ const size_t Processor::Clock()
 		if (command_to_execute.extended_cycles_amount != 0)
 		{
 			// Fetch the lower between the two, the operation didn't successfully happen.
-			clock_cycle = min(command_to_execute.cycles_amount,
-							  command_to_execute.extended_cycles_amount);
+			clock_cycle = std::min<decltype(command_to_execute.cycles_amount)>(
+								   command_to_execute.cycles_amount,
+								   command_to_execute.extended_cycles_amount);
 		}
 	}
 	else
@@ -118,8 +125,9 @@ const size_t Processor::Clock()
 		if (command_to_execute.extended_cycles_amount != 0)
 		{
 			// Fetch the higher between the two, the operation did successfully happen.
-			clock_cycle = max(command_to_execute.cycles_amount,
-							  command_to_execute.extended_cycles_amount);
+			clock_cycle = std::max<decltype(command_to_execute.cycles_amount)>(
+				                   command_to_execute.cycles_amount,
+								   command_to_execute.extended_cycles_amount);
 		}
 	}
 	
@@ -128,17 +136,9 @@ const size_t Processor::Clock()
 	LOG(" | ");
 #endif
 
-	// Increment timer counter.
-	Timer::GetInstance().ClearLoading();
-	if (Timer::GetInstance().IsTimerOverflowing())
-	{
-		// Overflow occurred, call interrupt.
-		InterruptHandler::IRQ(EInterrupts::TIMER);
-		Timer::GetInstance().AssignCounterToModulo();
-		Timer::GetInstance().ClearOverflowing();
-		Timer::GetInstance().SetLoading();
-	}
-	
+	clock_cycle += Clock::IsTimerDividerElapsed() ? Timer::IncreaseDivider() : 0;
+	clock_cycle += Clock::IsTimerCounterElapsed() ? Timer::IncreaseCounter() : 0;
+
 	return clock_cycle;
 }
 } // Core

@@ -10,6 +10,8 @@
 #include <Core/Memory/Memory.h>
 #include <Core/API/Definitions.h>
 #include <Core/Loader/BinaryLoader.h>
+#include <Core/LR35902/Boot.h>
+#include <algorithm>
 
 namespace Core
 {
@@ -60,7 +62,9 @@ protected:
 private:
 	void LoadDMGBoot()
 	{
-		BinaryLoader load_dmg{DMG_LOADER_PATH, this->GetMemoryPointer(), SIZE};
+		std::copy(SYSTEM_BOOT_CODE.data(),
+				  SYSTEM_BOOT_CODE.data() + SYSTEM_BOOT_CODE.size(),
+				  this->GetMemoryPointer());
 	}
 
 private:

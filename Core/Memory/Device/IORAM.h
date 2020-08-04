@@ -6,10 +6,12 @@
 #ifndef __LR35902_MEMORY_DEVICE_IO_RAM_H__
 #define __LR35902_MEMORY_DEVICE_IO_RAM_H__
 
+#include <Core/Processor/Timer/Registers/TimerModulo.h>
 #include <Core/API/Memory/Device/MemoryDeviceBase.h>
-#include <Core/Memory/Memory.h>
-#include <Core/API/Definitions.h>
+#include <Core/Interrupts/Registers/InterruptFlag.h>
 #include <Core/Processor/Timer/Timer.h>
+#include <Core/API/Definitions.h>
+#include <Core/Memory/Memory.h>
 
 namespace Core
 {
@@ -21,11 +23,15 @@ namespace Core
 class IORAM : public MemoryDeviceBase
 {
 public:
-	constexpr IORAM(DeviceManagerBase& device_manager) : MemoryDeviceBase{START_ADDRESS, END_ADDRESS, device_manager}, m_memory{} {}
+	constexpr IORAM(DeviceManagerBase& device_manager) : MemoryDeviceBase{START_ADDRESS, END_ADDRESS, device_manager}, m_memory{}
+	{
+		// Default value for the interrupt flag
+		this->m_memory[GetFixedAddress(InterruptFlag::INTERRUPT_FLAG_ADDRESS)] = InterruptFlag::INTERRUPT_FLAG_DEFAULT_VALUE;
+	}
 
 	virtual bool Read(const address_t absolute_address, data_t& result) const override
 	{
-		result = this->m_memory[absolute_address - START_ADDRESS];
+		result = this->m_memory[GetFixedAddress(absolute_address)];
 		return true;
 	}
 
@@ -33,13 +39,13 @@ public:
 	{
 		if (this->ApplyChanges(data, absolute_address))
 		{
-			this->m_memory[absolute_address - START_ADDRESS] = data;
+			this->m_memory[GetFixedAddress(absolute_address)] = data;
 		}
 	}
 
 	virtual bool Read(const address_t absolute_address, address_t& result) const override
 	{
-		result = this->m_memory[absolute_address - START_ADDRESS] | (this->m_memory[absolute_address - START_ADDRESS + 1] << 8);
+		result = this->m_memory[GetFixedAddress(absolute_address)] | (this->m_memory[GetFixedAddress(absolute_address)] << 8);
 		return true;
 	}
 
@@ -48,8 +54,8 @@ public:
 		if (this->ApplyChanges(data & 0x00FF, absolute_address) &&
 			this->ApplyChanges((data & 0xFF00) >> 8, absolute_address + 1))
 		{
-			this->m_memory[absolute_address - START_ADDRESS] = data & 0x00FF;
-			this->m_memory[absolute_address - START_ADDRESS + 1] = (data & 0xFF00 >> 8);
+			this->m_memory[GetFixedAddress(absolute_address)] = data & 0x00FF;
+			this->m_memory[GetFixedAddress(absolute_address) + 1] = (data & 0xFF00 >> 8);
 		}
 	}
 
@@ -59,6 +65,7 @@ public:
 	static constexpr size_t   SIZE = END_ADDRESS - START_ADDRESS + 1;
 
 protected:
+	constexpr address_t GetFixedAddress(const address_t address) const { return address - START_ADDRESS; }
 	virtual uint8_t* GetMemoryPointer() override { return this->m_memory.GetMemoryPointer(); }
 
 private:
@@ -68,38 +75,37 @@ private:
 		{
 			case (TIMER_MODULO_ADDRESS):
 			{
-				if (Timer::GetInstance().IsTimerLoading())
-				{
-					// Writing also onto the timer counter!
-					this->m_memory[TIMER_COUNTER_ADDRESS - START_ADDRESS] = data;
-				}
+				// Writing also onto the timer counter!
+				this->m_memory[GetFixedAddress(TIMER_COUNTER_ADDRESS)] = data;
 
 				break;
 			}
 
 			case (TIMER_COUNTER_ADDRESS):
 			{
-				/* Writes to the timer counter whilst it is loading are ignored */
-				if (Timer::GetInstance().IsTimerLoading())
+				if (Timer::IsCounterOverflow(data))
 				{
+					Timer::CounterOverflowInterrupt();
+					TimerModulo modulo{};
+					this->m_memory[GetFixedAddress(TIMER_COUNTER_ADDRESS)] = modulo;
 					return false;
 				}
 
-				Timer::GetInstance().ClearOverflowing();
 				break;
 			}
 
 			case (TIMER_CONTROL_ADDRESS):
 			{
-				Timer::GetInstance().UpdateTimerControl(data);
+				// No special treatment
 				break;
 			}
 
 			case (DIVIDER_REGISTER_ADDRESS):
 			{
-				SANITY(Timer::GetInstance().CountChange(false) == 4, "Failed changing count!");
-				this->m_memory[address - START_ADDRESS] = 0;
+				// Writing to the divier register resets the divider timer.
+				this->m_memory[GetFixedAddress(address)] = 0;
 				return false;
+				break;
 			}
 		}
 
@@ -111,6 +117,7 @@ private:
 
 private:
 	friend class DeviceManager;
+	friend class Timer;
 };
 } // Core
 

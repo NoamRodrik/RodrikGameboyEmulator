@@ -5,53 +5,55 @@
 #include "Registers/TimerCounter.h"
 #include "Registers/TimerModulo.h"
 #include "Registers/DividerRegister.h"
+#include <Core/Memory/Device/IORAM.h>
 
 namespace Core
 {
-void Timer::IncrementCounter()
+size_t Timer::IncreaseDivider(data_t amount)
 {
-	TimerCounter timer{};
-	Timer::GetInstance().m_timer_overflow = (timer == 0xFF);
-	timer = timer + 1;
-}
+	DividerRegister divider{};
 
-size_t Timer::CountChange(bool set_divider)
-{
-	const address_t NEW_COUNT = set_divider ? 0 : Timer::GetInstance().m_divider_cycles + 4;
-	const TimerControl timer_control{};
-	if (timer_control & 0x04)
+	// We need to write to register with force - otherwise it will get reset. (This is the OFFICIAL way to change the counter)
+	gsl::not_null<IORAM*> io_ram = static_cast<IORAM*>(Processor::GetInstance().GetMemory().m_device_manager.GetDeviceAtAddress(DIVIDER_REGISTER_ADDRESS));
+	io_ram->m_memory[io_ram->GetFixedAddress(DIVIDER_REGISTER_ADDRESS)] += amount;
+
+	if (divider >= DIVIDER_THRESHOLD)
 	{
-		if (!Timer::GetInstance().TimerControlBit(timer_control, NEW_COUNT) &&
-			 Timer::GetInstance().TimerControlBit(timer_control, Timer::GetInstance().m_divider_cycles))
-		{
-			Timer::GetInstance().IncrementCounter();
-		}
-	}
-
-	Timer::GetInstance().m_divider_cycles = NEW_COUNT;
-
-	if (set_divider)
-	{
-		DividerRegister divider{static_cast<const data_t>(NEW_COUNT >> 8)};
+		io_ram->m_memory[io_ram->GetFixedAddress(DIVIDER_REGISTER_ADDRESS)] = divider - DIVIDER_THRESHOLD;
 	}
 
 	// Takes 4 cycles.
 	return 4;
 }
-	
-void Timer::UpdateTimerControl(const data_t data)
+
+size_t Timer::IncreaseCounter(data_t amount)
 {
-	const data_t old_data = TimerControl{};
-
-	/* When disabled the bit to the falling edge detector is zero */
-	const bool oldBit = (old_data & 0x04) && Timer::GetInstance().TimerControlBit(old_data, Timer::GetInstance().m_counter_cycles);
-	const bool newBit = (data & 0x04) && Timer::GetInstance().TimerControlBit(data, Timer::GetInstance().m_counter_cycles);
-
-	/* Check for falling edge */
-	if (oldBit && !newBit)
+	if (Timer::IsTimerEnabled())
 	{
-		Timer::GetInstance().IncrementCounter();
+		TimerCounter timer_counter{};
+		timer_counter = timer_counter + amount;
 	}
+
+	// Takes 4 cycles.
+	return 4;
+}
+
+bool Timer::IsCounterOverflow(const data_t new_timer_counter)
+{
+	TimerCounter old_timer_counter{};
+	return old_timer_counter == std::numeric_limits<data_t>().max() &&
+		new_timer_counter == 0;
+}
+
+void Timer::CounterOverflowInterrupt()
+{
+	InterruptHandler::IRQ(EInterrupts::TIMER);
+}
+
+bool Timer::IsTimerEnabled()
+{
+	const TimerControl timer_control{};
+	return timer_control & 0b00000100;
 }
 
 void Timer::AssignCounterToModulo()
@@ -60,34 +62,31 @@ void Timer::AssignCounterToModulo()
 	TimerCounter timer_counter{timer_modulo};
 }
 
-void Timer::AssignDividerToZero()
+size_t Timer::TimerControlThreshold()
 {
-	DividerRegister divider{0};
-}
+	TimerControl timer_control{};
 
-bool Timer::TimerControlBit(const data_t timer_control, const address_t cycles)
-{
 	// Timer clock select
 	switch(timer_control & 0x03)
 	{
 	    case (0): /* 4.096 KHz (1024 cycles) */
 		{
-			return cycles & (1u << 9);
+			return (1u << 10);
 		}
 		
 	    case (1): /* 262.144 KHz (16 cycles) */
 		{
-		    return cycles & (1u << 3);
+		    return (1u << 4);
 		}
 	       
 	    case (2): /* 65.536 KHz (64 cycles) */
 	    {
-			return cycles & (1u << 5);
+			return (1u << 6);
 		}
 		
 	    case (3): /* 16.384 KHz (256 cycles) */
 		{
-			return cycles & (1u << 7);
+			return (1u << 8);
 		}
 
 		default:

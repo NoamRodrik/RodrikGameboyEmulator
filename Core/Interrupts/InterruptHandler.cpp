@@ -3,6 +3,7 @@
 #include <Core/Interrupts/Registers/InterruptFlag.h>
 #include <Core/Processor/Instruction/Generated/DI.h>
 #include <Core/Processor/Instruction/Shortcuts.h>
+#include <Core/Interrupts/Flags/IME.h>
 #include <Tools/Tools.h>
 
 #include "Types/HighLowPinNumber.h"
@@ -34,13 +35,21 @@ static const std::array<const Interrupt, INTERRUPT_COUNT> InterruptTable
 	
 size_t InterruptHandler::ProcessInterrupts()
 {
+	// If the master enable flag isn't on, we need to reset the enabled interrupts.
+	if (!IME::IsEnabled())
+	{
+		InterruptEnable interrupt_enable{};
+		interrupt_enable = 0;
+		return 0;
+	}
+
 	const auto* const interrupt_to_run = InterruptHandler::GetPrioritizedInterrupt();
 	
 	// If there's an interrupt.
 	if (interrupt_to_run != nullptr)
 	{
 		// When any enabled interrupt is raised it will bring the CPU out of halt mode to service it, if required.
-		Processor::GetInstance().ClearHalt();
+		Processor::ClearHalt();
 		 
 		// Clear interrupt.
 		InterruptHandler::ClearInterrupt(interrupt_to_run->enum_value);
@@ -100,7 +109,7 @@ const Interrupt* const InterruptHandler::GetPrioritizedInterrupt()
 	data_t interrupts_pending = interrupt_enable & interrupt_requests;
 
 	// If there are no interrupts, return nullptr.
-	if ((interrupt_enable & interrupt_requests) == 0)
+	if (interrupts_pending == 0)
 	{
 		return nullptr;
 	}
@@ -113,7 +122,7 @@ const Interrupt* const InterruptHandler::GetPrioritizedInterrupt()
 		interrupts_pending >>= 1;
 	}
 
-	SANITY(chosen_interrupt < sizeof(InterruptTable) / sizeof(InterruptTable[0]), "Got an invalid choice!");
+	SANITY(chosen_interrupt < InterruptTable.size(), "Got an invalid choice!");
 	return &InterruptTable[chosen_interrupt];
 }
 } // Core

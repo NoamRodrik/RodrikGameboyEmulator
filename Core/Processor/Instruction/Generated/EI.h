@@ -8,7 +8,7 @@
 
 #include <Core/Processor/Processor.h>
 #include <Core/Processor/Instruction/Shortcuts.h>
-#include <Core/Interrupts/Registers/InterruptEnable.h>
+#include <Core/Interrupts/Flags/IME.h>
 
 namespace Core
 {
@@ -17,7 +17,7 @@ namespace Core
 auto EI_0xFB = []()
 {
 	// Changes memory.
-	InterruptEnable interrupt_enable = ON;
+	IME::EnableInterrupts();
 	return true;
 };
 } // Core

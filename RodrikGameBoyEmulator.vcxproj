@@ -123,7 +123,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>false</SDLCheck>
       <ConformanceMode>false</ConformanceMode>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <TreatWarningAsError>false</TreatWarningAsError>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <CompileAs>CompileAsCpp</CompileAs>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -172,7 +172,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
       <ConformanceMode>false</ConformanceMode>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <TreatWarningAsError>false</TreatWarningAsError>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <CompileAs>CompileAsCpp</CompileAs>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -188,6 +188,7 @@
     <ClInclude Include="Core\API\Registers\RegisterPair.h" />
     <ClInclude Include="Core\Bus\Bus.h" />
     <ClInclude Include="Core\Bus\Devices\DeviceManager.h" />
+    <ClInclude Include="Core\Interrupts\Flags\IME.h" />
     <ClInclude Include="Core\Interrupts\Interrupt.h" />
     <ClInclude Include="Core\Interrupts\InterruptHandler.h" />
     <ClInclude Include="Core\Interrupts\Registers\InterruptEnable.h" />
@@ -199,6 +200,7 @@
     <ClInclude Include="Core\Interrupts\Types\VBlank.h" />
     <ClInclude Include="Core\Loader\GameLoader\GameLoader.h" />
     <ClInclude Include="Core\Loader\BinaryLoader.h" />
+    <ClInclude Include="Core\LR35902\Boot.h" />
     <ClInclude Include="Core\LR35902\Definitions.h" />
     <ClInclude Include="Core\Memory\Device\CartridgeRAM.h" />
     <ClInclude Include="Core\Memory\Device\CloneWorkRAM.h" />
@@ -214,8 +216,8 @@
     <ClInclude Include="Core\API\Memory\Device\IMemoryDeviceAccess.h" />
     <ClInclude Include="Core\API\Memory\Device\MemoryDeviceBase.h" />
     <ClInclude Include="Core\API\Memory\Device\MemoryDeviceOperations.h" />
-    <ClInclude Include="Core\API\Memory\IMemoryAccess.h" />
     <ClInclude Include="Core\API\Memory\MemoryBase.h" />
+    <ClInclude Include="Core\Processor\Clock\Clock.h" />
     <ClInclude Include="Core\Processor\Instruction\Generated\ADC.h" />
     <ClInclude Include="Core\Processor\Instruction\Generated\ADD.h" />
     <ClInclude Include="Core\Processor\Instruction\Generated\AND.h" />
@@ -289,6 +291,7 @@
     <ClCompile Include="Core\Bus\Devices\DeviceManager.cpp" />
     <ClCompile Include="Core\Bus\Devices\DeviceManagerBase.h" />
     <ClCompile Include="Core\Interrupts\InterruptHandler.cpp" />
+    <ClCompile Include="Core\Processor\Clock\Clock.cpp" />
     <ClCompile Include="Core\Processor\Joypad\Joypad.cpp" />
     <ClCompile Include="Core\Processor\Processor.cpp" />
     <ClCompile Include="Core\Processor\Timer\Timer.cpp" />

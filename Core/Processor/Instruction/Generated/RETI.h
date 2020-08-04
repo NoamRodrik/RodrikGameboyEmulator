@@ -9,6 +9,7 @@
 #include <Core/Processor/Processor.h>
 #include <Core/Processor/Instruction/Shortcuts.h>
 #include "EI.h"
+
 namespace Core
 {
 // 0xD9 RETI

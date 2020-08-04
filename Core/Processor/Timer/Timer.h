@@ -15,27 +15,28 @@ namespace Core
 class Timer : public StaticInstance<Timer>
 {
 public:
-	/* Returns true if timer has overflown. */
-	inline static void IncrementCycles() { Timer::GetInstance().m_counter_cycles += 1;  Timer::GetInstance().m_divider_cycles += 1; }
-	static void IncrementCounter();
-	static void UpdateTimerControl(const data_t data);
-	static size_t CountChange(const bool set_divider = true);
-
 	static void AssignCounterToModulo();
-	static void AssignDividerToZero();
-	inline static bool IsTimerLoading() { return Timer::GetInstance().m_timer_loading; }
-	inline static void SetLoading() { Timer::GetInstance().m_timer_loading = true; }
-	inline static void ClearLoading() { Timer::GetInstance().m_timer_loading = false; }
-	inline static bool IsTimerOverflowing() { return Timer::GetInstance().m_timer_overflow; }
-	inline static void SetOverflowing() { Timer::GetInstance().m_timer_overflow = true; }
-	inline static void ClearOverflowing() { Timer::GetInstance().m_timer_overflow = false; }
-	static bool TimerControlBit(const data_t timer_control, const address_t cycles);
+	static bool IsCounterOverflow(const data_t new_timer_counter);
+	static size_t TimerControlThreshold();
+	static void CounterOverflowInterrupt();
+	static size_t IncreaseDivider(data_t amount = 1);
+	static size_t IncreaseCounter(data_t amount = 1);
+	static bool IsTimerEnabled();
+
+public:
+	/* Returns true if timer has overflown. */
+	inline static void IncrementCycles()
+	{
+		Timer::GetInstance().m_counter_cycles += 1;
+		Timer::GetInstance().m_divider_cycles += 1;
+	}
 
 private:
-	address_t m_counter_cycles{0};
-	address_t m_divider_cycles{0};
-	bool	 m_timer_loading{false};
-	bool	 m_timer_overflow{false};
+	static constexpr auto DIVIDER_THRESHOLD = 64;
+	
+private:
+	size_t m_counter_cycles{0};
+	size_t m_divider_cycles{0};
 };
 } // Core
 

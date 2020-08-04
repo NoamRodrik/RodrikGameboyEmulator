@@ -6,9 +6,10 @@
 #ifndef __LR35902_MEMORY_DEVICE_INTERRUPT_SWITCH_H__
 #define __LR35902_MEMORY_DEVICE_INTERRUPT_SWITCH_H__
 
+#include <Core/Interrupts/Registers/InterruptEnable.h>
 #include <Core/API/Memory/Device/MemoryDeviceBase.h>
-#include <Core/Memory/Memory.h>
 #include <Core/API/Definitions.h>
+#include <Core/Memory/Memory.h>
 
 namespace Core
 {
@@ -20,7 +21,12 @@ namespace Core
 class InterruptSwitch : public MemoryDeviceBase
 {
 public:
-	constexpr InterruptSwitch(DeviceManagerBase& device_manager) : MemoryDeviceBase{START_ADDRESS, END_ADDRESS, device_manager}, m_memory{} {}
+	constexpr InterruptSwitch(DeviceManagerBase& device_manager) : MemoryDeviceBase{START_ADDRESS, END_ADDRESS, device_manager}, m_memory{}
+	{
+		// Default value for the interrupt flag
+		this->m_memory[InterruptEnable::INTERRUPT_ENABLE_ADDRESS - START_ADDRESS] =
+			InterruptEnable::INTERRUPT_ENABLE_DEFAULT_VALUE;
+	}
 
 	virtual bool Read(const address_t absolute_address, data_t& result) const override
 	{

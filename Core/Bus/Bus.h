@@ -41,6 +41,9 @@ public:
 
 private:
 	DeviceManager m_device_manager;
+
+private:
+	friend class Timer;
 };
 } // Core
 

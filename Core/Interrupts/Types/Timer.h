@@ -12,6 +12,7 @@ namespace Core
 {
 inline const auto TIMER_INTERRUPT = []()
 {
+	Message("Unimplemented!");
 	LOG("Timer has timed out!");
 	return true;
 };

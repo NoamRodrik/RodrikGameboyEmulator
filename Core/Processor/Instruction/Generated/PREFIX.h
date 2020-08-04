@@ -15,7 +15,7 @@ namespace Core
 // - - - -
 auto PREFIX_0xCB = []()
 {
-	Processor::GetInstance().SetPrefixCommand();
+	Processor::SetPrefixCommand();
 	return true;
 };
 } // Core
