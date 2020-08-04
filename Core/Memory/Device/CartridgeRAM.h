@@ -62,9 +62,11 @@ protected:
 private:
 	void LoadDMGBoot()
 	{
+#if SKIP_BOOT
 		std::copy(SYSTEM_BOOT_CODE.data(),
 				  SYSTEM_BOOT_CODE.data() + SYSTEM_BOOT_CODE.size(),
 				  this->GetMemoryPointer());
+#endif
 	}
 
 private:

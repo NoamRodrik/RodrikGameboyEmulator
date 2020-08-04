@@ -130,10 +130,11 @@ const size_t Processor::Clock()
 								   command_to_execute.extended_cycles_amount);
 		}
 	}
-	
+
 #if _DEBUG
 	Processor::PrintFlags();
 	LOG(" | ");
+	//Processor::PrintRegisters();
 #endif
 
 	clock_cycle += Clock::IsTimerDividerElapsed() ? Timer::IncreaseDivider() : 0;

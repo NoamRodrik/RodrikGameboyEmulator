@@ -19,6 +19,14 @@ auto JP_ADDR = [](const auto& address)
 	return false;
 };
 
+auto JP_REG = [](const auto& address)
+{
+	PC = address;
+
+	// Don't change PC.
+	return false;
+};
+
 auto JP_A16 = []()
 {
 	return JP_ADDR(PC_const);
@@ -59,11 +67,11 @@ auto JP_0xDA = []()
 	return F.IsSet(Flag::CARRY) ? JP_A16() : true;
 };
 
-// 0xE9 JP (HL)
+// 0xE9 JP HL
 // - - - -
 auto JP_0xE9 = []()
 {
-	return JP_ADDR(HL_const);
+	return JP_REG(HL_const);
 };
 } // Core
 

@@ -985,7 +985,7 @@ static const std::array<Instruction, 0x10 * 0x10> INSTRUCTION_LOOKUP_TABLE =
 
     // 0xE9 JP (HL)
     // - - - -
-    Instruction{JP_0xE9, 1, 4, 0, "JP (HL)"},
+    Instruction{JP_0xE9, 1, 4, 0, "JP HL"},
 
     // 0xEA LD (a16),A
     // - - - -

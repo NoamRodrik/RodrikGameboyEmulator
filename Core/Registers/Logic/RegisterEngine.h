@@ -35,8 +35,8 @@ public:
 private:
 	Bus&		   m_memory;
 	LogicRegisters m_logic_registers{};
-	SP_Register	   m_stack_pointer{0xFFFE, this->m_memory}; // 3.2.4. Stack Pointer
-	PC_Register	   m_program_counter{0x0000};					// 3.2.3.Program Counter
+	SP_Register	   m_stack_pointer{0xFFFE, this->m_memory};		   // 3.2.4. Stack Pointer
+	PC_Register	   m_program_counter{SKIP_BOOT ? 0x0100 : 0x0000}; // 3.2.3.Program Counter
 
 private:
 	/* Only processors can create register engines. */

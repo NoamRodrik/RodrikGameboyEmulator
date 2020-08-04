@@ -28,6 +28,13 @@ namespace Core
 		          static_cast<uint8_t>(Flag::HALF_CARRY) < CHAR_BIT &&
 		          static_cast<uint8_t>(Flag::CARRY) < CHAR_BIT);
 
+#if _DEBUG
+	Message("Cancel this if you don't want to skip the CPU");
+	#define SKIP_BOOT 1
+#else
+	#define SKIP_BOOT 0
+#endif
+
 } // Core
 
 #endif // __LR35902_DEFINITIONS_H__
