@@ -48,12 +48,6 @@ void Processor::PrintRegisters()
 		static_cast<const data_t>(E_const),	 static_cast<const data_t>(F_const),
 		static_cast<const data_t>(H_const),	 static_cast<const data_t>(L_const),
 		static_cast<const address_t>(SP_const), static_cast<const address_t>(PC_const));
-
-	LOG("AF: %04X\nBC: %04X\nDE: %04X\nHL: %04X\n",
-		(address_t)AF_const,
-		(address_t)BC_const,
-		(address_t)DE_const,
-		(address_t)HL_const);
 }
 
 void Processor::PrintFlags()
@@ -70,12 +64,16 @@ void Processor::PrintFlags()
 	LOG_NO_ENTER(" C = ");
 	LOG_NO_ENTER(F.IsSet(Flag::CARRY) ? ON : OFF);
 }
-#endif
 
-void Processor::UpdateClockCycles()
+void Processor::PrintInterruptRegisters()
 {
-	Timer::GetInstance().IncrementCycles();
+	LOG_NO_ENTER(" |");
+	LOG_NO_ENTER(" IF = ");
+	LOG_NO_ENTER("%02hhX", static_cast<data_t>(InterruptFlag{}));
+	LOG_NO_ENTER(" IE = ");
+	LOG_NO_ENTER("%02hhX", static_cast<data_t>(InterruptEnable{}));
 }
+#endif
 	
 const size_t Processor::Clock()
 {	
@@ -90,13 +88,31 @@ const size_t Processor::Clock()
 		return clock_cycle;
 	}
 
+	if (Processor::IsStopped())
+	{
+		LOG("STOP called!");
+
+		Message("Make this better!");
+		// If there's a button press.
+		static_cast<void>(getchar());
+		static_cast<void>(getchar());
+		Processor::ClearStop();
+		LOG("STOP cleared!");
+
+		// Requires no clock cycles
+		return 0;
+	}
+
 	const auto& command_to_execute = Processor::IsPrefix() ?
 										PREFIX_LOOKUP_TABLE[DataAt(PC_const)] :
 										INSTRUCTION_LOOKUP_TABLE[DataAt(PC_const)];
+
 #if _DEBUG
 	Processor::PrintInstruction(command_to_execute);
+#ifndef NO_PRINT_FLAGS
 	Processor::PrintFlags();
 	LOG_NO_ENTER(" | ->");
+#endif
 #endif
 
 	// If prefix is enabled, we need to disable it.
@@ -132,9 +148,20 @@ const size_t Processor::Clock()
 	}
 
 #if _DEBUG
+#ifndef NO_PRINT_FLAGS
 	Processor::PrintFlags();
 	LOG(" | ");
-	//Processor::PrintRegisters();
+#endif
+
+#ifndef NO_PRINT_IF_AND_IE
+	Processor::PrintInterruptRegisters();
+	LOG(" | ");
+#endif
+
+#ifndef NO_PRINT_REGISTERS
+	Processor::PrintRegisters();
+	LOG(" | ");
+#endif
 #endif
 
 	clock_cycle += Clock::IsTimerDividerElapsed() ? Timer::IncreaseDivider() : 0;

@@ -13,8 +13,12 @@
 #define MacroStr2(x)  MacroStr(x)
 #define Message(desc) __pragma(message(__FILE__ "(" MacroStr2(__LINE__) ") : " desc))
 
-Message("If you want no print, uncomment this here");
+Message("If you want to print, comment this here");
+#define NO_SDL
 //#define NO_PRINT
+//#define NO_PRINT_FLAGS
+//#define NO_PRINT_REGISTERS
+//#define NO_PRINT_IF_AND_IE
 
 #ifndef NO_PRINT
 #define LOG_NO_ENTER(fmt, ...)				\
@@ -33,21 +37,26 @@ Message("If you want no print, uncomment this here");
 #define LOG(fmt, ...)	
 #endif
 
-#define SANITY(cond, fmt, ...)				   \
-		do									   \
-		{									   \
-			if (!(cond))					   \
-			{								   \
-				LOG(fmt, __VA_ARGS__);         \
-				std::exit(1);				   \
-			}								   \
+#define MAIN_LOG(fmt, ...)				   \
+		do								   \
+		{								   \
+			printf(fmt "\n", __VA_ARGS__); \
+		} while (false)
+
+#define SANITY(cond, fmt, ...)				    \
+		do									    \
+		{									    \
+			if (!(cond))					    \
+			{								    \
+				STOP_RUNNING(fmt, __VA_ARGS__); \
+			}								    \
 		} while (false)
 
 #define STOP_RUNNING(fmt, ...)				   \
 		do									   \
 		{									   \
 			LOG(fmt, __VA_ARGS__);			   \
-			std::exit(1);					   \
+			std::abort();					   \
 		} while (false)
 
 #define RET_FALSE_IF_FAIL(cond, fmt, ...)	   \
@@ -59,6 +68,21 @@ Message("If you want no print, uncomment this here");
 				return false;				   \
 			}								   \
 		} while (false)
+
+
+#if _DEBUG
+#include <Windows.h>
+#include <iostream>
+#include <sstream>
+
+#define VISUAL_STUDIO_OUTPUT_VIEW_PRINT(character) \
+		do{										   \
+			std::wostringstream os_{};			   \
+			os_ << static_cast<char>(character);   \
+			OutputDebugStringW(os_.str().c_str()); \
+		} while(false)
+
+#endif
 
 namespace Tools
 {

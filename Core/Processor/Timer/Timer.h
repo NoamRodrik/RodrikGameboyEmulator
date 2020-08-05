@@ -23,20 +23,8 @@ public:
 	static size_t IncreaseCounter(data_t amount = 1);
 	static bool IsTimerEnabled();
 
-public:
-	/* Returns true if timer has overflown. */
-	inline static void IncrementCycles()
-	{
-		Timer::GetInstance().m_counter_cycles += 1;
-		Timer::GetInstance().m_divider_cycles += 1;
-	}
-
 private:
 	static constexpr auto DIVIDER_THRESHOLD = 64;
-	
-private:
-	size_t m_counter_cycles{0};
-	size_t m_divider_cycles{0};
 };
 } // Core
 

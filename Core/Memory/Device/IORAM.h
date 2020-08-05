@@ -9,6 +9,7 @@
 #include <Core/Processor/Timer/Registers/TimerModulo.h>
 #include <Core/API/Memory/Device/MemoryDeviceBase.h>
 #include <Core/Interrupts/Registers/InterruptFlag.h>
+#include <Core/Memory/Device/CartridgeRAM.h>
 #include <Core/Processor/Timer/Timer.h>
 #include <Core/API/Definitions.h>
 #include <Core/Memory/Memory.h>
@@ -65,7 +66,7 @@ public:
 	static constexpr size_t   SIZE = END_ADDRESS - START_ADDRESS + 1;
 
 protected:
-	constexpr address_t GetFixedAddress(const address_t address) const { return address - START_ADDRESS; }
+	static constexpr address_t GetFixedAddress(const address_t address) { return address - START_ADDRESS; }
 	virtual uint8_t* GetMemoryPointer() override { return this->m_memory.GetMemoryPointer(); }
 
 private:
@@ -73,6 +74,19 @@ private:
 	{
 		switch (address)
 		{
+			case (SERIAL_TRANSFER_CONTROL):
+			{
+#if _DEBUG
+				if (data == (SERIAL_TRANSFER_START | SERIAL_TRANSFER_CLOCK_SOURCE))
+				{
+					data_t byte_read{0};
+					SANITY(this->Read(SERIAL_TRANSFER_DATA, byte_read), "Failed reading serial data");
+					VISUAL_STUDIO_OUTPUT_VIEW_PRINT(byte_read);
+				}
+#endif
+				break;
+			}
+
 			case (TIMER_MODULO_ADDRESS):
 			{
 				// Writing also onto the timer counter!
@@ -105,6 +119,17 @@ private:
 				// Writing to the divier register resets the divider timer.
 				this->m_memory[GetFixedAddress(address)] = 0;
 				return false;
+				break;
+			}
+
+			case (OVERRIDE_BOOTROM_ADDRESS):
+			{
+				// Once this is written with 0x1, we can read the software BOOT-ROM section.
+				if (data == 0x01)
+				{
+					static_cast<CartridgeRAM*>(Processor::GetInstance().GetMemory().GetDeviceAtAddress(CartridgeRAM::START_ADDRESS))->CoverSystemBoot();
+				}
+
 				break;
 			}
 		}

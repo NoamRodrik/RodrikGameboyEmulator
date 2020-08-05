@@ -19,7 +19,6 @@ class Processor : public StaticInstance<Processor>
 public:
 	/* Returns the amount of clocks the operation needs. */
 	static const size_t Clock();
-	static void UpdateClockCycles();
 	RegisterEngine& GetRegisters() { return this->m_registers; }
 	Bus& GetMemory() { return this->m_bus; }
 
@@ -47,6 +46,7 @@ private:
 	static void PrintInstruction(const Instruction& instruction_to_print);
 	static void PrintRegisters();
 	static void PrintFlags();
+	static void PrintInterruptRegisters();
 #endif
 
 private:

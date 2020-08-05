@@ -4,15 +4,19 @@
  * @description Program entry point
  */
 #include <Core/Loader/GameLoader/GameLoader.h>
-#include <Core/Processor/Processor.h>
-#include <SDL.h>
 #include <Core/Processor/Timer/Timer.h>
 #include <Core/Processor/Clock/Clock.h>
+#include <Core/Processor/Processor.h>
+#include <filesystem>
+#include <SDL.h>
 
 using namespace Core;
 
+void LoadGame();
+
 int main(int argc, char** argv)
 {
+#ifndef NO_SDL
 	// Initialize Simple DirectMedia Library for video rendering, audio, and keyboard events
 	SDL_Init(SDL_INIT_EVERYTHING);
 
@@ -26,27 +30,13 @@ int main(int argc, char** argv)
 	SDL_RenderClear(renderer);
 
 	SDL_Texture* texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STATIC, 160, 144);
+#endif
 
-	Message("To remove!");
-	//GameLoader game_loader{"BootROM/cpu_instrs.gb"};
-	GameLoader game_loader{"BootROM/tetris.gb"};
+	LoadGame();
 
-	size_t global_clock_cycles = 0;
 	size_t clock_cycle = 0;
 	while (true)
 	{
-		// New cycle
-		global_clock_cycles += 1;
-		
-		if (Processor::IsStopped())
-		{
-			LOG("STOP called!");
-			break;
-		}
-
-		// Update timers.
-		Processor::UpdateClockCycles();
-		
 		Message("Implement!");
 		if (clock_cycle > 0)
 		{
@@ -58,11 +48,42 @@ int main(int argc, char** argv)
 		Clock::SyncClock();
 		clock_cycle = Processor::Clock();
 	}
-
+	
+#ifndef NO_SDL
 	// De-initialize.
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	SDL_Quit();
+#endif
 
 	return EXIT_SUCCESS;
+}
+
+void LoadGame()
+{
+	// Choose ROMS from GB folder
+	size_t index{0};
+	for (const auto& file : std::filesystem::directory_iterator("BootROM"))
+	{
+		MAIN_LOG("%llu) %s", index++, file.path().string().c_str());
+	}
+
+	int chosen_index{0};
+	do
+	{
+		MAIN_LOG("Choose a wanted file from the file list.");
+		chosen_index = getchar() - '0';
+		static_cast<void>(getchar());
+	} while (chosen_index >= index || chosen_index < 0);
+
+	index = chosen_index;
+
+	auto directory_iterator = std::filesystem::directory_iterator("BootROM");
+	while (index > 0)
+	{
+		++directory_iterator;
+		--index;
+	}
+
+	GameLoader game_loader{ (*directory_iterator).path().string() };
 }

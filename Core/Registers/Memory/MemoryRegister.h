@@ -28,7 +28,7 @@ public:
 
 	operator T() const
 	{
-		T temporary_object;
+		T temporary_object{};
 		SANITY(Processor::GetInstance().GetMemory().Read(MEMORY_ADDRESS, temporary_object), "Failed reading from memory!");
 		return temporary_object;
 	}

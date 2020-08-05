@@ -209,6 +209,7 @@
     <ClInclude Include="Core\Memory\Device\InterruptSwitch.h" />
     <ClInclude Include="Core\Memory\Device\IORAM.h" />
     <ClInclude Include="Core\Memory\Device\OAMRAM.h" />
+    <ClInclude Include="Core\Memory\Device\UnusedRAM.h" />
     <ClInclude Include="Core\Memory\Device\VideoRAM.h" />
     <ClInclude Include="Core\Memory\Device\WorkRAM.h" />
     <ClInclude Include="Core\Memory\Memory.h" />
@@ -298,6 +299,8 @@
     <ClCompile Include="Process\Main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="BootROM\01special.gb" />
+    <None Include="BootROM\02interrupts.gb" />
     <None Include="BootROM\cpu_instrs.gb" />
     <None Include="BootROM\tetris.gb" />
     <None Include="packages.config" />

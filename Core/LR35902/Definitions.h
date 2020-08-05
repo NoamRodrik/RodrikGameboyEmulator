@@ -11,9 +11,6 @@
 
 namespace Core
 {
-	/* RAM definitions */
-	static constexpr uint8_t UNUSED_RAM_SPACE = 96;
-
 	/* Flag Register Indexes */
 	enum class Flag : uint8_t
 	{
@@ -28,7 +25,11 @@ namespace Core
 		          static_cast<uint8_t>(Flag::HALF_CARRY) < CHAR_BIT &&
 		          static_cast<uint8_t>(Flag::CARRY) < CHAR_BIT);
 
-#if _DEBUG
+#ifdef SKIP_BOOT
+#undef SKIP_BOOT
+#endif
+
+#ifdef _DEBUG
 	Message("Cancel this if you don't want to skip the CPU");
 	#define SKIP_BOOT 1
 #else

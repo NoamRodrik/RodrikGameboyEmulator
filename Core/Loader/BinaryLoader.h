@@ -20,10 +20,7 @@ public:
 		auto file_size = this->GetFileSize();
 
 		// We might have a file size larger than the capable RAM size.
-		if (file_size >= size)
-		{
-			file_size = size;
-		}
+		file_size = file_size > size ? size : file_size;
 
 		SANITY(fread(destination, 1, file_size, this->m_binary_file) == file_size, "Failed reading from file!");
 	}

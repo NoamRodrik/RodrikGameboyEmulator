@@ -35,11 +35,13 @@ static const std::array<const Interrupt, INTERRUPT_COUNT> InterruptTable
 	
 size_t InterruptHandler::ProcessInterrupts()
 {
-	// If the master enable flag isn't on, we need to reset the enabled interrupts.
+	// If the master enable flag isn't on
 	if (!IME::IsEnabled())
 	{
-		InterruptEnable interrupt_enable{};
-		interrupt_enable = 0;
+		// We need to reset the enabled interrupts
+		Message("Commented out reset, will the test pass?");
+		//InterruptEnable interrupt_enable{};
+		//interrupt_enable = 0;
 		return 0;
 	}
 

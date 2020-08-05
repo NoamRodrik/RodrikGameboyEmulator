@@ -344,6 +344,9 @@
     <ClInclude Include="Core\LR35902\Boot.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Core\Memory\Device\UnusedRAM.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Tools\Basic Scripts\GeneratingImplementationsScript.py" />
@@ -353,5 +356,7 @@
     <None Include="BootROM\tetris.gb" />
     <None Include="BootROM\cpu_instrs.gb" />
     <None Include="packages.config" />
+    <None Include="BootROM\01special.gb" />
+    <None Include="BootROM\02interrupts.gb" />
   </ItemGroup>
 </Project>

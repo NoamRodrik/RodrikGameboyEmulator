@@ -13,7 +13,7 @@ namespace Core
 {	
 auto JP_ADDR = [](const auto& address)
 {
-	PC = ((DataAt(address + 1) & 0xFF00) << 8) | (DataAt(address) & 0x00FF);
+	PC = A16(address);
 
 	// Don't change PC.
 	return false;

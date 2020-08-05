@@ -19,8 +19,8 @@ class GameLoader : public BinaryLoader
 {
 public:
 	GameLoader(const std::string& game_path) : BinaryLoader{game_path,
-															Processor::GetInstance().GetMemory().GetDeviceAtAddress(CartridgeRAM::START_ADDRESS)->GetMemoryPointer() + SYSTEM_BOOT_CODE.size(),
-															CartridgeRAM::SIZE - static_cast<long>(SYSTEM_BOOT_CODE.size())}
+															Processor::GetInstance().GetMemory().GetDeviceAtAddress(CartridgeRAM::START_ADDRESS)->GetMemoryPointer(),
+															static_cast<long>(CartridgeRAM::SIZE)}
 	{}
 
 	virtual ~GameLoader() = default;

@@ -18,8 +18,8 @@ auto RETI_0xD9 = []()
 {
 	// Pop two bytes from stack & jump to that address then
 	// enable interrupts
-	EI_0xFB();
 	SP.Pop(PC);
+	EI_0xFB();
 
 	// Don't want to change PC!
 	return false;

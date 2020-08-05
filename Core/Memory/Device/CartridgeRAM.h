@@ -23,14 +23,20 @@ namespace Core
 class CartridgeRAM : public MemoryDeviceBase
 {
 public:
-	CartridgeRAM(DeviceManagerBase& device_manager) : MemoryDeviceBase{START_ADDRESS, END_ADDRESS, device_manager}, m_memory{}
-	{
-		LoadDMGBoot();
-	}
+	CartridgeRAM(DeviceManagerBase& device_manager) : MemoryDeviceBase{START_ADDRESS, END_ADDRESS, device_manager}, m_memory{} {}
 
 	virtual bool Read(const address_t absolute_address, data_t& result) const override
 	{
-		result = this->m_memory[absolute_address - START_ADDRESS];
+		// While 0xFF50 isn't 0x1, we still return the system_boot code.
+		if (!this->m_covered_system_boot && (absolute_address - START_ADDRESS) <= 0xFF)
+		{
+			result = SYSTEM_BOOT_CODE[absolute_address - START_ADDRESS];
+		}
+		else
+		{
+			result = this->m_memory[absolute_address - START_ADDRESS];
+		}
+
 		return true;
 	}
 
@@ -41,7 +47,17 @@ public:
 
 	virtual bool Read(const address_t absolute_address, address_t& result) const override
 	{
-		result = this->m_memory[absolute_address - START_ADDRESS] | (this->m_memory[absolute_address - START_ADDRESS + 1] << 8);
+		// While 0xFF50 isn't 0x1, we still return the system_boot code.
+		if (!this->m_covered_system_boot && (absolute_address - START_ADDRESS) <= 0xFF)
+		{
+			SANITY(absolute_address - START_ADDRESS + 1 < END_ADDRESS, "Overflow on Read");
+			result = SYSTEM_BOOT_CODE[absolute_address - START_ADDRESS] | (SYSTEM_BOOT_CODE[static_cast<size_t>(absolute_address) - START_ADDRESS + 1] << 8);
+		}
+		else
+		{
+			result = this->m_memory[absolute_address - START_ADDRESS] | (this->m_memory[absolute_address - START_ADDRESS + 1] << 8);
+		}
+
 		return true;
 	}
 
@@ -50,6 +66,11 @@ public:
 		this->m_memory[absolute_address - START_ADDRESS] = data & 0x00FF;
 		this->m_memory[absolute_address - START_ADDRESS + 1] = (data & 0xFF00 >> 8);
 	}
+
+	/**
+	 * Will be called when the system boot code will be swapped with the cartridge code.
+	 */
+	inline void CoverSystemBoot() { this->m_covered_system_boot = true; }
 
 public:
 	static constexpr uint16_t START_ADDRESS = 0x0000;
@@ -60,17 +81,8 @@ protected:
 	virtual uint8_t* GetMemoryPointer() override { return this->m_memory.GetMemoryPointer(); }
 
 private:
-	void LoadDMGBoot()
-	{
-#if SKIP_BOOT
-		std::copy(SYSTEM_BOOT_CODE.data(),
-				  SYSTEM_BOOT_CODE.data() + SYSTEM_BOOT_CODE.size(),
-				  this->GetMemoryPointer());
-#endif
-	}
-
-private:
 	Memory<SIZE> m_memory;
+	bool         m_covered_system_boot{SKIP_BOOT ? true : false};
 
 private:
 	friend class DeviceManager;

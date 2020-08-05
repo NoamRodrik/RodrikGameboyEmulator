@@ -72,9 +72,14 @@ const auto D8 = []()
 	return DataAt(PC_const + 1);
 };
 
+const auto A16 = [](const address_t address)
+{
+	return ((DataAt(address + 2) << 8) & 0xFF00) | (DataAt(address + 1) & 0x00FF);
+};
+
 const auto D16 = []()
 {
-	return DataAt(PC_const + 2) << 8 | DataAt(PC_const + 1);
+	return A16(PC_const);
 };
 } // Core
 

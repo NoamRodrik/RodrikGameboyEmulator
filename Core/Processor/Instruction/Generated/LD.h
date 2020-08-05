@@ -170,8 +170,8 @@ auto LD_0x26 = []()
 auto LD_0x2A = []()
 {
 	// Put value at address HL into A. Increment HL.
-	// Same as : LD A, (HL)-INC HL
-	LD_REG_FROM_REG_ADDR(HL_const, A);
+	// Same as : LD A, (HL) & INC HL
+	SANITY(LD_REG_FROM_REG_ADDR(HL_const, A), "Failed to load HL register to A");
 	INC_0x23();
 	return true;
 };
@@ -707,15 +707,14 @@ auto LD_0xF8 = []()
 		F.MutateByCondition(Tools::HalfCarryOnSubtraction(SP_const, static_cast<data_t>(right_hand_operand)), Flag::HALF_CARRY);
 	}
 
-	return true;
+	return LD_REG_FROM_DATA(HL, SP_const + right_hand_operand);
 };
 
 // 0xF9 LD SP,HL
 // - - - -
 auto LD_0xF9 = []()
 {
-	SP = HL_const;
-	return true;
+	return LD_REG_FROM_REG(SP, HL_const);
 };
 
 // 0xFA LD A,(a16)

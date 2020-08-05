@@ -41,8 +41,7 @@ size_t Timer::IncreaseCounter(data_t amount)
 bool Timer::IsCounterOverflow(const data_t new_timer_counter)
 {
 	TimerCounter old_timer_counter{};
-	return old_timer_counter == std::numeric_limits<data_t>().max() &&
-		new_timer_counter == 0;
+	return old_timer_counter == 0xFF && new_timer_counter == 0;
 }
 
 void Timer::CounterOverflowInterrupt()

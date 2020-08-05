@@ -18,8 +18,8 @@ namespace Core
 	 */
 	constexpr bool MemoryOverlap(const gsl::not_null<MemoryDeviceBase*> first_device, const gsl::not_null<MemoryDeviceBase*> second_device)
 	{
-		return std::max(first_device->GetStartAddress(), second_device->GetStartAddress()) <=
-			   std::min(first_device->GetEndAddress(), second_device->GetEndAddress());
+		return std::max<uint32_t>(first_device->GetStartAddress(), second_device->GetStartAddress()) <=
+			   std::min<uint32_t>(first_device->GetEndAddress(), second_device->GetEndAddress());
 	}
 	
 	/**
