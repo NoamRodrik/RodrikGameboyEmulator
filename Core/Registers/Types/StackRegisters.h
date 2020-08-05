@@ -22,16 +22,16 @@ public:
 public:
 	virtual void Push(const address_t data) override
 	{
-		this->Push(static_cast<const data_t>(data & 0x00FF));
 		this->Push(static_cast<const data_t>((data >> 8) & 0x00FF));
+		this->Push(static_cast<const data_t>(data & 0x00FF));
 	}
 
 	virtual void Pop(address_t& data) override
 	{
-		data_t top_byte = 0;
-		data_t bottom_byte = 0;
-		this->Pop(top_byte);
+		data_t top_byte{0};
+		data_t bottom_byte{0};
 		this->Pop(bottom_byte);
+		this->Pop(top_byte);
 		data = ((top_byte << 8) & 0xFF00) | (bottom_byte & 0x00FF);
 	}
 

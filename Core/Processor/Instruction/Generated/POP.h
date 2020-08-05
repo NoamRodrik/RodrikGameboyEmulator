@@ -15,8 +15,8 @@ namespace Core
 // - - - -
 auto POP_0xC1 = []()
 {
-	SP.Pop(B);
 	SP.Pop(C);
+	SP.Pop(B);
 	return true;
 };
 
@@ -24,8 +24,8 @@ auto POP_0xC1 = []()
 // - - - -
 auto POP_0xD1 = []()
 {
-	SP.Pop(D);
 	SP.Pop(E);
+	SP.Pop(D);
 	return true;
 };
 
@@ -33,8 +33,8 @@ auto POP_0xD1 = []()
 // - - - -
 auto POP_0xE1 = []()
 {
-	SP.Pop(H);
 	SP.Pop(L);
+	SP.Pop(H);
 	return true;
 };
 
@@ -42,8 +42,8 @@ auto POP_0xE1 = []()
 // - - - -
 auto POP_0xF1 = []()
 {
-	SP.Pop(A);
 	SP.Pop(F);
+	SP.Pop(A);
 	return true;
 };
 } // Core

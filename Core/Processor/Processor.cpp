@@ -148,6 +148,10 @@ const size_t Processor::Clock()
 	}
 
 #if _DEBUG
+#ifndef NO_PRINT
+	LOG(" | ");
+#endif
+
 #ifndef NO_PRINT_FLAGS
 	Processor::PrintFlags();
 	LOG(" | ");
