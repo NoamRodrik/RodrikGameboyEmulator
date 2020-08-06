@@ -37,15 +37,12 @@ int main(int argc, char** argv)
 	size_t clock_cycle = 0;
 	while (true)
 	{
-		Message("Implement!");
-		if (clock_cycle > 0)
+		// CPU needs to syncronize clocks.
+		for (size_t current_cycle = 0; current_cycle <= clock_cycle; ++current_cycle)
 		{
-			clock_cycle -= 1;
-			continue;
+			Clock::SyncClock();
 		}
 
-		// CPU needs to clock.
-		Clock::SyncClock();
 		clock_cycle = Processor::Clock();
 	}
 	
@@ -63,7 +60,7 @@ void LoadGame()
 {
 	// Choose ROMS from GB folder
 	size_t index{0};
-	for (const auto& file : std::filesystem::directory_iterator("BootROM"))
+	for (const auto& file : std::filesystem::directory_iterator("TestROM"))
 	{
 		MAIN_LOG("%llu) %s", index++, file.path().string().c_str());
 	}
@@ -78,7 +75,7 @@ void LoadGame()
 
 	index = chosen_index;
 
-	auto directory_iterator = std::filesystem::directory_iterator("BootROM");
+	auto directory_iterator = std::filesystem::directory_iterator("TestROM");
 	while (index > 0)
 	{
 		++directory_iterator;

@@ -27,7 +27,7 @@ public:
 
 private:
 	static constexpr auto LR35902_HZ_CLOCK = 1'048'576;
-	static constexpr auto LR35902_HZ_DIVIDER_CLOCK = 4'096;
+	static constexpr auto LR35902_HZ_DIVIDER_CLOCK = 1'024;
 	using lr35902_clock_period = std::chrono::duration<long long, std::ratio<1, LR35902_HZ_CLOCK>>;
 	using divider_clock_period = std::chrono::duration<long long, std::ratio<1, LR35902_HZ_DIVIDER_CLOCK>>;
 

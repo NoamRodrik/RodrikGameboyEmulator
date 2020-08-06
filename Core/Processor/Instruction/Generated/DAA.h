@@ -18,8 +18,8 @@ auto DAA_0x27 = []()
 	if (!F.IsSet(Flag::SUB))
 	{
 		// An addition has occurred.
-		const bool convert_carry_flag = F.IsSet(Flag::CARRY) || (A_const > 0x99);
-		const bool convert_half_carry_flag = F.IsSet(Flag::HALF_CARRY) || ((A_const & 0xF) > 0x09);
+		const bool convert_carry_flag = F.IsSet(Flag::CARRY) || (A_const > 0x9F);
+		const bool convert_half_carry_flag = F.IsSet(Flag::HALF_CARRY) || ((A_const & 0x0F) > 0x09);
 		F.MutateByCondition(convert_carry_flag, Flag::CARRY);
 		A += (convert_carry_flag * 0x60 + convert_half_carry_flag * 0x6);
 	}

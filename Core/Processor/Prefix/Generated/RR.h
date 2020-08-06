@@ -19,15 +19,13 @@ auto RR_REG = [](auto& reg)
 	F.Clear(Flag::HALF_CARRY);
 
 	// Fetching the utmost left bit.
-	const uint8_t shifted_bit = reg & 0x01;
-	uint8_t already_carried_bit = F.IsSet(Flag::CARRY) & 0x01;
+	uint8_t shifted_bit = reg & 0x01;
 	F.MutateByCondition(shifted_bit == 0x01, Flag::CARRY);
 
 	// Rotate right reg.
 	// The shifted bit goes into the carry flag, the carry flag goes into reg.
 	reg >>= 1;
-	already_carried_bit <<= 7;
-	reg |= already_carried_bit;
+	reg = reg | (shifted_bit << 7);
 	F.MutateByCondition(reg == 0, Flag::ZERO);
 	return true;
 };
