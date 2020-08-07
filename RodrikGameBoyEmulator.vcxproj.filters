@@ -397,7 +397,6 @@
     <None Include="Tools\Basic Scripts\GeneratingImplementationsPrefixScript.py" />
     <None Include="BootROM\tetris.gb" />
     <None Include="BootROM\cpu_instrs.gb" />
-    <None Include="packages.config" />
     <None Include="BootROM\01special.gb" />
     <None Include="BootROM\02interrupts.gb" />
     <None Include="TestROM\01special.gb" />
@@ -406,5 +405,8 @@
     <None Include="TestROM\daa.gb" />
     <None Include="TestROM\ie_push.gb" />
     <None Include="TestROM\tetris.gb" />
+    <None Include=".gitignore" />
+    <None Include="README.md" />
+    <None Include="RodrikGameBoyEmulator.aps" />
   </ItemGroup>
 </Project>
