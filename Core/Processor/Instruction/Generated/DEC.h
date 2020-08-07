@@ -33,6 +33,15 @@ auto DEC_LONG_REG = [](auto& o_long_reg)
 	return true;
 };
 
+// DEC (o_reg_addr)
+auto DEC_REG_ADDR = [](auto& o_reg_addr)
+{
+	data_t memory_at_address{DataAt(o_reg_addr)};
+	DEC_REG(memory_at_address);
+	memory.Write(memory_at_address, o_reg_addr);
+	return true;
+};
+
 // 0x05 DEC B
 // Z 1 H -
 auto DEC_0x05 = []()
@@ -100,7 +109,7 @@ auto DEC_0x2D = []()
 // Z 1 H -
 auto DEC_0x35 = []()
 {
-	return RunCommandAtAddress(HL_const, DEC_REG);
+	return DEC_REG_ADDR(HL_const);
 };
 
 // 0x3B DEC SP

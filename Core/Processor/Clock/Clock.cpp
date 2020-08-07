@@ -37,13 +37,15 @@ void Clock::SyncClock()
 	Clock::GetInstance().m_divider_tick_amount += 1;
 	Clock::GetInstance().m_counter_tick_amount += 1;
 
+	static constexpr auto one_clock_period{lr35902_clock_period{1}};
+
 	// Find out if the difference is less than one clock period
-	while ((std::chrono::high_resolution_clock::now() - Clock::GetInstance().m_last_tick) < lr35902_clock_period{1});
+	while ((std::chrono::high_resolution_clock::now() - Clock::GetInstance().m_last_tick) < one_clock_period);
 
 	// Use time_point_cast to convert (via truncation towards zero) back to
 	// the "native" duration of high_resolution_clock
 	Clock::GetInstance().m_last_tick =
 		std::chrono::time_point_cast<std::chrono::high_resolution_clock::duration>(
-			Clock::GetInstance().m_last_tick + lr35902_clock_period{1});
+			Clock::GetInstance().m_last_tick + one_clock_period);
 }
 } // Core

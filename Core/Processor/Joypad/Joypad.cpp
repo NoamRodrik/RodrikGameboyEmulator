@@ -5,11 +5,11 @@
 
 namespace Core
 {
-	void Joypad::PressButton(const EButton button)
-	{
-		JoypadRegister joypad_register{static_cast<const data_t>(button)};
+void Joypad::PressButton(const EButton button)
+{
+	JoypadRegister joypad_register{static_cast<const data_t>(button)};
 
-		// Button press occurred, call interrupt.
-		InterruptHandler::IRQ(EInterrupts::H_L_P);
-	}
+	// Button press occurred, call interrupt.
+	InterruptHandler::IRQ(EInterrupts::H_L_P);
+}
 } // Core

@@ -32,6 +32,15 @@ auto RL_REG = [](auto& reg)
 	return true;
 };
 
+// RL (reg_addr)
+auto RL_REG_ADDR = [](const auto& reg_addr)
+{
+	auto data_at_address{DataAt(reg_addr)};
+	RL_REG(data_at_address);
+	memory.Write(data_at_address, reg_addr);
+	return true;
+};
+
 // 0x10 RL B
 // Z 0 0 C
 auto RL_0x10 = []()
@@ -78,7 +87,7 @@ auto RL_0x15 = []()
 // Z 0 0 C
 auto RL_0x16 = []()
 {
-	return RunCommandAtAddress(HL_const, RL_REG);
+	return RL_REG_ADDR(HL_const);
 };
 
 // 0x17 RL A

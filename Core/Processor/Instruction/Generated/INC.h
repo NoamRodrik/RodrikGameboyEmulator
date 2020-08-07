@@ -33,6 +33,15 @@ auto INC_LONG_REG = [](auto& o_reg)
 	return true;
 };
 
+// INC (o_reg_addr)
+auto INC_REG_ADDR = [](auto& o_reg_addr)
+{
+	data_t memory_at_address{ DataAt(o_reg_addr) };
+	INC_REG(memory_at_address);
+	memory.Write(memory_at_address, o_reg_addr);
+	return true;
+};
+
 // 0x03 INC BC
 // - - - -
 auto INC_0x03 = []()
@@ -107,7 +116,7 @@ auto INC_0x33 = []()
 // Z 0 H -
 auto INC_0x34 = []()
 {
-	return RunCommandAtAddress(HL_const, INC_REG);
+	return INC_REG_ADDR(HL_const);
 };
 
 // 0x3C INC A

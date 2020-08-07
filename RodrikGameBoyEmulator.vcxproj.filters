@@ -347,6 +347,48 @@
     <ClInclude Include="Core\Memory\Device\UnusedRAM.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Contrib\PixelGameEngine\OLCPixelGameEngine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\GPU\Engine\MainPixelEngine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Processor\Instruction\Prefix\PrefixLookupTable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Processor\Instruction\Prefix\Generated\BIT.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Processor\Instruction\Prefix\Generated\RES.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Processor\Instruction\Prefix\Generated\RL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Processor\Instruction\Prefix\Generated\RLC.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Processor\Instruction\Prefix\Generated\RR.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Processor\Instruction\Prefix\Generated\RRC.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Processor\Instruction\Prefix\Generated\SET.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Processor\Instruction\Prefix\Generated\SLA.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Processor\Instruction\Prefix\Generated\SRA.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Processor\Instruction\Prefix\Generated\SRL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Processor\Instruction\Prefix\Generated\SWAP.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Tools\Basic Scripts\GeneratingImplementationsScript.py" />
@@ -358,5 +400,11 @@
     <None Include="packages.config" />
     <None Include="BootROM\01special.gb" />
     <None Include="BootROM\02interrupts.gb" />
+    <None Include="TestROM\01special.gb" />
+    <None Include="TestROM\02interrupts.gb" />
+    <None Include="TestROM\cpu_instrs.gb" />
+    <None Include="TestROM\daa.gb" />
+    <None Include="TestROM\ie_push.gb" />
+    <None Include="TestROM\tetris.gb" />
   </ItemGroup>
 </Project>

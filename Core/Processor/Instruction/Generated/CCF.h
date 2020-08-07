@@ -17,7 +17,15 @@ auto CCF_0x3F = []()
 {
 	F.Clear(Flag::HALF_CARRY);
 	F.Clear(Flag::SUB);
-	F.MutateByCondition(F.IsSet(Flag::CARRY), Flag::CARRY);
+	
+	if (F.IsSet(Flag::CARRY))
+	{
+		F.Clear(Flag::CARRY);
+	}
+	else
+	{
+		F.Set(Flag::CARRY);
+	}
 
 	return true;
 };

@@ -8,7 +8,7 @@
 
 #include <Core/Processor/Processor.h>
 #include <Core/Processor/Instruction/Shortcuts.h>
-#include <Core/Processor/Prefix/Generated/RLC.h>
+#include <Core/Processor/Instruction/Prefix/Generated/RLC.h>
 
 namespace Core
 {

@@ -15,7 +15,7 @@ namespace Core
 // - - - -
 auto LDH_0xE0 = []()
 {
-	memory.Write(A_const, D8() + 0xFF00);
+	memory.Write(A_const, FETCH_A8() + ZERO_PAGE_ADDRESS);
 	return true;
 };
 
@@ -23,7 +23,7 @@ auto LDH_0xE0 = []()
 // - - - -
 auto LDH_0xF0 = []()
 {
-	SANITY(memory.Read(D8() + 0xFF00, A), "Failed reading from memory!");
+	SANITY(memory.Read(FETCH_A8() + ZERO_PAGE_ADDRESS, A), "Failed reading from memory!");
 	return true;
 };
 } // Core

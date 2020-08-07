@@ -24,6 +24,9 @@ namespace Core
 	/* RAM */
 	static constexpr uint32_t MEMORY_SIZE = Tools::KilobitsToBits(std::numeric_limits<address_t>::digits);
 
+	/* Main memory constants */
+	static constexpr address_t ZERO_PAGE_ADDRESS{0xFF00};
+
 	/* Devices on BUS */
 	static constexpr uint8_t DEVICES_ON_BUS = 10;
 

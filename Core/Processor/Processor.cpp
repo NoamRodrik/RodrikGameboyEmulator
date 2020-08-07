@@ -4,10 +4,10 @@
  * @description Main logic of processor
  */
 
+#include <Core/Processor/Instruction/Prefix/PrefixLookupTable.h>
 #include <Core/Processor/Instruction/InstructionLookupTable.h>
 #include <Core\Interrupts\Registers\InterruptEnable.h>
 #include <Core\Interrupts\Registers\InterruptFlag.h>
-#include <Core/Processor/Prefix/PrefixLookupTable.h>
 #include <Core/Processor/Instruction/Shortcuts.h>
 #include <Core/Interrupts/InterruptHandler.h>
 #include <Core/Processor/Timer/Timer.h>
@@ -25,10 +25,10 @@ namespace Core
 #if _DEBUG
 void Processor::PrintInstruction(const Instruction& instruction_to_print)
 {
-	LOG_NO_ENTER("%04X) %-10s | ", static_cast<const address_t>(PC_const), instruction_to_print.operation_string.c_str());
+	LOG_NO_ENTER("%04X %-10s | ", static_cast<const address_t>(PC_const), instruction_to_print.operation_string.c_str());
 
 	const auto WRITE_AMOUNT = instruction_to_print.bytes_size - Processor::IsPrefix();
-	for (int32_t index = 0; index < WRITE_AMOUNT; ++index)
+	for (int32_t index = WRITE_AMOUNT; index >= 1; --index)
 	{
 		LOG_NO_ENTER("%02X", DataAt(PC_const + index));
 	}
@@ -149,7 +149,7 @@ const size_t Processor::Clock()
 
 #if _DEBUG
 #ifndef NO_PRINT
-	LOG(" | ");
+	LOG("");
 #endif
 
 #ifndef NO_PRINT_FLAGS

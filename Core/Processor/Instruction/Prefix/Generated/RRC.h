@@ -31,6 +31,15 @@ auto RRC_REG = [](auto& reg)
 	return true;
 };
 
+// RRC (reg_addr)
+auto RRC_REG_ADDR = [](const auto& reg_addr)
+{
+	data_t data_at_address{ DataAt(reg_addr) };
+	RRC_REG(data_at_address);
+	memory.Write(reg_addr, data_at_address);
+	return true;
+};
+
 // 0x08 RRC B
 // Z 0 0 C
 auto RRC_0x08 = []()
@@ -77,7 +86,7 @@ auto RRC_0x0D = []()
 // Z 0 0 C
 auto RRC_0x0E = []()
 {
-	return RunCommandAtAddress(HL_const, RRC_REG);
+	return RRC_REG_ADDR(HL_const);
 };
 
 // 0x0F RRC A

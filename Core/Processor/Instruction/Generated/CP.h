@@ -83,7 +83,7 @@ auto CP_0xBF = []()
 // Z 1 H C
 auto CP_0xFE = []()
 {
-	return CP_WITH_A(D8());
+	return CP_WITH_A(FETCH_D8());
 };
 } // Core
 

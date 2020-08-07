@@ -67,19 +67,30 @@ const auto RunCommandAtAddress = [](const auto& address, const auto& command)
 	return result;
 };
 
-const auto D8 = []()
+const auto FETCH_A8 = []()
 {
 	return DataAt(PC_const + 1);
 };
 
-const auto A16 = [](const address_t address)
+const auto FETCH_D8 = []()
 {
-	return ((DataAt(address + 2) << 8) & 0xFF00) | (DataAt(address + 1) & 0x00FF);
+	return FETCH_A8();
 };
 
-const auto D16 = []()
+const auto FETCH_A16 = []()
 {
-	return A16(PC_const);
+	return ((DataAt(PC_const + 2) << 8) & 0xFF00) | (DataAt(PC_const + 1) & 0x00FF);
+};
+
+const auto FETCH_D16 = []()
+{
+	return FETCH_A16();
+};
+
+const auto LOAD_D16 = [](auto& lsb_reg, auto& msb_reg)
+{
+	lsb_reg = DataAt(PC_const + 2);
+	msb_reg = DataAt(PC_const + 1);
 };
 } // Core
 

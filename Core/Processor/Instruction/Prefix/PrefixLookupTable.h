@@ -11,17 +11,17 @@
 #include <array>
 
  /* Instruction includes */
-#include <Core/Processor/Prefix/Generated/RLC.h>
-#include <Core/Processor/Prefix/Generated/RRC.h>
-#include <Core/Processor/Prefix/Generated/RL.h>
-#include <Core/Processor/Prefix/Generated/RR.h>
-#include <Core/Processor/Prefix/Generated/SLA.h>
-#include <Core/Processor/Prefix/Generated/SRA.h>
-#include <Core/Processor/Prefix/Generated/SWAP.h>
-#include <Core/Processor/Prefix/Generated/SRL.h>
-#include <Core/Processor/Prefix/Generated/BIT.h>
-#include <Core/Processor/Prefix/Generated/RES.h>
-#include <Core/Processor/Prefix/Generated/SET.h>
+#include <Core/Processor/Instruction/Prefix/Generated/RLC.h>
+#include <Core/Processor/Instruction/Prefix/Generated/RRC.h>
+#include <Core/Processor/Instruction/Prefix/Generated/RL.h>
+#include <Core/Processor/Instruction/Prefix/Generated/RR.h>
+#include <Core/Processor/Instruction/Prefix/Generated/SLA.h>
+#include <Core/Processor/Instruction/Prefix/Generated/SRA.h>
+#include <Core/Processor/Instruction/Prefix/Generated/SWAP.h>
+#include <Core/Processor/Instruction/Prefix/Generated/SRL.h>
+#include <Core/Processor/Instruction/Prefix/Generated/BIT.h>
+#include <Core/Processor/Instruction/Prefix/Generated/RES.h>
+#include <Core/Processor/Instruction/Prefix/Generated/SET.h>
 
 namespace Core
 {

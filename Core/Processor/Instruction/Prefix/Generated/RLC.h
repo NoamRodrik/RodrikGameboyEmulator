@@ -30,6 +30,15 @@ auto RLC_REG = [](auto& reg)
 	return true;
 };
 
+// RLC (reg_addr)
+auto RLC_REG_ADDR = [](const auto& reg_addr)
+{
+	data_t data_at_address{DataAt(reg_addr)};
+	RLC_REG(data_at_address);
+	memory.Write(data_at_address, reg_addr);
+	return true;
+};
+
 // 0x00 RLC B
 // Z 0 0 C
 auto RLC_0x00 = []()
@@ -76,7 +85,7 @@ auto RLC_0x05 = []()
 // Z 0 0 C
 auto RLC_0x06 = []()
 {
-	return RunCommandAtAddress(HL_const, RLC_REG);
+	return RLC_REG_ADDR(HL_const);
 };
 
 // 0x07 RLC A

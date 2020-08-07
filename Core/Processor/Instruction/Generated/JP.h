@@ -11,9 +11,9 @@
 
 namespace Core
 {	
-auto JP_ADDR = [](const auto& address)
+auto JP_ADDR = []()
 {
-	PC = A16(address);
+	PC = FETCH_A16();
 
 	// Don't change PC.
 	return false;
@@ -29,7 +29,7 @@ auto JP_REG = [](const auto& address)
 
 auto JP_A16 = []()
 {
-	return JP_ADDR(PC_const);
+	return JP_ADDR();
 };
 
 // 0xC2 JP NZ,a16

@@ -13,18 +13,16 @@ namespace Core
 {
 // SBC A, data
 // Z 1 H C
-auto SBC_DATA = [](const data_t data)
+auto SBC_WITH_A = [](const auto& data)
 {
-	const uint16_t inverted_data = static_cast<uint16_t>(data) ^ 0x00FF;
-	const uint16_t data_to_add = inverted_data + static_cast<uint16_t>(F.IsSet(Flag::CARRY));
-	const uint16_t reg_to_deduce = A_const;
+	const data_t data_to_subtract = static_cast<data_t>(data) + static_cast<data_t>(F.IsSet(Flag::CARRY));
 
-	F.MutateByCondition(Tools::ZeroOnAddition(data_to_add, reg_to_deduce), Flag::ZERO);
-	F.MutateByCondition(Tools::CarryOnAddition(reg_to_deduce, data_to_add), Flag::CARRY);
+	F.MutateByCondition(Tools::ZeroOnSubtraction(data_to_subtract, static_cast<data_t>(A_const)), Flag::ZERO);
+	F.MutateByCondition(Tools::CarryOnSubtraction(static_cast<data_t>(A_const), data_to_subtract), Flag::CARRY);
 	F.Set(Flag::SUB);
-	F.MutateByCondition(Tools::HalfCarryOnAddition(reg_to_deduce, data_to_add), Flag::HALF_CARRY);
+	F.MutateByCondition(Tools::HalfCarryOnSubtraction(static_cast<data_t>(A_const), data_to_subtract), Flag::HALF_CARRY);
 
-	A = (reg_to_deduce + data_to_add) & 0x00FF;
+	A = (static_cast<data_t>(A_const) - data_to_subtract) & 0x00FF;
 
 	return true;
 };
@@ -33,63 +31,63 @@ auto SBC_DATA = [](const data_t data)
 // Z 1 H C
 auto SBC_0x98 = []()
 {
-	return SBC_DATA(B_const);
+	return SBC_WITH_A(B_const);
 };
 
 // 0x99 SBC A,C
 // Z 1 H C
 auto SBC_0x99 = []()
 {
-	return SBC_DATA(C_const);
+	return SBC_WITH_A(C_const);
 };
 
 // 0x9A SBC A,D
 // Z 1 H C
 auto SBC_0x9A = []()
 {
-	return SBC_DATA(D_const);
+	return SBC_WITH_A(D_const);
 };
 
 // 0x9B SBC A,E
 // Z 1 H C
 auto SBC_0x9B = []()
 {
-	return SBC_DATA(E_const);
+	return SBC_WITH_A(E_const);
 };
 
 // 0x9C SBC A,H
 // Z 1 H C
 auto SBC_0x9C = []()
 {
-	return SBC_DATA(H_const);
+	return SBC_WITH_A(H_const);
 };
 
 // 0x9D SBC A,L
 // Z 1 H C
 auto SBC_0x9D = []()
 {
-	return SBC_DATA(L_const);
+	return SBC_WITH_A(L_const);
 };
 
 // 0x9E SBC A,(HL)
 // Z 1 H C
 auto SBC_0x9E = []()
 {
-	return SBC_DATA(DataAt(HL_const));
+	return SBC_WITH_A(DataAt(HL_const));
 };
 
 // 0x9F SBC A,A
 // Z 1 H C
 auto SBC_0x9F = []()
 {
-	return SBC_DATA(A_const);
+	return SBC_WITH_A(A_const);
 };
 
 // 0xDE SBC A,d8
 // Z 1 H C
 auto SBC_0xDE = []()
 {
-	return SBC_DATA(D8());
+	return SBC_WITH_A(FETCH_D8());
 };
 } // Core
 

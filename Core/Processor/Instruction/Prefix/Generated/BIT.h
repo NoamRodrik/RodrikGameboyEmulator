@@ -13,7 +13,7 @@ namespace Core
 {
 // BIT bit_index, data_to_check
 // Z 0 1 -
-auto BIT_CHECK = [](const uint8_t bit_index, const data_t data_to_check)
+auto BIT_CHECK = [](const uint8_t bit_index, const auto& data_to_check)
 {
 	SANITY(bit_index <= 7, "Got an invalid bit index!");
 	const bool bit_status = (data_to_check >> bit_index) & 0x01;

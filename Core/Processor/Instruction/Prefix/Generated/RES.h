@@ -19,6 +19,15 @@ auto RST_BIT_IN_REG = [](const uint8_t bit_index, auto& reg)
 	return true;
 };
 
+// RES bit_index, (reg_addr)
+auto RST_BIT_IN_REG_ADDR = [](const uint8_t bit_index, const auto& reg_addr)
+{
+	data_t data_at_address{DataAt(reg_addr)};
+	RST_BIT_IN_REG(bit_index, data_at_address);
+	memory.Write(data_at_address, reg_addr);
+	return true;
+};
+
 // 0x80 RES 0,B
 // - - - -
 auto RES_0x80 = []()
@@ -65,8 +74,7 @@ auto RES_0x85 = []()
 // - - - -
 auto RES_0x86 = []()
 {
-	const auto RST_REG_WITH_0 = [](auto& reg) { return RST_BIT_IN_REG(0, reg); };
-	return RunCommandAtAddress(HL_const, RST_REG_WITH_0);
+	return RST_BIT_IN_REG_ADDR(0, HL_const);
 };
 
 // 0x87 RES 0,A
@@ -122,8 +130,7 @@ auto RES_0x8D = []()
 // - - - -
 auto RES_0x8E = []()
 {
-	const auto RST_REG_WITH_1 = [](auto& reg) { return RST_BIT_IN_REG(1, reg); };
-	return RunCommandAtAddress(HL_const, RST_REG_WITH_1);
+	return RST_BIT_IN_REG_ADDR(1, HL_const);
 };
 
 // 0x8F RES 1,A
@@ -179,8 +186,7 @@ auto RES_0x95 = []()
 // - - - -
 auto RES_0x96 = []()
 {
-	const auto RST_REG_WITH_2 = [](auto& reg) { return RST_BIT_IN_REG(2, reg); };
-	return RunCommandAtAddress(HL_const, RST_REG_WITH_2);
+	return RST_BIT_IN_REG_ADDR(2, HL_const);
 };
 
 // 0x97 RES 2,A
@@ -236,8 +242,7 @@ auto RES_0x9D = []()
 // - - - -
 auto RES_0x9E = []()
 {
-	const auto RST_REG_WITH_3 = [](auto& reg) { return RST_BIT_IN_REG(3, reg); };
-	return RunCommandAtAddress(HL_const, RST_REG_WITH_3);
+	return RST_BIT_IN_REG_ADDR(3, HL_const);
 };
 
 // 0x9F RES 3,A
@@ -293,8 +298,7 @@ auto RES_0xA5 = []()
 // - - - -
 auto RES_0xA6 = []()
 {
-	const auto RST_REG_WITH_4 = [](auto& reg) { return RST_BIT_IN_REG(4, reg); };
-	return RunCommandAtAddress(HL_const, RST_REG_WITH_4);
+	return RST_BIT_IN_REG_ADDR(4, HL_const);
 };
 
 // 0xA7 RES 4,A
@@ -350,8 +354,7 @@ auto RES_0xAD = []()
 // - - - -
 auto RES_0xAE = []()
 {
-	const auto RST_REG_WITH_5 = [](auto& reg) { return RST_BIT_IN_REG(5, reg); };
-	return RunCommandAtAddress(HL_const, RST_REG_WITH_5);
+	return RST_BIT_IN_REG_ADDR(5, HL_const);
 };
 
 // 0xAF RES 5,A
@@ -407,8 +410,7 @@ auto RES_0xB5 = []()
 // - - - -
 auto RES_0xB6 = []()
 {
-	const auto RST_REG_WITH_6 = [](auto& reg) { return RST_BIT_IN_REG(6, reg); };
-	return RunCommandAtAddress(HL_const, RST_REG_WITH_6);
+	return RST_BIT_IN_REG_ADDR(6, HL_const);
 };
 
 // 0xB7 RES 6,A
@@ -464,8 +466,7 @@ auto RES_0xBD = []()
 // - - - -
 auto RES_0xBE = []()
 {
-	const auto RST_REG_WITH_7 = [](auto& reg) { return RST_BIT_IN_REG(7, reg); };
-	return RunCommandAtAddress(HL_const, RST_REG_WITH_7);
+	return RST_BIT_IN_REG_ADDR(7, HL_const);
 };
 
 // 0xBF RES 7,A

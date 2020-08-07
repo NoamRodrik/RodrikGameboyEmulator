@@ -84,7 +84,7 @@ auto XOR_0xAF = []()
 // Z 0 0 0
 auto XOR_0xEE = []()
 {
-	return XOR_WITH_A(D8());
+	return XOR_WITH_A(FETCH_D8());
 };
 } // Core
 

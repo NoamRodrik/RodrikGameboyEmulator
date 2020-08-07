@@ -13,7 +13,7 @@ namespace Core
 {
 // OR data
 // Z 0 0 0
-auto OR_WITH_A = [](const auto data)
+auto OR_WITH_A = [](const auto& data)
 {
 	A |= data;
 
@@ -85,7 +85,7 @@ auto OR_0xB7 = []()
 // Z 0 0 0
 auto OR_0xF6 = []()
 {
-	return OR_WITH_A(D8());
+	return OR_WITH_A(FETCH_D8());
 };
 } // Core
 

@@ -4,11 +4,11 @@
  * @description Program entry point
  */
 #include <Core/Loader/GameLoader/GameLoader.h>
+#include <Core/GPU/Engine/MainPixelEngine.h>
 #include <Core/Processor/Timer/Timer.h>
 #include <Core/Processor/Clock/Clock.h>
 #include <Core/Processor/Processor.h>
 #include <filesystem>
-#include <SDL.h>
 
 using namespace Core;
 
@@ -16,42 +16,24 @@ void LoadGame();
 
 int main(int argc, char** argv)
 {
-#ifndef NO_SDL
-	// Initialize Simple DirectMedia Library for video rendering, audio, and keyboard events
-	SDL_Init(SDL_INIT_EVERYTHING);
-
-	SDL_Renderer* renderer = nullptr;
-	SDL_Window* window = nullptr;
-	SDL_CreateWindowAndRenderer(160 * 3, 144 * 3, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE, &window, &renderer);
-	SDL_SetWindowTitle(window, "Rodrik Gameboy Emulator");
-	SDL_SetRenderDrawColor(renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
-
-	// Clear screen with White
-	SDL_RenderClear(renderer);
-
-	SDL_Texture* texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STATIC, 160, 144);
+#ifndef NO_PIXEL_ENGINE
+	MainPixelEngine pixel_engine{};
+	SANITY(pixel_engine.Construct(160, 144, 4, 4), "Failed constructing pixel engine");
+	pixel_engine.Start();
 #endif
 
 	LoadGame();
 
-	size_t clock_cycle = 0;
-	while (true)
+	do
 	{
+		size_t clock_cycle{Processor::Clock()};
+
 		// CPU needs to syncronize clocks.
 		for (size_t current_cycle = 0; current_cycle <= clock_cycle; ++current_cycle)
 		{
 			Clock::SyncClock();
 		}
-
-		clock_cycle = Processor::Clock();
-	}
-	
-#ifndef NO_SDL
-	// De-initialize.
-	SDL_DestroyRenderer(renderer);
-	SDL_DestroyWindow(window);
-	SDL_Quit();
-#endif
+	} while (true);
 
 	return EXIT_SUCCESS;
 }

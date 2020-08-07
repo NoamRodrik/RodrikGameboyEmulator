@@ -35,7 +35,7 @@ with open("PrefixLookupTable.h", 'w+') as our_file:
   
   for short_name in short_name_table:
     if not len(short_name) == 0:
-      our_file.write('#include <Core/Processor/Prefix/Generated/{}.h>\n'.format(short_name))
+      our_file.write('#include <Core/Processor/Instruction/Prefix/Generated/{}.h>\n'.format(short_name))
   
   our_file.write('\n')
   our_file.write('namespace Core\n')

@@ -18,6 +18,7 @@ auto DAA_0x27 = []()
 	if (!F.IsSet(Flag::SUB))
 	{
 		// An addition has occurred.
+		Message("0x9F or 0x99?");
 		const bool convert_carry_flag = F.IsSet(Flag::CARRY) || (A_const > 0x9F);
 		const bool convert_half_carry_flag = F.IsSet(Flag::HALF_CARRY) || ((A_const & 0x0F) > 0x09);
 		F.MutateByCondition(convert_carry_flag, Flag::CARRY);
@@ -25,8 +26,12 @@ auto DAA_0x27 = []()
 	}
 	else
 	{
-		// A substraction has occurred.
-		A -= (F.IsSet(Flag::CARRY) * 0x60 + F.IsSet(Flag::HALF_CARRY) * 0x6);
+		if (F.IsSet(Flag::HALF_CARRY))
+		{
+			A = (A_const - 6) & 0xFF;
+		}
+
+		A -= F.IsSet(Flag::CARRY) * 0x60;
 	}
 
 	F.MutateByCondition(A_const == 0, Flag::ZERO);

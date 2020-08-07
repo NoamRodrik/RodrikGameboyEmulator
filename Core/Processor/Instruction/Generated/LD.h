@@ -14,25 +14,25 @@
 
 namespace Core
 {
-// LD reg, d8
-auto LD_D8 = [](auto& reg)
-{
-	reg = DataAt(PC_const + 1);
-	return true;
-};
-
 // LD lower_reg&upper_reg, d16
 auto LD_D16 = [](data_t& lower_reg, data_t& higher_reg)
 {
-	lower_reg = DataAt(PC_const + 2);
-	higher_reg = DataAt(PC_const + 1);
+	LOAD_D16(lower_reg, higher_reg);
+	return true;
+};
+
+// LD (reg), d8
+auto FETCH_D8_TO_REG_ADDR = [](const auto& reg)
+{
+	data_t d8{FETCH_D8()};
+	memory.Write(reg, d8);
 	return true;
 };
 
 // LD (a16), reg
 auto LD_A16 = [](const address_t& reg)
 {
-	memory.Write(reg, D16());
+	memory.Write(reg, FETCH_D16());
 	return true;
 };
 
@@ -81,7 +81,8 @@ auto LD_0x02 = []()
 // - - - -
 auto LD_0x06 = []()
 {
-	return LD_D8(B);
+	B = FETCH_D8();
+	return true;
 };
 
 // 0x08 LD (a16), SP
@@ -102,7 +103,8 @@ auto LD_0x0A = []()
 // - - - -
 auto LD_0x0E = []()
 {
-	return LD_D8(C);
+	C = FETCH_D8();
+	return true;
 };
 
 // 0x11 LD DE, d16
@@ -123,7 +125,8 @@ auto LD_0x12 = []()
 // - - - -
 auto LD_0x16 = []()
 {
-	return LD_D8(D);
+	D = FETCH_D8();
+	return true;
 };
 
 // 0x1A LD A,(DE)
@@ -137,7 +140,8 @@ auto LD_0x1A = []()
 // - - - -
 auto LD_0x1E = []()
 {
-	return LD_D8(E);
+	E = FETCH_D8();
+	return true;
 };
 
 // 0x21 LD HL,d16
@@ -153,7 +157,7 @@ auto LD_0x22 = []()
 {
 	// Put A into memory address HL. Increment HL.
 	// Same as : LD (HL), A - INC HL
-	LD_REG_ADDR_FROM_REG(HL_const, A_const);
+	SANITY(LD_REG_ADDR_FROM_REG(HL_const, A_const), "Fail loading memory to reg");
 	INC_0x23();
 	return true;
 };
@@ -162,7 +166,8 @@ auto LD_0x22 = []()
 // - - - -
 auto LD_0x26 = []()
 {
-	return LD_D8(H);
+	H = FETCH_D8();
+	return true;
 };
 
 // 0x2A LD A,(HL+)
@@ -180,24 +185,25 @@ auto LD_0x2A = []()
 // - - - -
 auto LD_0x2E = []()
 {
-	return LD_D8(L);
+	L = FETCH_D8();
+	return true;
 };
 
 // 0x31 LD SP,d16
 // - - - -
 auto LD_0x31 = []()
 {
-	return LD_REG_FROM_DATA(SP, D16());
+	return LD_REG_FROM_DATA(SP, FETCH_D16());
 };
 
 // 0x32 LD (HL-),A
 // - - - -
 auto LD_0x32 = []()
 {
-	// Put A into memory address HL. Decrement HL.
-	// Same as : LD (HL), A - DEC HL
-	LD_REG_ADDR_FROM_REG(HL_const, A_const);
+	// Put A into memory address HL. Pre-Decrement HL.
+	// Same as : DEC HL && LD (HL), A
 	DEC_0x2B();
+	LD_REG_ADDR_FROM_REG(HL_const, A_const);
 	return true;
 };
 
@@ -205,17 +211,17 @@ auto LD_0x32 = []()
 // - - - -
 auto LD_0x36 = []()
 {
-	return RunCommandAtAddress(HL_const, LD_D8);
+	return FETCH_D8_TO_REG_ADDR(HL_const);
 };
 
 // 0x3A LD A,(HL-)
 // - - - -
 auto LD_0x3A = []()
 {
-	// Put value at address HL into A. Decrement HL.
-	// Same as : LD A, (HL)-DEC HL
-	LD_REG_FROM_REG_ADDR(HL_const, A);
+	// Put value at address HL into A. Pre-Decrement HL.
+	// Same as : DEC HL && LD A, (HL)
 	DEC_0x2B();
+	LD_REG_FROM_REG_ADDR(HL_const, A);
 	return true;
 };
 
@@ -223,7 +229,8 @@ auto LD_0x3A = []()
 // - - - -
 auto LD_0x3E = []()
 {
-	return LD_D8(A);
+	A = FETCH_D8();
+	return true;
 };
 
 // 0x40 LD B,B
@@ -671,28 +678,28 @@ auto LD_0x7F = []()
 // - - - -
 auto LD_0xE2 = []()
 {
-	return LD_REG_ADDR_FROM_REG(C_const + 0xFF00, A_const);
+	return LD_REG_ADDR_FROM_REG(C_const + ZERO_PAGE_ADDRESS, A_const);
 };
 
 // 0xEA LD (a16),A
 // - - - -
 auto LD_0xEA = []()
 {
-	return LD_REG_ADDR_FROM_REG(D16(), A_const);
+	return LD_REG_ADDR_FROM_REG(FETCH_D16(), A_const);
 };
 
 // 0xF2 LD A,(C)
 // - - - -
 auto LD_0xF2 = []()
 {
-	return LD_REG_FROM_REG_ADDR(C_const + 0xFF00, A);
+	return LD_REG_FROM_REG_ADDR(C_const + ZERO_PAGE_ADDRESS, A);
 };
 
 // 0xF8 LD HL,SP+r8
 // 0 0 H C
 auto LD_0xF8 = []()
 {
-	const r8_t right_hand_operand = D8_TO_R8(D8());
+	const r8_t right_hand_operand = D8_TO_R8(FETCH_D8());
 	F.Clear(Flag::ZERO);
 	F.Clear(Flag::SUB);
 
@@ -721,7 +728,7 @@ auto LD_0xF9 = []()
 // - - - -
 auto LD_0xFA = []()
 {
-	return LD_REG_FROM_REG_ADDR(D16(), A);
+	return LD_REG_FROM_REG_ADDR(FETCH_D16(), A);
 };
 } // Core
 
