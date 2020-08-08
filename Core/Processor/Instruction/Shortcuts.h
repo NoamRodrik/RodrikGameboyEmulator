@@ -49,48 +49,49 @@ static const auto& PC_const{Processor::GetInstance().GetRegisters().GetProgramCo
 
 const auto D8_TO_R8 = [](const data_t number)
 {
-	return static_cast<const r8_t>(number > 127 ? number - 256 : number);
+	Message("Is this right?");
+	return static_cast<const r8_t>(number);
+	//return static_cast<const r8_t>(number > 127 ? number - 256 : number);
 };
 
-const auto DataAt = [](const auto& address)
+const auto READ_DATA_AT = [](const auto& address)
 {
 	data_t data{0};
 	SANITY(memory_const.Read(static_cast<const address_t>(address), data), "Failed reading from memory!");
 	return data;
 };
 
-const auto RunCommandAtAddress = [](const auto& address, const auto& command)
+const auto RUN_COMMAND_ON_ADDRESS = [](const auto& address, const auto& command)
 {
-	data_t data{DataAt(address)};
+	data_t data{READ_DATA_AT(address)};
 	const bool result = command(data);
 	memory.Write(address, data);
 	return result;
 };
 
-const auto FETCH_A8 = []()
+const auto A8 = []()
 {
-	return DataAt(PC_const + 1);
+	return static_cast<data_t>(READ_DATA_AT(PC_const + 1));
 };
 
-const auto FETCH_D8 = []()
+const auto D8 = []()
 {
-	return FETCH_A8();
+	return A8();
 };
 
-const auto FETCH_A16 = []()
+const auto A16 = []()
 {
-	return ((DataAt(PC_const + 2) << 8) & 0xFF00) | (DataAt(PC_const + 1) & 0x00FF);
+	return static_cast<address_t>((READ_DATA_AT(PC_const + 2) << 8) & 0xFF00) | READ_DATA_AT(PC_const + 1);
 };
 
-const auto FETCH_D16 = []()
+const auto D16 = []()
 {
-	return FETCH_A16();
+	return A16();
 };
 
-const auto LOAD_D16 = [](auto& lsb_reg, auto& msb_reg)
+const auto R8 = []()
 {
-	lsb_reg = DataAt(PC_const + 2);
-	msb_reg = DataAt(PC_const + 1);
+	return D8_TO_R8(D8());
 };
 } // Core
 

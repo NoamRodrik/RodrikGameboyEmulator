@@ -1,3 +1,9 @@
+/**
+ * @file		DeviceManager.cpp
+ * @author		Noam Rodrik
+ * @description LR35902's device manager implementation.
+ */
+
 #include "DeviceManager.h"
 #include <Core/Memory/Device/InterruptSwitch.h>
 #include <Core/Memory/Device/CartridgeRAM.h>

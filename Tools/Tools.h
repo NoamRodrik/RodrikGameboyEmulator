@@ -17,8 +17,8 @@
 
 Message("If you want to print, comment this here");
 //#define NO_PRINT
-#define	NO_PRINT_FLAGS
-#define NO_PRINT_REGISTERS
+#define NO_PRINT_FLAGS
+//#define NO_PRINT_REGISTERS
 #define NO_PRINT_IF_AND_IE
 
 #ifndef NO_PRINT
@@ -38,11 +38,13 @@ Message("If you want to print, comment this here");
 #define LOG(fmt, ...)	
 #endif
 
-#define MAIN_LOG(fmt, ...)				   \
-		do								   \
-		{								   \
-			printf(fmt "\n", __VA_ARGS__); \
+#define MAIN_LOG_NO_ENTER(fmt, ...)	  \
+		do							  \
+		{							  \
+			printf(fmt, __VA_ARGS__); \
 		} while (false)
+
+#define MAIN_LOG(fmt, ...) MAIN_LOG_NO_ENTER(fmt "\n", __VA_ARGS__)
 
 #define SANITY(cond, fmt, ...)				    \
 		do									    \
@@ -72,6 +74,7 @@ Message("If you want to print, comment this here");
 
 
 #if _DEBUG
+#ifdef _MSC_BUILD
 #include <Windows.h>
 #include <iostream>
 #include <sstream>
@@ -83,6 +86,12 @@ Message("If you want to print, comment this here");
 			OutputDebugStringW(os_.str().c_str()); \
 		} while(false)
 
+#define SECONDARY_OUTPUT(character) VISUAL_STUDIO_OUTPUT_VIEW_PRINT(character)
+#else
+#define SECONDARY_OUTPUT(character) LOG("%c", character)
+#endif
+#else
+#define SECONDARY_OUTPUT(character) MAIN_LOG_NO_ENTER("%c", character)
 #endif
 
 namespace Tools
@@ -97,6 +106,7 @@ static constexpr uint32_t KilobitsToBits(uint32_t kb)
 	return pow(2, kb);
 }
 
+
 static constexpr bool HalfCarryOnAddition(uint8_t first_num, uint8_t second_num)
 {
 	return (((first_num & 0x0F) + (second_num & 0x0F)) & 0x10) == 0x10;
@@ -107,14 +117,10 @@ static constexpr bool HalfCarryOnAddition(uint16_t first_num, uint16_t second_nu
 	return (((first_num & 0x00FF) + (second_num & 0x00FF)) & 0x0100) == 0x0100;
 }
 
-static constexpr bool HalfCarryOnAddition(uint16_t first_num, uint8_t second_num)
+static constexpr bool HalfCarryOnAddition(uint16_t first_num, int8_t second_num)
 {
-	return (((first_num & 0x00FF) + (second_num)) & 0x0100) == 0x0100;
-}
-
-static constexpr bool HalfCarryOnAddition(uint8_t first_num, uint16_t second_num)
-{
-	return (((first_num) + (second_num & 0x00FF)) & 0x0100) == 0x0100;
+	return (((first_num & 0x00FF) + (second_num)) & 0x0100) == 0x0100 ||
+		(int)(first_num & 0x00FF) + (int)(second_num) < 0;
 }
 
 static constexpr bool HalfCarryOnSubtraction(uint8_t first_num, uint8_t second_num)
@@ -127,34 +133,14 @@ static constexpr bool HalfCarryOnSubtraction(uint16_t first_num, uint16_t second
 	return (int)(first_num & 0x00FF) - (int)(second_num & 0x00FF) < 0;
 }
 
-static constexpr bool HalfCarryOnSubtraction(uint16_t first_num, uint8_t second_num)
-{
-	return (int)(first_num & 0x00FF) - (int)(second_num & 0x0F) < 0;
-}
-
-static constexpr bool CarryOnAddition(uint8_t first_num, uint8_t second_num)
-{
-	return (int)(first_num) + (int)(second_num) > UINT8_MAX;
-}
-
 static constexpr bool CarryOnAddition(uint16_t first_num, uint16_t second_num)
 {
 	return (int)(first_num) + (int)(second_num) > UINT16_MAX;
 }
 
-static constexpr bool CarryOnAddition(uint16_t first_num, uint8_t second_num)
-{
-	return (int)(first_num)+(int)(second_num) > UINT16_MAX;
-}
-
-static constexpr bool CarryOnAddition(uint8_t first_num, uint16_t second_num)
-{
-	return (int)(first_num)+(int)(second_num) > UINT16_MAX;
-}
-
 static constexpr bool CarryOnSubtraction(uint16_t first_num, uint16_t second_num)
 {
-	return (int)(first_num) - (int)(second_num) < 0;
+	return (int)(first_num)-(int)(second_num) < 0;
 }
 
 static constexpr bool ZeroOnAddition(uint16_t first_num, uint16_t second_num)
@@ -162,24 +148,9 @@ static constexpr bool ZeroOnAddition(uint16_t first_num, uint16_t second_num)
 	return first_num + second_num == 0;
 }
 
-static constexpr bool ZeroOnAddition(uint8_t first_num, uint8_t second_num)
-{
-	return first_num + second_num == 0;
-}
-
-static constexpr bool ZeroOnAddition(uint16_t first_num, uint8_t second_num)
-{
-	return first_num + second_num == 0;
-}
-
-static constexpr bool ZeroOnAddition(uint8_t first_num, uint16_t second_num)
-{
-	return first_num + second_num == 0;
-}
-
 static constexpr bool ZeroOnSubtraction(uint16_t first_num, uint8_t second_num)
 {
-	return (int)(first_num) - (int)(second_num) == 0;
+	return (int)(first_num)-(int)(second_num) == 0;
 }
 } // Tools
 

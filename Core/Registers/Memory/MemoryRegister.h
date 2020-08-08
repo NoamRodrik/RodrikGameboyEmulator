@@ -6,6 +6,7 @@
 #ifndef __LR35902_MEMORY_REGISTER_H__
 #define __LR35902_MEMORY_REGISTER_H__
 
+#include <Core/Processor/Instruction/Shortcuts.h>
 #include <Core/Processor/Processor.h>
 
 namespace Core
@@ -22,15 +23,13 @@ public:
 
 	MemoryRegister& operator=(const T other)
 	{
-		Processor::GetInstance().GetMemory().Write(other, MEMORY_ADDRESS);
+		Processor::GetInstance().GetMemory().Write(MEMORY_ADDRESS, other);
 		return *this;
 	}
 
 	operator T() const
 	{
-		T temporary_object{};
-		SANITY(Processor::GetInstance().GetMemory().Read(MEMORY_ADDRESS, temporary_object), "Failed reading from memory!");
-		return temporary_object;
+		return READ_DATA_AT(MEMORY_ADDRESS);
 	}
 
 private:

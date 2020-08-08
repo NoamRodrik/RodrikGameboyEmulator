@@ -34,21 +34,20 @@ public:
 		return true;
 	}
 
-	virtual void Write(const data_t data, const address_t absolute_address) override
+	virtual void Write(const address_t absolute_address, const data_t data) override
 	{
 		this->m_memory[absolute_address - START_ADDRESS] = data;
 	}
 
 	virtual bool Read(const address_t absolute_address, address_t& result) const override
 	{
-		result = this->m_memory[absolute_address - START_ADDRESS] | (this->m_memory[absolute_address - START_ADDRESS + 1] << 8);
-		return true;
+		STOP_RUNNING("Invalid command");
+		return false;
 	}
 
-	virtual void Write(const address_t data, const address_t absolute_address) override
+	virtual void Write(const address_t absolute_address, const address_t data) override
 	{
-		this->m_memory[absolute_address - START_ADDRESS] = data & 0x00FF;
-		this->m_memory[absolute_address - START_ADDRESS + 1] = (data & 0xFF00 >> 8);
+		STOP_RUNNING("Invalid command");
 	}
 
 public:

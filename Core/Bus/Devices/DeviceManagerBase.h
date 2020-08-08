@@ -24,13 +24,13 @@ public:
 
 	virtual ~DeviceManagerBase() = default;
 
-	virtual void Write(const address_t data, const address_t absolute_address) override
+	virtual void Write(const address_t absolute_address, const address_t data) override
 	{
 		for (const gsl::not_null<MemoryDeviceBase*> device : this->m_devices)
 		{
 			if (AddressInRange(absolute_address, device))
 			{
-				return device->Write(data, absolute_address);
+				return device->Write(absolute_address, data);
 			}
 		}
 
@@ -51,13 +51,13 @@ public:
 		return false;
 	}
 
-	virtual void Write(const data_t data, const address_t absolute_address) override
+	virtual void Write(const address_t absolute_address, const data_t data) override
 	{
 		for (const gsl::not_null<MemoryDeviceBase*> device : this->m_devices)
 		{
 			if (AddressInRange(absolute_address, device))
 			{
-				return device->Write(data, absolute_address);
+				return device->Write(absolute_address, data);
 			}
 		}
 		

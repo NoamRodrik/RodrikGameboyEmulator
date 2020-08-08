@@ -28,7 +28,7 @@ public:
 		return true;
 	}
 
-	virtual void Write(const data_t data, const address_t absolute_address) override
+	virtual void Write(const address_t absolute_address, const data_t data) override
 	{
 		this->m_memory[absolute_address - START_ADDRESS] = data;
 	}
@@ -39,10 +39,10 @@ public:
 		return true;
 	}
 
-	virtual void Write(const address_t data, const address_t absolute_address) override
+	virtual void Write(const address_t absolute_address, const address_t data) override
 	{
 		this->m_memory[absolute_address - START_ADDRESS] = data & 0x00FF;
-		this->m_memory[absolute_address - START_ADDRESS + 1] = (data & 0xFF00 >> 8);
+		this->m_memory[absolute_address - START_ADDRESS + 1] = (data & 0xFF00) >> 8;
 	}
 
 public:

@@ -1,7 +1,7 @@
 #include "InterruptHandler.h"
 #include <Core/Interrupts/Registers/InterruptEnable.h>
 #include <Core/Interrupts/Registers/InterruptFlag.h>
-#include <Core/Processor/Instruction/Generated/DI.h>
+#include <Core/Processor/Instruction/Implementation/DI.h>
 #include <Core/Processor/Instruction/Shortcuts.h>
 #include <Core/Interrupts/Flags/IME.h>
 #include <Tools/Tools.h>
@@ -35,6 +35,8 @@ static const std::array<const Interrupt, INTERRUPT_COUNT> InterruptTable
 	
 size_t InterruptHandler::ProcessInterrupts()
 {
+	IME::EnableInterruptsIfScheduled();
+
 	// If the master enable flag isn't on
 	if (!IME::IsEnabled())
 	{

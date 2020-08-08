@@ -29,12 +29,9 @@ namespace Core
 #undef SKIP_BOOT
 #endif
 
-#ifdef _DEBUG
 	Message("Cancel this if you don't want to skip the CPU");
 	#define SKIP_BOOT 1
-#else
-	#define SKIP_BOOT 0
-#endif
+	// #define SKIP_BOOT 0
 
 } // Core
 

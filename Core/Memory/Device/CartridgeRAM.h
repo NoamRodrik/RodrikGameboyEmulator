@@ -40,7 +40,7 @@ public:
 		return true;
 	}
 
-	virtual void Write(const data_t data, const address_t absolute_address) override
+	virtual void Write(const address_t absolute_address, const data_t data) override
 	{
 		this->m_memory[absolute_address - START_ADDRESS] = data;
 	}
@@ -50,7 +50,7 @@ public:
 		// While 0xFF50 isn't 0x1, we still return the system_boot code.
 		if (!this->m_covered_system_boot && (absolute_address - START_ADDRESS) <= 0xFF)
 		{
-			SANITY(absolute_address - START_ADDRESS + 1 < END_ADDRESS, "Overflow on Read");
+			SANITY(absolute_address - START_ADDRESS + 1 <= END_ADDRESS, "Overflow on Read");
 			result = SYSTEM_BOOT_CODE[absolute_address - START_ADDRESS] | (SYSTEM_BOOT_CODE[static_cast<size_t>(absolute_address) - START_ADDRESS + 1] << 8);
 		}
 		else
@@ -61,10 +61,10 @@ public:
 		return true;
 	}
 
-	virtual void Write(const address_t data, const address_t absolute_address) override
+	virtual void Write(const address_t absolute_address, const address_t data) override
 	{
 		this->m_memory[absolute_address - START_ADDRESS] = data & 0x00FF;
-		this->m_memory[absolute_address - START_ADDRESS + 1] = (data & 0xFF00 >> 8);
+		this->m_memory[absolute_address - START_ADDRESS + 1] = (data & 0xFF00) >> 8;
 	}
 
 	/**

@@ -26,10 +26,8 @@ int main(int argc, char** argv)
 
 	do
 	{
-		size_t clock_cycle{Processor::Clock()};
-
 		// CPU needs to syncronize clocks.
-		for (size_t current_cycle = 0; current_cycle <= clock_cycle; ++current_cycle)
+		for (size_t current_cycle = Processor::Clock(); current_cycle > 0; --current_cycle)
 		{
 			Clock::SyncClock();
 		}
@@ -41,24 +39,22 @@ int main(int argc, char** argv)
 void LoadGame()
 {
 	// Choose ROMS from GB folder
-	size_t index{0};
+	size_t index{1};
 	for (const auto& file : std::filesystem::directory_iterator("TestROM"))
 	{
 		MAIN_LOG("%llu) %s", index++, file.path().string().c_str());
 	}
 
-	int chosen_index{0};
+	uint32_t chosen_index{0};
 	do
 	{
 		MAIN_LOG("Choose a wanted file from the file list.");
-		chosen_index = getchar() - '0';
-		static_cast<void>(getchar());
-	} while (chosen_index >= index || chosen_index < 0);
-
+		scanf_s("%u", &chosen_index);
+	} while (chosen_index >= index || chosen_index < 1);
 	index = chosen_index;
 
 	auto directory_iterator = std::filesystem::directory_iterator("TestROM");
-	while (index > 0)
+	while (index > 1)
 	{
 		++directory_iterator;
 		--index;

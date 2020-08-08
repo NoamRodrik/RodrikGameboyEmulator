@@ -28,11 +28,11 @@ public:
 
 	virtual void Pop(address_t& data) override
 	{
-		data_t top_byte{0};
-		data_t bottom_byte{0};
-		this->Pop(bottom_byte);
-		this->Pop(top_byte);
-		data = ((top_byte << 8) & 0xFF00) | (bottom_byte & 0x00FF);
+		data_t msb{0};
+		data_t lsb{0};
+		this->Pop(lsb);
+		this->Pop(msb);
+		data = (msb << 8) | lsb;
 	}
 
 	virtual void Pop(data_t& data) override
@@ -42,7 +42,7 @@ public:
 
 	void Push(const data_t data) override
 	{
-		this->m_memory_context.Write(data, --this->m_data);
+		this->m_memory_context.Write(--this->m_data, data);
 	}
 
 private:

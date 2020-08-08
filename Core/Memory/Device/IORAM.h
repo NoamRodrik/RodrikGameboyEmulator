@@ -36,7 +36,7 @@ public:
 		return true;
 	}
 
-	virtual void Write(const data_t data, const address_t absolute_address) override
+	virtual void Write(const address_t absolute_address, const data_t data) override
 	{
 		if (this->ApplyChanges(data, absolute_address))
 		{
@@ -50,7 +50,7 @@ public:
 		return true;
 	}
 
-	virtual void Write(const address_t data, const address_t absolute_address) override
+	virtual void Write(const address_t absolute_address, const address_t data) override
 	{
 		if (this->ApplyChanges(data & 0x00FF, absolute_address) &&
 			this->ApplyChanges((data & 0xFF00) >> 8, absolute_address + 1))
@@ -76,14 +76,14 @@ private:
 		{
 			case (SERIAL_TRANSFER_CONTROL):
 			{
-#if _DEBUG
+				Message("This is for testing purposes");
 				if (data == (SERIAL_TRANSFER_START | SERIAL_TRANSFER_CLOCK_SOURCE))
 				{
 					data_t byte_read{0};
 					SANITY(this->Read(SERIAL_TRANSFER_DATA, byte_read), "Failed reading serial data");
-					VISUAL_STUDIO_OUTPUT_VIEW_PRINT(byte_read);
+					SECONDARY_OUTPUT(byte_read);
 				}
-#endif
+
 				break;
 			}
 

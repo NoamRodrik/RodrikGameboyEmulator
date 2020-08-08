@@ -16,62 +16,69 @@
 #include <time.h>
 #include <cmath>
 
-#if _DEBUG
-#include <Windows.h>
-#endif
-
 namespace Core
 {
 #if _DEBUG
 void Processor::PrintInstruction(const Instruction& instruction_to_print)
 {
-	LOG_NO_ENTER("%04X %-10s | ", static_cast<const address_t>(PC_const), instruction_to_print.operation_string.c_str());
+	LOG_NO_ENTER("%04X %02X %s ", static_cast<const address_t>(PC_const), READ_DATA_AT(PC_const), instruction_to_print.operation_string.c_str());
 
-	const auto WRITE_AMOUNT = instruction_to_print.bytes_size - Processor::IsPrefix();
-	for (int32_t index = WRITE_AMOUNT; index >= 1; --index)
+	address_t address{0};
+	int iteration{0};
+
+	for (auto index = instruction_to_print.bytes_size - Processor::IsPrefix() - 1; index >= 1; --index)
 	{
-		LOG_NO_ENTER("%02X", DataAt(PC_const + index));
+		address_t data{READ_DATA_AT(PC_const + index)};
+		LOG_NO_ENTER("%02X", data);
+		address |= data << 8*(1 - iteration);
+		iteration += 1;
 	}
 
-	// For alignment
-	for (int32_t index = 0; index < 3 - WRITE_AMOUNT; ++index)
+	if (iteration == 1)
 	{
-		LOG_NO_ENTER("  ");
+		address += ZERO_PAGE_ADDRESS;
+	}
+
+	if (address != 0)
+	{
+		LOG(" %04X", READ_DATA_AT(address));
+	}
+	else
+	{
+		LOG("");
 	}
 }
 
 void Processor::PrintRegisters()
 {
-	LOG_NO_ENTER("A: %02X\nB: %02X\nC: %02X\nD: %02X\nE: %02X\nF: %02X\nH: %02X\nL: %02X\nSP: %04X\nPC: %04X\n",
+	LOG_NO_ENTER("A:%02X B:%02X C:%02X D:%02X E:%02X F:%02X H:%02X L:%02X SP:%04X\n",
 		static_cast<const data_t>(A_const),	 static_cast<const data_t>(B_const),
 		static_cast<const data_t>(C_const),	 static_cast<const data_t>(D_const),
 		static_cast<const data_t>(E_const),	 static_cast<const data_t>(F_const),
 		static_cast<const data_t>(H_const),	 static_cast<const data_t>(L_const),
-		static_cast<const address_t>(SP_const), static_cast<const address_t>(PC_const));
+		static_cast<const address_t>(SP_const));
 }
 
 void Processor::PrintFlags()
 {
 	static constexpr char ON[] = "1";
 	static constexpr char OFF[] = "0";
-	LOG_NO_ENTER(" |");
-	LOG_NO_ENTER(" Z = ");
+	LOG_NO_ENTER("Z:");
 	LOG_NO_ENTER(F.IsSet(Flag::ZERO) ? ON: OFF);
-	LOG_NO_ENTER(" N = ");
+	LOG_NO_ENTER(" N:");
 	LOG_NO_ENTER(F.IsSet(Flag::SUB) ? ON : OFF);
-	LOG_NO_ENTER(" H = ");
+	LOG_NO_ENTER(" H:");
 	LOG_NO_ENTER(F.IsSet(Flag::HALF_CARRY) ? ON : OFF);
-	LOG_NO_ENTER(" C = ");
-	LOG_NO_ENTER(F.IsSet(Flag::CARRY) ? ON : OFF);
+	LOG_NO_ENTER(" C:");
+	LOG("%s", F.IsSet(Flag::CARRY) ? ON : OFF);
 }
 
 void Processor::PrintInterruptRegisters()
 {
-	LOG_NO_ENTER(" |");
-	LOG_NO_ENTER(" IF = ");
+	LOG_NO_ENTER("IF:");
 	LOG_NO_ENTER("%02hhX", static_cast<data_t>(InterruptFlag{}));
-	LOG_NO_ENTER(" IE = ");
-	LOG_NO_ENTER("%02hhX", static_cast<data_t>(InterruptEnable{}));
+	LOG_NO_ENTER(" IE:");
+	LOG("%02hhX", static_cast<data_t>(InterruptEnable{}));
 }
 #endif
 	
@@ -104,15 +111,11 @@ const size_t Processor::Clock()
 	}
 
 	const auto& command_to_execute = Processor::IsPrefix() ?
-										PREFIX_LOOKUP_TABLE[DataAt(PC_const)] :
-										INSTRUCTION_LOOKUP_TABLE[DataAt(PC_const)];
+										PREFIX_LOOKUP_TABLE[READ_DATA_AT(PC_const)] :
+										INSTRUCTION_LOOKUP_TABLE[READ_DATA_AT(PC_const)];
 
 #if _DEBUG
 	Processor::PrintInstruction(command_to_execute);
-#ifndef NO_PRINT_FLAGS
-	Processor::PrintFlags();
-	LOG_NO_ENTER(" | ->");
-#endif
 #endif
 
 	// If prefix is enabled, we need to disable it.
@@ -130,47 +133,39 @@ const size_t Processor::Clock()
 
 		if (command_to_execute.extended_cycles_amount != 0)
 		{
-			// Fetch the lower between the two, the operation didn't successfully happen.
-			clock_cycle = std::min<decltype(command_to_execute.cycles_amount)>(
-								   command_to_execute.cycles_amount,
-								   command_to_execute.extended_cycles_amount);
+			// The operation didn't successfully happen.
+			clock_cycle = command_to_execute.extended_cycles_amount;
 		}
 	}
 	else
 	{
 		if (command_to_execute.extended_cycles_amount != 0)
 		{
-			// Fetch the higher between the two, the operation did successfully happen.
-			clock_cycle = std::max<decltype(command_to_execute.cycles_amount)>(
-				                   command_to_execute.cycles_amount,
-								   command_to_execute.extended_cycles_amount);
+			// The operation did successfully happen.
+			clock_cycle = command_to_execute.cycles_amount;
 		}
 	}
 
 #if _DEBUG
-#ifndef NO_PRINT
-	LOG("");
-#endif
-
 #ifndef NO_PRINT_FLAGS
 	Processor::PrintFlags();
-	LOG(" | ");
 #endif
 
 #ifndef NO_PRINT_IF_AND_IE
 	Processor::PrintInterruptRegisters();
-	LOG(" | ");
 #endif
 
 #ifndef NO_PRINT_REGISTERS
 	Processor::PrintRegisters();
-	LOG(" | ");
+#endif
+
+#ifndef NO_PRINT
+	LOG("");
 #endif
 #endif
 
-	clock_cycle += Clock::IsTimerDividerElapsed() ? Timer::IncreaseDivider() : 0;
-	clock_cycle += Clock::IsTimerCounterElapsed() ? Timer::IncreaseCounter() : 0;
-
-	return clock_cycle;
+	return clock_cycle +
+		   Clock::IsTimerDividerElapsed() ? Timer::IncreaseDivider() : 0 +
+		   Clock::IsTimerCounterElapsed() ? Timer::IncreaseCounter() : 0;
 }
 } // Core

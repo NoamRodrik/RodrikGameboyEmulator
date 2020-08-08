@@ -17,9 +17,26 @@ public:
 	static inline void DisableInterrupts() { IME::GetInstance().m_enabled = false; }
 	static inline bool IsEnabled() { return IME::GetInstance().m_enabled; }
 
+	static inline void Schedule() { IME::GetInstance().m_schedule = true; IME::GetInstance().m_cycles_wait = 1; }
+	static inline void EnableInterruptsIfScheduled()
+	{
+		if (IME::GetInstance().m_cycles_wait > 0)
+		{
+			IME::GetInstance().m_cycles_wait -= 1;
+		}
+
+		if (IME::GetInstance().m_schedule)
+		{
+			IME::GetInstance().m_schedule = false;
+			IME::EnableInterrupts();
+		}
+	}
+
 private:
 	// By default, the IME is disabled.
-	bool m_enabled{false};
+	bool   m_enabled{false};
+	bool   m_schedule{false};
+	size_t m_cycles_wait{0};
 };
 }
 

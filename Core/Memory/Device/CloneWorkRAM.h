@@ -17,6 +17,8 @@ class DeviceManagerBase;
 
 namespace Core
 {
+class WorkRAM;
+
 class CloneWorkRAM : public MemoryDeviceBase
 {
 public:
@@ -28,12 +30,12 @@ public:
 		return true;
 	}
 
-	virtual void Write(const data_t data, const address_t absolute_address) override
+	virtual void Write(const address_t absolute_address, const data_t data) override
 	{
 		this->m_memory[absolute_address - START_ADDRESS] = data;
 
 		// Clones to the WorkRAM.
-		this->m_device_manager.Write(data, absolute_address - SIZE);
+		this->m_device_manager.Write(absolute_address - SIZE, data);
 	}
 
 	virtual bool Read(const address_t absolute_address, address_t& result) const override
@@ -42,14 +44,29 @@ public:
 		return true;
 	}
 
-	virtual void Write(const address_t data, const address_t absolute_address) override
+	virtual void Write(const address_t absolute_address, const address_t data) override
 	{
 		this->m_memory[absolute_address - START_ADDRESS] = data & 0x00FF;
-		this->m_memory[absolute_address - START_ADDRESS + 1] = (data & 0xFF00 >> 8);
+		this->m_memory[absolute_address - START_ADDRESS + 1] = (data & 0xFF00) >> 8;
+
+		data_t lsb{0};
+		data_t msb{0};
+
+		SANITY(this->m_device_manager.Read(0xC000 + absolute_address - START_ADDRESS, lsb),
+			   "Failed reading from WorkRAM");
+		SANITY(this->m_device_manager.Read(0xC000 + absolute_address - START_ADDRESS + 1, msb),
+			"Failed reading from WorkRAM");
 
 		// Clones to the WorkRAM
-		this->m_device_manager.Write(static_cast<address_t>(data & 0x00FF), absolute_address - SIZE);
-		this->m_device_manager.Write(static_cast<address_t>((data & 0xFF00) >> 8), absolute_address - SIZE);
+		if (lsb != this->m_memory[absolute_address - START_ADDRESS])
+		{
+			this->m_device_manager.Write(0xC000 + absolute_address - START_ADDRESS, lsb);
+		}
+
+		if (msb != this->m_memory[absolute_address - START_ADDRESS + 1])
+		{
+			this->m_device_manager.Write(0xC000 + absolute_address - START_ADDRESS + 1, msb);
+		}
 	}
 
 public:

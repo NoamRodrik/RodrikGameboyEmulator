@@ -14,14 +14,14 @@ namespace Core
 class Bus : public IMemoryDeviceAccess
 {
 public:
-	virtual void Write(const data_t data, const address_t absolute_address) override
+	virtual void Write(const address_t absolute_address, const data_t data) override
 	{
-		this->m_device_manager.Write(data, absolute_address);
+		this->m_device_manager.Write(absolute_address, data);
 	}
 
-	virtual void Write(const address_t data, const address_t absolute_address) override
+	virtual void Write(const address_t absolute_address, const address_t data) override
 	{
-		this->m_device_manager.Write(data, absolute_address);
+		this->m_device_manager.Write(absolute_address, data);
 	}
 
 	virtual bool Read(const address_t absolute_address, data_t& result) const override
