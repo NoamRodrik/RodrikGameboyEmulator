@@ -46,7 +46,7 @@ auto POP_0xF1 = []()
 	SP.Pop(A);
 
 	/* This is a feature of the EFL register: if overwritten, the lower 4 bits are always 0 nonetheless! */
-	F = static_cast<data_t>(F_const) & 0xF0;
+	F &= 0xF0;
 	return true;
 };
 } // Core

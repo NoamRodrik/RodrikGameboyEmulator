@@ -28,9 +28,9 @@ auto ADD_DATA_TO_REG = [](auto& io_reg, const auto& data)
 
 // ADD io_reg, data
 // Z 0 H C or 0 0 H C
-auto ADD_DATA_TO_REG_MUTATE_ZERO_FLAG = [](auto& io_reg, const auto& data, const bool zero_flag_enable = true)
+auto ADD_DATA_TO_REG_MUTATE_ZERO_FLAG = [](auto& io_reg, const auto& data)
 {
-	F.MutateByCondition(zero_flag_enable && Tools::ZeroOnAddition(io_reg, data), Flag::ZERO);
+	F.MutateByCondition(Tools::ZeroOnAddition(io_reg, data), Flag::ZERO);
 	return ADD_DATA_TO_REG(io_reg, data);
 };
 
@@ -129,8 +129,12 @@ auto ADD_0xC6 = []()
 // 0 0 H C
 auto ADD_0xE8 = []()
 {
-	// false means -> Always clear the zero flag!
-	return ADD_DATA_TO_REG_MUTATE_ZERO_FLAG(SP, R8(), false);
+	F.Clear(Flag::ZERO);
+	F.Clear(Flag::SUB);
+	F.MutateByCondition(((SP_const & 0x000F) + (R8() & 0x0F)) & 0x00F0, Flag::HALF_CARRY);
+	F.MutateByCondition(((SP_const & 0x00FF) + (R8() & 0xFF)) & 0x0F00, Flag::CARRY);
+	SP += R8();
+	return true;
 };
 } // Core
 

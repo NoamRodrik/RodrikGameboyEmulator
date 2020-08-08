@@ -22,7 +22,7 @@ public:
 
 public:
 	static constexpr address_t INTERRUPT_FLAG_ADDRESS{0xFF0F};
-	static constexpr data_t    INTERRUPT_FLAG_DEFAULT_VALUE{0xE0};
+	static constexpr data_t    INTERRUPT_FLAG_DEFAULT_VALUE{0x00};
 };
 } // Core
 

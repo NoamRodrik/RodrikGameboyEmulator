@@ -21,32 +21,7 @@ namespace Core
 #if _DEBUG
 void Processor::PrintInstruction(const Instruction& instruction_to_print)
 {
-	LOG_NO_ENTER("%04X %02X %s ", static_cast<const address_t>(PC_const), READ_DATA_AT(PC_const), instruction_to_print.operation_string.c_str());
-
-	address_t address{0};
-	int iteration{0};
-
-	for (auto index = instruction_to_print.bytes_size - Processor::IsPrefix() - 1; index >= 1; --index)
-	{
-		address_t data{READ_DATA_AT(PC_const + index)};
-		LOG_NO_ENTER("%02X", data);
-		address |= data << 8*(1 - iteration);
-		iteration += 1;
-	}
-
-	if (iteration == 1)
-	{
-		address += ZERO_PAGE_ADDRESS;
-	}
-
-	if (address != 0)
-	{
-		LOG(" %04X", READ_DATA_AT(address));
-	}
-	else
-	{
-		LOG("");
-	}
+	LOG("%04X %02X %s ", static_cast<const address_t>(PC_const), READ_DATA_AT(PC_const), instruction_to_print.operation_string.c_str());
 }
 
 void Processor::PrintRegisters()
@@ -119,7 +94,6 @@ const size_t Processor::Clock()
 #endif
 
 	// If prefix is enabled, we need to disable it.
-	PC -= Processor::IsPrefix();
 	Processor::ClearPrefixCommand();
 
 	// The compute amount is the amount of cycles the command needs.

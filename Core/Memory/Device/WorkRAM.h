@@ -33,41 +33,15 @@ public:
 	{
 		this->m_memory[absolute_address - START_ADDRESS] = data;
 
-		if (absolute_address - START_ADDRESS < 0x200)
+		data_t clone_data{0};
+
+		SANITY(this->m_device_manager.Read(CloneWorkRAM::START_ADDRESS + absolute_address - START_ADDRESS, clone_data),
+			"Failed reading from CloneWorkRAM");
+
+		if (clone_data != data)
 		{
 			// Clones to the CloneWorkRAM
 			this->m_device_manager.Write(CloneWorkRAM::START_ADDRESS + (absolute_address - START_ADDRESS), data);
-		}
-	}
-
-	virtual bool Read(const address_t absolute_address, address_t& result) const override
-	{
-		result = this->m_memory[absolute_address - START_ADDRESS] | (this->m_memory[absolute_address - START_ADDRESS + 1] << 8);
-		return true;
-	}
-
-	virtual void Write(const address_t absolute_address, const address_t data) override
-	{
-		this->m_memory[absolute_address - START_ADDRESS] = data & 0x00FF;
-		this->m_memory[absolute_address - START_ADDRESS + 1] = (data & 0xFF00) >> 8;
-
-		data_t lsb{0};
-		data_t msb{0};
-
-		SANITY(this->m_device_manager.Read(CloneWorkRAM::START_ADDRESS + absolute_address - START_ADDRESS, lsb),
-			"Failed reading from CloneWorkRAM");
-		SANITY(this->m_device_manager.Read(CloneWorkRAM::START_ADDRESS + absolute_address - START_ADDRESS + 1, msb),
-			"Failed reading from CloneWorkRAM");
-
-		// Clones to the CloneWorkRAM
-		if (lsb != this->m_memory[absolute_address - START_ADDRESS])
-		{
-			this->m_device_manager.Write(CloneWorkRAM::START_ADDRESS + absolute_address - START_ADDRESS, lsb);
-		}
-
-		if (msb != this->m_memory[absolute_address - START_ADDRESS + 1])
-		{
-			this->m_device_manager.Write(CloneWorkRAM::START_ADDRESS + absolute_address - START_ADDRESS + 1, msb);
 		}
 	}
 

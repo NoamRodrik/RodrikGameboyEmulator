@@ -19,6 +19,9 @@ public:
 public:
 	using MemoryRegister::operator=;
 	using MemoryRegister::operator data_t;
+
+public:
+	static constexpr auto TIMER_CONTROL_DEFAULT_VALUE = 0;
 };
 } // Core
 

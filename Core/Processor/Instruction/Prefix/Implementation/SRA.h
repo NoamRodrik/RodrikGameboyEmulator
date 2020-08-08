@@ -11,15 +11,15 @@
 
 namespace Core
 {
-// SRA reg
+// SRA data
 // Z 0 0 C
-auto SRA_REG = [](auto& reg)
+auto SRA = [](data_t& data)
 {
 	F.Clear(Flag::SUB);
 	F.Clear(Flag::HALF_CARRY);
-	F.MutateByCondition(reg & 0x01, Flag::CARRY);
-	reg = ((reg & 128) | (reg >> 1));
-	F.MutateByCondition(reg == 0, Flag::ZERO);
+	F.MutateByCondition(data & 0x01, Flag::CARRY);
+	data = ((data >> 1) | (data & 0x80));
+	F.MutateByCondition(data == 0, Flag::ZERO);
 	return true;
 };
 
@@ -27,56 +27,56 @@ auto SRA_REG = [](auto& reg)
 // Z 0 0 0
 auto SRA_0x28 = []()
 {
-	return SRA_REG(B);
+	return SRA(B);
 };
 
 // 0x29 SRA C
 // Z 0 0 0
 auto SRA_0x29 = []()
 {
-	return SRA_REG(C);
+	return SRA(C);
 };
 
 // 0x2A SRA D
 // Z 0 0 0
 auto SRA_0x2A = []()
 {
-	return SRA_REG(D);
+	return SRA(D);
 };
 
 // 0x2B SRA E
 // Z 0 0 0
 auto SRA_0x2B = []()
 {
-	return SRA_REG(E);
+	return SRA(E);
 };
 
 // 0x2C SRA H
 // Z 0 0 0
 auto SRA_0x2C = []()
 {
-	return SRA_REG(H);
+	return SRA(H);
 };
 
 // 0x2D SRA L
 // Z 0 0 0
 auto SRA_0x2D = []()
 {
-	return SRA_REG(L);
+	return SRA(L);
 };
 
 // 0x2E SRA (HL)
 // Z 0 0 0
 auto SRA_0x2E = []()
 {
-	return RUN_COMMAND_ON_ADDRESS(HL_const, SRA_REG);
+	return RUN_COMMAND_ON_ADDRESS(HL_const, SRA);
 };
 
 // 0x2F SRA A
 // Z 0 0 0
 auto SRA_0x2F = []()
 {
-	return SRA_REG(A);
+	return SRA(A);
 };
 } // Core
 

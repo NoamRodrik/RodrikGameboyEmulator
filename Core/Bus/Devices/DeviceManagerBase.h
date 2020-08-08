@@ -24,33 +24,6 @@ public:
 
 	virtual ~DeviceManagerBase() = default;
 
-	virtual void Write(const address_t absolute_address, const address_t data) override
-	{
-		for (const gsl::not_null<MemoryDeviceBase*> device : this->m_devices)
-		{
-			if (AddressInRange(absolute_address, device))
-			{
-				return device->Write(absolute_address, data);
-			}
-		}
-
-		STOP_RUNNING("Didn't write anything to the devices.");
-	}
-
-	virtual bool Read(const address_t absolute_address, address_t& result) const override
-	{
-		for (const gsl::not_null<MemoryDeviceBase*> device : this->m_devices)
-		{
-			if (AddressInRange(absolute_address, device))
-			{
-				return device->Read(absolute_address, result);
-			}
-		}
-
-		STOP_RUNNING("Failed reading from device -> The address is illegal and not in range!");
-		return false;
-	}
-
 	virtual void Write(const address_t absolute_address, const data_t data) override
 	{
 		for (const gsl::not_null<MemoryDeviceBase*> device : this->m_devices)

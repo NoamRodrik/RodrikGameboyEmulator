@@ -15,11 +15,11 @@ namespace Core
 // - 1 1 -
 auto CPL_0x2F = []()
 {
-	// Flip A
-	A = ~A;
-	
 	F.Set(Flag::SUB);
 	F.Set(Flag::HALF_CARRY);
+
+	// Flip A
+	A = ~A;
 
 	return true;
 };

@@ -33,18 +33,6 @@ public:
 		this->m_memory[absolute_address - START_ADDRESS] = data;
 	}
 
-	virtual bool Read(const address_t absolute_address, address_t& result) const override
-	{
-		result = this->m_memory[absolute_address - START_ADDRESS] | (this->m_memory[absolute_address - START_ADDRESS + 1] << 8);
-		return true;
-	}
-
-	virtual void Write(const address_t absolute_address, const address_t data) override
-	{
-		this->m_memory[absolute_address - START_ADDRESS] = data & 0x00FF;
-		this->m_memory[absolute_address - START_ADDRESS + 1] = (data & 0xFF00) >> 8;
-	}
-
 public:
 	static constexpr uint16_t START_ADDRESS = 0xFF80;
 	static constexpr uint16_t END_ADDRESS = 0xFFFE;

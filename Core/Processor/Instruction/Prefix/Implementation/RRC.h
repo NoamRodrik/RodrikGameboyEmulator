@@ -13,21 +13,21 @@ namespace Core
 {
 // RRC reg
 // Z 0 0 C
-auto RRC_REG = [](auto& reg)
+auto RRC = [](auto& reg)
 {
 	F.Clear(Flag::SUB);
 	F.Clear(Flag::HALF_CARRY);
 
+	const bool WAS_CARRY_FLAG_SET{F.IsSet(Flag::CARRY)};
+
 	// Fetching the utmost left bit.
-	uint8_t shifted_bit = reg & 0x01;
-	F.MutateByCondition(shifted_bit == 0x01, Flag::CARRY);
+	F.MutateByCondition(reg & 0x01, Flag::CARRY);
 
 	// Rotate right A.
 	// Restore shifted_bit's position.
-	reg >>= 1;
-	shifted_bit <<= 7;
-	reg |= shifted_bit;
+	reg = (reg >> 1) | (static_cast<const data_t>(WAS_CARRY_FLAG_SET) << 7);
 	F.MutateByCondition(reg == 0, Flag::ZERO);
+
 	return true;
 };
 
@@ -35,56 +35,56 @@ auto RRC_REG = [](auto& reg)
 // Z 0 0 C
 auto RRC_0x08 = []()
 {
-	return RRC_REG(B);
+	return RRC(B);
 };
 
 // 0x09 RRC C
 // Z 0 0 C
 auto RRC_0x09 = []()
 {
-	return RRC_REG(C);
+	return RRC(C);
 };
 
 // 0x0A RRC D
 // Z 0 0 C
 auto RRC_0x0A = []()
 {
-	return RRC_REG(D);
+	return RRC(D);
 };
 
 // 0x0B RRC E
 // Z 0 0 C
 auto RRC_0x0B = []()
 {
-	return RRC_REG(E);
+	return RRC(E);
 };
 
 // 0x0C RRC H
 // Z 0 0 C
 auto RRC_0x0C = []()
 {
-	return RRC_REG(H);
+	return RRC(H);
 };
 
 // 0x0D RRC L
 // Z 0 0 C
 auto RRC_0x0D = []()
 {
-	return RRC_REG(L);
+	return RRC(L);
 };
 
 // 0x0E RRC (HL)
 // Z 0 0 C
 auto RRC_0x0E = []()
 {
-	return RUN_COMMAND_ON_ADDRESS(HL_const, RRC_REG);
+	return RUN_COMMAND_ON_ADDRESS(HL_const, RRC);
 };
 
 // 0x0F RRC A
 // Z 0 0 C
 auto RRC_0x0F = []()
 {
-	return RRC_REG(A);
+	return RRC(A);
 };
 } // Core
 

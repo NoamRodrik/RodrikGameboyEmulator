@@ -47,13 +47,6 @@ static const auto& SP_const{Processor::GetInstance().GetRegisters().GetStackRegi
 static auto& PC{Processor::GetInstance().GetRegisters().GetProgramCounter()};
 static const auto& PC_const{Processor::GetInstance().GetRegisters().GetProgramCounter()};
 
-const auto D8_TO_R8 = [](const data_t number)
-{
-	Message("Is this right?");
-	return static_cast<const r8_t>(number);
-	//return static_cast<const r8_t>(number > 127 ? number - 256 : number);
-};
-
 const auto READ_DATA_AT = [](const auto& address)
 {
 	data_t data{0};
@@ -81,7 +74,7 @@ const auto D8 = []()
 
 const auto A16 = []()
 {
-	return static_cast<address_t>((READ_DATA_AT(PC_const + 2) << 8) & 0xFF00) | READ_DATA_AT(PC_const + 1);
+	return ((static_cast<address_t>(READ_DATA_AT(PC_const + 2)) << 8) & 0xFF00) | READ_DATA_AT(PC_const + 1);
 };
 
 const auto D16 = []()
@@ -91,7 +84,7 @@ const auto D16 = []()
 
 const auto R8 = []()
 {
-	return D8_TO_R8(D8());
+	return static_cast<const r8_t>(D8());
 };
 } // Core
 

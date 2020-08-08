@@ -15,14 +15,15 @@ namespace Core
 // Z 1 H C
 auto SBC_WITH_A = [](const auto& data)
 {
-	const data_t data_to_subtract = static_cast<data_t>(data) + static_cast<data_t>(F.IsSet(Flag::CARRY));
-
-	F.MutateByCondition(Tools::ZeroOnSubtraction(data_to_subtract, static_cast<data_t>(A_const)), Flag::ZERO);
-	F.MutateByCondition(Tools::CarryOnSubtraction(static_cast<data_t>(A_const), data_to_subtract), Flag::CARRY);
+	const bool WAS_CARRY_SET{F.IsSet(Flag::CARRY)};
+	const int32_t SBC_RESULT{static_cast<int32_t>(A_const) - static_cast<int32_t>(data) - static_cast<int32_t>(WAS_CARRY_SET)};
+	
+	F.MutateByCondition(SBC_RESULT == 0, Flag::ZERO);
 	F.Set(Flag::SUB);
-	F.MutateByCondition(Tools::HalfCarryOnSubtraction(static_cast<data_t>(A_const), data_to_subtract), Flag::HALF_CARRY);
+	F.MutateByCondition(((A_const & 0x0F) - (data & 0x0F) - (static_cast<const data_t>(WAS_CARRY_SET) & 0x0F)) < 0, Flag::HALF_CARRY);
+	F.MutateByCondition(SBC_RESULT < 0, Flag::CARRY);
 
-	A = (static_cast<data_t>(A_const) - data_to_subtract) & 0x00FF;
+	A = static_cast<data_t>(SBC_RESULT);
 
 	return true;
 };

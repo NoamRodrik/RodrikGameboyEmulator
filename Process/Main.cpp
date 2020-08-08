@@ -7,6 +7,7 @@
 #include <Core/GPU/Engine/MainPixelEngine.h>
 #include <Core/Processor/Timer/Timer.h>
 #include <Core/Processor/Clock/Clock.h>
+#include <Core/Interrupts/Flags/IME.h>
 #include <Core/Processor/Processor.h>
 #include <filesystem>
 
@@ -30,6 +31,7 @@ int main(int argc, char** argv)
 		for (size_t current_cycle = Processor::Clock(); current_cycle > 0; --current_cycle)
 		{
 			Clock::SyncClock();
+			IME::EnableInterruptsIfScheduled();
 		}
 	} while (true);
 

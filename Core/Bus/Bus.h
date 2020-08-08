@@ -19,17 +19,7 @@ public:
 		this->m_device_manager.Write(absolute_address, data);
 	}
 
-	virtual void Write(const address_t absolute_address, const address_t data) override
-	{
-		this->m_device_manager.Write(absolute_address, data);
-	}
-
 	virtual bool Read(const address_t absolute_address, data_t& result) const override
-	{
-		return this->m_device_manager.Read(absolute_address, result);
-	}
-
-	virtual bool Read(const address_t absolute_address, address_t& result) const override
 	{
 		return this->m_device_manager.Read(absolute_address, result);
 	}

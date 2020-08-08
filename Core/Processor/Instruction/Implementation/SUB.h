@@ -21,6 +21,7 @@ auto SUB_WITH_A = [](const auto& data)
 	F.MutateByCondition(Tools::CarryOnSubtraction(A_const, data), Flag::CARRY);
 
 	A -= data;
+
 	return true;
 };
 

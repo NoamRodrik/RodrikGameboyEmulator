@@ -31,7 +31,7 @@ namespace Core
 
 	Message("Cancel this if you don't want to skip the CPU");
 	#define SKIP_BOOT 1
-	// #define SKIP_BOOT 0
+	//#define SKIP_BOOT 0
 
 } // Core
 

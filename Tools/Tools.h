@@ -16,9 +16,9 @@
 #define NO_PIXEL_ENGINE
 
 Message("If you want to print, comment this here");
-//#define NO_PRINT
+#define NO_PRINT
 #define NO_PRINT_FLAGS
-//#define NO_PRINT_REGISTERS
+#define NO_PRINT_REGISTERS
 #define NO_PRINT_IF_AND_IE
 
 #ifndef NO_PRINT
@@ -106,51 +106,74 @@ static constexpr uint32_t KilobitsToBits(uint32_t kb)
 	return pow(2, kb);
 }
 
-
 static constexpr bool HalfCarryOnAddition(uint8_t first_num, uint8_t second_num)
 {
-	return (((first_num & 0x0F) + (second_num & 0x0F)) & 0x10) == 0x10;
+	decltype(first_num) result = first_num & 0x0F;
+	result += (second_num & 0x0F);
+	return result & 0x10;
 }
 
 static constexpr bool HalfCarryOnAddition(uint16_t first_num, uint16_t second_num)
 {
-	return (((first_num & 0x00FF) + (second_num & 0x00FF)) & 0x0100) == 0x0100;
-}
-
-static constexpr bool HalfCarryOnAddition(uint16_t first_num, int8_t second_num)
-{
-	return (((first_num & 0x00FF) + (second_num)) & 0x0100) == 0x0100 ||
-		(int)(first_num & 0x00FF) + (int)(second_num) < 0;
+	decltype(first_num) result = first_num & 0x00FF;
+	result += (second_num & 0x00FF);
+	return result & 0x0100;
 }
 
 static constexpr bool HalfCarryOnSubtraction(uint8_t first_num, uint8_t second_num)
 {
-	return (int)(first_num & 0x0F) - (int)(second_num & 0x0F) < 0;
+	int32_t result = first_num & 0x0F;
+	result -= (second_num & 0x0F);
+	return result < 0;
 }
 
 static constexpr bool HalfCarryOnSubtraction(uint16_t first_num, uint16_t second_num)
 {
-	return (int)(first_num & 0x00FF) - (int)(second_num & 0x00FF) < 0;
+	int32_t result = first_num & 0x00FF;
+	result -= (second_num & 0x00FF);
+	return result < 0;
 }
 
 static constexpr bool CarryOnAddition(uint16_t first_num, uint16_t second_num)
 {
-	return (int)(first_num) + (int)(second_num) > UINT16_MAX;
+	int32_t result = first_num;
+	result += second_num;
+	return result & 0x10000;
 }
 
 static constexpr bool CarryOnSubtraction(uint16_t first_num, uint16_t second_num)
 {
-	return (int)(first_num)-(int)(second_num) < 0;
+	int32_t result = (first_num & 0x00FF);
+	result -= (second_num & 0x00FF);
+	return result < 0;
 }
 
 static constexpr bool ZeroOnAddition(uint16_t first_num, uint16_t second_num)
 {
-	return first_num + second_num == 0;
+	decltype(first_num) result = first_num;
+	result += second_num;
+	return result == 0;
+}
+
+static constexpr bool ZeroOnAddition(uint8_t first_num, uint8_t second_num)
+{
+	decltype(first_num) result = first_num;
+	result += second_num;
+	return result == 0;
+}
+
+static constexpr bool ZeroOnSubtraction(uint8_t first_num, uint8_t second_num)
+{
+	decltype(first_num) result = first_num;
+	result -= second_num;
+	return result == 0;
 }
 
 static constexpr bool ZeroOnSubtraction(uint16_t first_num, uint8_t second_num)
 {
-	return (int)(first_num)-(int)(second_num) == 0;
+	decltype(first_num) result = first_num;
+	result -= second_num;
+	return result == 0;
 }
 } // Tools
 

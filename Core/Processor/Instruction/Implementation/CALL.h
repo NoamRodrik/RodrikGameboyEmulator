@@ -15,7 +15,7 @@ auto CALL_A16 = []()
 {
 	// + 3 Because we want to skip the call size.
 	SP.Push(static_cast<const address_t>(PC_const + 3));
-	PC = D16();
+	PC = A16();
 
 	// Don't change the PC.
 	return false;

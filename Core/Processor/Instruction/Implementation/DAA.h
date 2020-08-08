@@ -13,6 +13,36 @@ namespace Core
 {
 // 0x27 DAA
 // Z - 0 C
+/*
+auto DAA_0x27 = []()
+{
+	int32_t calculation{0};
+	address_t daa_correction = F.IsSet(Flag::CARRY) ? 0x60 : 0x00;
+
+	if (F.IsSet(Flag::HALF_CARRY) || (!F.IsSet(Flag::SUB) && (static_cast<const data_t>(A_const) & 0x0F) > 0x09))
+	{
+		daa_correction |= 0x06;
+	}
+
+	if (F.IsSet(Flag::CARRY) || (!F.IsSet(Flag::SUB) && static_cast<const data_t>(A_const) > 0x99))
+	{
+		daa_correction |= 0x60;
+	}
+
+	calculation = F.IsSet(Flag::SUB) ? A_const - daa_correction : A_const + daa_correction;\
+
+	F.MutateByCondition((calculation & 0x00FF) == 0, Flag::ZERO);
+	F.Clear(Flag::HALF_CARRY);
+	if (((daa_correction << 2) & 0x100) != 0)
+	{
+		F.Set(Flag::CARRY);
+	}
+
+	A = (calculation & 0x00FF);
+
+	return true;
+};
+*/
 auto DAA_0x27 = []()
 {
 	if (!F.IsSet(Flag::SUB))

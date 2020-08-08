@@ -18,10 +18,11 @@ static constexpr data_t DECREMENT_VALUE = 1;
 // DEC o_reg
 auto DEC_REG = [](data_t& o_reg)
 {
-	F.MutateByCondition(Tools::HalfCarryOnSubtraction(o_reg, DECREMENT_VALUE), Flag::HALF_CARRY);
-	o_reg -= DECREMENT_VALUE;
-	F.MutateByCondition(o_reg == 0, Flag::ZERO);
+	F.MutateByCondition(Tools::ZeroOnSubtraction(o_reg, DECREMENT_VALUE), Flag::ZERO);
 	F.Set(Flag::SUB);
+	F.MutateByCondition(Tools::HalfCarryOnSubtraction(o_reg, DECREMENT_VALUE), Flag::HALF_CARRY);
+
+	o_reg -= DECREMENT_VALUE;
 
 	return true;
 };

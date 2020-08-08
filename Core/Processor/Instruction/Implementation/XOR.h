@@ -19,8 +19,8 @@ auto XOR_WITH_A = [](const auto data)
 
 	F.MutateByCondition(A == 0, Flag::ZERO);
 	F.Clear(Flag::SUB);
-	F.Clear(Flag::CARRY);
 	F.Clear(Flag::HALF_CARRY);
+	F.Clear(Flag::CARRY);
 
 	return true;
 };

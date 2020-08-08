@@ -11,13 +11,13 @@
 
 namespace Core
 {
-// SWAP reg
+// SWAP data
 // Z 0 0 0
-auto SWAP_REG = [](auto& reg)
+auto SWAP = [](data_t& data)
 {
-	reg = ((reg & 0x0F) << 4) | ((reg & 0xF0) >> 4);
+	data = ((data & 0x0F) << 4) | ((data & 0xF0) >> 4);
 
-	F.MutateByCondition(reg == 0, Flag::ZERO);
+	F.MutateByCondition(data == 0, Flag::ZERO);
 	F.Clear(Flag::SUB);
 	F.Clear(Flag::HALF_CARRY);
 	F.Clear(Flag::CARRY);
@@ -29,56 +29,56 @@ auto SWAP_REG = [](auto& reg)
 // Z 0 0 0
 auto SWAP_0x30 = []()
 {
-	return SWAP_REG(B);
+	return SWAP(B);
 };
 
 // 0x31 SWAP C
 // Z 0 0 0
 auto SWAP_0x31 = []()
 {
-	return SWAP_REG(C);
+	return SWAP(C);
 };
 
 // 0x32 SWAP D
 // Z 0 0 0
 auto SWAP_0x32 = []()
 {
-	return SWAP_REG(D);
+	return SWAP(D);
 };
 
 // 0x33 SWAP E
 // Z 0 0 0
 auto SWAP_0x33 = []()
 {
-	return SWAP_REG(E);
+	return SWAP(E);
 };
 
 // 0x34 SWAP H
 // Z 0 0 0
 auto SWAP_0x34 = []()
 {
-	return SWAP_REG(H);
+	return SWAP(H);
 };
 
 // 0x35 SWAP L
 // Z 0 0 0
 auto SWAP_0x35 = []()
 {
-	return SWAP_REG(L);
+	return SWAP(L);
 };
 
 // 0x36 SWAP (HL)
 // Z 0 0 0
 auto SWAP_0x36 = []()
 {
-	return RUN_COMMAND_ON_ADDRESS(HL_const, SWAP_REG);
+	return RUN_COMMAND_ON_ADDRESS(HL_const, SWAP);
 };
 
 // 0x37 SWAP A
 // Z 0 0 0
 auto SWAP_0x37 = []()
 {
-	return SWAP_REG(A);
+	return SWAP(A);
 };
 } // Core
 

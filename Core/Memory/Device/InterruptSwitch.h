@@ -39,17 +39,6 @@ public:
 		this->m_memory[absolute_address - START_ADDRESS] = data;
 	}
 
-	virtual bool Read(const address_t absolute_address, address_t& result) const override
-	{
-		STOP_RUNNING("Invalid command");
-		return false;
-	}
-
-	virtual void Write(const address_t absolute_address, const address_t data) override
-	{
-		STOP_RUNNING("Invalid command");
-	}
-
 public:
 	static constexpr uint16_t START_ADDRESS = 0xFFFF;
 	static constexpr uint16_t END_ADDRESS = 0xFFFF;

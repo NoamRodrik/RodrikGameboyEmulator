@@ -11,15 +11,15 @@
 
 namespace Core
 {
-// SLA reg
+// SLA data
 // Z 0 0 C
-auto SLA_REG = [](data_t& reg)
+auto SLA = [](data_t& data)
 {
 	F.Clear(Flag::SUB);
 	F.Clear(Flag::HALF_CARRY);
-	F.MutateByCondition((reg >> 7) & 0x01, Flag::CARRY);
-	reg <<= 1;
-	F.MutateByCondition(reg == 0, Flag::ZERO);
+	F.MutateByCondition((data >> 7) & 0x01, Flag::CARRY);
+	data <<= 1;
+	F.MutateByCondition(data == 0, Flag::ZERO);
 	return true;
 };
 
@@ -27,56 +27,56 @@ auto SLA_REG = [](data_t& reg)
 // Z 0 0 C
 auto SLA_0x20 = []()
 {
-	return SLA_REG(B);
+	return SLA(B);
 };
 
 // 0x21 SLA C
 // Z 0 0 C
 auto SLA_0x21 = []()
 {
-	return SLA_REG(C);
+	return SLA(C);
 };
 
 // 0x22 SLA D
 // Z 0 0 C
 auto SLA_0x22 = []()
 {
-	return SLA_REG(D);
+	return SLA(D);
 };
 
 // 0x23 SLA E
 // Z 0 0 C
 auto SLA_0x23 = []()
 {
-	return SLA_REG(E);
+	return SLA(E);
 };
 
 // 0x24 SLA H
 // Z 0 0 C
 auto SLA_0x24 = []()
 {
-	return SLA_REG(H);
+	return SLA(H);
 };
 
 // 0x25 SLA L
 // Z 0 0 C
 auto SLA_0x25 = []()
 {
-	return SLA_REG(L);
+	return SLA(L);
 };
 
 // 0x26 SLA (HL)
 // Z 0 0 C
 auto SLA_0x26 = []()
 {
-	return RUN_COMMAND_ON_ADDRESS(HL_const, SLA_REG);
+	return RUN_COMMAND_ON_ADDRESS(HL_const, SLA);
 };
 
 // 0x27 SLA A
 // Z 0 0 C
 auto SLA_0x27 = []()
 {
-	return SLA_REG(A);
+	return SLA(A);
 };
 } // Core
 

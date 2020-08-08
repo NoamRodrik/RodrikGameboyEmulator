@@ -15,14 +15,16 @@ namespace Core
 // Z 0 H C
 auto ADC_WITH_A = [](const data_t data)
 {
-	const data_t data_to_add = data + F.IsSet(Flag::CARRY);
+	const bool WAS_CARRY_SET{F.IsSet(Flag::CARRY)};
+	
+	const int32_t ADC_RESULT{static_cast<int32_t>(A_const) + static_cast<int32_t>(data) + WAS_CARRY_SET};
 
-	F.MutateByCondition(Tools::ZeroOnAddition(static_cast<const data_t>(A_const), data_to_add), Flag::ZERO);
-	F.MutateByCondition(Tools::CarryOnAddition(static_cast<const data_t>(A_const), data_to_add), Flag::CARRY);
+	F.MutateByCondition(static_cast<const data_t>(ADC_RESULT) == 0, Flag::ZERO);
 	F.Clear(Flag::SUB);
-	F.MutateByCondition(Tools::HalfCarryOnAddition(static_cast<const data_t>(A_const), data_to_add), Flag::HALF_CARRY);
+	F.MutateByCondition(((A_const & 0x0F) + (data & 0x0F) + (static_cast<const data_t>(WAS_CARRY_SET) & 0x0F)) > 0x0F, Flag::HALF_CARRY);
+	F.MutateByCondition(ADC_RESULT > 0xFF, Flag::CARRY);
 
-	A = (static_cast<const data_t>(A_const) + data_to_add) & 0x00FF;
+	A = static_cast<const data_t>(ADC_RESULT);
 	return true;
 };
 

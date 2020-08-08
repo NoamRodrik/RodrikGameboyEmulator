@@ -20,15 +20,17 @@ public:
 	static inline void Schedule() { IME::GetInstance().m_schedule = true; IME::GetInstance().m_cycles_wait = 1; }
 	static inline void EnableInterruptsIfScheduled()
 	{
-		if (IME::GetInstance().m_cycles_wait > 0)
-		{
-			IME::GetInstance().m_cycles_wait -= 1;
-		}
-
 		if (IME::GetInstance().m_schedule)
 		{
-			IME::GetInstance().m_schedule = false;
-			IME::EnableInterrupts();
+			if (IME::GetInstance().m_cycles_wait > 0)
+			{
+				IME::GetInstance().m_cycles_wait -= 1;
+			}
+			else
+			{
+				IME::GetInstance().m_schedule = false;
+				IME::EnableInterrupts();
+			}
 		}
 	}
 

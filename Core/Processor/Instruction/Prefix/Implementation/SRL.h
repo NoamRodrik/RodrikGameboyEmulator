@@ -11,15 +11,15 @@
 
 namespace Core
 {
-// SRL reg
+// SRL data
 // Z 0 0 C
-auto SRL_REG = [](auto& reg)
+auto SRL = [](data_t& data)
 {
 	F.Clear(Flag::SUB);
 	F.Clear(Flag::HALF_CARRY);
-	F.MutateByCondition(reg & 0x01, Flag::CARRY);
-	reg >>= 1;
-	F.MutateByCondition(reg == 0, Flag::ZERO);
+	F.MutateByCondition(data & 0x01, Flag::CARRY);
+	data >>= 1;
+	F.MutateByCondition(data == 0, Flag::ZERO);
 	return true;
 };
 
@@ -27,56 +27,56 @@ auto SRL_REG = [](auto& reg)
 // Z 0 0 C
 auto SRL_0x38 = []()
 {
-	return SRL_REG(B);
+	return SRL(B);
 };
 
 // 0x39 SRL C
 // Z 0 0 C
 auto SRL_0x39 = []()
 {
-	return SRL_REG(C);
+	return SRL(C);
 };
 
 // 0x3A SRL D
 // Z 0 0 C
 auto SRL_0x3A = []()
 {
-	return SRL_REG(D);
+	return SRL(D);
 };
 
 // 0x3B SRL E
 // Z 0 0 C
 auto SRL_0x3B = []()
 {
-	return SRL_REG(E);
+	return SRL(E);
 };
 
 // 0x3C SRL H
 // Z 0 0 C
 auto SRL_0x3C = []()
 {
-	return SRL_REG(H);
+	return SRL(H);
 };
 
 // 0x3D SRL L
 // Z 0 0 C
 auto SRL_0x3D = []()
 {
-	return SRL_REG(L);
+	return SRL(L);
 };
 
 // 0x3E SRL (HL)
 // Z 0 0 C
 auto SRL_0x3E = []()
 {
-	return RUN_COMMAND_ON_ADDRESS(HL_const, SRL_REG);
+	return RUN_COMMAND_ON_ADDRESS(HL_const, SRL);
 };
 
 // 0x3F SRL A
 // Z 0 0 C
 auto SRL_0x3F = []()
 {
-	return SRL_REG(A);
+	return SRL(A);
 };
 } // Core
 

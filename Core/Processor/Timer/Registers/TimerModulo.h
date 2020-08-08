@@ -20,6 +20,9 @@ public:
 public:
 	using MemoryRegister::operator data_t;
 	using MemoryRegister::operator=;
+
+public:
+	static constexpr auto TIMER_MODULO_DEFAULT_VALUE = 0;
 };
 } // Core
 

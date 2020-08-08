@@ -6,7 +6,9 @@
 #ifndef __LR35902_MEMORY_DEVICE_IO_RAM_H__
 #define __LR35902_MEMORY_DEVICE_IO_RAM_H__
 
+#include <Core/Processor/Timer/Registers/TimerControl.h>
 #include <Core/Processor/Timer/Registers/TimerModulo.h>
+#include <Core/Interrupts/Registers/InterruptEnable.h>
 #include <Core/API/Memory/Device/MemoryDeviceBase.h>
 #include <Core/Interrupts/Registers/InterruptFlag.h>
 #include <Core/Memory/Device/CartridgeRAM.h>
@@ -26,7 +28,10 @@ class IORAM : public MemoryDeviceBase
 public:
 	constexpr IORAM(DeviceManagerBase& device_manager) : MemoryDeviceBase{START_ADDRESS, END_ADDRESS, device_manager}, m_memory{}
 	{
-		// Default value for the interrupt flag
+		// Default values
+		this->m_memory[GetFixedAddress(TIMER_COUNTER_ADDRESS)] = TimerCounter::TIMER_COUNTER_DEFAULT_VALUE;
+		this->m_memory[GetFixedAddress(TIMER_MODULO_ADDRESS)] = TimerModulo::TIMER_MODULO_DEFAULT_VALUE;
+		this->m_memory[GetFixedAddress(TIMER_CONTROL_ADDRESS)] = TimerControl::TIMER_CONTROL_DEFAULT_VALUE;
 		this->m_memory[GetFixedAddress(InterruptFlag::INTERRUPT_FLAG_ADDRESS)] = InterruptFlag::INTERRUPT_FLAG_DEFAULT_VALUE;
 	}
 
@@ -41,22 +46,6 @@ public:
 		if (this->ApplyChanges(data, absolute_address))
 		{
 			this->m_memory[GetFixedAddress(absolute_address)] = data;
-		}
-	}
-
-	virtual bool Read(const address_t absolute_address, address_t& result) const override
-	{
-		result = this->m_memory[GetFixedAddress(absolute_address)] | (this->m_memory[GetFixedAddress(absolute_address)] << 8);
-		return true;
-	}
-
-	virtual void Write(const address_t absolute_address, const address_t data) override
-	{
-		if (this->ApplyChanges(data & 0x00FF, absolute_address) &&
-			this->ApplyChanges((data & 0xFF00) >> 8, absolute_address + 1))
-		{
-			this->m_memory[GetFixedAddress(absolute_address)] = data & 0x00FF;
-			this->m_memory[GetFixedAddress(absolute_address) + 1] = (data & 0xFF00 >> 8);
 		}
 	}
 

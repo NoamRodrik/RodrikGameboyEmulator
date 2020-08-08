@@ -24,7 +24,7 @@ public:
 	static bool IsTimerEnabled();
 
 private:
-	static constexpr auto DIVIDER_THRESHOLD = 64;
+	static constexpr auto DIVIDER_THRESHOLD = 16;
 };
 } // Core
 

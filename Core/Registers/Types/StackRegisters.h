@@ -22,7 +22,7 @@ public:
 public:
 	virtual void Push(const address_t data) override
 	{
-		this->Push(static_cast<const data_t>((data >> 8) & 0x00FF));
+		this->Push(static_cast<const data_t>((static_cast<address_t>(data) >> 8) & 0x00FF));
 		this->Push(static_cast<const data_t>(data & 0x00FF));
 	}
 

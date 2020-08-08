@@ -11,7 +11,7 @@
 
 namespace Core
 {	
-auto JP_REG = [](const auto& address)
+auto JP = [](const auto& address)
 {
 	PC = address;
 
@@ -21,10 +21,8 @@ auto JP_REG = [](const auto& address)
 
 auto JP_A16 = []()
 {
-	PC = A16();
-
 	// Don't change PC.
-	return false;
+	return JP(A16());
 };
 
 // 0xC2 JP NZ,a16
@@ -66,7 +64,7 @@ auto JP_0xDA = []()
 // - - - -
 auto JP_0xE9 = []()
 {
-	return JP_REG(HL_const);
+	return JP(HL_const);
 };
 } // Core
 

@@ -15,10 +15,12 @@ namespace Core
 // Z 1 H C
 auto CP_WITH_A = [](const auto& reg)
 {
-	F.MutateByCondition(A_const == reg, Flag::ZERO);
+	const int32_t CP_RESULT{static_cast<int32_t>(A_const) - static_cast<int32_t>(reg)};
+	
+	F.MutateByCondition((CP_RESULT & 0x00FF) == 0, Flag::ZERO);
 	F.Set(Flag::SUB);
 	F.MutateByCondition(Tools::HalfCarryOnSubtraction(A_const, reg), Flag::HALF_CARRY);
-	F.MutateByCondition(Tools::CarryOnSubtraction(A_const, reg), Flag::CARRY);
+	F.MutateByCondition(CP_RESULT < 0, Flag::CARRY);
 
 	return true;
 };
