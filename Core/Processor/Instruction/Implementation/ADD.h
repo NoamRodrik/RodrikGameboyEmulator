@@ -13,116 +13,121 @@
 
 namespace Core
 {
-// ADD io_reg, data
-// - 0 H C
-auto ADD_DATA_TO_REG = [](auto& io_reg, const auto& data)
+// ADD o_reg, data
+// Z 0 H C
+auto ADD_DATA_TO_REG = [](auto& o_reg, const data_t& data)
 {
 	F.Clear(Flag::SUB);
-	F.MutateByCondition(Tools::HalfCarryOnAddition(io_reg, data), Flag::HALF_CARRY);
-	F.MutateByCondition(Tools::CarryOnAddition(io_reg, data), Flag::CARRY);
+	F.MutateByCondition(((static_cast<data_t>(o_reg + data) ^ o_reg ^ data) & 0x10) == 0x10, Flag::HALF_CARRY);
+	F.MutateByCondition(static_cast<data_t>(o_reg + data) < o_reg, Flag::CARRY);
+	o_reg += data;
 
-	io_reg += data;
-
+	F.MutateByCondition(o_reg == 0, Flag::ZERO);
 	return true;
 };
 
-// ADD io_reg, data
-// Z 0 H C or 0 0 H C
-auto ADD_DATA_TO_REG_MUTATE_ZERO_FLAG = [](auto& io_reg, const auto& data)
+// ADD o_reg, data
+// - 0 H C
+auto ADD_DATA_TO_REG_LONG = [](auto& o_reg, const address_t& data)
 {
-	F.MutateByCondition(Tools::ZeroOnAddition(io_reg, data), Flag::ZERO);
-	return ADD_DATA_TO_REG(io_reg, data);
+	F.Clear(Flag::SUB);
+	F.MutateByCondition((static_cast<const address_t>(o_reg + data) ^ o_reg ^ data) & 0x1000, Flag::HALF_CARRY);
+	F.MutateByCondition(static_cast<const address_t>(o_reg + data) < o_reg, Flag::CARRY);
+
+	o_reg += data;
+
+	return true;
 };
 
 // 0x09 ADD HL,BC
 // - 0 H C
 auto ADD_0x09 = []()
 {
-	return ADD_DATA_TO_REG(HL, BC_const);
+	return ADD_DATA_TO_REG_LONG(HL, BC_const);
 };
 
 // 0x19 ADD HL,DE
 // - 0 H C
 auto ADD_0x19 = []()
 {
-	return ADD_DATA_TO_REG(HL, DE_const);
+	return ADD_DATA_TO_REG_LONG(HL, DE_const);
 };
 
 // 0x29 ADD HL,HL
 // - 0 H C
 auto ADD_0x29 = []()
 {
-	return ADD_DATA_TO_REG(HL, HL_const);
+	return ADD_DATA_TO_REG_LONG(HL, HL_const);
 };
 
 // 0x39 ADD HL,SP
 // - 0 H C
 auto ADD_0x39 = []()
 {
-	return ADD_DATA_TO_REG(HL, SP_const);
+	return ADD_DATA_TO_REG_LONG(HL, SP_const);
 };
 
 // 0x80 ADD A,B
 // Z 0 H C
 auto ADD_0x80 = []()
 {
-	return ADD_DATA_TO_REG_MUTATE_ZERO_FLAG(A, B_const);
+	return ADD_DATA_TO_REG(A, B_const);
 };
 
 // 0x81 ADD A,C
 // Z 0 H C
 auto ADD_0x81 = []()
 {
-	return ADD_DATA_TO_REG_MUTATE_ZERO_FLAG(A, C_const);
+	return ADD_DATA_TO_REG(A, C_const);
 };
 
 // 0x82 ADD A,D
 // Z 0 H C
 auto ADD_0x82 = []()
 {
-	return ADD_DATA_TO_REG_MUTATE_ZERO_FLAG(A, D_const);
+	return ADD_DATA_TO_REG(A, D_const);
 };
 
 // 0x83 ADD A,E
 // Z 0 H C
 auto ADD_0x83 = []()
 {
-	return ADD_DATA_TO_REG_MUTATE_ZERO_FLAG(A, E_const);
+	return ADD_DATA_TO_REG(A, E_const);
 };
 
 // 0x84 ADD A,H
 // Z 0 H C
 auto ADD_0x84 = []()
 {
-	return ADD_DATA_TO_REG_MUTATE_ZERO_FLAG(A, H_const);
+	return ADD_DATA_TO_REG(A, H_const);
 };
 
 // 0x85 ADD A,L
 // Z 0 H C
 auto ADD_0x85 = []()
 {
-	return ADD_DATA_TO_REG_MUTATE_ZERO_FLAG(A, L_const);
+	return ADD_DATA_TO_REG(A, L_const);
 };
 
 // 0x86 ADD A,(HL)
 // Z 0 H C
 auto ADD_0x86 = []()
 {
-	return ADD_DATA_TO_REG_MUTATE_ZERO_FLAG(A, READ_DATA_AT(HL_const));
+	return ADD_DATA_TO_REG(A, READ_DATA_AT(HL_const));
 };
 
 // 0x87 ADD A,A
 // Z 0 H C
 auto ADD_0x87 = []()
 {
-	return ADD_DATA_TO_REG_MUTATE_ZERO_FLAG(A, A_const);
+	return ADD_DATA_TO_REG(A, A_const);
 };
 
 // 0xC6 ADD A,d8
 // Z 0 H C
 auto ADD_0xC6 = []()
 {
-	return ADD_DATA_TO_REG_MUTATE_ZERO_FLAG(A, D8());
+	return ADD_DATA_TO_REG(A, D8());
 };
 
 // 0xE8 ADD SP,r8
@@ -131,8 +136,9 @@ auto ADD_0xE8 = []()
 {
 	F.Clear(Flag::ZERO);
 	F.Clear(Flag::SUB);
-	F.MutateByCondition(((SP_const & 0x000F) + (R8() & 0x0F)) & 0x00F0, Flag::HALF_CARRY);
-	F.MutateByCondition(((SP_const & 0x00FF) + (R8() & 0xFF)) & 0x0F00, Flag::CARRY);
+	F.MutateByCondition((static_cast<const address_t>(SP_const + R8()) & 0xF) < (SP_const & 0xF), Flag::HALF_CARRY);
+	F.MutateByCondition((static_cast<const address_t>(SP_const + R8()) & 0xFF) < (SP_const & 0xFF), Flag::CARRY);
+
 	SP += R8();
 	return true;
 };

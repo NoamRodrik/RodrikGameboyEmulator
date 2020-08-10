@@ -15,18 +15,24 @@ namespace Core
 // Z 0 0 C
 auto RRC = [](auto& reg)
 {
+	const data_t SET_CARRY_BIT{Tools::IsBitSet(reg, 0)};
+
+	// Rotate right the register and set the carry bit in it's place.
+	reg >>= 1;
+	if (SET_CARRY_BIT != 0)
+	{
+		F.Set(Flag::CARRY);
+		Tools::SetBit(reg, 7);
+	}
+	else
+	{
+		F.Clear(Flag::CARRY);
+		Tools::ClearBit(reg, 7);
+	}
+
+	F.MutateByCondition(reg == 0, Flag::ZERO);
 	F.Clear(Flag::SUB);
 	F.Clear(Flag::HALF_CARRY);
-
-	const bool WAS_CARRY_FLAG_SET{F.IsSet(Flag::CARRY)};
-
-	// Fetching the utmost left bit.
-	F.MutateByCondition(reg & 0x01, Flag::CARRY);
-
-	// Rotate right A.
-	// Restore shifted_bit's position.
-	reg = (reg >> 1) | (static_cast<const data_t>(WAS_CARRY_FLAG_SET) << 7);
-	F.MutateByCondition(reg == 0, Flag::ZERO);
 
 	return true;
 };

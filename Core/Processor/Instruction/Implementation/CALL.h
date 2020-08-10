@@ -11,7 +11,7 @@
 
 namespace Core
 {
-auto CALL_A16 = []()
+auto CALL = []()
 {
 	// + 3 Because we want to skip the call size.
 	SP.Push(static_cast<const address_t>(PC_const + 3));
@@ -25,35 +25,35 @@ auto CALL_A16 = []()
 // - - - -
 auto CALL_0xC4 = []()
 {
-	return !F.IsSet(Flag::ZERO) ? CALL_A16() : true;
+	return !F.IsSet(Flag::ZERO) ? CALL() : true;
 };
 
 // 0xCC CALL Z,a16
 // - - - -
 auto CALL_0xCC = []()
 {
-	return F.IsSet(Flag::ZERO) ? CALL_A16() : true;
+	return F.IsSet(Flag::ZERO) ? CALL() : true;
 };
 
 // 0xCD CALL a16
 // - - - -
 auto CALL_0xCD = []()
 {
-	return CALL_A16();
+	return CALL();
 };
 
 // 0xD4 CALL NC,a16
 // - - - -
 auto CALL_0xD4 = []()
 {
-	return !F.IsSet(Flag::CARRY) ? CALL_A16() : true;
+	return !F.IsSet(Flag::CARRY) ? CALL() : true;
 };
 
 // 0xDC CALL C,a16
 // - - - -
 auto CALL_0xDC = []()
 {
-	return F.IsSet(Flag::CARRY) ? CALL_A16() : true;
+	return F.IsSet(Flag::CARRY) ? CALL() : true;
 };
 } // Core
 

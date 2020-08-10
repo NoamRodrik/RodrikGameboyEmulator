@@ -11,7 +11,7 @@
 
 namespace Core
 {	
-auto JP = [](const auto& address)
+auto JP = [](const address_t& address)
 {
 	PC = address;
 

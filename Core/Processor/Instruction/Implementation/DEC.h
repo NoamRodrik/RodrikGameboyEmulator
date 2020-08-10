@@ -16,11 +16,11 @@ namespace Core
 static constexpr data_t DECREMENT_VALUE = 1;
 
 // DEC o_reg
-auto DEC_REG = [](data_t& o_reg)
+auto DEC = [](data_t& o_reg)
 {
-	F.MutateByCondition(Tools::ZeroOnSubtraction(o_reg, DECREMENT_VALUE), Flag::ZERO);
+	F.MutateByCondition((o_reg - DECREMENT_VALUE) == 0, Flag::ZERO);
 	F.Set(Flag::SUB);
-	F.MutateByCondition(Tools::HalfCarryOnSubtraction(o_reg, DECREMENT_VALUE), Flag::HALF_CARRY);
+	F.MutateByCondition(((static_cast<const data_t>(o_reg - DECREMENT_VALUE) ^ o_reg ^ DECREMENT_VALUE) & 0x10) == 0x10, Flag::HALF_CARRY);
 
 	o_reg -= DECREMENT_VALUE;
 
@@ -38,7 +38,7 @@ auto DEC_LONG_REG = [](auto& o_long_reg)
 // Z 1 H -
 auto DEC_0x05 = []()
 {
-	return DEC_REG(B);
+	return DEC(B);
 };
 
 // 0x0B DEC BC
@@ -52,14 +52,14 @@ auto DEC_0x0B = []()
 // Z 1 H -
 auto DEC_0x0D = []()
 {
-	return DEC_REG(C);
+	return DEC(C);
 };
 
 // 0x15 DEC D
 // Z 1 H -
 auto DEC_0x15 = []()
 {
-	return DEC_REG(D);
+	return DEC(D);
 };
 
 // 0x1B DEC DE
@@ -73,14 +73,14 @@ auto DEC_0x1B = []()
 // Z 1 H -
 auto DEC_0x1D = []()
 {
-	return DEC_REG(E);
+	return DEC(E);
 };
 
 // 0x25 DEC H
 // Z 1 H -
 auto DEC_0x25 = []()
 {
-	return DEC_REG(H);
+	return DEC(H);
 };
 
 // 0x2B DEC HL
@@ -94,14 +94,14 @@ auto DEC_0x2B = []()
 // Z 1 H -
 auto DEC_0x2D = []()
 {
-	return DEC_REG(L);
+	return DEC(L);
 };
 
 // 0x35 DEC (HL)
 // Z 1 H -
 auto DEC_0x35 = []()
 {
-	return RUN_COMMAND_ON_ADDRESS(HL_const, DEC_REG);
+	return RUN_COMMAND_ON_ADDRESS(HL_const, DEC);
 };
 
 // 0x3B DEC SP
@@ -115,7 +115,7 @@ auto DEC_0x3B = []()
 // Z 1 H -
 auto DEC_0x3D = []()
 {
-	return DEC_REG(A);
+	return DEC(A);
 };
 } // Core
 

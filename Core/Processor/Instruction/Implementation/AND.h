@@ -13,7 +13,7 @@ namespace Core
 {
 // AND data
 // Z 0 1 0
-auto AND_WITH_A = [](const auto data)
+auto AND = [](const auto data)
 {
 	A &= data;
 
@@ -29,63 +29,63 @@ auto AND_WITH_A = [](const auto data)
 // Z 0 1 0
 auto AND_0xA0 = []()
 {
-	return AND_WITH_A(B_const);
+	return AND(B_const);
 };
 
 // 0xA1 AND C
 // Z 0 1 0
 auto AND_0xA1 = []()
 {
-	return AND_WITH_A(C_const);
+	return AND(C_const);
 };
 
 // 0xA2 AND D
 // Z 0 1 0
 auto AND_0xA2 = []()
 {
-	return AND_WITH_A(D_const);
+	return AND(D_const);
 };
 
 // 0xA3 AND E
 // Z 0 1 0
 auto AND_0xA3 = []()
 {
-	return AND_WITH_A(E_const);
+	return AND(E_const);
 };
 
 // 0xA4 AND H
 // Z 0 1 0
 auto AND_0xA4 = []()
 {
-	return AND_WITH_A(H_const);
+	return AND(H_const);
 };
 
 // 0xA5 AND L
 // Z 0 1 0
 auto AND_0xA5 = []()
 {
-	return AND_WITH_A(L_const);
+	return AND(L_const);
 };
 
 // 0xA6 AND (HL)
 // Z 0 1 0
 auto AND_0xA6 = []()
 {
-	return AND_WITH_A(READ_DATA_AT(HL_const));
+	return AND(READ_DATA_AT(HL_const));
 };
 
 // 0xA7 AND A
 // Z 0 1 0
 auto AND_0xA7 = []()
 {
-	return AND_WITH_A(A_const);
+	return AND(A_const);
 };
 
 // 0xE6 AND d8
 // Z 0 1 0
 auto AND_0xE6 = []()
 {
-	return AND_WITH_A(D8());
+	return AND(D8());
 };
 } // Core
 

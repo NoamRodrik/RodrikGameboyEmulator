@@ -32,6 +32,32 @@ public:
 		this->m_memory[GetFixedAddress(TIMER_COUNTER_ADDRESS)] = TimerCounter::TIMER_COUNTER_DEFAULT_VALUE;
 		this->m_memory[GetFixedAddress(TIMER_MODULO_ADDRESS)] = TimerModulo::TIMER_MODULO_DEFAULT_VALUE;
 		this->m_memory[GetFixedAddress(TIMER_CONTROL_ADDRESS)] = TimerControl::TIMER_CONTROL_DEFAULT_VALUE;
+		this->m_memory[GetFixedAddress(NR10_ADDRESS)] = NR10_DEFAULT_VALUE;
+		this->m_memory[GetFixedAddress(NR11_ADDRESS)] = NR11_DEFAULT_VALUE;
+		this->m_memory[GetFixedAddress(NR12_ADDRESS)] = NR12_DEFAULT_VALUE;
+		this->m_memory[GetFixedAddress(NR14_ADDRESS)] = NR14_DEFAULT_VALUE;
+		this->m_memory[GetFixedAddress(NR21_ADDRESS)] = NR21_DEFAULT_VALUE;
+		this->m_memory[GetFixedAddress(NR22_ADDRESS)] = NR22_DEFAULT_VALUE;
+		this->m_memory[GetFixedAddress(NR24_ADDRESS)] = NR24_DEFAULT_VALUE;
+		this->m_memory[GetFixedAddress(NR30_ADDRESS)] = NR30_DEFAULT_VALUE;
+		this->m_memory[GetFixedAddress(NR31_ADDRESS)] = NR31_DEFAULT_VALUE;
+		this->m_memory[GetFixedAddress(NR32_ADDRESS)] = NR32_DEFAULT_VALUE;
+		this->m_memory[GetFixedAddress(NR33_ADDRESS)] = NR33_DEFAULT_VALUE;
+		this->m_memory[GetFixedAddress(NR41_ADDRESS)] = NR41_DEFAULT_VALUE;
+		this->m_memory[GetFixedAddress(NR42_ADDRESS)] = NR42_DEFAULT_VALUE;
+		this->m_memory[GetFixedAddress(NR43_ADDRESS)] = NR43_DEFAULT_VALUE;
+		this->m_memory[GetFixedAddress(NR44_ADDRESS)] = NR44_DEFAULT_VALUE;
+		this->m_memory[GetFixedAddress(NR50_ADDRESS)] = NR50_DEFAULT_VALUE;
+		this->m_memory[GetFixedAddress(NR51_ADDRESS)] = NR51_DEFAULT_VALUE;
+		this->m_memory[GetFixedAddress(NR52_ADDRESS)] = NR52_DEFAULT_VALUE;
+		this->m_memory[GetFixedAddress(LCDC_ADDRESS)] = LCDC_DEFAULT_VALUE;
+		this->m_memory[GetFixedAddress(SCY_ADDRESS)] = SCY_DEFAULT_VALUE;
+		this->m_memory[GetFixedAddress(SCX_ADDRESS)] = SCX_DEFAULT_VALUE;
+		this->m_memory[GetFixedAddress(LYC_ADDRESS)] = BGP_DEFAULT_VALUE;
+		this->m_memory[GetFixedAddress(OBP0_ADDRESS)] = OBP0_DEFAULT_VALUE;
+		this->m_memory[GetFixedAddress(OBP1_ADDRESS)] = OBP1_DEFAULT_VALUE;
+		this->m_memory[GetFixedAddress(WY_ADDRESS)] = WY_DEFAULT_VALUE;
+		this->m_memory[GetFixedAddress(WX_ADDRESS)] = WX_DEFAULT_VALUE;
 		this->m_memory[GetFixedAddress(InterruptFlag::INTERRUPT_FLAG_ADDRESS)] = InterruptFlag::INTERRUPT_FLAG_DEFAULT_VALUE;
 	}
 

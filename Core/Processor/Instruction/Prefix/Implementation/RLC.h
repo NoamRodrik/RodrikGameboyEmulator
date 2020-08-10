@@ -18,14 +18,11 @@ auto RLC_REG = [](auto& reg)
 	F.Clear(Flag::SUB);
 	F.Clear(Flag::HALF_CARRY);
 	
-	const bool WAS_CARRY_FLAG_SET{F.IsSet(Flag::CARRY)};
-
-	// Fetching the utmost left bit.
+	// Bit 7 is also copied to the carry and also to the new bit 0.
 	F.MutateByCondition(((reg & 0x80) >> 7) & 0x01, Flag::CARRY);
 
-	// Rotate left reg.
-	// Restore shifted_bit's position.
-	reg = (reg << 1) | static_cast<data_t>(WAS_CARRY_FLAG_SET);
+	// Rotate left reg and set bit 0 to the carry flag.
+	reg = (reg << 1) | static_cast<const data_t>(F.IsSet(Flag::CARRY));
 	F.MutateByCondition(reg == 0, Flag::ZERO);
 	return true;
 };

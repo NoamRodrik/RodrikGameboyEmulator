@@ -13,7 +13,7 @@ namespace Core
 {
 // XOR data
 // Z 0 0 0
-auto XOR_WITH_A = [](const auto data)
+auto XOR = [](const auto data)
 {
 	A ^= data;
 
@@ -29,63 +29,63 @@ auto XOR_WITH_A = [](const auto data)
 // Z 0 0 0
 auto XOR_0xA8 = []()
 {
-	return XOR_WITH_A(B_const);
+	return XOR(B_const);
 };
 
 // 0xA9 XOR C
 // Z 0 0 0
 auto XOR_0xA9 = []()
 {
-	return XOR_WITH_A(C_const);
+	return XOR(C_const);
 };
 
 // 0xAA XOR D
 // Z 0 0 0
 auto XOR_0xAA = []()
 {
-	return XOR_WITH_A(D_const);
+	return XOR(D_const);
 };
 
 // 0xAB XOR E
 // Z 0 0 0
 auto XOR_0xAB = []()
 {
-	return XOR_WITH_A(E_const);
+	return XOR(E_const);
 };
 
 // 0xAC XOR H
 // Z 0 0 0
 auto XOR_0xAC = []()
 {
-	return XOR_WITH_A(H_const);
+	return XOR(H_const);
 };
 
 // 0xAD XOR L
 // Z 0 0 0
 auto XOR_0xAD = []()
 {
-	return XOR_WITH_A(L_const);
+	return XOR(L_const);
 };
 
 // 0xAE XOR (HL)
 // Z 0 0 0
 auto XOR_0xAE = []()
 {
-	return XOR_WITH_A(READ_DATA_AT(HL_const));
+	return XOR(READ_DATA_AT(HL_const));
 };
 
 // 0xAF XOR A
 // Z 0 0 0
 auto XOR_0xAF = []()
 {
-	return XOR_WITH_A(A_const);
+	return XOR(A_const);
 };
 
 // 0xEE XOR d8
 // Z 0 0 0
 auto XOR_0xEE = []()
 {
-	return XOR_WITH_A(D8());
+	return XOR(D8());
 };
 } // Core
 

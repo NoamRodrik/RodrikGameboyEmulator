@@ -19,7 +19,7 @@ auto CPL_0x2F = []()
 	F.Set(Flag::HALF_CARRY);
 
 	// Flip A
-	A = ~A;
+	A ^= 0xFF;
 
 	return true;
 };

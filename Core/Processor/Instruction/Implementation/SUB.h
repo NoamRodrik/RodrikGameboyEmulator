@@ -13,12 +13,12 @@ namespace Core
 {
 // SUB io_reg, data
 // Z 1 H C
-auto SUB_WITH_A = [](const auto& data)
+auto SUB = [](const auto& data)
 {
-	F.MutateByCondition(Tools::ZeroOnSubtraction(A_const, data), Flag::ZERO);
+	F.MutateByCondition((A_const - data) == 0, Flag::ZERO);
 	F.Set(Flag::SUB);
-	F.MutateByCondition(Tools::HalfCarryOnSubtraction(A_const, data), Flag::HALF_CARRY);
-	F.MutateByCondition(Tools::CarryOnSubtraction(A_const, data), Flag::CARRY);
+	F.MutateByCondition((A_const & 0x0F) < (data & 0x0F), Flag::HALF_CARRY);
+	F.MutateByCondition((A_const & 0xFF) < (data & 0xFF), Flag::CARRY);
 
 	A -= data;
 
@@ -29,63 +29,63 @@ auto SUB_WITH_A = [](const auto& data)
 // Z 1 H C
 auto SUB_0x90 = []()
 {
-	return SUB_WITH_A(B_const);
+	return SUB(B_const);
 };
 
 // 0x91 SUB C
 // Z 1 H C
 auto SUB_0x91 = []()
 {
-	return SUB_WITH_A(C_const);
+	return SUB(C_const);
 };
 
 // 0x92 SUB D
 // Z 1 H C
 auto SUB_0x92 = []()
 {
-	return SUB_WITH_A(D_const);
+	return SUB(D_const);
 };
 
 // 0x93 SUB E
 // Z 1 H C
 auto SUB_0x93 = []()
 {
-	return SUB_WITH_A(E_const);
+	return SUB(E_const);
 };
 
 // 0x94 SUB H
 // Z 1 H C
 auto SUB_0x94 = []()
 {
-	return SUB_WITH_A(H_const);
+	return SUB(H_const);
 };
 
 // 0x95 SUB L
 // Z 1 H C
 auto SUB_0x95 = []()
 {
-	return SUB_WITH_A(L_const);
+	return SUB(L_const);
 };
 
 // 0x96 SUB (HL)
 // Z 1 H C
 auto SUB_0x96 = []()
 {
-	return SUB_WITH_A(READ_DATA_AT(HL_const));
+	return SUB(READ_DATA_AT(HL_const));
 };
 
 // 0x97 SUB A
 // Z 1 H C
 auto SUB_0x97 = []()
 {
-	return SUB_WITH_A(A_const);
+	return SUB(A_const);
 };
 
 // 0xD6 SUB d8
 // Z 1 H C
 auto SUB_0xD6 = []()
 {
-	return SUB_WITH_A(D8());
+	return SUB(D8());
 };
 } // Core
 

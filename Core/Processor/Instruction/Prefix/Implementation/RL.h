@@ -13,17 +13,19 @@ namespace Core
 {
 // RL reg
 // Z 0 0 C
-auto RL_REG = [](auto& reg)
+auto RL = [](auto& reg)
 {
 	F.Clear(Flag::SUB);
 	F.Clear(Flag::HALF_CARRY);
 
+	const data_t WAS_CARRY_ON{F.IsSet(Flag::CARRY)};
+
 	// Fetching the utmost left bit.
-	F.MutateByCondition(((reg & 0x80) >> 7) & 0x01, Flag::CARRY);
+	F.MutateByCondition(Tools::IsBitSet(reg, 7), Flag::CARRY);
 
 	// Rotate left reg.
 	// The shifted bit goes into the carry flag, the carry flag goes into reg.
-	reg = (reg << 1) | static_cast<data_t>(F.IsSet(Flag::CARRY));
+	reg = (reg << 1) | static_cast<const data_t>(WAS_CARRY_ON);
 
 	F.MutateByCondition(reg == 0, Flag::ZERO);
 	return true;
@@ -33,56 +35,56 @@ auto RL_REG = [](auto& reg)
 // Z 0 0 C
 auto RL_0x10 = []()
 {
-	return RL_REG(B);
+	return RL(B);
 };
 
 // 0x11 RL C
 // Z 0 0 C
 auto RL_0x11 = []()
 {
-	return RL_REG(C);
+	return RL(C);
 };
 
 // 0x12 RL D
 // Z 0 0 C
 auto RL_0x12 = []()
 {
-	return RL_REG(D);
+	return RL(D);
 };
 
 // 0x13 RL E
 // Z 0 0 C
 auto RL_0x13 = []()
 {
-	return RL_REG(E);
+	return RL(E);
 };
 
 // 0x14 RL H
 // Z 0 0 C
 auto RL_0x14 = []()
 {
-	return RL_REG(H);
+	return RL(H);
 };
 
 // 0x15 RL L
 // Z 0 0 C
 auto RL_0x15 = []()
 {
-	return RL_REG(L);
+	return RL(L);
 };
 
 // 0x16 RL (HL)
 // Z 0 0 C
 auto RL_0x16 = []()
 {
-	return RUN_COMMAND_ON_ADDRESS(HL_const, RL_REG);
+	return RUN_COMMAND_ON_ADDRESS(HL_const, RL);
 };
 
 // 0x17 RL A
 // Z 0 0 C
 auto RL_0x17 = []()
 {
-	return RL_REG(A);
+	return RL(A);
 };
 } // Core
 

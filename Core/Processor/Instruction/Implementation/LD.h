@@ -15,37 +15,37 @@
 namespace Core
 {
 // LD o_reg, data
-auto LD_REG_WITH_DATA = [](auto& o_reg, const auto& data)
+auto LD_REG_WITH_DATA = [](data_t& o_reg, const data_t data)
 {
 	o_reg = data;
 	return true;
 };
 
-// LD reg_pair, d16
-auto LD_D16 = [](auto& reg_pair)
+// LD o_reg, d16
+auto LD_D16 = [](auto& o_reg)
 {
-	return LD_REG_WITH_DATA(reg_pair, D16());
+	o_reg = D16();
+	return true;
+};
+
+// LD o_reg, d8
+auto LD_D8 = [](data_t& o_reg)
+{
+	return LD_REG_WITH_DATA(o_reg, D8());
 };
 
 // LD (addr), value
-auto LD_VALUE_TO_ADDR = [](const address_t& addr, const data_t& value)
+auto LD_VALUE_TO_ADDR = [](const address_t addr, const data_t value)
 {
 	memory.Write(addr, value);
 	return true;
 };
 
 // LD (a16), reg
-auto LD_A16 = [](const address_t& reg)
+auto LD_REG_TO_ADDR = [](const address_t reg)
 {
 	LD_VALUE_TO_ADDR(A16(), static_cast<const data_t>(reg & 0x00FF));
 	LD_VALUE_TO_ADDR(A16() + 1, static_cast<const data_t>((static_cast<const address_t>(reg & 0xFF00) >> 8) & 0x00FF));
-	return true;
-};
-
-// LD o_reg, (addr)
-auto LD_REG_FROM_MEMORY_ADDRESS = [](const auto& addr, auto& o_reg)
-{
-	o_reg = READ_DATA_AT(addr);
 	return true;
 };
 
@@ -67,30 +67,28 @@ auto LD_0x02 = []()
 // - - - -
 auto LD_0x06 = []()
 {
-	B = D8();
-	return true;
+	return LD_D8(B);
 };
 
 // 0x08 LD (a16), SP
 // - - - -
 auto LD_0x08 = []()
 {
-	return LD_A16(SP_const);
+	return LD_REG_TO_ADDR(SP_const);
 };
 
 // 0x0A LD A, (BC)
 // - - - -
 auto LD_0x0A = []()
 {
-	return LD_REG_FROM_MEMORY_ADDRESS(BC_const, A);
+	return LD_REG_WITH_DATA(A, READ_DATA_AT(BC_const));
 };
 
 // 0x0E LD C, d8
 // - - - -
 auto LD_0x0E = []()
 {
-	C = D8();
-	return true;
+	return LD_D8(C);
 };
 
 // 0x11 LD DE, d16
@@ -111,23 +109,21 @@ auto LD_0x12 = []()
 // - - - -
 auto LD_0x16 = []()
 {
-	D = D8();
-	return true;
+	return LD_D8(D);
 };
 
 // 0x1A LD A,(DE)
 // - - - -
 auto LD_0x1A = []()
 {
-	return LD_REG_FROM_MEMORY_ADDRESS(DE_const, A);
+	return LD_REG_WITH_DATA(A, READ_DATA_AT(DE_const));
 };
 
 // 0x1E LD E,d8
 // - - - -
 auto LD_0x1E = []()
 {
-	E = D8();
-	return true;
+	return LD_D8(E);
 };
 
 // 0x21 LD HL,d16
@@ -143,17 +139,14 @@ auto LD_0x22 = []()
 {
 	// Put A into memory address HL. Increment HL.
 	// Same as : LD (HL), A - INC HL
-	SANITY(LD_VALUE_TO_ADDR(HL_const, A_const), "Fail loading memory to reg");
-	INC_0x23();
-	return true;
+	return LD_VALUE_TO_ADDR(HL_const, A_const) && INC_0x23();
 };
 
 // 0x26 LD H,d8
 // - - - -
 auto LD_0x26 = []()
 {
-	H = D8();
-	return true;
+	return LD_D8(H);
 };
 
 // 0x2A LD A,(HL+)
@@ -162,24 +155,21 @@ auto LD_0x2A = []()
 {
 	// Put value at address HL into A. Increment HL.
 	// Same as : LD A, (HL) & INC HL
-	SANITY(LD_REG_FROM_MEMORY_ADDRESS(HL_const, A), "Failed to load HL register to A");
-	INC_0x23();
-	return true;
+	return LD_REG_WITH_DATA(A, READ_DATA_AT(HL_const)) && INC_0x23();
 };
 
 // 0x2E LD L,d8
 // - - - -
 auto LD_0x2E = []()
 {
-	L = D8();
-	return true;
+	return LD_D8(L);
 };
 
 // 0x31 LD SP,d16
 // - - - -
 auto LD_0x31 = []()
 {
-	return LD_REG_WITH_DATA(SP, D16());
+	return LD_D16(SP);
 };
 
 // 0x32 LD (HL-),A
@@ -188,26 +178,23 @@ auto LD_0x32 = []()
 {
 	// Put A into memory address HL. Decrement HL.
 	// Same as : LD (HL), A && DEC HL
-	LD_VALUE_TO_ADDR(HL_const, A_const);
-	DEC_0x2B();
-	return true;
+	return LD_VALUE_TO_ADDR(HL_const, A_const) && DEC_0x2B();
 };
 
 // 0x36 LD (HL),d8
 // - - - -
 auto LD_0x36 = []()
 {
-	memory.Write(HL_const, D8());
-	return true;
+	return LD_VALUE_TO_ADDR(HL_const, D8());
 };
 
 // 0x3A LD A,(HL-)
 // - - - -
 auto LD_0x3A = []()
 {
-	// Put value at address HL into A. Pre-Decrement HL.
+	// Put value at address HL into A. Decrement HL.
 	// Same as : LD A, (HL) && DEC HL
-	LD_REG_FROM_MEMORY_ADDRESS(HL_const, A);
+	LD_REG_WITH_DATA(A, READ_DATA_AT(HL_const));
 	DEC_0x2B();
 	return true;
 };
@@ -216,8 +203,7 @@ auto LD_0x3A = []()
 // - - - -
 auto LD_0x3E = []()
 {
-	A = D8();
-	return true;
+	return LD_D8(A);
 };
 
 // 0x40 LD B,B
@@ -266,7 +252,7 @@ auto LD_0x45 = []()
 // - - - -
 auto LD_0x46 = []()
 {
-	return LD_REG_FROM_MEMORY_ADDRESS(HL_const, B);
+	return LD_REG_WITH_DATA(B, READ_DATA_AT(HL_const));
 };
 
 // 0x47 LD B,A
@@ -322,7 +308,7 @@ auto LD_0x4D = []()
 // - - - -
 auto LD_0x4E = []()
 {
-	return LD_REG_FROM_MEMORY_ADDRESS(HL_const, C);
+	return LD_REG_WITH_DATA(C, READ_DATA_AT(HL_const));
 };
 
 // 0x4F LD C,A
@@ -378,7 +364,7 @@ auto LD_0x55 = []()
 // - - - -
 auto LD_0x56 = []()
 {
-	return LD_REG_FROM_MEMORY_ADDRESS(HL_const, D);
+	return LD_REG_WITH_DATA(D, READ_DATA_AT(HL_const));
 };
 
 // 0x57 LD D,A
@@ -434,7 +420,7 @@ auto LD_0x5D = []()
 // - - - -
 auto LD_0x5E = []()
 {
-	return LD_REG_FROM_MEMORY_ADDRESS(HL_const, E);
+	return LD_REG_WITH_DATA(E, READ_DATA_AT(HL_const));
 };
 
 // 0x5F LD E,A
@@ -490,7 +476,7 @@ auto LD_0x65 = []()
 // - - - -
 auto LD_0x66 = []()
 {
-	return LD_REG_FROM_MEMORY_ADDRESS(HL_const, H);
+	return LD_REG_WITH_DATA(H, READ_DATA_AT(HL_const));
 };
 
 // 0x67 LD H,A
@@ -546,7 +532,7 @@ auto LD_0x6D = []()
 // - - - -
 auto LD_0x6E = []()
 {
-	return LD_REG_FROM_MEMORY_ADDRESS(HL_const, L);
+	return LD_REG_WITH_DATA(L, READ_DATA_AT(HL_const));
 };
 
 // 0x6F LD L,A
@@ -651,7 +637,7 @@ auto LD_0x7D = []()
 // - - - -
 auto LD_0x7E = []()
 {
-	return LD_REG_FROM_MEMORY_ADDRESS(HL_const, A);
+	return LD_REG_WITH_DATA(A, READ_DATA_AT(HL_const));
 };
 
 // 0x7F LD A,A
@@ -672,41 +658,43 @@ auto LD_0xE2 = []()
 // - - - -
 auto LD_0xEA = []()
 {
-	return LD_VALUE_TO_ADDR(D16(), A_const);
+	return LD_VALUE_TO_ADDR(A16(), A_const);
 };
 
 // 0xF2 LD A,(C)
 // - - - -
 auto LD_0xF2 = []()
 {
-	return LD_REG_FROM_MEMORY_ADDRESS(C_const + ZERO_PAGE_ADDRESS, A);
+	return LD_REG_WITH_DATA(A, READ_DATA_AT(C_const + ZERO_PAGE_ADDRESS));
 };
 
 // 0xF8 LD HL,SP+r8
 // 0 0 H C
 auto LD_0xF8 = []()
 {
-	F.MutateByCondition((static_cast<int32_t>(SP_const) + static_cast<int32_t>(R8())) & 0x10000, Flag::CARRY);
-	F.MutateByCondition((static_cast<int32_t>(SP_const & 0x0F) + static_cast<int32_t>(R8())) & 0x0100, Flag::HALF_CARRY);
+	F.MutateByCondition((static_cast<const address_t>(SP_const ^ R8() ^ ((SP_const + R8()) & 0xFFFF)) & 0x10) == 0x10, Flag::HALF_CARRY);
+	F.MutateByCondition((static_cast<const address_t>(SP_const ^ R8() ^ ((SP_const + R8()) & 0xFFFF)) & 0x100) == 0x100, Flag::CARRY);
 
 	F.Clear(Flag::ZERO);
 	F.Clear(Flag::SUB);
 
-	return LD_REG_WITH_DATA(HL, static_cast<address_t>(SP_const + R8()));
+	HL = static_cast<address_t>(SP_const + R8());
+	return true;
 };
 
 // 0xF9 LD SP,HL
 // - - - -
 auto LD_0xF9 = []()
 {
-	return LD_REG_WITH_DATA(SP, HL_const);
+	SP = HL_const;
+	return true;
 };
 
 // 0xFA LD A,(a16)
 // - - - -
 auto LD_0xFA = []()
 {
-	return LD_REG_FROM_MEMORY_ADDRESS(D16(), A);
+	return LD_REG_WITH_DATA(A, READ_DATA_AT(A16()));
 };
 } // Core
 

@@ -106,6 +106,21 @@ static constexpr uint32_t KilobitsToBits(uint32_t kb)
 	return pow(2, kb);
 }
 
+static constexpr bool IsBitSet(const uint8_t data, const size_t index)
+{
+	return (data >> index) & 0x01;
+}
+
+static constexpr void SetBit(uint8_t& data, const size_t index)
+{
+	data |= 1 << index;
+}
+
+static constexpr void ClearBit(uint8_t& data, const size_t index)
+{
+	data &= static_cast<uint8_t>(~(1 << index));
+}
+
 static constexpr bool HalfCarryOnAddition(uint8_t first_num, uint8_t second_num)
 {
 	decltype(first_num) result = first_num & 0x0F;

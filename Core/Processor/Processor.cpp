@@ -85,9 +85,12 @@ const size_t Processor::Clock()
 		return 0;
 	}
 
-	const auto& command_to_execute = Processor::IsPrefix() ?
-										PREFIX_LOOKUP_TABLE[READ_DATA_AT(PC_const)] :
-										INSTRUCTION_LOOKUP_TABLE[READ_DATA_AT(PC_const)];
+	// While halted, the CPU spins on NOP
+	// The CPU will be unhalted on any triggered interrupt
+	const auto& command_to_execute = Processor::IsHalted() ? INSTRUCTION_LOOKUP_TABLE[0] :
+									    (Processor::IsPrefix() ?
+										 PREFIX_LOOKUP_TABLE[READ_DATA_AT(PC_const)] :
+										 INSTRUCTION_LOOKUP_TABLE[READ_DATA_AT(PC_const)]);
 
 #if _DEBUG
 	Processor::PrintInstruction(command_to_execute);

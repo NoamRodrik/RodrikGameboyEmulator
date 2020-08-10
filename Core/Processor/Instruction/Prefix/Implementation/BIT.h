@@ -13,10 +13,10 @@ namespace Core
 {
 // BIT index, data
 // Z 0 1 -
-auto BIT = [](const uint8_t index, const auto& data)
+auto BIT = [](auto&& index, const auto& data)
 {
 	SANITY(index <= 7, "Got an invalid bit index!");
-	F.MutateByCondition(((data >> index) & 0x01) == 0, Flag::ZERO);
+	F.MutateByCondition(!Tools::IsBitSet(data, index), Flag::ZERO);
 	F.Clear(Flag::SUB);
 	F.Set(Flag::HALF_CARRY);
 	return true;

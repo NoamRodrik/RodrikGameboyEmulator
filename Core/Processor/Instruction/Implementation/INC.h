@@ -16,13 +16,14 @@ namespace Core
 static constexpr data_t INCREMENT_VALUE = 1;
 
 // INC o_reg
-auto INC_REG = [](data_t& o_reg)
+auto INC = [](data_t& o_reg)
 {
-	F.MutateByCondition(Tools::ZeroOnAddition(o_reg, INCREMENT_VALUE) , Flag::ZERO);
-	F.Clear(Flag::SUB);
-	F.MutateByCondition(Tools::HalfCarryOnAddition(o_reg, INCREMENT_VALUE), Flag::HALF_CARRY);
+	F.MutateByCondition(Tools::IsBitSet(o_reg, 3) && !Tools::IsBitSet((o_reg + INCREMENT_VALUE), 3), Flag::HALF_CARRY);
 
 	o_reg += INCREMENT_VALUE;
+
+	F.MutateByCondition(o_reg == 0, Flag::ZERO);
+	F.Clear(Flag::SUB);
 
 	return true;
 };
@@ -45,14 +46,14 @@ auto INC_0x03 = []()
 // Z 0 H -
 auto INC_0x04 = []()
 {
-	return INC_REG(B);
+	return INC(B);
 };
 
 // 0x0C INC C
 // Z 0 H -
 auto INC_0x0C = []()
 {
-	return INC_REG(C);
+	return INC(C);
 };
 
 // 0x13 INC DE
@@ -66,14 +67,14 @@ auto INC_0x13 = []()
 // Z 0 H -
 auto INC_0x14 = []()
 {
-	return INC_REG(D);
+	return INC(D);
 };
 
 // 0x1C INC E
 // Z 0 H -
 auto INC_0x1C = []()
 {
-	return INC_REG(E);
+	return INC(E);
 };
 
 // 0x23 INC HL
@@ -87,14 +88,14 @@ auto INC_0x23 = []()
 // Z 0 H -
 auto INC_0x24 = []()
 {
-	return INC_REG(H);
+	return INC(H);
 };
 
 // 0x2C INC L
 // Z 0 H -
 auto INC_0x2C = []()
 {
-	return INC_REG(L);
+	return INC(L);
 };
 
 // 0x33 INC SP
@@ -108,14 +109,14 @@ auto INC_0x33 = []()
 // Z 0 H -
 auto INC_0x34 = []()
 {
-	return RUN_COMMAND_ON_ADDRESS(HL_const, INC_REG);
+	return RUN_COMMAND_ON_ADDRESS(HL_const, INC);
 };
 
 // 0x3C INC A
 // Z 0 H -
 auto INC_0x3C = []()
 {
-	return INC_REG(A);
+	return INC(A);
 };
 } // Core
 

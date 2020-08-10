@@ -15,7 +15,7 @@ namespace Core
 auto RES = [](const uint8_t bit_index, auto& reg)
 {
 	SANITY(bit_index <= 7, "Got an invalid bit index!");
-	reg &= static_cast<data_t>(~(1 << bit_index));
+	Tools::ClearBit(reg, bit_index);
 	return true;
 };
 

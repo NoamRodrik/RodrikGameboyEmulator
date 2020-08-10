@@ -82,6 +82,11 @@ const auto D16 = []()
 	return A16();
 };
 
+const auto A16_TEST = []()
+{
+	return ((static_cast<address_t>(READ_DATA_AT(PC_const + 1)) << 8) & 0xFF00) | READ_DATA_AT(PC_const + 2);
+};
+
 const auto R8 = []()
 {
 	return static_cast<const r8_t>(D8());

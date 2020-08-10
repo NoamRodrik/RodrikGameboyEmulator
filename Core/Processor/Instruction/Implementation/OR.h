@@ -13,7 +13,7 @@ namespace Core
 {
 // OR data
 // Z 0 0 0
-auto OR_WITH_A = [](const auto& data)
+auto OR = [](const auto& data)
 {
 	A |= data;
 
@@ -29,63 +29,63 @@ auto OR_WITH_A = [](const auto& data)
 // Z 0 0 0
 auto OR_0xB0 = []()
 {
-	return OR_WITH_A(B_const);
+	return OR(B_const);
 };
 
 // 0xB1 OR C
 // Z 0 0 0
 auto OR_0xB1 = []()
 {
-	return OR_WITH_A(C_const);
+	return OR(C_const);
 };
 
 // 0xB2 OR D
 // Z 0 0 0
 auto OR_0xB2 = []()
 {
-	return OR_WITH_A(D_const);
+	return OR(D_const);
 };
 
 // 0xB3 OR E
 // Z 0 0 0
 auto OR_0xB3 = []()
 {
-	return OR_WITH_A(E_const);
+	return OR(E_const);
 };
 
 // 0xB4 OR H
 // Z 0 0 0
 auto OR_0xB4 = []()
 {
-	return OR_WITH_A(H_const);
+	return OR(H_const);
 };
 
 // 0xB5 OR L
 // Z 0 0 0
 auto OR_0xB5 = []()
 {
-	return OR_WITH_A(L_const);
+	return OR(L_const);
 };
 
 // 0xB6 OR (HL)
 // Z 0 0 0
 auto OR_0xB6 = []()
 {
-	return OR_WITH_A(READ_DATA_AT(HL_const));
+	return OR(READ_DATA_AT(HL_const));
 };
 
 // 0xB7 OR A
 // Z 0 0 0
 auto OR_0xB7 = []()
 {
-	return OR_WITH_A(A_const);
+	return OR(A_const);
 };
 
 // 0xF6 OR d8
 // Z 0 0 0
 auto OR_0xF6 = []()
 {
-	return OR_WITH_A(D8());
+	return OR(D8());
 };
 } // Core
 
