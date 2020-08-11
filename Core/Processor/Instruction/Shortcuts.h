@@ -74,7 +74,7 @@ const auto D8 = []()
 
 const auto A16 = []()
 {
-	return ((static_cast<address_t>(READ_DATA_AT(PC_const + 2)) << 8) & 0xFF00) | READ_DATA_AT(PC_const + 1);
+	return (READ_DATA_AT(PC_const + 2) << 8) | READ_DATA_AT(PC_const + 1);
 };
 
 const auto D16 = []()

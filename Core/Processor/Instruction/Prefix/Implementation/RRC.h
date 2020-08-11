@@ -19,15 +19,7 @@ auto RRC = [](auto& reg)
 
 	// Rotate right the register and set the carry bit in it's place.
 	reg >>= 1;
-
-	if (F.IsSet(Flag::CARRY))
-	{
-		Tools::SetBit(reg, 7);
-	}
-	else
-	{
-		Tools::ClearBit(reg, 7);
-	}
+	Tools::MutateBitByCondition(F.IsSet(Flag::CARRY), reg, 7);
 
 	F.MutateByCondition(reg == 0, Flag::ZERO);
 	F.Clear(Flag::SUB);

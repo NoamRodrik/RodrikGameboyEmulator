@@ -21,15 +21,7 @@ auto RR = [](auto& reg)
 	// Rotate right reg.
 	// The shifted bit goes into the carry flag, the carry flag goes into reg.
 	reg >>= 1;
-
-	if (WAS_CARRY_FLAG_SET)
-	{
-		Tools::SetBit(reg, 7);
-	}
-	else
-	{
-		Tools::ClearBit(reg, 7);
-	}
+	Tools::MutateBitByCondition(WAS_CARRY_FLAG_SET, reg, 7);
 
 	F.MutateByCondition(reg == 0, Flag::ZERO);
 	F.Clear(Flag::SUB);

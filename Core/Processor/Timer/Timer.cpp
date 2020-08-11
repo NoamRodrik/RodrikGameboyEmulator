@@ -14,7 +14,7 @@ size_t Timer::IncreaseDivider(data_t amount)
 	DividerRegister divider{};
 
 	// We need to write to register with force - otherwise it will get reset. (This is the OFFICIAL way to change the counter)
-	gsl::not_null<IORAM*> io_ram = static_cast<IORAM*>(Processor::GetInstance().GetMemory().m_device_manager.GetDeviceAtAddress(DIVIDER_REGISTER_ADDRESS));
+	static gsl::not_null<IORAM*> io_ram = static_cast<IORAM*>(Processor::GetInstance().GetMemory().m_device_manager.GetDeviceAtAddress(DIVIDER_REGISTER_ADDRESS));
 	io_ram->m_memory[io_ram->GetFixedAddress(DIVIDER_REGISTER_ADDRESS)] += amount;
 
 	if (divider >= DIVIDER_THRESHOLD)
@@ -22,8 +22,8 @@ size_t Timer::IncreaseDivider(data_t amount)
 		io_ram->m_memory[io_ram->GetFixedAddress(DIVIDER_REGISTER_ADDRESS)] = divider - DIVIDER_THRESHOLD;
 	}
 
-	// Takes 4 cycles.
-	return 4;
+	// Takes 1 cycle.
+	return 1;
 }
 
 size_t Timer::IncreaseCounter(data_t amount)
@@ -32,10 +32,12 @@ size_t Timer::IncreaseCounter(data_t amount)
 	{
 		TimerCounter timer_counter{};
 		timer_counter = timer_counter + amount;
+
+		// Takes 1 cycle.
+		return 1;
 	}
 
-	// Takes 4 cycles.
-	return 4;
+	return 0;
 }
 
 bool Timer::IsCounterOverflow(const data_t new_timer_counter)

@@ -69,7 +69,7 @@ public:
 
 	virtual void Write(const address_t absolute_address, const data_t data) override
 	{
-		if (this->ApplyChanges(data, absolute_address))
+		if (this->ManipulateData(data, absolute_address))
 		{
 			this->m_memory[GetFixedAddress(absolute_address)] = data;
 		}
@@ -85,7 +85,7 @@ protected:
 	virtual uint8_t* GetMemoryPointer() override { return this->m_memory.GetMemoryPointer(); }
 
 private:
-	bool ApplyChanges(const data_t data, const address_t address)
+	bool ManipulateData(const data_t data, const address_t address)
 	{
 		switch (address)
 		{
@@ -125,7 +125,9 @@ private:
 
 			case (TIMER_CONTROL_ADDRESS):
 			{
-				// No special treatment
+				// Using only the allowed portion of the TAC.
+				this->m_memory[GetFixedAddress(address)] = data & 0x07;
+				return false;
 				break;
 			}
 

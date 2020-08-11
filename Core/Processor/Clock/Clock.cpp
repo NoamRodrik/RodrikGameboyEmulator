@@ -34,9 +34,6 @@ bool Clock::IsTimerCounterElapsed()
 
 void Clock::SyncClock()
 {
-	Clock::GetInstance().m_divider_tick_amount += 1;
-	Clock::GetInstance().m_counter_tick_amount += 1;
-
 	static constexpr auto one_clock_period{lr35902_clock_period{1}};
 
 	// Find out if the difference is less than one clock period
@@ -47,5 +44,8 @@ void Clock::SyncClock()
 	Clock::GetInstance().m_last_tick =
 		std::chrono::time_point_cast<std::chrono::high_resolution_clock::duration>(
 			Clock::GetInstance().m_last_tick + one_clock_period);
+
+	Clock::GetInstance().m_divider_tick_amount += 1;
+	Clock::GetInstance().m_counter_tick_amount += 1;
 }
 } // Core

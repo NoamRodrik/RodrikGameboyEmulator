@@ -23,15 +23,7 @@ auto RLC_REG = [](auto& reg)
 
 	// Rotate left reg and set bit 0 to the carry flag.
 	reg <<= 1;
-
-	if (F.IsSet(Flag::CARRY))
-	{
-		Tools::SetBit(reg, 0);
-	}
-	else
-	{
-		Tools::ClearBit(reg, 0);
-	}
+	Tools::MutateBitByCondition(F.IsSet(Flag::CARRY), reg, 0);
 
 	F.MutateByCondition(reg == 0, Flag::ZERO);
 	return true;
