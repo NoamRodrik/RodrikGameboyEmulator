@@ -23,8 +23,7 @@ auto LDH_0xE0 = []()
 // - - - -
 auto LDH_0xF0 = []()
 {
-	SANITY(memory.Read(A8() + ZERO_PAGE_ADDRESS, A), "Failed reading from memory!");
-	return true;
+	return memory.Read(A8() + ZERO_PAGE_ADDRESS, A);
 };
 } // Core
 

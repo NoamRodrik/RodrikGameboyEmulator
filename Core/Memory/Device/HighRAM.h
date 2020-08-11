@@ -24,13 +24,13 @@ public:
 
 	virtual bool Read(const address_t absolute_address, data_t& result) const override
 	{
-		result = this->m_memory[absolute_address - START_ADDRESS];
+		result = this->m_memory[GetFixedAddress(absolute_address)];
 		return true;
 	}
 
 	virtual void Write(const address_t absolute_address, const data_t data) override
 	{
-		this->m_memory[absolute_address - START_ADDRESS] = data;
+		this->m_memory[GetFixedAddress(absolute_address)] = data;
 	}
 
 public:
@@ -40,6 +40,9 @@ public:
 
 protected:
 	virtual uint8_t* GetMemoryPointer() override { return this->m_memory.GetMemoryPointer(); }
+
+private:
+	static constexpr address_t GetFixedAddress(const address_t address) { return address - START_ADDRESS; }
 
 private:
 	Memory<SIZE> m_memory;

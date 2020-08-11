@@ -19,10 +19,20 @@ auto RLC_REG = [](auto& reg)
 	F.Clear(Flag::HALF_CARRY);
 	
 	// Bit 7 is also copied to the carry and also to the new bit 0.
-	F.MutateByCondition(((reg & 0x80) >> 7) & 0x01, Flag::CARRY);
+	F.MutateByCondition(Tools::IsBitSet(reg, 7), Flag::CARRY);
 
 	// Rotate left reg and set bit 0 to the carry flag.
-	reg = (reg << 1) | static_cast<const data_t>(F.IsSet(Flag::CARRY));
+	reg <<= 1;
+
+	if (F.IsSet(Flag::CARRY))
+	{
+		Tools::SetBit(reg, 0);
+	}
+	else
+	{
+		Tools::ClearBit(reg, 0);
+	}
+
 	F.MutateByCondition(reg == 0, Flag::ZERO);
 	return true;
 };

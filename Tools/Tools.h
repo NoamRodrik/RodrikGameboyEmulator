@@ -16,9 +16,9 @@
 #define NO_PIXEL_ENGINE
 
 Message("If you want to print, comment this here");
-#define NO_PRINT
-#define NO_PRINT_FLAGS
-#define NO_PRINT_REGISTERS
+//#define NO_PRINT
+//#define NO_PRINT_FLAGS
+//#define NO_PRINT_REGISTERS
 #define NO_PRINT_IF_AND_IE
 
 #ifndef NO_PRINT

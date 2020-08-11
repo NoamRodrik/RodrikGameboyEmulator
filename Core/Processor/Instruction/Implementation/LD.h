@@ -44,8 +44,8 @@ auto LD_VALUE_TO_ADDR = [](const address_t addr, const data_t value)
 // LD (a16), reg
 auto LD_REG_TO_ADDR = [](const address_t reg)
 {
-	LD_VALUE_TO_ADDR(A16(), static_cast<const data_t>(reg & 0x00FF));
-	LD_VALUE_TO_ADDR(A16() + 1, static_cast<const data_t>((static_cast<const address_t>(reg & 0xFF00) >> 8) & 0x00FF));
+	LD_VALUE_TO_ADDR(A16(), static_cast<data_t>(reg & 0x00FF));
+	LD_VALUE_TO_ADDR(A16() + 1, static_cast<data_t>(reg >> 8));
 	return true;
 };
 

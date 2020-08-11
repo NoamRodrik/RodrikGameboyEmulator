@@ -40,7 +40,7 @@ public:
 		this->m_memory_context.Read(this->m_data++, data);
 	}
 
-	void Push(const data_t data) override
+	virtual void Push(const data_t data) override
 	{
 		this->m_memory_context.Write(--this->m_data, data);
 	}

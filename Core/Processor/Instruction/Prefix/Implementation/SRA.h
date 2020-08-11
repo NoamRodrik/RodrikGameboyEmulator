@@ -17,7 +17,7 @@ auto SRA = [](data_t& data)
 {
 	F.Clear(Flag::SUB);
 	F.Clear(Flag::HALF_CARRY);
-	F.MutateByCondition(data & 0x01, Flag::CARRY);
+	F.MutateByCondition(Tools::IsBitSet(data, 0), Flag::CARRY);
 	data = ((data >> 1) | (data & 0x80));
 	F.MutateByCondition(data == 0, Flag::ZERO);
 	return true;

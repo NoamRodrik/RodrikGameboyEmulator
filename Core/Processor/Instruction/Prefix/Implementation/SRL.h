@@ -15,11 +15,13 @@ namespace Core
 // Z 0 0 C
 auto SRL = [](data_t& data)
 {
+	F.MutateByCondition(Tools::IsBitSet(data, 0), Flag::CARRY);
+	data >>= 1;
+	Tools::ClearBit(data, 7);
+
+	F.MutateByCondition(data == 0, Flag::ZERO);
 	F.Clear(Flag::SUB);
 	F.Clear(Flag::HALF_CARRY);
-	F.MutateByCondition(data & 0x01, Flag::CARRY);
-	data >>= 1;
-	F.MutateByCondition(data == 0, Flag::ZERO);
 	return true;
 };
 

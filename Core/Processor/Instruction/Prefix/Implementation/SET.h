@@ -15,7 +15,7 @@ namespace Core
 auto SET = [](const uint8_t index, auto& data)
 {
 	SANITY(index <= 7, "Got an invalid bit index!");
-	data |= static_cast<data_t>(1 << index);
+	Tools::SetBit(data, index);
 	return true;
 };
 

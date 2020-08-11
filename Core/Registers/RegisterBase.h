@@ -50,10 +50,10 @@ public:
 	using RegisterBase::operator address_t&;
 	using RegisterBase::operator address_t;
 
-
-	void operator=(const address_t data)
+	AddressRegisterBase& operator=(const address_t data)
 	{
 		this->m_data = data;
+		return *this;
 	}
 };
 
@@ -64,13 +64,9 @@ class StackRegisterBase : public AddressRegisterBase
 {
 public:
 	using AddressRegisterBase::AddressRegisterBase;
+	using AddressRegisterBase::operator=;
 	using RegisterBase::operator address_t&;
 	using RegisterBase::operator address_t;
-
-	void operator=(const address_t data)
-	{
-		this->m_data = data;
-	}
 
 public:
 	virtual void Push(const address_t data) = 0;

@@ -15,11 +15,11 @@ namespace Core
 // Z 0 0 C
 auto SLA = [](data_t& data)
 {
-	F.Clear(Flag::SUB);
-	F.Clear(Flag::HALF_CARRY);
-	F.MutateByCondition((data >> 7) & 0x01, Flag::CARRY);
+	F.MutateByCondition(Tools::IsBitSet(data, 7), Flag::CARRY);
 	data <<= 1;
 	F.MutateByCondition(data == 0, Flag::ZERO);
+	F.Clear(Flag::SUB);
+	F.Clear(Flag::HALF_CARRY);
 	return true;
 };
 
