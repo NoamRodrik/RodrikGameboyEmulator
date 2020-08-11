@@ -22,9 +22,22 @@ auto LD = [](auto& o_reg, const auto& data)
 };
 
 // LD (addr), value
-auto LD_ADDR = [](const address_t addr, const data_t value)
+auto LD_ADDR = [](const address_t addr, const auto& value)
 {
-	memory.Write(addr, value);
+	if constexpr (sizeof(value) == sizeof(data_t))
+	{
+		memory.Write(addr, value);
+	}
+	else if constexpr (sizeof(value) == sizeof(address_t))
+	{
+		memory.Write(addr, static_cast<data_t>(value & 0x00FF));
+		memory.Write(addr + 1, static_cast<data_t>((value >> 8) & 0x00FF));
+	}
+	else
+	{
+		static_assert("Got an invalid value type");
+	}
+
 	return true;
 };
 
@@ -53,9 +66,7 @@ auto LD_0x06 = []()
 // - - - -
 auto LD_0x08 = []()
 {
-	LD_ADDR(A16(), static_cast<data_t>(SP_const & 0x00FF));
-	LD_ADDR(A16() + 1, static_cast<data_t>(SP_const >> 8));
-	return true;
+	return LD_ADDR(A16(), static_cast<const address_t>(SP_const));
 };
 
 // 0x0A LD A, (BC)
@@ -657,8 +668,7 @@ auto LD_0xF8 = []()
 	F.Clear(Flag::ZERO);
 	F.Clear(Flag::SUB);
 
-	HL = static_cast<address_t>(SP_const + R8());
-	return true;
+	return LD(HL, static_cast<address_t>(SP_const + R8()));
 };
 
 // 0xF9 LD SP,HL
