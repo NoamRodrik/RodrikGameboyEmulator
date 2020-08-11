@@ -13,7 +13,7 @@ namespace Core
 {
 // XOR data
 // Z 0 0 0
-auto XOR = [](const auto data)
+static constexpr auto XOR = [](const auto data)
 {
 	A ^= data;
 
@@ -27,63 +27,63 @@ auto XOR = [](const auto data)
 
 // 0xA8 XOR B
 // Z 0 0 0
-auto XOR_0xA8 = []()
+static constexpr auto XOR_0xA8 = []()
 {
 	return XOR(B_const);
 };
 
 // 0xA9 XOR C
 // Z 0 0 0
-auto XOR_0xA9 = []()
+static constexpr auto XOR_0xA9 = []()
 {
 	return XOR(C_const);
 };
 
 // 0xAA XOR D
 // Z 0 0 0
-auto XOR_0xAA = []()
+static constexpr auto XOR_0xAA = []()
 {
 	return XOR(D_const);
 };
 
 // 0xAB XOR E
 // Z 0 0 0
-auto XOR_0xAB = []()
+static constexpr auto XOR_0xAB = []()
 {
 	return XOR(E_const);
 };
 
 // 0xAC XOR H
 // Z 0 0 0
-auto XOR_0xAC = []()
+static constexpr auto XOR_0xAC = []()
 {
 	return XOR(H_const);
 };
 
 // 0xAD XOR L
 // Z 0 0 0
-auto XOR_0xAD = []()
+static constexpr auto XOR_0xAD = []()
 {
 	return XOR(L_const);
 };
 
 // 0xAE XOR (HL)
 // Z 0 0 0
-auto XOR_0xAE = []()
+static constexpr auto XOR_0xAE = []()
 {
 	return XOR(READ_DATA_AT(HL_const));
 };
 
 // 0xAF XOR A
 // Z 0 0 0
-auto XOR_0xAF = []()
+static constexpr auto XOR_0xAF = []()
 {
 	return XOR(A_const);
 };
 
 // 0xEE XOR d8
 // Z 0 0 0
-auto XOR_0xEE = []()
+static constexpr auto XOR_0xEE = []()
 {
 	return XOR(D8());
 };

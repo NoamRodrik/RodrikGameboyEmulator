@@ -13,7 +13,7 @@ namespace Core
 {
 // 0x37 SCF
 // - 0 0 1
-auto SCF_0x37 = []()
+static constexpr auto SCF_0x37 = []()
 {
 	F.Clear(Flag::SUB);
 	F.Clear(Flag::HALF_CARRY);

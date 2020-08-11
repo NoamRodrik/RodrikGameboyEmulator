@@ -11,7 +11,7 @@
 
 namespace Core
 {
-auto RST = [](const address_t offset)
+static constexpr auto RST = [](const address_t offset)
 {
 	// + 1 Because we want to skip the size of the opcode.
 	SP.Push(static_cast<const address_t>(PC_const + 1));
@@ -22,56 +22,56 @@ auto RST = [](const address_t offset)
 
 // 0xC7 RST 00H
 // - - - -
-auto RST_0xC7 = []()
+static constexpr auto RST_0xC7 = []()
 {
 	return RST(0x00);
 };
 
 // 0xCF RST 08H
 // - - - -
-auto RST_0xCF = []()
+static constexpr auto RST_0xCF = []()
 {
 	return RST(0x08);
 };
 
 // 0xD7 RST 10H
 // - - - -
-auto RST_0xD7 = []()
+static constexpr auto RST_0xD7 = []()
 {
 	return RST(0x10);
 };
 
 // 0xDF RST 18H
 // - - - -
-auto RST_0xDF = []()
+static constexpr auto RST_0xDF = []()
 {
 	return RST(0x18);
 };
 
 // 0xE7 RST 20H
 // - - - -
-auto RST_0xE7 = []()
+static constexpr auto RST_0xE7 = []()
 {
 	return RST(0x20);
 };
 
 // 0xEF RST 28H
 // - - - -
-auto RST_0xEF = []()
+static constexpr auto RST_0xEF = []()
 {
 	return RST(0x28);
 };
 
 // 0xF7 RST 30H
 // - - - -
-auto RST_0xF7 = []()
+static constexpr auto RST_0xF7 = []()
 {
 	return RST(0x30);
 };
 
 // 0xFF RST 38H
 // - - - -
-auto RST_0xFF = []()
+static constexpr auto RST_0xFF = []()
 {
 	return RST(0x38);
 };

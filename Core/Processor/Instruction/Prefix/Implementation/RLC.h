@@ -13,7 +13,7 @@ namespace Core
 {
 // RLC reg
 // Z 0 0 C
-auto RLC = [](auto& reg)
+static constexpr auto RLC = [](auto& reg)
 {
 	F.Clear(Flag::SUB);
 	F.Clear(Flag::HALF_CARRY);
@@ -31,56 +31,56 @@ auto RLC = [](auto& reg)
 
 // 0x00 RLC B
 // Z 0 0 C
-auto RLC_0x00 = []()
+static constexpr auto RLC_0x00 = []()
 {
 	return RLC(B);
 };
 
 // 0x01 RLC C
 // Z 0 0 C
-auto RLC_0x01 = []()
+static constexpr auto RLC_0x01 = []()
 {
 	return RLC(C);
 };
 
 // 0x02 RLC D
 // Z 0 0 C
-auto RLC_0x02 = []()
+static constexpr auto RLC_0x02 = []()
 {
 	return RLC(D);
 };
 
 // 0x03 RLC E
 // Z 0 0 C
-auto RLC_0x03 = []()
+static constexpr auto RLC_0x03 = []()
 {
 	return RLC(E);
 };
 
 // 0x04 RLC H
 // Z 0 0 C
-auto RLC_0x04 = []()
+static constexpr auto RLC_0x04 = []()
 {
 	return RLC(H);
 };
 
 // 0x05 RLC L
 // Z 0 0 C
-auto RLC_0x05 = []()
+static constexpr auto RLC_0x05 = []()
 {
 	return RLC(L);
 };
 
 // 0x06 RLC (HL)
 // Z 0 0 C
-auto RLC_0x06 = []()
+static constexpr auto RLC_0x06 = []()
 {
 	return RUN_COMMAND_ON_ADDRESS(HL_const, RLC);
 };
 
 // 0x07 RLC A
 // Z 0 0 C
-auto RLC_0x07 = []()
+static constexpr auto RLC_0x07 = []()
 {
 	return RLC(A);
 };

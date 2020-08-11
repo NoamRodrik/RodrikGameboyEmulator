@@ -13,7 +13,7 @@ namespace Core
 {
 // SRL data
 // Z 0 0 C
-auto SRL = [](data_t& data)
+static constexpr auto SRL = [](data_t& data)
 {
 	F.MutateByCondition(Tools::IsBitSet(data, 0), Flag::CARRY);
 	data >>= 1;
@@ -27,56 +27,56 @@ auto SRL = [](data_t& data)
 
 // 0x38 SRL B
 // Z 0 0 C
-auto SRL_0x38 = []()
+static constexpr auto SRL_0x38 = []()
 {
 	return SRL(B);
 };
 
 // 0x39 SRL C
 // Z 0 0 C
-auto SRL_0x39 = []()
+static constexpr auto SRL_0x39 = []()
 {
 	return SRL(C);
 };
 
 // 0x3A SRL D
 // Z 0 0 C
-auto SRL_0x3A = []()
+static constexpr auto SRL_0x3A = []()
 {
 	return SRL(D);
 };
 
 // 0x3B SRL E
 // Z 0 0 C
-auto SRL_0x3B = []()
+static constexpr auto SRL_0x3B = []()
 {
 	return SRL(E);
 };
 
 // 0x3C SRL H
 // Z 0 0 C
-auto SRL_0x3C = []()
+static constexpr auto SRL_0x3C = []()
 {
 	return SRL(H);
 };
 
 // 0x3D SRL L
 // Z 0 0 C
-auto SRL_0x3D = []()
+static constexpr auto SRL_0x3D = []()
 {
 	return SRL(L);
 };
 
 // 0x3E SRL (HL)
 // Z 0 0 C
-auto SRL_0x3E = []()
+static constexpr auto SRL_0x3E = []()
 {
 	return RUN_COMMAND_ON_ADDRESS(HL_const, SRL);
 };
 
 // 0x3F SRL A
 // Z 0 0 C
-auto SRL_0x3F = []()
+static constexpr auto SRL_0x3F = []()
 {
 	return SRL(A);
 };

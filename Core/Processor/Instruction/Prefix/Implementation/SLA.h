@@ -13,7 +13,7 @@ namespace Core
 {
 // SLA data
 // Z 0 0 C
-auto SLA = [](data_t& data)
+static constexpr auto SLA = [](data_t& data)
 {
 	F.MutateByCondition(Tools::IsBitSet(data, 7), Flag::CARRY);
 	data <<= 1;
@@ -25,56 +25,56 @@ auto SLA = [](data_t& data)
 
 // 0x20 SLA B
 // Z 0 0 C
-auto SLA_0x20 = []()
+static constexpr auto SLA_0x20 = []()
 {
 	return SLA(B);
 };
 
 // 0x21 SLA C
 // Z 0 0 C
-auto SLA_0x21 = []()
+static constexpr auto SLA_0x21 = []()
 {
 	return SLA(C);
 };
 
 // 0x22 SLA D
 // Z 0 0 C
-auto SLA_0x22 = []()
+static constexpr auto SLA_0x22 = []()
 {
 	return SLA(D);
 };
 
 // 0x23 SLA E
 // Z 0 0 C
-auto SLA_0x23 = []()
+static constexpr auto SLA_0x23 = []()
 {
 	return SLA(E);
 };
 
 // 0x24 SLA H
 // Z 0 0 C
-auto SLA_0x24 = []()
+static constexpr auto SLA_0x24 = []()
 {
 	return SLA(H);
 };
 
 // 0x25 SLA L
 // Z 0 0 C
-auto SLA_0x25 = []()
+static constexpr auto SLA_0x25 = []()
 {
 	return SLA(L);
 };
 
 // 0x26 SLA (HL)
 // Z 0 0 C
-auto SLA_0x26 = []()
+static constexpr auto SLA_0x26 = []()
 {
 	return RUN_COMMAND_ON_ADDRESS(HL_const, SLA);
 };
 
 // 0x27 SLA A
 // Z 0 0 C
-auto SLA_0x27 = []()
+static constexpr auto SLA_0x27 = []()
 {
 	return SLA(A);
 };

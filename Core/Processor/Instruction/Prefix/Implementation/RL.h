@@ -13,7 +13,7 @@ namespace Core
 {
 // RL reg
 // Z 0 0 C
-auto RL = [](auto& reg)
+static constexpr auto RL = [](auto& reg)
 {
 	const bool WAS_CARRY_ON{F.IsSet(Flag::CARRY)};
 
@@ -34,56 +34,56 @@ auto RL = [](auto& reg)
 
 // 0x10 RL B
 // Z 0 0 C
-auto RL_0x10 = []()
+static constexpr auto RL_0x10 = []()
 {
 	return RL(B);
 };
 
 // 0x11 RL C
 // Z 0 0 C
-auto RL_0x11 = []()
+static constexpr auto RL_0x11 = []()
 {
 	return RL(C);
 };
 
 // 0x12 RL D
 // Z 0 0 C
-auto RL_0x12 = []()
+static constexpr auto RL_0x12 = []()
 {
 	return RL(D);
 };
 
 // 0x13 RL E
 // Z 0 0 C
-auto RL_0x13 = []()
+static constexpr auto RL_0x13 = []()
 {
 	return RL(E);
 };
 
 // 0x14 RL H
 // Z 0 0 C
-auto RL_0x14 = []()
+static constexpr auto RL_0x14 = []()
 {
 	return RL(H);
 };
 
 // 0x15 RL L
 // Z 0 0 C
-auto RL_0x15 = []()
+static constexpr auto RL_0x15 = []()
 {
 	return RL(L);
 };
 
 // 0x16 RL (HL)
 // Z 0 0 C
-auto RL_0x16 = []()
+static constexpr auto RL_0x16 = []()
 {
 	return RUN_COMMAND_ON_ADDRESS(HL_const, RL);
 };
 
 // 0x17 RL A
 // Z 0 0 C
-auto RL_0x17 = []()
+static constexpr auto RL_0x17 = []()
 {
 	return RL(A);
 };

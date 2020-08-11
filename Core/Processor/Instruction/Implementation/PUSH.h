@@ -13,7 +13,7 @@ namespace Core
 {
 // 0xC5 PUSH BC
 // - - - -
-auto PUSH_0xC5 = []()
+static constexpr auto PUSH_0xC5 = []()
 {
 	SP.Push(B_const);
 	SP.Push(C_const);
@@ -22,7 +22,7 @@ auto PUSH_0xC5 = []()
 
 // 0xD5 PUSH DE
 // - - - -
-auto PUSH_0xD5 = []()
+static constexpr auto PUSH_0xD5 = []()
 {
 	SP.Push(D_const);
 	SP.Push(E_const);
@@ -31,7 +31,7 @@ auto PUSH_0xD5 = []()
 
 // 0xE5 PUSH HL
 // - - - -
-auto PUSH_0xE5 = []()
+static constexpr auto PUSH_0xE5 = []()
 {
 	SP.Push(H_const);
 	SP.Push(L_const);
@@ -40,7 +40,7 @@ auto PUSH_0xE5 = []()
 
 // 0xF5 PUSH AF
 // - - - -
-auto PUSH_0xF5 = []()
+static constexpr auto PUSH_0xF5 = []()
 {
 	SP.Push(A_const);
 	SP.Push(F_const);

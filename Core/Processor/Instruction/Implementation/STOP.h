@@ -13,7 +13,7 @@ namespace Core
 {
 // 0x10 STOP
 // - - - -
-auto STOP_0x10 = []()
+static constexpr auto STOP_0x10 = []()
 {
 	Processor::Stop();
 	return true;

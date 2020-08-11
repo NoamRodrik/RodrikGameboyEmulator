@@ -15,7 +15,7 @@ namespace Core
 {
 // 0xD9 RETI
 // - - - -
-auto RETI_0xD9 = []()
+static constexpr auto RETI_0xD9 = []()
 {
 	// Pop two bytes from stack & jump to that address then
 	// enable interrupts

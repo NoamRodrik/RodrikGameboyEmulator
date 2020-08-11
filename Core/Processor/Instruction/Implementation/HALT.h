@@ -13,7 +13,7 @@ namespace Core
 {
 // 0x76 HALT
 // - - - -
-auto HALT_0x76 = []()
+static constexpr auto HALT_0x76 = []()
 {
 	Processor::Halt();
 	return true;

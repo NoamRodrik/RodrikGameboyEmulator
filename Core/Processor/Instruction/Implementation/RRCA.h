@@ -14,7 +14,7 @@ namespace Core
 {
 // 0x0F RRCA
 // 0 0 0 C
-auto RRCA_0x0F = []()
+static constexpr auto RRCA_0x0F = []()
 {
 	const bool RESULT = RRC_0x0F();
 	F.Clear(Flag::ZERO);

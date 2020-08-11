@@ -14,7 +14,7 @@ namespace Core
 {
 // 0x07 RLCA
 // 0 0 0 C
-auto RLCA_0x07 = []()
+static constexpr auto RLCA_0x07 = []()
 {
 	const bool RESULT = RLC_0x07();
 	F.Clear(Flag::ZERO);

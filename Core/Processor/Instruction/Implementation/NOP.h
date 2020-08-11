@@ -13,7 +13,7 @@ namespace Core
 {
 // 0x00 NOP
 // - - - -
-auto NOP_0x00 = []()
+static constexpr auto NOP_0x00 = []()
 {
 	return true;
 };

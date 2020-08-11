@@ -14,7 +14,7 @@ namespace Core
 {
 // 0xF3 DI
 // - - - -
-auto DI_0xF3 = []()
+static constexpr auto DI_0xF3 = []()
 {
 	// Changes memory.
 	IME::DisableInterrupts();

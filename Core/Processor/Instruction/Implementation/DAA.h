@@ -13,7 +13,7 @@ namespace Core
 {
 // 0x27 DAA
 // Z - 0 C
-auto DAA_0x27 = []()
+static constexpr auto DAA_0x27 = []()
 {
 	data_t adjust{F.IsSet(Flag::CARRY) ? static_cast<data_t>(0x60) : static_cast<data_t>(0x00)};
 	adjust |= F.IsSet(Flag::HALF_CARRY) ? 0x06 : 0x00;

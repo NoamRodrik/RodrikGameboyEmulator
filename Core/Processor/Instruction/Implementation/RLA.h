@@ -14,7 +14,7 @@ namespace Core
 {
 // 0x17 RLA
 // 0 0 0 C
-auto RLA_0x17 = []()
+static constexpr auto RLA_0x17 = []()
 {
 	const bool RESULT = RL_0x17();
 	F.Clear(Flag::ZERO);

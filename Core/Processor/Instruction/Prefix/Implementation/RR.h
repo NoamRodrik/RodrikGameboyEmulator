@@ -13,7 +13,7 @@ namespace Core
 {
 // RR reg
 // Z 0 0 C
-auto RR = [](auto& reg)
+static constexpr auto RR = [](auto& reg)
 {
 	const bool WAS_CARRY_FLAG_SET{F.IsSet(Flag::CARRY)};
 	F.MutateByCondition(Tools::IsBitSet(reg, 0), Flag::CARRY);
@@ -32,56 +32,56 @@ auto RR = [](auto& reg)
 
 // 0x18 RR B
 // Z 0 0 C
-auto RR_0x18 = []()
+static constexpr auto RR_0x18 = []()
 {
 	return RR(B);
 };
 
 // 0x19 RR C
 // Z 0 0 C
-auto RR_0x19 = []()
+static constexpr auto RR_0x19 = []()
 {
 	return RR(C);
 };
 
 // 0x1A RR D
 // Z 0 0 C
-auto RR_0x1A = []()
+static constexpr auto RR_0x1A = []()
 {
 	return RR(D);
 };
 
 // 0x1B RR E
 // Z 0 0 C
-auto RR_0x1B = []()
+static constexpr auto RR_0x1B = []()
 {
 	return RR(E);
 };
 
 // 0x1C RR H
 // Z 0 0 C
-auto RR_0x1C = []()
+static constexpr auto RR_0x1C = []()
 {
 	return RR(H);
 };
 
 // 0x1D RR L
 // Z 0 0 C
-auto RR_0x1D = []()
+static constexpr auto RR_0x1D = []()
 {
 	return RR(L);
 };
 
 // 0x1E RR (HL)
 // Z 0 0 C
-auto RR_0x1E = []()
+static constexpr auto RR_0x1E = []()
 {
 	return RUN_COMMAND_ON_ADDRESS(HL_const, RR);
 };
 
 // 0x1F RR A
 // Z 0 0 C
-auto RR_0x1F = []()
+static constexpr auto RR_0x1F = []()
 {
 	return RR(A);
 };

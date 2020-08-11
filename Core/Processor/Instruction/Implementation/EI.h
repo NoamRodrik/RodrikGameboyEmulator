@@ -14,7 +14,7 @@ namespace Core
 {
 // 0xFB EI
 // - - - -
-auto EI_0xFB = []()
+static constexpr auto EI_0xFB = []()
 {
 	// Changes IME.
 	IME::Schedule();

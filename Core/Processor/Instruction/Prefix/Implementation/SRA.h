@@ -13,7 +13,7 @@ namespace Core
 {
 // SRA data
 // Z 0 0 C
-auto SRA = [](data_t& data)
+static constexpr auto SRA = [](data_t& data)
 {
 	F.Clear(Flag::SUB);
 	F.Clear(Flag::HALF_CARRY);
@@ -25,56 +25,56 @@ auto SRA = [](data_t& data)
 
 // 0x28 SRA B
 // Z 0 0 0
-auto SRA_0x28 = []()
+static constexpr auto SRA_0x28 = []()
 {
 	return SRA(B);
 };
 
 // 0x29 SRA C
 // Z 0 0 0
-auto SRA_0x29 = []()
+static constexpr auto SRA_0x29 = []()
 {
 	return SRA(C);
 };
 
 // 0x2A SRA D
 // Z 0 0 0
-auto SRA_0x2A = []()
+static constexpr auto SRA_0x2A = []()
 {
 	return SRA(D);
 };
 
 // 0x2B SRA E
 // Z 0 0 0
-auto SRA_0x2B = []()
+static constexpr auto SRA_0x2B = []()
 {
 	return SRA(E);
 };
 
 // 0x2C SRA H
 // Z 0 0 0
-auto SRA_0x2C = []()
+static constexpr auto SRA_0x2C = []()
 {
 	return SRA(H);
 };
 
 // 0x2D SRA L
 // Z 0 0 0
-auto SRA_0x2D = []()
+static constexpr auto SRA_0x2D = []()
 {
 	return SRA(L);
 };
 
 // 0x2E SRA (HL)
 // Z 0 0 0
-auto SRA_0x2E = []()
+static constexpr auto SRA_0x2E = []()
 {
 	return RUN_COMMAND_ON_ADDRESS(HL_const, SRA);
 };
 
 // 0x2F SRA A
 // Z 0 0 0
-auto SRA_0x2F = []()
+static constexpr auto SRA_0x2F = []()
 {
 	return SRA(A);
 };

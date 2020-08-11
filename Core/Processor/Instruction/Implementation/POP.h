@@ -13,7 +13,7 @@ namespace Core
 {
 // 0xC1 POP BC
 // - - - -
-auto POP_0xC1 = []()
+static constexpr auto POP_0xC1 = []()
 {
 	SP.Pop(C);
 	SP.Pop(B);
@@ -22,7 +22,7 @@ auto POP_0xC1 = []()
 
 // 0xD1 POP DE
 // - - - -
-auto POP_0xD1 = []()
+static constexpr auto POP_0xD1 = []()
 {
 	SP.Pop(E);
 	SP.Pop(D);
@@ -31,7 +31,7 @@ auto POP_0xD1 = []()
 
 // 0xE1 POP HL
 // - - - -
-auto POP_0xE1 = []()
+static constexpr auto POP_0xE1 = []()
 {
 	SP.Pop(L);
 	SP.Pop(H);
@@ -40,7 +40,7 @@ auto POP_0xE1 = []()
 
 // 0xF1 POP AF
 // - - - -
-auto POP_0xF1 = []()
+static constexpr auto POP_0xF1 = []()
 {
 	SP.Pop(F);
 	SP.Pop(A);

@@ -13,7 +13,7 @@ namespace Core
 {
 // 0xCB PREFIX CB
 // - - - -
-auto PREFIX_0xCB = []()
+static constexpr auto PREFIX_0xCB = []()
 {
 	Processor::SetPrefixCommand();
 	return true;

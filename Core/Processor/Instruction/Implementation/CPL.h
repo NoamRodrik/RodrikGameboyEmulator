@@ -13,7 +13,7 @@ namespace Core
 {
 // 0x2F CPL
 // - 1 1 -
-auto CPL_0x2F = []()
+static constexpr auto CPL_0x2F = []()
 {
 	F.Set(Flag::SUB);
 	F.Set(Flag::HALF_CARRY);

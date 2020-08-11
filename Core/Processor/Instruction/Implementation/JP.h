@@ -11,7 +11,7 @@
 
 namespace Core
 {	
-auto JP = [](const address_t& address)
+static constexpr auto JP = [](const address_t& address)
 {
 	PC = address;
 
@@ -21,42 +21,42 @@ auto JP = [](const address_t& address)
 
 // 0xC2 JP NZ,a16
 // - - - -
-auto JP_0xC2 = []()
+static constexpr auto JP_0xC2 = []()
 {
 	return !F.IsSet(Flag::ZERO) ? JP(A16()) : true;
 };
 
 // 0xC3 JP a16
 // - - - -
-auto JP_0xC3 = []()
+static constexpr auto JP_0xC3 = []()
 {
 	return JP(A16());
 };
 
 // 0xCA JP Z,a16
 // - - - -
-auto JP_0xCA = []()
+static constexpr auto JP_0xCA = []()
 {
 	return F.IsSet(Flag::ZERO) ? JP(A16()) : true;
 };
 
 // 0xD2 JP NC,a16
 // - - - -
-auto JP_0xD2 = []()
+static constexpr auto JP_0xD2 = []()
 {
 	return !F.IsSet(Flag::CARRY) ? JP(A16()) : true;
 };
 
 // 0xDA JP C,a16
 // - - - -
-auto JP_0xDA = []()
+static constexpr auto JP_0xDA = []()
 {
 	return F.IsSet(Flag::CARRY) ? JP(A16()) : true;
 };
 
 // 0xE9 JP HL
 // - - - -
-auto JP_0xE9 = []()
+static constexpr auto JP_0xE9 = []()
 {
 	return JP(HL_const);
 };

@@ -13,7 +13,7 @@ namespace Core
 {
 // 0x3F CCF
 // - 0 0 C
-auto CCF_0x3F = []()
+static constexpr auto CCF_0x3F = []()
 {
 	F.Clear(Flag::SUB);
 	F.Clear(Flag::HALF_CARRY);

@@ -13,7 +13,7 @@ namespace Core
 {
 // SBC A, data
 // Z 1 H C
-auto SBC = [](const auto& data)
+static constexpr auto SBC = [](const auto& data)
 {
 	const int32_t SBC_RESULT {static_cast<int32_t>(A_const & 0xFF) - static_cast<int32_t>(data & 0xFF) - static_cast<int32_t>(F.IsSet(Flag::CARRY))};
 
@@ -29,63 +29,63 @@ auto SBC = [](const auto& data)
 
 // 0x98 SBC A,B
 // Z 1 H C
-auto SBC_0x98 = []()
+static constexpr auto SBC_0x98 = []()
 {
 	return SBC(B_const);
 };
 
 // 0x99 SBC A,C
 // Z 1 H C
-auto SBC_0x99 = []()
+static constexpr auto SBC_0x99 = []()
 {
 	return SBC(C_const);
 };
 
 // 0x9A SBC A,D
 // Z 1 H C
-auto SBC_0x9A = []()
+static constexpr auto SBC_0x9A = []()
 {
 	return SBC(D_const);
 };
 
 // 0x9B SBC A,E
 // Z 1 H C
-auto SBC_0x9B = []()
+static constexpr auto SBC_0x9B = []()
 {
 	return SBC(E_const);
 };
 
 // 0x9C SBC A,H
 // Z 1 H C
-auto SBC_0x9C = []()
+static constexpr auto SBC_0x9C = []()
 {
 	return SBC(H_const);
 };
 
 // 0x9D SBC A,L
 // Z 1 H C
-auto SBC_0x9D = []()
+static constexpr auto SBC_0x9D = []()
 {
 	return SBC(L_const);
 };
 
 // 0x9E SBC A,(HL)
 // Z 1 H C
-auto SBC_0x9E = []()
+static constexpr auto SBC_0x9E = []()
 {
 	return SBC(READ_DATA_AT(HL_const));
 };
 
 // 0x9F SBC A,A
 // Z 1 H C
-auto SBC_0x9F = []()
+static constexpr auto SBC_0x9F = []()
 {
 	return SBC(A_const);
 };
 
 // 0xDE SBC A,d8
 // Z 1 H C
-auto SBC_0xDE = []()
+static constexpr auto SBC_0xDE = []()
 {
 	return SBC(D8());
 };
