@@ -41,6 +41,12 @@ public:
 		return *this;
 	}
 
+	ArithmeticRegister& operator=(data_t data)
+	{
+		this->m_data = data;
+		return *this;
+	}
+
 	auto operator ~()
 	{
 		return ~this->m_data;

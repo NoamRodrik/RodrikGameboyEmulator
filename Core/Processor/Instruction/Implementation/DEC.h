@@ -28,7 +28,7 @@ auto DEC = [](data_t& o_reg)
 };
 
 // DEC o_long_reg
-auto DEC_LONG_REG = [](auto& o_long_reg)
+auto DEC_LONG = [](auto& o_long_reg)
 {
 	o_long_reg -= DECREMENT_VALUE;
 	return true;
@@ -45,7 +45,7 @@ auto DEC_0x05 = []()
 // - - - -
 auto DEC_0x0B = []()
 {
-	return DEC_LONG_REG(BC);
+	return DEC_LONG(BC);
 };
 
 // 0x0D DEC C
@@ -66,7 +66,7 @@ auto DEC_0x15 = []()
 // - - - -
 auto DEC_0x1B = []()
 {
-	return DEC_LONG_REG(DE);
+	return DEC_LONG(DE);
 };
 
 // 0x1D DEC E
@@ -87,7 +87,7 @@ auto DEC_0x25 = []()
 // - - - -
 auto DEC_0x2B = []()
 {
-	return DEC_LONG_REG(HL);
+	return DEC_LONG(HL);
 };
 
 // 0x2D DEC L
@@ -108,7 +108,7 @@ auto DEC_0x35 = []()
 // - - - -
 auto DEC_0x3B = []()
 {
-	return DEC_LONG_REG(SP);
+	return DEC_LONG(SP);
 };
 
 // 0x3D DEC A

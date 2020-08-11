@@ -15,15 +15,14 @@ namespace Core
 // - - - -
 auto LDH_0xE0 = []()
 {
-	memory.Write(A8() + ZERO_PAGE_ADDRESS, A_const);
-	return true;
+	return LD_ADDR(A8() + ZERO_PAGE_ADDRESS, A_const);
 };
 
 // 0xF0 LDH A,(a8)
 // - - - -
 auto LDH_0xF0 = []()
 {
-	return memory.Read(A8() + ZERO_PAGE_ADDRESS, A);
+	return LD(A, READ_DATA_AT(A8() + ZERO_PAGE_ADDRESS));
 };
 } // Core
 

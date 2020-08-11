@@ -15,7 +15,7 @@ namespace Core
 {
 // ADD o_reg, data
 // Z 0 H C
-auto ADD_DATA_TO_REG = [](auto& o_reg, const data_t& data)
+auto ADD = [](auto& o_reg, const data_t& data)
 {
 	F.Clear(Flag::SUB);
 	F.MutateByCondition(((static_cast<data_t>(o_reg + data) ^ o_reg ^ data) & 0x10) == 0x10, Flag::HALF_CARRY);
@@ -28,7 +28,7 @@ auto ADD_DATA_TO_REG = [](auto& o_reg, const data_t& data)
 
 // ADD o_reg, data
 // - 0 H C
-auto ADD_DATA_TO_REG_LONG = [](auto& o_reg, const address_t& data)
+auto ADD_LONG = [](auto& o_reg, const address_t& data)
 {
 	F.Clear(Flag::SUB);
 	F.MutateByCondition((static_cast<const address_t>(o_reg + data) ^ o_reg ^ data) & 0x1000, Flag::HALF_CARRY);
@@ -43,91 +43,91 @@ auto ADD_DATA_TO_REG_LONG = [](auto& o_reg, const address_t& data)
 // - 0 H C
 auto ADD_0x09 = []()
 {
-	return ADD_DATA_TO_REG_LONG(HL, BC_const);
+	return ADD_LONG(HL, BC_const);
 };
 
 // 0x19 ADD HL,DE
 // - 0 H C
 auto ADD_0x19 = []()
 {
-	return ADD_DATA_TO_REG_LONG(HL, DE_const);
+	return ADD_LONG(HL, DE_const);
 };
 
 // 0x29 ADD HL,HL
 // - 0 H C
 auto ADD_0x29 = []()
 {
-	return ADD_DATA_TO_REG_LONG(HL, HL_const);
+	return ADD_LONG(HL, HL_const);
 };
 
 // 0x39 ADD HL,SP
 // - 0 H C
 auto ADD_0x39 = []()
 {
-	return ADD_DATA_TO_REG_LONG(HL, SP_const);
+	return ADD_LONG(HL, SP_const);
 };
 
 // 0x80 ADD A,B
 // Z 0 H C
 auto ADD_0x80 = []()
 {
-	return ADD_DATA_TO_REG(A, B_const);
+	return ADD(A, B_const);
 };
 
 // 0x81 ADD A,C
 // Z 0 H C
 auto ADD_0x81 = []()
 {
-	return ADD_DATA_TO_REG(A, C_const);
+	return ADD(A, C_const);
 };
 
 // 0x82 ADD A,D
 // Z 0 H C
 auto ADD_0x82 = []()
 {
-	return ADD_DATA_TO_REG(A, D_const);
+	return ADD(A, D_const);
 };
 
 // 0x83 ADD A,E
 // Z 0 H C
 auto ADD_0x83 = []()
 {
-	return ADD_DATA_TO_REG(A, E_const);
+	return ADD(A, E_const);
 };
 
 // 0x84 ADD A,H
 // Z 0 H C
 auto ADD_0x84 = []()
 {
-	return ADD_DATA_TO_REG(A, H_const);
+	return ADD(A, H_const);
 };
 
 // 0x85 ADD A,L
 // Z 0 H C
 auto ADD_0x85 = []()
 {
-	return ADD_DATA_TO_REG(A, L_const);
+	return ADD(A, L_const);
 };
 
 // 0x86 ADD A,(HL)
 // Z 0 H C
 auto ADD_0x86 = []()
 {
-	return ADD_DATA_TO_REG(A, READ_DATA_AT(HL_const));
+	return ADD(A, READ_DATA_AT(HL_const));
 };
 
 // 0x87 ADD A,A
 // Z 0 H C
 auto ADD_0x87 = []()
 {
-	return ADD_DATA_TO_REG(A, A_const);
+	return ADD(A, A_const);
 };
 
 // 0xC6 ADD A,d8
 // Z 0 H C
 auto ADD_0xC6 = []()
 {
-	return ADD_DATA_TO_REG(A, D8());
+	return ADD(A, D8());
 };
 
 // 0xE8 ADD SP,r8

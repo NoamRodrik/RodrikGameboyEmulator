@@ -62,29 +62,29 @@ const auto RUN_COMMAND_ON_ADDRESS = [](const auto& address, const auto& command)
 	return result;
 };
 
-const auto A8 = []()
+const auto PC_PARAMETER = [](const address_t offset = 1)
 {
-	return static_cast<data_t>(READ_DATA_AT(PC_const + 1));
+	return static_cast<const data_t>(READ_DATA_AT(PC_const + offset));
 };
 
 const auto D8 = []()
 {
-	return A8();
+	return PC_PARAMETER();
 };
 
-const auto A16 = []()
+const auto A8 = []()
 {
-	return (READ_DATA_AT(PC_const + 2) << 8) | READ_DATA_AT(PC_const + 1);
+	return D8();
 };
 
 const auto D16 = []()
 {
-	return A16();
+	return (PC_PARAMETER(2) << 8) | PC_PARAMETER(1);
 };
 
-const auto A16_TEST = []()
+const auto A16 = []()
 {
-	return ((static_cast<address_t>(READ_DATA_AT(PC_const + 1)) << 8) & 0xFF00) | READ_DATA_AT(PC_const + 2);
+	return D16();
 };
 
 const auto R8 = []()

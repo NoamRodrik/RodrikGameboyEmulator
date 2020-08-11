@@ -19,45 +19,39 @@ auto JP = [](const address_t& address)
 	return false;
 };
 
-auto JP_A16 = []()
-{
-	// Don't change PC.
-	return JP(A16());
-};
-
 // 0xC2 JP NZ,a16
 // - - - -
 auto JP_0xC2 = []()
 {
-	return !F.IsSet(Flag::ZERO) ? JP_A16() : true;
+	return !F.IsSet(Flag::ZERO) ? JP(A16()) : true;
 };
 
 // 0xC3 JP a16
 // - - - -
 auto JP_0xC3 = []()
 {
-	return JP_A16();
+	return JP(A16());
 };
 
 // 0xCA JP Z,a16
 // - - - -
 auto JP_0xCA = []()
 {
-	return F.IsSet(Flag::ZERO) ? JP_A16() : true;
+	return F.IsSet(Flag::ZERO) ? JP(A16()) : true;
 };
 
 // 0xD2 JP NC,a16
 // - - - -
 auto JP_0xD2 = []()
 {
-	return !F.IsSet(Flag::CARRY) ? JP_A16() : true;
+	return !F.IsSet(Flag::CARRY) ? JP(A16()) : true;
 };
 
 // 0xDA JP C,a16
 // - - - -
 auto JP_0xDA = []()
 {
-	return F.IsSet(Flag::CARRY) ? JP_A16() : true;
+	return F.IsSet(Flag::CARRY) ? JP(A16()) : true;
 };
 
 // 0xE9 JP HL

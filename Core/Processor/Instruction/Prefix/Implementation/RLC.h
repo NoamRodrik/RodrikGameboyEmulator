@@ -13,7 +13,7 @@ namespace Core
 {
 // RLC reg
 // Z 0 0 C
-auto RLC_REG = [](auto& reg)
+auto RLC = [](auto& reg)
 {
 	F.Clear(Flag::SUB);
 	F.Clear(Flag::HALF_CARRY);
@@ -33,56 +33,56 @@ auto RLC_REG = [](auto& reg)
 // Z 0 0 C
 auto RLC_0x00 = []()
 {
-	return RLC_REG(B);
+	return RLC(B);
 };
 
 // 0x01 RLC C
 // Z 0 0 C
 auto RLC_0x01 = []()
 {
-	return RLC_REG(C);
+	return RLC(C);
 };
 
 // 0x02 RLC D
 // Z 0 0 C
 auto RLC_0x02 = []()
 {
-	return RLC_REG(D);
+	return RLC(D);
 };
 
 // 0x03 RLC E
 // Z 0 0 C
 auto RLC_0x03 = []()
 {
-	return RLC_REG(E);
+	return RLC(E);
 };
 
 // 0x04 RLC H
 // Z 0 0 C
 auto RLC_0x04 = []()
 {
-	return RLC_REG(H);
+	return RLC(H);
 };
 
 // 0x05 RLC L
 // Z 0 0 C
 auto RLC_0x05 = []()
 {
-	return RLC_REG(L);
+	return RLC(L);
 };
 
 // 0x06 RLC (HL)
 // Z 0 0 C
 auto RLC_0x06 = []()
 {
-	return RUN_COMMAND_ON_ADDRESS(HL_const, RLC_REG);
+	return RUN_COMMAND_ON_ADDRESS(HL_const, RLC);
 };
 
 // 0x07 RLC A
 // Z 0 0 C
 auto RLC_0x07 = []()
 {
-	return RLC_REG(A);
+	return RLC(A);
 };
 } // Core
 

@@ -65,8 +65,7 @@ auto SET_0xC5 = []()
 // - - - -
 auto SET_0xC6 = []()
 {
-	const auto SET_REG_WITH_0 = [](auto& reg) { return SET(0, reg); };
-	return RUN_COMMAND_ON_ADDRESS(HL_const, SET_REG_WITH_0);
+	return RUN_COMMAND_ON_ADDRESS(HL_const, [](auto& reg) { return SET(0, reg); });
 };
 
 // 0xC7 SET 0,A
@@ -122,8 +121,7 @@ auto SET_0xCD = []()
 // - - - -
 auto SET_0xCE = []()
 {
-	const auto SET_REG_WITH_1 = [](auto& reg) { return SET(1, reg); };
-	return RUN_COMMAND_ON_ADDRESS(HL_const, SET_REG_WITH_1);
+	return RUN_COMMAND_ON_ADDRESS(HL_const, [](auto& reg) { return SET(1, reg); });
 };
 
 // 0xCF SET 1,A
@@ -179,8 +177,7 @@ auto SET_0xD5 = []()
 // - - - -
 auto SET_0xD6 = []()
 {
-	const auto SET_REG_WITH_2 = [](auto& reg) { return SET(2, reg); };
-	return RUN_COMMAND_ON_ADDRESS(HL_const, SET_REG_WITH_2);
+	return RUN_COMMAND_ON_ADDRESS(HL_const, [](auto& reg) { return SET(2, reg); });
 };
 
 // 0xD7 SET 2,A
@@ -236,8 +233,7 @@ auto SET_0xDD = []()
 // - - - -
 auto SET_0xDE = []()
 {
-	const auto SET_REG_WITH_3 = [](auto& reg) { return SET(3, reg); };
-	return RUN_COMMAND_ON_ADDRESS(HL_const, SET_REG_WITH_3);
+	return RUN_COMMAND_ON_ADDRESS(HL_const, [](auto& reg) { return SET(3, reg); });
 };
 
 // 0xDF SET 3,A
@@ -293,8 +289,7 @@ auto SET_0xE5 = []()
 // - - - -
 auto SET_0xE6 = []()
 {
-	const auto SET_REG_WITH_4 = [](auto& reg) { return SET(4, reg); };
-	return RUN_COMMAND_ON_ADDRESS(HL_const, SET_REG_WITH_4);
+	return RUN_COMMAND_ON_ADDRESS(HL_const, [](auto& reg) { return SET(4, reg); });
 };
 
 // 0xE7 SET 4,A
@@ -350,8 +345,7 @@ auto SET_0xED = []()
 // - - - -
 auto SET_0xEE = []()
 {
-	const auto SET_REG_WITH_5 = [](auto& reg) { return SET(5, reg); };
-	return RUN_COMMAND_ON_ADDRESS(HL_const, SET_REG_WITH_5);
+	return RUN_COMMAND_ON_ADDRESS(HL_const, [](auto& reg) { return SET(5, reg); });
 };
 
 // 0xEF SET 5,A
@@ -407,8 +401,7 @@ auto SET_0xF5 = []()
 // - - - -
 auto SET_0xF6 = []()
 {
-	const auto SET_REG_WITH_6 = [](auto& reg) { return SET(6, reg); };
-	return RUN_COMMAND_ON_ADDRESS(HL_const, SET_REG_WITH_6);
+	return RUN_COMMAND_ON_ADDRESS(HL_const, [](auto& reg) { return SET(6, reg); });
 };
 
 // 0xF7 SET 6,A
@@ -464,8 +457,7 @@ auto SET_0xFD = []()
 // - - - -
 auto SET_0xFE = []()
 {
-	const auto SET_REG_WITH_7 = [](auto& reg) { return SET(7, reg); };
-	return RUN_COMMAND_ON_ADDRESS(HL_const, SET_REG_WITH_7);
+	return RUN_COMMAND_ON_ADDRESS(HL_const, [](auto& reg) { return SET(7, reg); });
 };
 
 // 0xFF SET 7,A

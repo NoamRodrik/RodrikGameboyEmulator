@@ -29,7 +29,7 @@ auto INC = [](data_t& o_reg)
 };
 
 // INC o_reg
-auto INC_LONG_REG = [](auto& o_reg)
+auto INC_LONG = [](auto& o_reg)
 {
 	o_reg += INCREMENT_VALUE;
 	return true;
@@ -39,7 +39,7 @@ auto INC_LONG_REG = [](auto& o_reg)
 // - - - -
 auto INC_0x03 = []()
 {
-	return INC_LONG_REG(BC);
+	return INC_LONG(BC);
 };
 
 // 0x04 INC B
@@ -60,7 +60,7 @@ auto INC_0x0C = []()
 // - - - -
 auto INC_0x13 = []()
 {
-	return INC_LONG_REG(DE);
+	return INC_LONG(DE);
 };
 
 // 0x14 INC D
@@ -81,7 +81,7 @@ auto INC_0x1C = []()
 // - - - -
 auto INC_0x23 = []()
 {
-	return INC_LONG_REG(HL);
+	return INC_LONG(HL);
 };
 
 // 0x24 INC H
@@ -102,7 +102,7 @@ auto INC_0x2C = []()
 // - - - -
 auto INC_0x33 = []()
 {
-	return INC_LONG_REG(SP);
+	return INC_LONG(SP);
 };
 
 // 0x34 INC (HL)

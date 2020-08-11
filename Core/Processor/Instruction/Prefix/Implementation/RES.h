@@ -19,15 +19,6 @@ auto RES = [](const uint8_t bit_index, auto& reg)
 	return true;
 };
 
-// RES bit_index, (reg_addr)
-auto RES_MEMORY_ADDR = [](const uint8_t bit_index, const auto& reg_addr)
-{
-	data_t data_at_address{READ_DATA_AT(reg_addr)};
-	RES(bit_index, data_at_address);
-	memory.Write(reg_addr, data_at_address);
-	return true;
-};
-
 // 0x80 RES 0,B
 // - - - -
 auto RES_0x80 = []()
@@ -74,7 +65,7 @@ auto RES_0x85 = []()
 // - - - -
 auto RES_0x86 = []()
 {
-	return RES_MEMORY_ADDR(0, HL_const);
+	return RUN_COMMAND_ON_ADDRESS(HL_const, [](auto& addr) {return RES(0, addr); }); 
 };
 
 // 0x87 RES 0,A
@@ -130,7 +121,7 @@ auto RES_0x8D = []()
 // - - - -
 auto RES_0x8E = []()
 {
-	return RES_MEMORY_ADDR(1, HL_const);
+	return RUN_COMMAND_ON_ADDRESS(HL_const, [](auto& addr) {return RES(1, addr); });
 };
 
 // 0x8F RES 1,A
@@ -186,7 +177,7 @@ auto RES_0x95 = []()
 // - - - -
 auto RES_0x96 = []()
 {
-	return RES_MEMORY_ADDR(2, HL_const);
+	return RUN_COMMAND_ON_ADDRESS(HL_const, [](auto& addr) {return RES(2, addr); });
 };
 
 // 0x97 RES 2,A
@@ -242,7 +233,7 @@ auto RES_0x9D = []()
 // - - - -
 auto RES_0x9E = []()
 {
-	return RES_MEMORY_ADDR(3, HL_const);
+	return RUN_COMMAND_ON_ADDRESS(HL_const, [](auto& addr) {return RES(3, addr); });
 };
 
 // 0x9F RES 3,A
@@ -298,7 +289,7 @@ auto RES_0xA5 = []()
 // - - - -
 auto RES_0xA6 = []()
 {
-	return RES_MEMORY_ADDR(4, HL_const);
+	return RUN_COMMAND_ON_ADDRESS(HL_const, [](auto& addr) {return RES(4, addr); });
 };
 
 // 0xA7 RES 4,A
@@ -354,7 +345,7 @@ auto RES_0xAD = []()
 // - - - -
 auto RES_0xAE = []()
 {
-	return RES_MEMORY_ADDR(5, HL_const);
+	return RUN_COMMAND_ON_ADDRESS(HL_const, [](auto& addr) {return RES(5, addr); });
 };
 
 // 0xAF RES 5,A
@@ -410,7 +401,7 @@ auto RES_0xB5 = []()
 // - - - -
 auto RES_0xB6 = []()
 {
-	return RES_MEMORY_ADDR(6, HL_const);
+	return RUN_COMMAND_ON_ADDRESS(HL_const, [](auto& addr) {return RES(6, addr); });
 };
 
 // 0xB7 RES 6,A
@@ -466,7 +457,7 @@ auto RES_0xBD = []()
 // - - - -
 auto RES_0xBE = []()
 {
-	return RES_MEMORY_ADDR(7, HL_const);
+	return RUN_COMMAND_ON_ADDRESS(HL_const, [](auto& addr) {return RES(7, addr); });
 };
 
 // 0xBF RES 7,A

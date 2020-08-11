@@ -9,7 +9,7 @@
 #include <Core/Interrupts/Flags/IME.h>
 #include <Core/Processor/Processor.h>
 #include <Core/Processor/Instruction/Shortcuts.h>
-#include "RET.h"
+#include "EI.h"
 
 namespace Core
 {
@@ -20,7 +20,7 @@ auto RETI_0xD9 = []()
 	// Pop two bytes from stack & jump to that address then
 	// enable interrupts
 	RET();
-	IME::EnableInterrupts();
+	EI_0xFB();
 
 	// Don't want to change PC!
 	return false;
