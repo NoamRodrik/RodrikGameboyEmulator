@@ -6,14 +6,10 @@
 #ifndef __LR35902_MEMORY_DEVICE_CLONE_WORK_RAM_H__
 #define __LR35902_MEMORY_DEVICE_CLONE_WORK_RAM_H__
 
+#include <API/Memory/Device/IMemoryDeviceAccess.h>
 #include <API/Memory/Device/IMemoryDevice.h>
 #include <API/Memory/Memory.h>
 #include <API/Definitions.h>
-
-namespace Core
-{
-class DeviceManager;
-} // Core
 
 namespace Core
 {
@@ -22,7 +18,7 @@ class WorkRAM;
 class CloneWorkRAM : public API::IMemoryDevice
 {
 public:
-	constexpr CloneWorkRAM(DeviceManager& device_manager) : API::IMemoryDevice{START_ADDRESS, END_ADDRESS, device_manager}, m_memory{} {}
+	constexpr CloneWorkRAM(API::IMemoryDeviceAccess& m_memory_accessor) : API::IMemoryDevice{START_ADDRESS, END_ADDRESS, m_memory_accessor}, m_memory{} {}
 
 	virtual bool Read(const API::address_t absolute_address, API::data_t& result) const override
 	{
@@ -36,12 +32,12 @@ public:
 
 		API::data_t work_ram_data{0};
 
-		SANITY(this->m_device_manager.Read(0xC000 + absolute_address - START_ADDRESS, work_ram_data),
+		SANITY(this->m_memory_accessor.Read(0xC000 + absolute_address - START_ADDRESS, work_ram_data),
 			"Failed reading from WorkRAM");
 
 		if (work_ram_data != data)
 		{
-			this->m_device_manager.Write(0xC000 + absolute_address - START_ADDRESS, work_ram_data);
+			this->m_memory_accessor.Write(0xC000 + absolute_address - START_ADDRESS, work_ram_data);
 		}
 	}
 

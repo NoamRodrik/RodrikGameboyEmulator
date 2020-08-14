@@ -6,6 +6,7 @@
 #ifndef __LR35902_MEMORY_DEVICE_CARTRIDGE_RAM_H__
 #define __LR35902_MEMORY_DEVICE_CARTRIDGE_RAM_H__
 
+#include <API/Memory/Device/IMemoryDeviceAccess.h>
 #include <Core/Cartridge/Loader/BinaryLoader.h>
 #include <API/Memory/Device/IMemoryDevice.h>
 #include <API/Memory/Memory.h>
@@ -14,15 +15,10 @@
 
 namespace Core
 {
-class DeviceManager;
-} // Core
-
-namespace Core
-{
 class CartridgeRAM : public API::IMemoryDevice
 {
 public:
-	CartridgeRAM(DeviceManager& device_manager) : API::IMemoryDevice{START_ADDRESS, END_ADDRESS, device_manager}, m_memory{} {}
+	CartridgeRAM(API::IMemoryDeviceAccess& m_memory_accessor) : API::IMemoryDevice{START_ADDRESS, END_ADDRESS, m_memory_accessor}, m_memory{} {}
 
 	virtual bool Read(const API::address_t absolute_address, API::data_t& result) const override
 	{

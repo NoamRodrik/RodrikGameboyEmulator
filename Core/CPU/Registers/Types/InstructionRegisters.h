@@ -6,15 +6,15 @@
 #ifndef __LR35902_INSTRUCTION_REGISTERS_H__
 #define __LR35902_INSTRUCTION_REGISTERS_H__
 
-#include <Core/Registers/RegisterBase.h>
+#include <API/Registers/RegisterBase.h>
 
 namespace Core
 {
-class PC_Register : public AddressRegisterBase
+class PC_Register : public API::AddressRegisterBase
 {
 public:
-	using AddressRegisterBase::AddressRegisterBase;
-	using AddressRegisterBase::RegisterType;
+	using API::AddressRegisterBase::AddressRegisterBase;
+	using API::AddressRegisterBase::RegisterType;
 
 public:
 	inline void Next() { this->m_data += 1; }

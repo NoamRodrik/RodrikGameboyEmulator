@@ -77,6 +77,6 @@ constexpr RegisterPair& operator++(RegisterPair& reg_pair)
 {
 	return reg_pair += 1;
 }
-} // Core
+} // API
 
 #endif // __REGISTER_PAIR_H__

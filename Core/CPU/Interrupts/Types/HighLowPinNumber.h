@@ -12,7 +12,6 @@ namespace Core
 {
 inline const auto HIGH_LOW_PIN_NUMBER_INTERRUPT = []()
 {
-	Message("Unimplemented!");
 	return false;
 };
 } // Core

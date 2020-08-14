@@ -9,6 +9,7 @@
 #include <Core/CPU/Interrupts/Registers/InterruptEnable.h>
 #include <Core/CPU/Interrupts/Registers/InterruptFlag.h>
 #include <Core/CPU/Timer/Registers/TimerControl.h>
+#include <API/Memory/Device/IMemoryDeviceAccess.h>
 #include <Core/CPU/Timer/Registers/TimerModulo.h>
 #include <API/Memory/Device/IMemoryDevice.h>
 #include <Core/Bus/Devices/CartridgeRAM.h>
@@ -18,15 +19,10 @@
 
 namespace Core
 {
-class DeviceManager;
-} // Core
-
-namespace Core
-{
 class IORAM : public API::IMemoryDevice
 {
 public:
-	constexpr IORAM(DeviceManager& device_manager) : API::IMemoryDevice{START_ADDRESS, END_ADDRESS, device_manager}, m_memory{}
+	constexpr IORAM(API::IMemoryDeviceAccess& memory_accessor) : API::IMemoryDevice{START_ADDRESS, END_ADDRESS, memory_accessor }, m_memory{}
 	{
 		// Default values
 		this->m_memory[GetFixedAddress(API::TIMER_COUNTER_ADDRESS)] = TimerCounter::TIMER_COUNTER_DEFAULT_VALUE;
@@ -91,6 +87,7 @@ private:
 		{
 			case (API::SERIAL_TRANSFER_CONTROL):
 			{
+#ifdef TESTING
 				Message("This is for testing purposes");
 				if (data == (API::SERIAL_TRANSFER_START | API::SERIAL_TRANSFER_CLOCK_SOURCE))
 				{
@@ -98,7 +95,7 @@ private:
 					SANITY(this->Read(API::SERIAL_TRANSFER_DATA, byte_read), "Failed reading serial data");
 					SECONDARY_OUTPUT(byte_read);
 				}
-
+#endif
 				break;
 			}
 

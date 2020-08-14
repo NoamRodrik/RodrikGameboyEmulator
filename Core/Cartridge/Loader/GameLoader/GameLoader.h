@@ -10,7 +10,7 @@
 #include <Core/Bus/Devices/CartridgeRAM.h>
 #include <Core/CPU/Processor.h>
 #include <API/Definitions.h>
-#include <Tools/not_null.h>
+#include <Contrib/GSL/not_null.h>
 #include <string>
 
 namespace Core

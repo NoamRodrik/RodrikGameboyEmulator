@@ -12,7 +12,6 @@ namespace Core
 {
 inline const auto LCDC_INTERRUPT = []()
 {
-	Message("Unimplemented!");
 	return false;
 };
 } // Core

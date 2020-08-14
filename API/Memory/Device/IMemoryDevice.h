@@ -1,10 +1,10 @@
 /**
  * @file		IMemoryDevice.h
  * @author		Noam Rodrik
- * @description Defines basic actions for memory device base objects.
+ * @description Defines an interfaces for memory device objects.
  */
-#ifndef __MEMORY_DEVICE_BASE_H__
-#define __MEMORY_DEVICE_BASE_H__
+#ifndef __IMEMORY_DEVICE_H__
+#define __IMEMORY_DEVICE_H__
 
 #include <API/Memory/Device/IMemoryDeviceAccess.h>
 #include <API/Memory/Device/IMemoryDevice.h>
@@ -13,15 +13,13 @@
 
 namespace API
 {
-class DeviceManager;
-
 class IMemoryDevice : public IMemoryDeviceAccess
 {
 public:
-	constexpr IMemoryDevice(const uint32_t start_address, const uint32_t end_address, IMemoryDeviceAccess& device_manager) :
+	constexpr IMemoryDevice(const uint32_t start_address, const uint32_t end_address, IMemoryDeviceAccess& memory_accessor) :
 		m_start_address{start_address},
 		m_end_address{end_address},
-		m_device_manager{device_manager}
+		m_memory_accessor{memory_accessor}
 	{
 	}
 
@@ -33,15 +31,12 @@ public:
 protected:
 	virtual uint8_t* GetMemoryPointer() = 0;
 
-	IMemoryDeviceAccess& m_device_manager;
+	IMemoryDeviceAccess& m_memory_accessor;
 
 private:
 	const uint32_t m_start_address;
 	const uint32_t m_end_address;
-
-private:
-	friend class GameLoader;
 };
-} // Core
+} // API
 
-#endif // __MEMORY_DEVICE_BASE_H__
+#endif // __IMEMORY_DEVICE_H__

@@ -6,9 +6,9 @@
 #ifndef __LR35902_REGISTER_ENGINE_H__
 #define __LR35902_REGISTER_ENGINE_H__
 
-#include <Core/Registers/Types/InstructionRegisters.h>
-#include <Core/Registers/Types/StackRegisters.h>
-#include <Core/Registers/Types/LogicRegisters.h>
+#include <Core/CPU/Registers/Types/InstructionRegisters.h>
+#include <Core/CPU/Registers/Types/StackRegisters.h>
+#include <Core/CPU/Registers/Types/LogicRegisters.h>
 
 namespace Core
 {
@@ -17,12 +17,12 @@ class RegisterEngine
 public:
 	RegisterEngine(Bus& memory) : m_memory{memory} {}
 
-	StackRegisterBase& GetStackRegister()
+	API::StackRegisterBase& GetStackRegister()
 	{
 		return this->m_stack_pointer;
 	}
 
-	AddressRegisterBase& GetProgramCounter()
+	API::AddressRegisterBase& GetProgramCounter()
 	{
 		return this->m_program_counter;
 	}

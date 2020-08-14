@@ -7,21 +7,17 @@
 #define __LR35902_MEMORY_DEVICE_INTERRUPT_SWITCH_H__
 
 #include <Core/CPU/Interrupts/Registers/InterruptEnable.h>
+#include <API/Memory/Device/IMemoryDeviceAccess.h>
 #include <API/Memory/Device/IMemoryDevice.h>
-#include <API/Definitions.h>
 #include <API/Memory/Memory.h>
-
-namespace Core
-{
-class DeviceManager;
-} // Core
+#include <API/Definitions.h>
 
 namespace Core
 {
 class InterruptSwitch : public API::IMemoryDevice
 {
 public:
-	constexpr InterruptSwitch(DeviceManager& device_manager) : API::IMemoryDevice{START_ADDRESS, END_ADDRESS, device_manager}, m_memory{}
+	constexpr InterruptSwitch(API::IMemoryDeviceAccess& memory_accessor) : API::IMemoryDevice{START_ADDRESS, END_ADDRESS, memory_accessor }, m_memory{}
 	{
 		// Default value for the interrupt flag
 		this->m_memory[InterruptEnable::INTERRUPT_ENABLE_ADDRESS - START_ADDRESS] =

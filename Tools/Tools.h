@@ -14,8 +14,9 @@
 #define Message(desc) __pragma(message(__FILE__ "(" MacroStr2(__LINE__) ") : " desc))
 
 #define NO_PIXEL_ENGINE
+#define TESTING
 
-Message("If you want to print, comment this here");
+Message("If you want to print, comment this here, otherwise uncomment.");
 //#define NO_PRINT
 //#define NO_PRINT_FLAGS
 //#define NO_PRINT_REGISTERS

@@ -6,7 +6,7 @@
 #ifndef __LR35902_JOYPAD_REGISTER_H__
 #define __LR35902_JOYPAD_REGISTER_H__
 
-#include <Core/Registers/Memory/MemoryRegister.h>
+#include <Core/CPU/Registers/MemoryRegister.h>
 
 namespace Core
 {
@@ -14,7 +14,7 @@ class JoypadRegister : public MemoryRegister<API::data_t>
 {
 public:
 	JoypadRegister() : MemoryRegister{ API::JOYPAD_REGISTER_ADDRESS} {}
-	JoypadRegister(const API::data_t value) : MemoryRegister{ API::JOYPAD_REGISTER_ADDRESS} { *this = value; }
+	JoypadRegister(const API::data_t value) : MemoryRegister{API::JOYPAD_REGISTER_ADDRESS} { *this = value; }
 
 public:
 	using MemoryRegister::operator=;

@@ -3,8 +3,8 @@
  * @author		Noam Rodrik
  * @description Defines basic actions for memory objects.
  */
-#ifndef __MEMORY_BASE_H__
-#define __MEMORY_BASE_H__
+#ifndef __MEMORY_H__
+#define __MEMORY_H__
 
 #include <stdint.h>
 #include <array>
@@ -44,6 +44,6 @@ private:
 private:
 	std::array<data_t, SIZE> m_ram;
 };
-} // Core
+} // API
 
-#endif // __MEMORY_BASE_H__
+#endif // __MEMORY_H__

@@ -22,7 +22,7 @@ using namespace API;
 
 namespace Core
 {
-DeviceManager::DeviceManager() : m_devices{}, m_last_added_device{ 0 }
+DeviceManager::DeviceManager() : m_devices{}, m_last_added_device{0}
 {
 	this->StartDevices();
 }

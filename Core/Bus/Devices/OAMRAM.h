@@ -6,21 +6,17 @@
 #ifndef __LR35902_MEMORY_DEVICE_OAM_RAM_H__
 #define __LR35902_MEMORY_DEVICE_OAM_RAM_H__
 
+#include <API/Memory/Device/IMemoryDeviceAccess.h>
 #include <API/Memory/Device/IMemoryDevice.h>
 #include <API/Memory/Memory.h>
 #include <API/Definitions.h>
 
 namespace Core
 {
-class DeviceManager;
-} // Core
-
-namespace Core
-{
 class OAMRAM : public API::IMemoryDevice
 {
 public:
-	constexpr OAMRAM(DeviceManager& device_manager) : API::IMemoryDevice{START_ADDRESS, END_ADDRESS, device_manager}, m_memory{} {}
+	constexpr OAMRAM(API::IMemoryDeviceAccess& memory_accessor) : API::IMemoryDevice{START_ADDRESS, END_ADDRESS, memory_accessor }, m_memory{} {}
 
 	virtual bool Read(const API::address_t absolute_address, API::data_t& result) const override
 	{

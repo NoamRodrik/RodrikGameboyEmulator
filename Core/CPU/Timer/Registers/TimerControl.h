@@ -6,7 +6,7 @@
 #ifndef __LR35902_TIMER_CONTROL_REGISTER_H__
 #define __LR35902_TIMER_CONTROL_REGISTER_H__
 
-#include <Core/Registers/Memory/MemoryRegister.h>
+#include <Core/CPU/Registers/MemoryRegister.h>
 
 namespace Core
 {

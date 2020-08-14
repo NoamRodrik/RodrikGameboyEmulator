@@ -6,16 +6,16 @@
 #ifndef __LR35902_STACK_REGISTERS_H__
 #define __LR35902_STACK_REGISTERS_H__
 
-#include <Core/Registers/RegisterBase.h>
+#include <API/Registers/RegisterBase.h>
 #include <Core/Bus/Bus.h>
 
 namespace Core
 {
-class SP_Register : public StackRegisterBase
+class SP_Register : public API::StackRegisterBase
 {
 public:
 	SP_Register(RegisterType&& reg_value, API::IMemoryDeviceAccess& memory_context) :
-		StackRegisterBase{std::move(reg_value)}, m_memory_context{memory_context} {}
+				API::StackRegisterBase{std::move(reg_value)}, m_memory_context{memory_context} {}
 
 	virtual ~SP_Register() = default;
 

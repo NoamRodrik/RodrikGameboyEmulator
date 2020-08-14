@@ -6,7 +6,7 @@
 #ifndef __PROCESSOR_H__
 #define __PROCESSOR_H__
 
-#include <Core/Registers/Logic/RegisterEngine.h>
+#include <Core/CPU/Registers/RegisterEngine.h>
 #include <API/StaticInstance.h>
 #include <Core/Bus/Bus.h>
 

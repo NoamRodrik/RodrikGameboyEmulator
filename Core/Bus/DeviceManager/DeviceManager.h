@@ -3,13 +3,13 @@
  * @author		Noam Rodrik
  * @description Defines the basic device manager base for the bus.
  */
-#ifndef __DEVICE_MANAGER_BASE_H__
-#define __DEVICE_MANAGER_BASE_H__
+#ifndef __DEVICE_MANAGER_H__
+#define __DEVICE_MANAGER_H__
 
 #include <API/Memory/Device/MemoryDeviceOperations.h>
 #include <API/Memory/Device/IMemoryDeviceAccess.h>
+#include <Contrib/GSL/not_null.h>
 #include <API/Definitions.h>
-#include <Tools/not_null.h>
 #include <cstdint>
 
 namespace Core
@@ -61,4 +61,4 @@ protected:
 };
 } // Core
 
-#endif // __DEVICE_MANAGER_BASE_H__
+#endif // __DEVICE_MANAGER_H__

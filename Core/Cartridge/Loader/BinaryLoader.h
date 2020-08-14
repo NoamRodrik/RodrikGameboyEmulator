@@ -7,7 +7,7 @@
 #define __BINARY_LOADER_H__
 
 #include <Core/CPU/Processor.h>
-#include <Tools/not_null.h>
+#include <Contrib/GSL/not_null.h>
 #include <string>
 
 namespace Core

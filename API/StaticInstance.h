@@ -6,7 +6,7 @@
 #ifndef __STATIC_INSTANCE_H__
 #define __STATIC_INSTANCE_H__
 
-#include <Tools/not_null.h>
+#include <Contrib/GSL/not_null.h>
 
 namespace API
 {
@@ -27,6 +27,6 @@ public:
 private:
 	inline static T* Instance{nullptr};
 };
-} // Core
+} // API
 
 #endif // __STATIC_INSTANCE_H__

@@ -27,16 +27,13 @@
     <ClCompile Include="Core\CPU\Processor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Core\Bus\DeviceManager\DeviceManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Core\Clock\Clock.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Core\Joypad\Joypad.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Core\Bus\DeviceManager\DeviceManager.h">
+    <ClCompile Include="Core\Bus\DeviceManager\DeviceManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -44,34 +41,7 @@
     <ClInclude Include="Tools\Tools.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Tools\not_null.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Core\Bus\Bus.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Registers\Logic\RegisterEngine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Registers\Types\ArithmeticRegisters.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Registers\Types\EFLRegisters.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Registers\Types\InstructionRegisters.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Registers\Types\LogicRegisters.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Registers\Types\StackRegisters.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Registers\RegisterBase.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Registers\Memory\MemoryRegister.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Contrib\PixelGameEngine\OLCPixelGameEngine.h">
@@ -186,39 +156,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Core\CPU\Instruction\Implementation\XOR.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CPU\Instruction\Prefix\Implementation\BIT.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CPU\Instruction\Prefix\Implementation\RES.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CPU\Instruction\Prefix\Implementation\RL.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CPU\Instruction\Prefix\Implementation\RLC.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CPU\Instruction\Prefix\Implementation\RR.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CPU\Instruction\Prefix\Implementation\RRC.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CPU\Instruction\Prefix\Implementation\SET.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CPU\Instruction\Prefix\Implementation\SLA.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CPU\Instruction\Prefix\Implementation\SRA.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CPU\Instruction\Prefix\Implementation\SRL.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CPU\Instruction\Prefix\Implementation\SWAP.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Core\CPU\Instruction\Prefix\PrefixLookupTable.h">
@@ -339,6 +276,69 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="API\Memory\Device\IMemoryDevice.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="API\Registers\RegisterBase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Instruction\Prefix\Implementation\BIT.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Instruction\Prefix\Implementation\RES.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Instruction\Prefix\Implementation\RL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Instruction\Prefix\Implementation\RLC.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Instruction\Prefix\Implementation\RR.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Instruction\Prefix\Implementation\RRC.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Instruction\Prefix\Implementation\SET.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Instruction\Prefix\Implementation\SLA.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Instruction\Prefix\Implementation\SRA.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Instruction\Prefix\Implementation\SRL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Instruction\Prefix\Implementation\SWAP.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Contrib\GSL\not_null.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Registers\Types\ArithmeticRegisters.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Registers\Types\EFLRegisters.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Registers\Types\InstructionRegisters.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Registers\Types\LogicRegisters.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Registers\Types\StackRegisters.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Registers\MemoryRegister.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Registers\RegisterEngine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Bus\DeviceManager\DeviceManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

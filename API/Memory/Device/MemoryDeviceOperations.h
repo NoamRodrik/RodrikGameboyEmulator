@@ -8,7 +8,7 @@
 
 #include <API/Definitions.h>
 #include "IMemoryDevice.h"
-#include <Tools/not_null.h>
+#include <Contrib/GSL/not_null.h>
 #include <algorithm>
 
 namespace API
@@ -29,6 +29,6 @@ namespace API
 	{
 		return address >= device->GetStartAddress() && address <= device->GetEndAddress();
 	}
-} // Core
+} // API
 
 #endif // __MEMORY_DEVICE_OPERATIONS_H__

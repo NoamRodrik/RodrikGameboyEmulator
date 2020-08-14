@@ -131,7 +131,7 @@ namespace API
 #undef SKIP_BOOT
 #endif
 
-	Message("Cancel this if you don't want to skip the CPU");
+	Message("Cancel this if you don't want to skip the Boot");
 	#define SKIP_BOOT 1
 	//#define SKIP_BOOT 0
 
@@ -182,6 +182,6 @@ namespace API
 		0x05, 0x20, 0xFB, 0x86, 0x20, 0xFE,
 		0x3E, 0x01, 0xE0, 0x50
 	};
-} // Core
+} // API
 
 #endif // __API_DEFINITIONS_H__

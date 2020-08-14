@@ -6,8 +6,8 @@
 #ifndef __LR35902_LOGIC_REGISTERS_H__
 #define __LR35902_LOGIC_REGISTERS_H__
 
-#include <Core/Registers/Types/ArithmeticRegisters.h>
-#include <Core/Registers/Types/EFLRegisters.h>
+#include <Core/CPU/Registers/Types/ArithmeticRegisters.h>
+#include <Core/CPU/Registers/Types/EFLRegisters.h>
 
 namespace Core
 {

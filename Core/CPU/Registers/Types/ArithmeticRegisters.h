@@ -6,16 +6,16 @@
 #ifndef __LR35902_ARITHMETIC_REGISTERS_H__
 #define __LR35902_ARITHMETIC_REGISTERS_H__
 
-#include <Core/Registers/RegisterBase.h>
+#include <API/Registers/RegisterBase.h>
 
 namespace Core
 {
-class ArithmeticRegister : public ArithmeticRegisterBase
+class ArithmeticRegister : public API::ArithmeticRegisterBase
 {
 public:
-	using ArithmeticRegisterBase::ArithmeticRegisterBase;
-	using ArithmeticRegisterBase::RegisterType;
-	using ArithmeticRegisterBase::operator ArithmeticRegisterBase::RegisterType&;
+	using API::ArithmeticRegisterBase::ArithmeticRegisterBase;
+	using API::ArithmeticRegisterBase::RegisterType;
+	using API::ArithmeticRegisterBase::operator API::ArithmeticRegisterBase::RegisterType&;
 
 	ArithmeticRegister& operator>>=(int amount)
 	{
@@ -52,10 +52,10 @@ public:
 		return ~this->m_data;
 	}
 
-	void operator<<=(uint8_t) const = delete;
-	void operator&=(uint8_t) const = delete;
-	void operator|=(uint8_t) const = delete;
-	void operator>>=(uint8_t) const = delete;
+	void operator<<=(API::data_t) const = delete;
+	void operator&=(API::data_t) const = delete;
+	void operator|=(API::data_t) const = delete;
+	void operator>>=(API::data_t) const = delete;
 };
 
 static_assert(sizeof(ArithmeticRegister) == sizeof(ArithmeticRegister::RegisterType));
