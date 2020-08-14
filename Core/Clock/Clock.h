@@ -26,10 +26,12 @@ private:
 	static void Update();
 
 private:
-	using lr35902_clock_period = std::chrono::duration<long long, std::ratio<1, API::LR35902_HZ_CLOCK>>;
+	using lr35902_clock_period = std::chrono::duration<int64_t, std::ratio<1, API::LR35902_HZ_CLOCK>>;
+	static constexpr lr35902_clock_period one_clock_period{1};
+	using clock = std::chrono::high_resolution_clock;
 
 private:
-	decltype(std::chrono::high_resolution_clock::now()) m_last_tick{};
+	decltype(clock::now()) m_last_tick{std::chrono::time_point_cast<clock::duration>(clock::now() + one_clock_period)};
 };
 } // Core
 

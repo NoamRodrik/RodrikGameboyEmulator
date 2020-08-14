@@ -31,7 +31,6 @@ int main(int argc, char** argv)
 		for (size_t current_cycle = Processor::Clock(); current_cycle > 0; --current_cycle)
 		{
 			Clock::SyncClock();
-			IME::EnableInterruptsIfScheduled();
 		}
 	} while (true);
 

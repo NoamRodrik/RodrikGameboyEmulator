@@ -37,6 +37,9 @@ static const std::array<const Interrupt, INTERRUPT_COUNT> InterruptTable
 	
 size_t InterruptHandler::ProcessInterrupts()
 {
+	// Interrupt Handling
+	IME::EnableInterruptsIfScheduled();
+
 	if (!IME::IsEnabled())
 	{
 		// The master enable isn't on, we can't use interrupts yet.
