@@ -5,12 +5,12 @@
  */
 
 #include <Core/CPU/Interrupts/Registers/InterruptEnable.h>
-#include <Core/CPU/Instruction/Prefix/PrefixLookupTable.h>
-#include <Core/CPU/Instruction/InstructionLookupTable.h>
+#include <Core/CPU/Instructions/Prefix/PrefixLookupTable.h>
+#include <Core/CPU/Instructions/InstructionLookupTable.h>
 #include <Core/CPU/Interrupts/Registers/InterruptFlag.h>
 #include <Core/CPU/Interrupts/InterruptHandler.h>
-#include <Core/CPU/Instruction/Shortcuts.h>
-#include <Core/CPU/Timer/Timer.h>
+#include <Core/CPU/Instructions/Shortcuts.h>
+#include <Core/CPU/Timers/Timer.h>
 #include <Core/CPU/Processor.h>
 #include <Core/Clock/Clock.h>
 #include <time.h>

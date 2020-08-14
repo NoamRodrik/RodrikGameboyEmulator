@@ -13,12 +13,15 @@ namespace Core
 class JoypadRegister : public MemoryRegister<API::data_t>
 {
 public:
-	JoypadRegister() : MemoryRegister{ API::JOYPAD_REGISTER_ADDRESS} {}
-	JoypadRegister(const API::data_t value) : MemoryRegister{API::JOYPAD_REGISTER_ADDRESS} { *this = value; }
+	JoypadRegister() : MemoryRegister{JOYPAD_REGISTER_ADDRESS} {}
+	JoypadRegister(const API::data_t value) : MemoryRegister{JOYPAD_REGISTER_ADDRESS} { *this = value; }
 
 public:
 	using MemoryRegister::operator=;
 	using MemoryRegister::operator API::data_t;
+
+public:
+	static constexpr API::address_t JOYPAD_REGISTER_ADDRESS{0xFF00};
 };
 } // Core
 

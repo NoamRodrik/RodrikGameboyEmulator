@@ -18,10 +18,6 @@ namespace API
 	using data_t = uint8_t;
 	using r8_t = int8_t;
 
-	/* Necessary switch */
-	static constexpr data_t OFF = 0;
-	static constexpr data_t ON  = 1;
-
 	/* RAM */
 	static constexpr uint32_t MEMORY_SIZE = Tools::KilobitsToBits(std::numeric_limits<address_t>::digits);
 
@@ -31,23 +27,11 @@ namespace API
 	/* Devices on BUS */
 	static constexpr uint8_t DEVICES_ON_BUS = 10;
 
-	/* Interrupts */
-	static constexpr uint8_t INTERRUPT_COUNT = 5;
-
-	/* Joypad */
-	static constexpr address_t JOYPAD_REGISTER_ADDRESS{0xFF00};
-
 	/* Serial */
 	static constexpr address_t SERIAL_TRANSFER_DATA{0xFF01};
 	static constexpr address_t SERIAL_TRANSFER_CONTROL{0xFF02};
 	static constexpr data_t SERIAL_TRANSFER_START{0x01};
 	static constexpr data_t SERIAL_TRANSFER_CLOCK_SOURCE{0x80};
-
-	/* Timers */
-	static constexpr address_t DIVIDER_REGISTER_ADDRESS{0xFF04};
-	static constexpr address_t TIMER_COUNTER_ADDRESS{0xFF05};
-	static constexpr address_t TIMER_MODULO_ADDRESS{0xFF06};
-	static constexpr address_t TIMER_CONTROL_ADDRESS{0xFF07};
 
 	/* Audio Processing and Graphics Processing */
 	static constexpr address_t NR10_ADDRESS{0xFF10};

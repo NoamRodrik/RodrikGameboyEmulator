@@ -6,7 +6,7 @@
 #include <Core/Cartridge/Loader/GameLoader/GameLoader.h>
 #include <Core/CPU/Interrupts/SpecialRegisters/IME.h>
 #include <Core/GPU/Engine/MainPixelEngine.h>
-#include <Core/CPU/Timer/Timer.h>
+#include <Core/CPU/Timers/Timer.h>
 #include <Core/CPU/Processor.h>
 #include <Core/Clock/Clock.h>
 #include <filesystem>

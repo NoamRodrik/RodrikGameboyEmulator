@@ -3,7 +3,7 @@
  * @author		Noam Rodrik
  * @description Main logic of the processor's clock
  */
-#include <Core/CPU/Timer/Timer.h>
+#include <Core/CPU/Timers/Timer.h>
 #include <Core/Clock/Clock.h>
 #include <thread>
 

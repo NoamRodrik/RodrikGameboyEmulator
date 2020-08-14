@@ -8,12 +8,14 @@
 
 #include <Core/CPU/Interrupts/Registers/InterruptEnable.h>
 #include <Core/CPU/Interrupts/Registers/InterruptFlag.h>
-#include <Core/CPU/Timer/Registers/TimerControl.h>
+#include <Core/CPU/Timers/Registers/DividerRegister.h>
+#include <Core/CPU/Timers/Registers/TimerCounter.h>
+#include <Core/CPU/Timers/Registers/TimerControl.h>
 #include <API/Memory/Device/IMemoryDeviceAccess.h>
-#include <Core/CPU/Timer/Registers/TimerModulo.h>
+#include <Core/CPU/Timers/Registers/TimerModulo.h>
 #include <API/Memory/Device/IMemoryDevice.h>
 #include <Core/Bus/Devices/CartridgeRAM.h>
-#include <Core/CPU/Timer/Timer.h>
+#include <Core/CPU/Timers/Timer.h>
 #include <API/Definitions.h>
 #include <API/Memory/Memory.h>
 
@@ -25,9 +27,9 @@ public:
 	constexpr IORAM(API::IMemoryDeviceAccess& memory_accessor) : API::IMemoryDevice{START_ADDRESS, END_ADDRESS, memory_accessor }, m_memory{}
 	{
 		// Default values
-		this->m_memory[GetFixedAddress(API::TIMER_COUNTER_ADDRESS)] = TimerCounter::TIMER_COUNTER_DEFAULT_VALUE;
-		this->m_memory[GetFixedAddress(API::TIMER_MODULO_ADDRESS)] = TimerModulo::TIMER_MODULO_DEFAULT_VALUE;
-		this->m_memory[GetFixedAddress(API::TIMER_CONTROL_ADDRESS)] = TimerControl::TIMER_CONTROL_DEFAULT_VALUE;
+		this->m_memory[GetFixedAddress(TimerCounter::TIMER_COUNTER_ADDRESS)] = TimerCounter::TIMER_COUNTER_DEFAULT_VALUE;
+		this->m_memory[GetFixedAddress(TimerModulo::TIMER_MODULO_ADDRESS)] = TimerModulo::TIMER_MODULO_DEFAULT_VALUE;
+		this->m_memory[GetFixedAddress(TimerControl::TIMER_CONTROL_ADDRESS)] = TimerControl::TIMER_CONTROL_DEFAULT_VALUE;
 		this->m_memory[GetFixedAddress(API::NR10_ADDRESS)] = API::NR10_DEFAULT_VALUE;
 		this->m_memory[GetFixedAddress(API::NR11_ADDRESS)] = API::NR11_DEFAULT_VALUE;
 		this->m_memory[GetFixedAddress(API::NR12_ADDRESS)] = API::NR12_DEFAULT_VALUE;
@@ -99,28 +101,28 @@ private:
 				break;
 			}
 
-			case (API::TIMER_MODULO_ADDRESS):
+			case (TimerModulo::TIMER_MODULO_ADDRESS):
 			{
 				// Writing also onto the timer counter!
-				this->m_memory[GetFixedAddress(API::TIMER_COUNTER_ADDRESS)] = data;
+				this->m_memory[GetFixedAddress(TimerCounter::TIMER_COUNTER_ADDRESS)] = data;
 
 				break;
 			}
 
-			case (API::TIMER_COUNTER_ADDRESS):
+			case (TimerCounter::TIMER_COUNTER_ADDRESS):
 			{
 				if (Timer::IsCounterOverflow(data))
 				{
 					Timer::CounterOverflowInterrupt();
 					TimerModulo modulo{};
-					this->m_memory[GetFixedAddress(API::TIMER_COUNTER_ADDRESS)] = modulo;
+					this->m_memory[GetFixedAddress(TimerCounter::TIMER_COUNTER_ADDRESS)] = modulo;
 					return false;
 				}
 
 				break;
 			}
 
-			case (API::TIMER_CONTROL_ADDRESS):
+			case (TimerControl::TIMER_CONTROL_ADDRESS):
 			{
 				// Using only the allowed portion of the TAC.
 				this->m_memory[GetFixedAddress(address)] = data & 0x07;
@@ -128,7 +130,7 @@ private:
 				break;
 			}
 
-			case (API::DIVIDER_REGISTER_ADDRESS):
+			case (DividerRegister::DIVIDER_REGISTER_ADDRESS):
 			{
 				// Writing to the divier register resets the divider timer.
 				this->m_memory[GetFixedAddress(address)] = 0;

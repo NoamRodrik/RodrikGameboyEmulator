@@ -6,7 +6,7 @@
 #ifndef __LR35902_MEMORY_REGISTER_H__
 #define __LR35902_MEMORY_REGISTER_H__
 
-#include <Core/CPU/Instruction/Shortcuts.h>
+#include <Core/CPU/Instructions/Shortcuts.h>
 #include <Core/CPU/Processor.h>
 
 namespace Core

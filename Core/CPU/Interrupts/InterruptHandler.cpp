@@ -1,8 +1,8 @@
 #include "InterruptHandler.h"
 #include <Core/CPU/Interrupts/Registers/InterruptEnable.h>
 #include <Core/CPU/Interrupts/Registers/InterruptFlag.h>
-#include <Core/CPU/Instruction/Implementation/DI.h>
-#include <Core/CPU/Instruction/Shortcuts.h>
+#include <Core/CPU/Instructions/Implementation/DI.h>
+#include <Core/CPU/Instructions/Shortcuts.h>
 #include <Core/CPU/Interrupts/SpecialRegisters/IME.h>
 #include <Tools/Tools.h>
 
@@ -17,7 +17,7 @@ using namespace API;
 
 namespace Core
 {
-static const std::array<const Interrupt, INTERRUPT_COUNT> InterruptTable
+static const std::array<const Interrupt, 0x05> InterruptTable
 {
 	// Bit 0 : V - Blank
 	Interrupt{VBLANK_INTERRUPT, 0x40, EInterrupts::VBLANK},
@@ -79,28 +79,12 @@ size_t InterruptHandler::ProcessInterrupts()
 void InterruptHandler::ClearInterrupt(const EInterrupts interrupt)
 {
 	InterruptFlag interrupt_requests{};
-
-#if _DEBUG
-	if ((interrupt_requests / static_cast<data_t>(interrupt)) == OFF)
-	{
-		LOG("Deleting interrupt even when the flag is off!");
-	}
-#endif
-
 	interrupt_requests = interrupt_requests & (static_cast<data_t>(interrupt) ^ 0b11111111);
 }
 
 void InterruptHandler::IRQ(const EInterrupts interrupt)
 {
 	InterruptFlag interrupt_requests{};
-
-#if _DEBUG
-	if ((interrupt_requests / static_cast<data_t>(interrupt)) == ON)
-	{
-		LOG("Adding interrupt even when the flag is on!");
-	}
-#endif
-
 	interrupt_requests = interrupt_requests | static_cast<data_t>(interrupt);
 }
 
