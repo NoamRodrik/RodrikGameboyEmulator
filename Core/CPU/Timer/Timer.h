@@ -34,8 +34,8 @@ private:
 	static constexpr auto DIVIDER_THRESHOLD = 16;
 
 private:
-	size_t                                              m_divider_tick_amount{0};
-	size_t                                              m_counter_tick_amount{0};
+	size_t m_divider_tick_amount{0};
+	size_t m_counter_tick_amount{0};
 };
 } // Core
 

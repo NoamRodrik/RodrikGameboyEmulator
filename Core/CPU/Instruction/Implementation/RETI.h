@@ -7,7 +7,7 @@
 #define __LR35902_RETI_H__
 
 #include <Core/CPU/Instruction/Shortcuts.h>
-#include <Core/CPU/Interrupts/Flags/IME.h>
+#include <Core/CPU/Interrupts/SpecialRegisters/IME.h>
 #include <Core/CPU/Processor.h>
 #include "EI.h"
 

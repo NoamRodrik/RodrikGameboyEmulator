@@ -170,9 +170,6 @@
     <ClInclude Include="Core\CPU\Instruction\Shortcuts.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Core\CPU\Interrupts\Flags\IME.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Core\CPU\Interrupts\Registers\InterruptEnable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -341,6 +338,9 @@
     <ClInclude Include="Core\Bus\DeviceManager\DeviceManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Core\CPU\Interrupts\SpecialRegisters\IME.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="BootROM\tetris.gb" />
@@ -356,5 +356,16 @@
     <None Include=".gitignore" />
     <None Include="README.md" />
     <None Include="RodrikGameBoyEmulator.aps" />
+    <None Include="TestROM\01-special.gb" />
+    <None Include="TestROM\02-interrupts.gb" />
+    <None Include="TestROM\03-op sp,hl.gb" />
+    <None Include="TestROM\04-op r,imm.gb" />
+    <None Include="TestROM\05-op rp.gb" />
+    <None Include="TestROM\06-ld r,r.gb" />
+    <None Include="TestROM\07-jr,jp,call,ret,rst.gb" />
+    <None Include="TestROM\08-misc instrs.gb" />
+    <None Include="TestROM\09-op r,r.gb" />
+    <None Include="TestROM\10-bit ops.gb" />
+    <None Include="TestROM\11-op a,(hl).gb" />
   </ItemGroup>
 </Project>

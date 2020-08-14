@@ -3,7 +3,7 @@
 #include <Core/CPU/Interrupts/Registers/InterruptFlag.h>
 #include <Core/CPU/Instruction/Implementation/DI.h>
 #include <Core/CPU/Instruction/Shortcuts.h>
-#include <Core/CPU/Interrupts/Flags/IME.h>
+#include <Core/CPU/Interrupts/SpecialRegisters/IME.h>
 #include <Tools/Tools.h>
 
 #include "Types/HighLowPinNumber.h"
