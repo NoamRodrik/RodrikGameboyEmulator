@@ -1,7 +1,7 @@
 #include "InterruptHandler.h"
 #include <Core/CPU/Interrupts/Registers/InterruptEnable.h>
 #include <Core/CPU/Interrupts/Registers/InterruptFlag.h>
-#include <Core/CPU/Instructions/Implementation/DI.h>
+#include <Core/CPU/Instructions/General/Implementation/DI.h>
 #include <Core/CPU/Instructions/Shortcuts.h>
 #include <Core/CPU/Interrupts/SpecialRegisters/IME.h>
 #include <Tools/Tools.h>

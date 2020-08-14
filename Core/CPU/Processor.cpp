@@ -5,8 +5,8 @@
  */
 
 #include <Core/CPU/Interrupts/Registers/InterruptEnable.h>
-#include <Core/CPU/Instructions/Prefix/PrefixLookupTable.h>
-#include <Core/CPU/Instructions/InstructionLookupTable.h>
+#include <Core/CPU/Instructions/Prefix/LookupTable.h>
+#include <Core/CPU/Instructions/General/LookupTable.h>
 #include <Core/CPU/Interrupts/Registers/InterruptFlag.h>
 #include <Core/CPU/Interrupts/InterruptHandler.h>
 #include <Core/CPU/Instructions/Shortcuts.h>
@@ -89,10 +89,10 @@ const size_t Processor::Clock()
 
 	// While halted, the CPU spins on NOP
 	// The CPU will be unhalted on any triggered interrupt
-	const auto& command_to_execute = Processor::IsHalted() ? INSTRUCTION_LOOKUP_TABLE[0] :
+	const auto& command_to_execute = Processor::IsHalted() ? GENERAL_LOOKUP_TABLE[0] :
 									    (Processor::IsPrefix() ?
 										 PREFIX_LOOKUP_TABLE[READ_DATA_AT(PC_const)] :
-										 INSTRUCTION_LOOKUP_TABLE[READ_DATA_AT(PC_const)]);
+										 GENERAL_LOOKUP_TABLE[READ_DATA_AT(PC_const)]);
 
 #if _DEBUG
 	Processor::PrintInstruction(command_to_execute);

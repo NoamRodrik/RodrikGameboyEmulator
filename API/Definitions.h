@@ -96,20 +96,6 @@ namespace API
 	static constexpr auto LR35902_HZ_CLOCK = 1'048'576;
 	static constexpr auto LR35902_HZ_DIVIDER_CLOCK = 1'024;
 
-	/* Flag Register Index */
-	enum class Flag : data_t
-	{
-		ZERO = 7,
-		SUB = 6,
-		HALF_CARRY = 5,
-		CARRY = 4
-	};
-
-	static_assert(static_cast<uint8_t>(Flag::ZERO) < CHAR_BIT &&
-				  static_cast<uint8_t>(Flag::SUB) < CHAR_BIT &&
-		          static_cast<uint8_t>(Flag::HALF_CARRY) < CHAR_BIT &&
-		          static_cast<uint8_t>(Flag::CARRY) < CHAR_BIT);
-
 	/* Boot Definitions */
 #ifdef SKIP_BOOT
 #undef SKIP_BOOT

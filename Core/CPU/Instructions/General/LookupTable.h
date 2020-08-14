@@ -1,50 +1,50 @@
 /**
- * @file		InstructionLookupTable.h
+ * @file		LookupTable.h
  * @author		Noam Rodrik
- * @description A lookup table for all instruction sequences.
+ * @description A lookup table for all general instruction sequences.
  */
-#ifndef __INSTRUCTION_LOOKUP_TABLE_H__
-#define __INSTRUCTION_LOOKUP_TABLE_H__
+#ifndef __GENERAL_LOOKUP_TABLE_H__
+#define __GENERAL_LOOKUP_TABLE_H__
 
 #include <Core/CPU/Instructions/Instruction.h>
 #include <Tools/Tools.h>
 #include <array>
 
 /* Instruction includes */
-#include <Core/CPU/Instructions/Implementation/NOP.h>
-#include <Core/CPU/Instructions/Implementation/LD.h>
-#include <Core/CPU/Instructions/Implementation/INC.h>
-#include <Core/CPU/Instructions/Implementation/DEC.h>
-#include <Core/CPU/Instructions/Implementation/RLCA.h>
-#include <Core/CPU/Instructions/Implementation/ADD.h>
-#include <Core/CPU/Instructions/Implementation/RRCA.h>
-#include <Core/CPU/Instructions/Implementation/STOP.h>
-#include <Core/CPU/Instructions/Implementation/RLA.h>
-#include <Core/CPU/Instructions/Implementation/JR.h>
-#include <Core/CPU/Instructions/Implementation/RRA.h>
-#include <Core/CPU/Instructions/Implementation/DAA.h>
-#include <Core/CPU/Instructions/Implementation/CPL.h>
-#include <Core/CPU/Instructions/Implementation/SCF.h>
-#include <Core/CPU/Instructions/Implementation/CCF.h>
-#include <Core/CPU/Instructions/Implementation/HALT.h>
-#include <Core/CPU/Instructions/Implementation/ADC.h>
-#include <Core/CPU/Instructions/Implementation/SUB.h>
-#include <Core/CPU/Instructions/Implementation/SBC.h>
-#include <Core/CPU/Instructions/Implementation/AND.h>
-#include <Core/CPU/Instructions/Implementation/XOR.h>
-#include <Core/CPU/Instructions/Implementation/OR.h>
-#include <Core/CPU/Instructions/Implementation/CP.h>
-#include <Core/CPU/Instructions/Implementation/RET.h>
-#include <Core/CPU/Instructions/Implementation/POP.h>
-#include <Core/CPU/Instructions/Implementation/JP.h>
-#include <Core/CPU/Instructions/Implementation/CALL.h>
-#include <Core/CPU/Instructions/Implementation/PUSH.h>
-#include <Core/CPU/Instructions/Implementation/RST.h>
-#include <Core/CPU/Instructions/Implementation/PREFIX.h>
-#include <Core/CPU/Instructions/Implementation/RETI.h>
-#include <Core/CPU/Instructions/Implementation/LDH.h>
-#include <Core/CPU/Instructions/Implementation/DI.h>
-#include <Core/CPU/Instructions/Implementation/EI.h>
+#include <Core/CPU/Instructions/General/Implementation/NOP.h>
+#include <Core/CPU/Instructions/General/Implementation/LD.h>
+#include <Core/CPU/Instructions/General/Implementation/INC.h>
+#include <Core/CPU/Instructions/General/Implementation/DEC.h>
+#include <Core/CPU/Instructions/General/Implementation/RLCA.h>
+#include <Core/CPU/Instructions/General/Implementation/ADD.h>
+#include <Core/CPU/Instructions/General/Implementation/RRCA.h>
+#include <Core/CPU/Instructions/General/Implementation/STOP.h>
+#include <Core/CPU/Instructions/General/Implementation/RLA.h>
+#include <Core/CPU/Instructions/General/Implementation/JR.h>
+#include <Core/CPU/Instructions/General/Implementation/RRA.h>
+#include <Core/CPU/Instructions/General/Implementation/DAA.h>
+#include <Core/CPU/Instructions/General/Implementation/CPL.h>
+#include <Core/CPU/Instructions/General/Implementation/SCF.h>
+#include <Core/CPU/Instructions/General/Implementation/CCF.h>
+#include <Core/CPU/Instructions/General/Implementation/HALT.h>
+#include <Core/CPU/Instructions/General/Implementation/ADC.h>
+#include <Core/CPU/Instructions/General/Implementation/SUB.h>
+#include <Core/CPU/Instructions/General/Implementation/SBC.h>
+#include <Core/CPU/Instructions/General/Implementation/AND.h>
+#include <Core/CPU/Instructions/General/Implementation/XOR.h>
+#include <Core/CPU/Instructions/General/Implementation/OR.h>
+#include <Core/CPU/Instructions/General/Implementation/CP.h>
+#include <Core/CPU/Instructions/General/Implementation/RET.h>
+#include <Core/CPU/Instructions/General/Implementation/POP.h>
+#include <Core/CPU/Instructions/General/Implementation/JP.h>
+#include <Core/CPU/Instructions/General/Implementation/CALL.h>
+#include <Core/CPU/Instructions/General/Implementation/PUSH.h>
+#include <Core/CPU/Instructions/General/Implementation/RST.h>
+#include <Core/CPU/Instructions/General/Implementation/PREFIX.h>
+#include <Core/CPU/Instructions/General/Implementation/RETI.h>
+#include <Core/CPU/Instructions/General/Implementation/LDH.h>
+#include <Core/CPU/Instructions/General/Implementation/DI.h>
+#include <Core/CPU/Instructions/General/Implementation/EI.h>
 
 namespace Core
 {
@@ -54,7 +54,7 @@ auto TERMINATE = []()
 	return false;
 };
 
-static const std::array<Instruction, 0x10 * 0x10> INSTRUCTION_LOOKUP_TABLE =
+static const std::array<Instruction, 0x10 * 0x10> GENERAL_LOOKUP_TABLE =
 {
     // 0x00 NOP
     // - - - -
@@ -1071,4 +1071,4 @@ static const std::array<Instruction, 0x10 * 0x10> INSTRUCTION_LOOKUP_TABLE =
 };
 } // Core
 
-#endif // __INSTRUCTION_LOOKUP_TABLE_H__
+#endif // __GENERAL_LOOKUP_TABLE_H__

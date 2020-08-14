@@ -1,5 +1,5 @@
 /**
- * @file		PrefixLookupTable.h
+ * @file		LookupTable.h
  * @author		Noam Rodrik
  * @description A lookup table for all prefix instruction sequences.
  */

@@ -179,108 +179,6 @@
     <ClInclude Include="Core\CPU\Interrupts\SpecialRegisters\IME.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Core\CPU\Instructions\Implementation\ADC.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CPU\Instructions\Implementation\ADD.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CPU\Instructions\Implementation\AND.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CPU\Instructions\Implementation\CALL.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CPU\Instructions\Implementation\CCF.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CPU\Instructions\Implementation\CP.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CPU\Instructions\Implementation\CPL.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CPU\Instructions\Implementation\DAA.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CPU\Instructions\Implementation\DEC.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CPU\Instructions\Implementation\DI.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CPU\Instructions\Implementation\EI.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CPU\Instructions\Implementation\HALT.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CPU\Instructions\Implementation\INC.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CPU\Instructions\Implementation\JP.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CPU\Instructions\Implementation\JR.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CPU\Instructions\Implementation\LD.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CPU\Instructions\Implementation\LDH.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CPU\Instructions\Implementation\NOP.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CPU\Instructions\Implementation\OR.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CPU\Instructions\Implementation\POP.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CPU\Instructions\Implementation\PREFIX.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CPU\Instructions\Implementation\PUSH.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CPU\Instructions\Implementation\RET.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CPU\Instructions\Implementation\RETI.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CPU\Instructions\Implementation\RLA.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CPU\Instructions\Implementation\RLCA.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CPU\Instructions\Implementation\RRA.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CPU\Instructions\Implementation\RRCA.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CPU\Instructions\Implementation\RST.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CPU\Instructions\Implementation\SBC.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CPU\Instructions\Implementation\SCF.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CPU\Instructions\Implementation\STOP.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CPU\Instructions\Implementation\SUB.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CPU\Instructions\Implementation\XOR.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Core\CPU\Instructions\Prefix\Implementation\BIT.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -314,13 +212,7 @@
     <ClInclude Include="Core\CPU\Instructions\Prefix\Implementation\SWAP.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Core\CPU\Instructions\Prefix\PrefixLookupTable.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Core\CPU\Instructions\Instruction.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CPU\Instructions\InstructionLookupTable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Core\CPU\Instructions\Shortcuts.h">
@@ -339,6 +231,114 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Core\CPU\Timers\Timer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Instructions\Prefix\LookupTable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Instructions\General\Implementation\ADC.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Instructions\General\Implementation\ADD.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Instructions\General\Implementation\AND.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Instructions\General\Implementation\CALL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Instructions\General\Implementation\CCF.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Instructions\General\Implementation\CP.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Instructions\General\Implementation\CPL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Instructions\General\Implementation\DAA.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Instructions\General\Implementation\DEC.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Instructions\General\Implementation\DI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Instructions\General\Implementation\EI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Instructions\General\Implementation\HALT.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Instructions\General\Implementation\INC.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Instructions\General\Implementation\JP.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Instructions\General\Implementation\JR.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Instructions\General\Implementation\LD.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Instructions\General\Implementation\LDH.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Instructions\General\Implementation\NOP.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Instructions\General\Implementation\OR.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Instructions\General\Implementation\POP.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Instructions\General\Implementation\PREFIX.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Instructions\General\Implementation\PUSH.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Instructions\General\Implementation\RET.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Instructions\General\Implementation\RETI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Instructions\General\Implementation\RLA.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Instructions\General\Implementation\RLCA.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Instructions\General\Implementation\RRA.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Instructions\General\Implementation\RRCA.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Instructions\General\Implementation\RST.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Instructions\General\Implementation\SBC.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Instructions\General\Implementation\SCF.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Instructions\General\Implementation\STOP.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Instructions\General\Implementation\SUB.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Instructions\General\Implementation\XOR.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Instructions\General\LookupTable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
