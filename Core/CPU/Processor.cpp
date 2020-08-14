@@ -60,7 +60,9 @@ void Processor::PrintInterruptRegisters()
 #endif
 	
 const size_t Processor::Clock()
-{	
+{
+	const bool WAS_PROCESSOR_HALTED{Processor::IsHalted()};
+
 	// Interrupts check.
 	size_t clock_cycle = InterruptHandler::ProcessInterrupts();
 
@@ -70,6 +72,12 @@ const size_t Processor::Clock()
 		LOG("Interrupt called!");
 #endif
 		return clock_cycle;
+	}
+
+	// Unhalting takes 4 cycles.
+	if (WAS_PROCESSOR_HALTED && !Processor::IsHalted())
+	{
+		clock_cycle += 4;
 	}
 
 	if (Processor::IsStopped())
@@ -107,8 +115,12 @@ const size_t Processor::Clock()
 	// If the command wants to forward the PC, we need to add the bytes size.
 	if (command_to_execute.Execute())
 	{
-		// Change the PC!
-		PC += command_to_execute.bytes_size;
+		// If we aren't on the HALT bug.
+		if (!(WAS_PROCESSOR_HALTED && !Processor::IsHalted()))
+		{
+			// Change the PC!
+			PC += command_to_execute.bytes_size;
+		}
 
 		if (command_to_execute.extended_cycles_amount != 0)
 		{

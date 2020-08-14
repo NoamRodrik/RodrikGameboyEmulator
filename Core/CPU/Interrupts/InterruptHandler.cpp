@@ -40,28 +40,31 @@ size_t InterruptHandler::ProcessInterrupts()
 	// Interrupt Handling
 	IME::EnableInterruptsIfScheduled();
 
-	if (!IME::IsEnabled())
-	{
-		// The master enable isn't on, we can't use interrupts yet.
-		return 0;
-	}
-
 	const auto* const interrupt_to_run = InterruptHandler::GetPrioritizedInterrupt();
 
 	// If there's an interrupt.
 	if (interrupt_to_run != nullptr)
 	{
+		const bool WAS_PROCESSOR_HALTED{Processor::IsHalted()};
+
 		// When any enabled interrupt is raised it will bring the CPU out of halt mode to service it, if required.
 		Processor::ClearHalt();
-		 
+		
+		// If the IME is or isn't disable it won't affect the HALT, but the interrupt needs IME.
+		if (!IME::IsEnabled())
+		{
+			// The master enable isn't on, we can't use interrupts yet.
+			return 0;
+		}
+
 		// Clear interrupt.
 		InterruptHandler::ClearInterrupt(interrupt_to_run->enum_value);
-
-		// Disable all interrupts.
-		DI_0xF3();
 		
 		// 1) Save PC
 		SP.Push(PC);
+
+		// Disable all interrupts.
+		IME::DisableInterrupts();
 
 		// 2) Acknowledge Interrupt
 		SANITY(interrupt_to_run->Execute(), "Failed executing interrupts.");
@@ -69,8 +72,8 @@ size_t InterruptHandler::ProcessInterrupts()
 		// 3) PC = Interrupt Service Routine
 		PC = interrupt_to_run->jump_address;
 
-		// It takes 5 MACHINE cycles to process this.
-		return 20;
+		// It takes 20 clocks to dispatch an interrupt. If CPU is in HALT mode, another extra 4 clocks are needed.
+		return 20 + WAS_PROCESSOR_HALTED ? 4 : 0;
 	}
 
 	return 0;
