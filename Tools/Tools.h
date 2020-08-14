@@ -17,9 +17,9 @@
 #define TESTING
 
 Message("If you want to print, comment this here, otherwise uncomment.");
-//#define NO_PRINT
-//#define NO_PRINT_FLAGS
-//#define NO_PRINT_REGISTERS
+#define NO_PRINT
+#define NO_PRINT_FLAGS
+#define NO_PRINT_REGISTERS
 #define NO_PRINT_IF_AND_IE
 
 #ifndef NO_PRINT

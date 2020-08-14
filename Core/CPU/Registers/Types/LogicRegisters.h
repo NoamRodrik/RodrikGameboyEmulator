@@ -16,12 +16,12 @@ struct LogicRegisters
 {
 	ArithmeticRegister a{0x01};
 	EFL_Register	   f{0xB0};
-	ArithmeticRegister b{0x13};
-	ArithmeticRegister c{0x00};
-	ArithmeticRegister d{0xD8};
-	ArithmeticRegister e{0x00};
-	ArithmeticRegister h{0x4D};
-	ArithmeticRegister l{0x01};
+	ArithmeticRegister b{0x00};
+	ArithmeticRegister c{0x13};
+	ArithmeticRegister d{0x00};
+	ArithmeticRegister e{0xD8};
+	ArithmeticRegister h{0x01};
+	ArithmeticRegister l{0x4D};
 };
 #pragma pack(pop)
 

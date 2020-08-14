@@ -51,7 +51,9 @@ public:
 		this->m_memory[GetFixedAddress(API::LCDC_ADDRESS)] = API::LCDC_DEFAULT_VALUE;
 		this->m_memory[GetFixedAddress(API::SCY_ADDRESS)] = API::SCY_DEFAULT_VALUE;
 		this->m_memory[GetFixedAddress(API::SCX_ADDRESS)] = API::SCX_DEFAULT_VALUE;
-		this->m_memory[GetFixedAddress(API::LYC_ADDRESS)] = API::BGP_DEFAULT_VALUE;
+		this->m_memory[GetFixedAddress(API::LY_ADDRESS)] = API::LY_DEFAULT_VALUE;
+		this->m_memory[GetFixedAddress(API::LYC_ADDRESS)] = API::LYC_DEFAULT_VALUE;
+		this->m_memory[GetFixedAddress(API::BGP_ADDRESS)] = API::BGP_DEFAULT_VALUE;
 		this->m_memory[GetFixedAddress(API::OBP0_ADDRESS)] = API::OBP0_DEFAULT_VALUE;
 		this->m_memory[GetFixedAddress(API::OBP1_ADDRESS)] = API::OBP1_DEFAULT_VALUE;
 		this->m_memory[GetFixedAddress(API::WY_ADDRESS)] = API::WY_DEFAULT_VALUE;

@@ -55,6 +55,7 @@ namespace API
 	static constexpr address_t LCDC_ADDRESS{0xFF40};
 	static constexpr address_t SCY_ADDRESS {0xFF42};
 	static constexpr address_t SCX_ADDRESS {0xFF43};
+	static constexpr address_t LY_ADDRESS  {0xFF44};
 	static constexpr address_t LYC_ADDRESS {0xFF45};
 	static constexpr address_t BGP_ADDRESS {0xFF47};
 	static constexpr address_t OBP0_ADDRESS{0xFF48};
@@ -82,6 +83,7 @@ namespace API
 	static constexpr address_t LCDC_DEFAULT_VALUE{0x91};
 	static constexpr address_t SCY_DEFAULT_VALUE {0x00};
 	static constexpr address_t SCX_DEFAULT_VALUE {0x00};
+	static constexpr address_t LY_DEFAULT_VALUE  {0x90};
 	static constexpr address_t LYC_DEFAULT_VALUE {0x00};
 	static constexpr address_t BGP_DEFAULT_VALUE {0xFC};
 	static constexpr address_t OBP0_DEFAULT_VALUE{0xFF};

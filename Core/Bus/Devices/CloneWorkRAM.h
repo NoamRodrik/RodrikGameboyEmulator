@@ -28,16 +28,16 @@ public:
 
 	virtual void Write(const API::address_t absolute_address, const API::data_t data) override
 	{
-		this->m_memory[absolute_address - START_ADDRESS] = data;
+		this->m_memory[GetFixedAddress(absolute_address)] = data;
 
 		API::data_t work_ram_data{0};
 
-		SANITY(this->m_memory_accessor.Read(0xC000 + absolute_address - START_ADDRESS, work_ram_data),
+		SANITY(this->m_memory_accessor.Read(0xC000 + GetFixedAddress(absolute_address), work_ram_data),
 			"Failed reading from WorkRAM");
 
 		if (work_ram_data != data)
 		{
-			this->m_memory_accessor.Write(0xC000 + absolute_address - START_ADDRESS, work_ram_data);
+			this->m_memory_accessor.Write(0xC000 + GetFixedAddress(absolute_address), work_ram_data);
 		}
 	}
 
@@ -48,6 +48,9 @@ public:
 
 protected:
 	virtual uint8_t* GetMemoryPointer() override { return this->m_memory.GetMemoryPointer(); }
+
+private:
+	static constexpr API::address_t GetFixedAddress(const API::address_t address) { return address - START_ADDRESS; }
 
 private:
 	API::Memory<SIZE> m_memory;

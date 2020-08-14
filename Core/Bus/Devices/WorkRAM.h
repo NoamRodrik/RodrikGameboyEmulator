@@ -9,6 +9,7 @@
 #include <API/Memory/Device/IMemoryDeviceAccess.h>
 #include <API/Memory/Device/IMemoryDevice.h>
 #include <Core/Bus/Devices/CloneWorkRAM.h>
+#include <Core/Bus/Devices/OAMRAM.h>
 #include <API/Memory/Memory.h>
 #include <API/Definitions.h>
 
@@ -27,17 +28,20 @@ public:
 
 	virtual void Write(const API::address_t absolute_address, const API::data_t data) override
 	{
-		this->m_memory[absolute_address - START_ADDRESS] = data;
+		this->m_memory[GetFixedAddress(absolute_address)] = data;
 
-		API::data_t clone_data{0};
-
-		SANITY(this->m_memory_accessor.Read(CloneWorkRAM::START_ADDRESS + absolute_address - START_ADDRESS, clone_data),
-			"Failed reading from CloneWorkRAM");
-
-		if (clone_data != data)
+		// We don't want to randomly write into the other rams.
+		if (CloneWorkRAM::START_ADDRESS + GetFixedAddress(absolute_address) < OAMRAM::START_ADDRESS)
 		{
-			// Clones to the CloneWorkRAM
-			this->m_memory_accessor.Write(CloneWorkRAM::START_ADDRESS + (absolute_address - START_ADDRESS), data);
+			API::data_t clone_data{0};
+			SANITY(this->m_memory_accessor.Read(CloneWorkRAM::START_ADDRESS + GetFixedAddress(absolute_address), clone_data),
+				"Failed reading from CloneWorkRAM");
+
+			if (clone_data != data)
+			{
+				// Clones to the CloneWorkRAM
+				this->m_memory_accessor.Write(CloneWorkRAM::START_ADDRESS + GetFixedAddress(absolute_address), data);
+			}
 		}
 	}
 
@@ -48,6 +52,9 @@ public:
 
 protected:
 	virtual uint8_t* GetMemoryPointer() override { return this->m_memory.GetMemoryPointer(); }
+
+private:
+	static constexpr API::address_t GetFixedAddress(const API::address_t address) { return address - START_ADDRESS; }
 
 private:
 	API::Memory<SIZE> m_memory;
