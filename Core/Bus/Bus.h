@@ -6,8 +6,8 @@
 #ifndef __LR35902_BUS_H__
 #define __LR35902_BUS_H__
 
-#include <Core/Bus/Devices/DeviceManagerBase.h>
-#include <Core/Bus/Devices/DeviceManager.h>
+#include <Core/Bus/DeviceManager/DeviceManagerBase.h>
+#include <Core/Bus/DeviceManager/DeviceManager.h>
 
 namespace Core
 {

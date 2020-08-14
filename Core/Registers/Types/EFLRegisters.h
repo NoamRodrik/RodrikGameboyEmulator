@@ -7,7 +7,7 @@
 #define __LR35902_EFL_REGISTERS_H__
 
 #include <Core/Registers/RegisterBase.h>
-#include <Core/LR35902/Definitions.h>
+#include <Core/API/Definitions.h>
 
 namespace Core
 {

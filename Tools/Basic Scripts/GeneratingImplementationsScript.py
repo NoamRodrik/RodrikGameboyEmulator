@@ -43,8 +43,8 @@ for curr_file in short_name_table:
 #ifndef __LR35902_{}_H__
 #define __LR35902_{}_H__
 
-#include <Core/Processor/Processor.h>
-#include <Core/Processor/Instruction/Shortcuts.h>
+#include <Core/CPU/Processor.h>
+#include <Core/CPU/Instruction/Shortcuts.h>
 
 namespace Core""".format(curr_file, curr_file))
     new_file.write("\n{")

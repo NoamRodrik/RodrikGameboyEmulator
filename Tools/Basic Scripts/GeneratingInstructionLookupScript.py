@@ -12,7 +12,7 @@ with open("InstructionLookupTable.h", 'w+') as our_file:
 #ifndef __INSTRUCTION_LOOKUP_TABLE_H__
 #define __INSTRUCTION_LOOKUP_TABLE_H__
 
-#include <Core/Processor/Instruction/Instruction.h>
+#include <Core/CPU/Instruction/Instruction.h>
 #include <Tools/Tools.h>
 #include <array>
 
@@ -35,7 +35,7 @@ with open("InstructionLookupTable.h", 'w+') as our_file:
   
   for short_name in short_name_table:
     if not len(short_name) == 0:
-      our_file.write('#include <Core/Processor/Instruction/Implementation/{}.h>\n'.format(short_name))
+      our_file.write('#include <Core/CPU/Instruction/Implementation/{}.h>\n'.format(short_name))
   
   our_file.write('\n')
   our_file.write('namespace Core\n')
