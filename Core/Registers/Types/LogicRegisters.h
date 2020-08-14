@@ -25,7 +25,7 @@ struct LogicRegisters
 };
 #pragma pack(pop)
 
-static_assert(sizeof(LogicRegisters) == sizeof(data_t) * 8);
+static_assert(sizeof(LogicRegisters) == sizeof(API::data_t) * 8);
 } // Core
 
 #endif // __LR35902_LOGIC_REGISTERS_H__

@@ -7,8 +7,8 @@
 #include <Core/CPU/Interrupts/Flags/IME.h>
 #include <Core/GPU/Engine/MainPixelEngine.h>
 #include <Core/CPU/Timer/Timer.h>
-#include <Core/CPU/Clock/Clock.h>
 #include <Core/CPU/Processor.h>
+#include <Core/Clock/Clock.h>
 #include <filesystem>
 
 using namespace Core;

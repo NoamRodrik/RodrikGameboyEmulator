@@ -11,14 +11,14 @@
 
 namespace Core
 {
-class TimerCounter : public MemoryRegister<data_t>
+class TimerCounter : public MemoryRegister<API::data_t>
 {
 public:
-	TimerCounter() : MemoryRegister{TIMER_COUNTER_ADDRESS} {}
-	TimerCounter(const data_t value) : MemoryRegister{TIMER_COUNTER_ADDRESS} { *this = value; }
+	TimerCounter() : MemoryRegister{API::TIMER_COUNTER_ADDRESS} {}
+	TimerCounter(const API::data_t value) : MemoryRegister{API::TIMER_COUNTER_ADDRESS} { *this = value; }
 
 public:
-	using MemoryRegister::operator data_t;
+	using MemoryRegister::operator API::data_t;
 	using MemoryRegister::operator=;
 
 public:

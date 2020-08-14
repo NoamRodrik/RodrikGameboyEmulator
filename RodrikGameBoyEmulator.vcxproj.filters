@@ -18,13 +18,7 @@
     <ClCompile Include="Process\Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Core\CPU\Clock\Clock.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Core\CPU\Interrupts\InterruptHandler.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\CPU\Joypad\Joypad.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Core\CPU\Timer\Timer.cpp">
@@ -36,7 +30,13 @@
     <ClCompile Include="Core\Bus\DeviceManager\DeviceManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Core\Bus\DeviceManager\DeviceManagerBase.h">
+    <ClCompile Include="Core\Clock\Clock.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Joypad\Joypad.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Bus\DeviceManager\DeviceManager.h">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -45,21 +45,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Tools\not_null.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\API\Memory\Device\IMemoryDeviceAccess.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\API\Memory\Device\MemoryDeviceBase.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\API\Memory\Device\MemoryDeviceOperations.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\API\Definitions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\API\Registers\RegisterPair.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Core\Bus\Bus.h">
@@ -89,9 +74,6 @@
     <ClInclude Include="Core\Registers\Memory\MemoryRegister.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Core\API\StaticInstance.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Contrib\PixelGameEngine\OLCPixelGameEngine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -102,9 +84,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Core\Cartridge\Loader\BinaryLoader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CPU\Clock\Clock.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Core\CPU\Instruction\Implementation\ADC.h">
@@ -284,12 +263,6 @@
     <ClInclude Include="Core\CPU\Interrupts\InterruptHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Core\CPU\Joypad\Registers\JoypadRegister.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CPU\Joypad\Joypad.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Core\CPU\Timer\Registers\DividerRegister.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -338,18 +311,38 @@
     <ClInclude Include="Core\Bus\Devices\WorkRAM.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Core\API\Memory\Memory.h">
+    <ClInclude Include="Core\Clock\Clock.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Bus\DeviceManager\DeviceManager.h">
+    <ClInclude Include="Core\Joypad\Registers\JoypadRegister.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Joypad\Joypad.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="API\Memory\Device\IMemoryDeviceAccess.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="API\Memory\Device\MemoryDeviceOperations.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="API\Memory\Memory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="API\Registers\RegisterPair.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="API\Definitions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="API\StaticInstance.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="API\Memory\Device\IMemoryDevice.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Tools\Basic Scripts\GeneratingImplementationsScript.py" />
-    <None Include="Tools\Basic Scripts\GeneratingInstructionLookupScript.py" />
-    <None Include="Tools\Basic Scripts\GeneratingPrefixLookupTable.py" />
-    <None Include="Tools\Basic Scripts\GeneratingImplementationsPrefixScript.py" />
     <None Include="BootROM\tetris.gb" />
     <None Include="BootROM\cpu_instrs.gb" />
     <None Include="BootROM\01special.gb" />

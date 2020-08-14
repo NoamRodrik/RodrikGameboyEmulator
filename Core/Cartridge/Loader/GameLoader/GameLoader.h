@@ -9,7 +9,7 @@
 #include <Core/Cartridge/Loader/BinaryLoader.h>
 #include <Core/Bus/Devices/CartridgeRAM.h>
 #include <Core/CPU/Processor.h>
-#include <Core/API/Definitions.h>
+#include <API/Definitions.h>
 #include <Tools/not_null.h>
 #include <string>
 
@@ -19,7 +19,7 @@ class GameLoader : public BinaryLoader
 {
 public:
 	GameLoader(const std::string& game_path) : BinaryLoader{game_path,
-															Processor::GetInstance().GetMemory().GetDeviceAtAddress(CartridgeRAM::START_ADDRESS)->GetMemoryPointer(),
+															static_cast<CartridgeRAM*>(Processor::GetInstance().GetMemory().GetDeviceAtAddress(CartridgeRAM::START_ADDRESS))->GetMemoryPointer(),
 															static_cast<long>(CartridgeRAM::SIZE)}
 	{}
 

@@ -6,30 +6,30 @@
 #ifndef __LR35902_MEMORY_DEVICE_CARTRIDGE_RAM_H__
 #define __LR35902_MEMORY_DEVICE_CARTRIDGE_RAM_H__
 
-#include <Core/API/Memory/Device/MemoryDeviceBase.h>
 #include <Core/Cartridge/Loader/BinaryLoader.h>
-#include <Core/API/Definitions.h>
-#include <Core/API/Memory/Memory.h>
+#include <API/Memory/Device/IMemoryDevice.h>
+#include <API/Memory/Memory.h>
+#include <API/Definitions.h>
 #include <algorithm>
 
 namespace Core
 {
-class DeviceManagerBase;
+class DeviceManager;
 } // Core
 
 namespace Core
 {
-class CartridgeRAM : public MemoryDeviceBase
+class CartridgeRAM : public API::IMemoryDevice
 {
 public:
-	CartridgeRAM(DeviceManagerBase& device_manager) : MemoryDeviceBase{START_ADDRESS, END_ADDRESS, device_manager}, m_memory{} {}
+	CartridgeRAM(DeviceManager& device_manager) : API::IMemoryDevice{START_ADDRESS, END_ADDRESS, device_manager}, m_memory{} {}
 
-	virtual bool Read(const address_t absolute_address, data_t& result) const override
+	virtual bool Read(const API::address_t absolute_address, API::data_t& result) const override
 	{
 		// While 0xFF50 isn't 0x1, we still return the system_boot code.
 		if (!this->m_covered_system_boot && (absolute_address - START_ADDRESS) <= 0xFF)
 		{
-			result = SYSTEM_BOOT_CODE[absolute_address - START_ADDRESS];
+			result = API::SYSTEM_BOOT_CODE[absolute_address - START_ADDRESS];
 		}
 		else
 		{
@@ -39,7 +39,7 @@ public:
 		return true;
 	}
 
-	virtual void Write(const address_t absolute_address, const data_t data) override
+	virtual void Write(const API::address_t absolute_address, const API::data_t data) override
 	{
 		this->m_memory[absolute_address - START_ADDRESS] = data;
 	}
@@ -58,11 +58,12 @@ protected:
 	virtual uint8_t* GetMemoryPointer() override { return this->m_memory.GetMemoryPointer(); }
 
 private:
-	Memory<SIZE> m_memory;
-	bool         m_covered_system_boot{SKIP_BOOT ? true : false};
+	API::Memory<SIZE> m_memory;
+	bool              m_covered_system_boot{SKIP_BOOT ? true : false};
 
 private:
 	friend class DeviceManager;
+	friend class GameLoader;
 };
 } // Core
 

@@ -11,10 +11,12 @@
 #include <Core/CPU/Interrupts/InterruptHandler.h>
 #include <Core/CPU/Instruction/Shortcuts.h>
 #include <Core/CPU/Timer/Timer.h>
-#include <Core/CPU/Clock/Clock.h>
 #include <Core/CPU/Processor.h>
+#include <Core/Clock/Clock.h>
 #include <time.h>
 #include <cmath>
+
+using namespace API;
 
 namespace Core
 {
@@ -141,8 +143,9 @@ const size_t Processor::Clock()
 #endif
 #endif
 
-	return clock_cycle +
-		   Clock::IsTimerDividerElapsed() ? Timer::IncreaseDivider() : 0 +
-		   Clock::IsTimerCounterElapsed() ? Timer::IncreaseCounter() : 0;
+	// Timer additions
+	clock_cycle += Timer::Clock();
+
+	return clock_cycle;
 }
 } // Core

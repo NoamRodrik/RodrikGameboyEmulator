@@ -10,15 +10,15 @@
 
 namespace Core
 {
-class DividerRegister : public MemoryRegister<data_t>
+class DividerRegister : public MemoryRegister<API::data_t>
 {
 public:
-	DividerRegister() : MemoryRegister{DIVIDER_REGISTER_ADDRESS} {}
-	DividerRegister(const data_t value) : MemoryRegister{DIVIDER_REGISTER_ADDRESS} { *this = value; }
+	DividerRegister() : MemoryRegister{API::DIVIDER_REGISTER_ADDRESS} {}
+	DividerRegister(const API::data_t value) : MemoryRegister{ API::DIVIDER_REGISTER_ADDRESS} { *this = value; }
 
 public:
 	using MemoryRegister::operator=;
-	using MemoryRegister::operator data_t;
+	using MemoryRegister::operator API::data_t;
 };
 } // Core
 

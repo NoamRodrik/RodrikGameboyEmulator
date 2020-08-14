@@ -6,9 +6,9 @@
 #ifndef __IMEMORY_DEVICE_ACCESS_H__
 #define __IMEMORY_DEVICE_ACCESS_H__
 
-#include <Core/API/Definitions.h>
+#include <API/Definitions.h>
 
-namespace Core
+namespace API
 {
 class IMemoryDeviceAccess
 {

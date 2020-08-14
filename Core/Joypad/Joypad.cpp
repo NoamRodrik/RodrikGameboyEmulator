@@ -1,7 +1,9 @@
 #include "Joypad.h"
 
-#include <Core/CPU/Joypad/Registers/JoypadRegister.h>
 #include <Core/CPU/Interrupts/InterruptHandler.h>
+#include <Core/Joypad/Registers/JoypadRegister.h>
+
+using namespace API;
 
 namespace Core
 {

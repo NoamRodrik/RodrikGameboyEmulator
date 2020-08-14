@@ -19,7 +19,7 @@ template <typename T>
 class MemoryRegister
 {
 public:
-	MemoryRegister(const address_t address) : MEMORY_ADDRESS{address} {}
+	MemoryRegister(const API::address_t address) : MEMORY_ADDRESS{address} {}
 
 	MemoryRegister& operator=(const T other)
 	{
@@ -33,7 +33,7 @@ public:
 	}
 
 private:
-	const address_t MEMORY_ADDRESS;
+	const API::address_t MEMORY_ADDRESS;
 };
 } // Core
 

@@ -6,10 +6,10 @@
 #ifndef __REGISTER_PAIR_H__
 #define __REGISTER_PAIR_H__
 
-#include <Core/API/Definitions.h>
+#include <API/Definitions.h>
 #include <limits>
 
-namespace Core
+namespace API
 {
 static_assert(std::numeric_limits<data_t>::digits == 8);
 static_assert(std::numeric_limits<address_t>::digits == std::numeric_limits<data_t>::digits * 2);

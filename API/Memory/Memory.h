@@ -9,7 +9,7 @@
 #include <stdint.h>
 #include <array>
 
-namespace Core
+namespace API
 {
 template <size_t SIZE>
 class Memory

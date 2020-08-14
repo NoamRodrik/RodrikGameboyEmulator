@@ -10,15 +10,15 @@
 
 namespace Core
 {
-class TimerControl : public MemoryRegister<data_t>
+class TimerControl : public MemoryRegister<API::data_t>
 {
 public:
-	TimerControl() : MemoryRegister{TIMER_CONTROL_ADDRESS} {}
-	TimerControl(const data_t value) : MemoryRegister{TIMER_CONTROL_ADDRESS} { *this = value; }
+	TimerControl() : MemoryRegister{API::TIMER_CONTROL_ADDRESS} {}
+	TimerControl(const API::data_t value) : MemoryRegister{API::TIMER_CONTROL_ADDRESS} { *this = value; }
 
 public:
 	using MemoryRegister::operator=;
-	using MemoryRegister::operator data_t;
+	using MemoryRegister::operator API::data_t;
 
 public:
 	static constexpr auto TIMER_CONTROL_DEFAULT_VALUE = 0;

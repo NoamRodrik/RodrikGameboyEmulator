@@ -10,19 +10,19 @@
 
 namespace Core
 {
-class InterruptFlag : public MemoryRegister<data_t>
+class InterruptFlag : public MemoryRegister<API::data_t>
 {
 public:
 	InterruptFlag() : MemoryRegister{INTERRUPT_FLAG_ADDRESS} {}
-	InterruptFlag(const data_t value) : MemoryRegister{INTERRUPT_FLAG_ADDRESS} {*this = value;}
+	InterruptFlag(const API::data_t value) : MemoryRegister{INTERRUPT_FLAG_ADDRESS} {*this = value;}
 
 public:
 	using MemoryRegister::operator=;
-	using MemoryRegister::operator data_t;
+	using MemoryRegister::operator API::data_t;
 
 public:
-	static constexpr address_t INTERRUPT_FLAG_ADDRESS{0xFF0F};
-	static constexpr data_t    INTERRUPT_FLAG_DEFAULT_VALUE{0x00};
+	static constexpr API::address_t INTERRUPT_FLAG_ADDRESS{0xFF0F};
+	static constexpr API::data_t	INTERRUPT_FLAG_DEFAULT_VALUE{0x00};
 };
 } // Core
 

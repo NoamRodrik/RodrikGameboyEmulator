@@ -6,13 +6,13 @@
 #ifndef __LR35902_INTERRUPT_H__
 #define __LR35902_INTERRUPT_H__
 
-#include <Core/API/Definitions.h>
+#include <API/Definitions.h>
 #include <functional>
 #include <cstdint>
 
 namespace Core
 {
-enum class EInterrupts : data_t
+enum class EInterrupts : API::data_t
 {
 	VBLANK = 1 << 0,
 	LCDC   = 1 << 1,

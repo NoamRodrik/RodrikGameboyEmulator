@@ -8,7 +8,7 @@
 
 #include <Tools/not_null.h>
 
-namespace Core
+namespace API
 {
 template <typename T>
 class StaticInstance

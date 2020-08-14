@@ -6,10 +6,12 @@
 #ifndef __LR35902_ADD_H__
 #define __LR35902_ADD_H__
 
-#include <Core/API/Registers/RegisterPair.h>
+#include <API/Registers/RegisterPair.h>
 #include <Core/CPU/Processor.h>
 #include <Core/CPU/Instruction/Shortcuts.h>
 #include <Tools/Tools.h>
+
+using namespace API;
 
 namespace Core
 {

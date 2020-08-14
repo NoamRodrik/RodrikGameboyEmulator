@@ -7,7 +7,7 @@
 #define __LR35902_EFL_REGISTERS_H__
 
 #include <Core/Registers/RegisterBase.h>
-#include <Core/API/Definitions.h>
+#include <API/Definitions.h>
 
 namespace Core
 {
@@ -18,22 +18,22 @@ public:
 	using FlagsRegisterBase::RegisterType;
 
 public:
-	constexpr bool IsSet(const Flag flag) const
+	constexpr bool IsSet(const API::Flag flag) const
 	{
 		return FlagsRegisterBase::GetFlag(static_cast<const uint8_t>(flag));
 	}
 
-	inline void Set(const Flag flag)
+	inline void Set(const API::Flag flag)
 	{
 		FlagsRegisterBase::SetFlag(static_cast<const uint8_t>(flag));
 	}
 
-	inline void Clear(const Flag flag)
+	inline void Clear(const API::Flag flag)
 	{
 		FlagsRegisterBase::ClearFlag(static_cast<const uint8_t>(flag));
 	}
 
-	void MutateByCondition(const bool condition, const Flag flag)
+	void MutateByCondition(const bool condition, const API::Flag flag)
 	{
 		if (condition)
 		{

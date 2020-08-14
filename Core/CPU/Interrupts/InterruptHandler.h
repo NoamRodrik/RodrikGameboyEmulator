@@ -7,7 +7,7 @@
 #define __LR35902_INTERRUPT_HANDLER_H__
 
 #include <Core/CPU/Interrupts/Interrupt.h>
-#include <Core/API/Definitions.h>
+#include <API/Definitions.h>
 
 namespace Core
 {

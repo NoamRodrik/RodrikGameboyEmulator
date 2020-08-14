@@ -7,14 +7,14 @@
 #define __PROCESSOR_H__
 
 #include <Core/Registers/Logic/RegisterEngine.h>
-#include <Core/API/StaticInstance.h>
+#include <API/StaticInstance.h>
 #include <Core/Bus/Bus.h>
 
 namespace Core
 {
 class Instruction;
 
-class Processor : public StaticInstance<Processor>
+class Processor : public API::StaticInstance<Processor>
 {
 public:
 	/* Returns the amount of clocks the operation needs. */
@@ -62,7 +62,7 @@ private:
 	size_t					 m_global_cycles{0};
 
 private:
-	friend class StaticInstance<Processor>;
+	friend class API::StaticInstance<Processor>;
 };
 } // Core
 

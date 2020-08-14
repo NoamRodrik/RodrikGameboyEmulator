@@ -6,11 +6,11 @@
 #ifndef __LR35902_IME_H__
 #define __LR35902_IME_H__
 
-#include <Core/API/StaticInstance.h>
+#include <API/StaticInstance.h>
 
 namespace Core
 {
-class IME : StaticInstance<IME>
+class IME : API::StaticInstance<IME>
 {
 public:
 	static inline void EnableInterrupts() { IME::GetInstance().m_enabled = true; }

@@ -8,7 +8,7 @@
 #define __SHORTCUTS_H__
 
 #include <Core/CPU/Processor.h>
-#include <Core/API/Registers/RegisterPair.h>
+#include <API/Registers/RegisterPair.h>
 
 namespace Core
 {
@@ -33,14 +33,14 @@ static const auto& H_const{Processor::GetInstance().GetRegisters().GetLogicRegis
 static auto& L{Processor::GetInstance().GetRegisters().GetLogicRegisters().l};
 static const auto& L_const{Processor::GetInstance().GetRegisters().GetLogicRegisters().l};
 
-static RegisterPair AF{A, F};
-static const RegisterPair AF_const{A, F};
-static RegisterPair BC{B, C};
-static const RegisterPair BC_const{B, C};
-static RegisterPair DE{D, E};
-static const RegisterPair DE_const{D, E};
-static RegisterPair HL{H, L};
-static const RegisterPair HL_const{H, L};
+static API::RegisterPair AF{A, F};
+static const API::RegisterPair AF_const{A, F};
+static API::RegisterPair BC{B, C};
+static const API::RegisterPair BC_const{B, C};
+static API::RegisterPair DE{D, E};
+static const API::RegisterPair DE_const{D, E};
+static API::RegisterPair HL{H, L};
+static const API::RegisterPair HL_const{H, L};
 
 static auto& SP{Processor::GetInstance().GetRegisters().GetStackRegister()};
 static const auto& SP_const{Processor::GetInstance().GetRegisters().GetStackRegister()};
@@ -49,22 +49,22 @@ static const auto& PC_const{Processor::GetInstance().GetRegisters().GetProgramCo
 
 const auto READ_DATA_AT = [](const auto& address)
 {
-	data_t data{0};
-	SANITY(memory_const.Read(static_cast<const address_t>(address), data), "Failed reading from memory!");
+	API::data_t data{0};
+	SANITY(memory_const.Read(static_cast<const API::address_t>(address), data), "Failed reading from memory!");
 	return data;
 };
 
 const auto RUN_COMMAND_ON_ADDRESS = [](const auto& address, const auto& command)
 {
-	data_t data{READ_DATA_AT(address)};
+	API::data_t data{READ_DATA_AT(address)};
 	const bool result = command(data);
 	memory.Write(address, data);
 	return result;
 };
 
-const auto PC_PARAMETER = [](const address_t offset = 1)
+const auto PC_PARAMETER = [](const API::address_t offset = 1)
 {
-	return static_cast<const data_t>(READ_DATA_AT(PC_const + offset));
+	return static_cast<const API::data_t>(READ_DATA_AT(PC_const + offset));
 };
 
 const auto D8 = []()
@@ -89,7 +89,7 @@ const auto A16 = []()
 
 const auto R8 = []()
 {
-	return static_cast<const r8_t>(D8());
+	return static_cast<const API::r8_t>(D8());
 };
 } // Core
 

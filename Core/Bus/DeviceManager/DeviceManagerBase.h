@@ -6,8 +6,8 @@
 #ifndef __DEVICE_MANAGER_BASE_H__
 #define __DEVICE_MANAGER_BASE_H__
 
-#include <Core/API/Memory/Device/MemoryDeviceOperations.h>
-#include <Core/API/Definitions.h>
+#include <API/Memory/Device/MemoryDeviceOperations.h>
+#include <API/Definitions.h>
 #include <Tools/not_null.h>
 #include <cstdint>
 
@@ -50,6 +50,7 @@ public:
 		return false;
 	}
 
+
 	constexpr bool RegisterDevice(gsl::not_null<MemoryDeviceBase*> new_device)
 	{
 		SANITY(this->m_last_added_device < this->m_devices.size(), "Added too many elements, overflow!");
@@ -89,8 +90,11 @@ protected:
 		}
 	}
 
+private:
+	void StartDevices();
+
 protected:
-	std::array<MemoryDeviceBase*, DEVICES_ON_BUS> m_devices;
+	std::array<API::MemoryDeviceBase*, API::DEVICES_ON_BUS> m_devices;
 	uint32_t m_last_added_device;
 };
 } // Core

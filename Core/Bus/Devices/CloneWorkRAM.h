@@ -6,35 +6,35 @@
 #ifndef __LR35902_MEMORY_DEVICE_CLONE_WORK_RAM_H__
 #define __LR35902_MEMORY_DEVICE_CLONE_WORK_RAM_H__
 
-#include <Core/API/Memory/Device/MemoryDeviceBase.h>
-#include <Core/API/Memory/Memory.h>
-#include <Core/API/Definitions.h>
+#include <API/Memory/Device/IMemoryDevice.h>
+#include <API/Memory/Memory.h>
+#include <API/Definitions.h>
 
 namespace Core
 {
-class DeviceManagerBase;
+class DeviceManager;
 } // Core
 
 namespace Core
 {
 class WorkRAM;
 
-class CloneWorkRAM : public MemoryDeviceBase
+class CloneWorkRAM : public API::IMemoryDevice
 {
 public:
-	constexpr CloneWorkRAM(DeviceManagerBase& device_manager) : MemoryDeviceBase{START_ADDRESS, END_ADDRESS, device_manager}, m_memory{} {}
+	constexpr CloneWorkRAM(DeviceManager& device_manager) : API::IMemoryDevice{START_ADDRESS, END_ADDRESS, device_manager}, m_memory{} {}
 
-	virtual bool Read(const address_t absolute_address, data_t& result) const override
+	virtual bool Read(const API::address_t absolute_address, API::data_t& result) const override
 	{
 		result = this->m_memory[absolute_address - START_ADDRESS];
 		return true;
 	}
 
-	virtual void Write(const address_t absolute_address, const data_t data) override
+	virtual void Write(const API::address_t absolute_address, const API::data_t data) override
 	{
 		this->m_memory[absolute_address - START_ADDRESS] = data;
 
-		data_t work_ram_data{0};
+		API::data_t work_ram_data{0};
 
 		SANITY(this->m_device_manager.Read(0xC000 + absolute_address - START_ADDRESS, work_ram_data),
 			"Failed reading from WorkRAM");
@@ -54,7 +54,7 @@ protected:
 	virtual uint8_t* GetMemoryPointer() override { return this->m_memory.GetMemoryPointer(); }
 
 private:
-	Memory<SIZE> m_memory;
+	API::Memory<SIZE> m_memory;
 
 private:
 	friend class DeviceManager;

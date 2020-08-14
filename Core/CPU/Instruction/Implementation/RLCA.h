@@ -10,6 +10,8 @@
 #include <Core/CPU/Instruction/Shortcuts.h>
 #include <Core/CPU/Instruction/Prefix/Implementation/RLC.h>
 
+using namespace API;
+
 namespace Core
 {
 // 0x07 RLCA

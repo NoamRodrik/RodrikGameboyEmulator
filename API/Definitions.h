@@ -11,7 +11,7 @@
 #include <limits>
 #include <array>
 
-namespace Core
+namespace API
 {
 	/* Necessary types for the CPU */
 	using address_t = uint16_t;
@@ -107,6 +107,10 @@ namespace Core
 
 	/* Special Registers */
 	static constexpr address_t OVERRIDE_BOOTROM_ADDRESS{0xFF50};
+
+	/* Timer Definitions */
+	static constexpr auto LR35902_HZ_CLOCK = 1'048'576;
+	static constexpr auto LR35902_HZ_DIVIDER_CLOCK = 1'024;
 
 	/* Flag Register Index */
 	enum class Flag : data_t

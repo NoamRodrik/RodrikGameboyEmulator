@@ -7,9 +7,47 @@
 #include "Registers/DividerRegister.h"
 #include <Core/Bus/Devices/IORAM.h>
 
+using namespace API;
+
 namespace Core
 {
-size_t Timer::IncreaseDivider(data_t amount)
+size_t Timer::Clock()
+{
+	return Timer::IsTimerDividerElapsed() ? Timer::IncreaseDivider() : 0 +
+		   Timer::IsTimerCounterElapsed() ? Timer::IncreaseCounter() : 0;
+}
+	
+void Timer::Tick()
+{
+	Timer::GetInstance().m_divider_tick_amount += 1;
+	Timer::GetInstance().m_counter_tick_amount += 1;
+}
+
+bool Timer::IsTimerDividerElapsed()
+{
+	// If we passed the amount of divider ticks, we can clock the divider.
+	if (Timer::GetInstance().m_divider_tick_amount % LR35902_HZ_DIVIDER_CLOCK == 0)
+	{
+		Timer::GetInstance().m_divider_tick_amount = 0;
+		return true;
+	}
+
+	return false;
+}
+
+bool Timer::IsTimerCounterElapsed()
+{
+	// If we passed the amount of counter ticks, we can clock the counter.
+	if (Timer::GetInstance().m_counter_tick_amount % Timer::TimerControlThreshold() == 0)
+	{
+		Timer::GetInstance().m_counter_tick_amount = 0;
+		return true;
+	}
+
+	return false;
+}
+
+size_t Timer::IncreaseDivider(const data_t amount)
 {
 	DividerRegister divider{};
 
@@ -26,7 +64,7 @@ size_t Timer::IncreaseDivider(data_t amount)
 	return 1;
 }
 
-size_t Timer::IncreaseCounter(data_t amount)
+size_t Timer::IncreaseCounter(const data_t amount)
 {
 	if (Timer::IsTimerEnabled())
 	{

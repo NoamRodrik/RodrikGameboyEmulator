@@ -9,6 +9,8 @@
 #include <Core/CPU/Processor.h>
 #include <Core/CPU/Instruction/Shortcuts.h>
 
+using namespace API;
+
 namespace Core
 {
 // SUB io_reg, data

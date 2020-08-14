@@ -6,7 +6,7 @@
 #ifndef __REGISTER_BASE_H__
 #define __REGISTER_BASE_H__
 
-#include <Core/API/Definitions.h>
+#include <API/Definitions.h>
 #include <type_traits>
 #include <stdint.h>
 #include <atomic>
@@ -43,14 +43,14 @@ protected:
 /**
  * All addressing registers use 16 bits.
  */
-class AddressRegisterBase : public RegisterBase<address_t>
+class AddressRegisterBase : public RegisterBase<API::address_t>
 {
 public:
 	using RegisterBase::RegisterBase;
-	using RegisterBase::operator address_t&;
-	using RegisterBase::operator address_t;
+	using RegisterBase::operator API::address_t&;
+	using RegisterBase::operator API::address_t;
 
-	AddressRegisterBase& operator=(const address_t data)
+	AddressRegisterBase& operator=(const API::address_t data)
 	{
 		this->m_data = data;
 		return *this;
@@ -65,38 +65,38 @@ class StackRegisterBase : public AddressRegisterBase
 public:
 	using AddressRegisterBase::AddressRegisterBase;
 	using AddressRegisterBase::operator=;
-	using RegisterBase::operator address_t&;
-	using RegisterBase::operator address_t;
+	using RegisterBase::operator API::address_t&;
+	using RegisterBase::operator API::address_t;
 
 public:
-	virtual void Push(const address_t data) = 0;
-	virtual void Push(const data_t data) = 0;
-	virtual void Pop(address_t& data) = 0;
-	virtual void Pop(data_t& data) = 0;
+	virtual void Push(const API::address_t data) = 0;
+	virtual void Push(const API::data_t data) = 0;
+	virtual void Pop(API::address_t& data) = 0;
+	virtual void Pop(API::data_t& data) = 0;
 };
 
 /**
  * The stack registers hold 8 bit data segments that maintain their position in the stack.
  */
-class FlagsRegisterBase : public RegisterBase<data_t>
+class FlagsRegisterBase : public RegisterBase<API::data_t>
 {
 public:
 	using RegisterBase::RegisterBase;
-	using RegisterBase::operator data_t&;
-	using RegisterBase::operator data_t;
+	using RegisterBase::operator API::data_t&;
+	using RegisterBase::operator API::data_t;
 
 protected:
-	constexpr bool GetFlag(const data_t bit_index) const
+	constexpr bool GetFlag(const API::data_t bit_index) const
 	{
 		return (this->m_data >> bit_index) & 0x01;
 	}
 
-	inline void SetFlag(const data_t flag)
+	inline void SetFlag(const API::data_t flag)
 	{
 		this->m_data |= (0x1 << flag);
 	}
 
-	inline void ClearFlag(const data_t flag)
+	inline void ClearFlag(const API::data_t flag)
 	{
 		this->m_data &= ((0x1 << flag) ^ 0b11111111);
 	}
@@ -105,12 +105,12 @@ protected:
 /**
  * The arithmetic registers hold 8 bit data segments, that maintain their logic.
  */
-class ArithmeticRegisterBase : public RegisterBase<data_t>
+class ArithmeticRegisterBase : public RegisterBase<API::data_t>
 {
 public:
 	using RegisterBase::RegisterBase;
-	using RegisterBase::operator data_t&;
-	using RegisterBase::operator data_t;
+	using RegisterBase::operator API::data_t&;
+	using RegisterBase::operator API::data_t;
 };
 } // Core
 

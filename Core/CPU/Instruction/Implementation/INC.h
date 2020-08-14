@@ -8,8 +8,10 @@
 
 #include <Core/CPU/Processor.h>
 #include <Core/CPU/Instruction/Shortcuts.h>
-#include <Core/API/Registers/RegisterPair.h>
+#include <API/Registers/RegisterPair.h>
 #include <Tools/Tools.h>
+
+using namespace API;
 
 namespace Core
 {

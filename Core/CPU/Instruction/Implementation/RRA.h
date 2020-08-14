@@ -10,6 +10,8 @@
 #include <Core/CPU/Instruction/Shortcuts.h>
 #include <Core/CPU/Instruction/Prefix/Implementation/RR.h>
 
+using namespace API;
+
 namespace Core
 {
 // 0x1F RRA

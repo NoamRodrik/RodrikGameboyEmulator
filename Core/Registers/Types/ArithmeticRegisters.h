@@ -29,19 +29,19 @@ public:
 		return *this;
 	}
 
-	ArithmeticRegister& operator&=(data_t data)
+	ArithmeticRegister& operator&=(API::data_t data)
 	{
 		this->m_data &= data;
 		return *this;
 	}
 
-	ArithmeticRegister& operator|=(data_t data)
+	ArithmeticRegister& operator|=(API::data_t data)
 	{
 		this->m_data |= data;
 		return *this;
 	}
 
-	ArithmeticRegister& operator=(data_t data)
+	ArithmeticRegister& operator=(API::data_t data)
 	{
 		this->m_data = data;
 		return *this;

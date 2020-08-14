@@ -11,6 +11,8 @@
 #include <Core/CPU/Processor.h>
 #include "EI.h"
 
+using namespace API;
+
 namespace Core
 {
 // 0xD9 RETI

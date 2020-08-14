@@ -10,6 +10,8 @@
 #include <Core/CPU/Interrupts/Flags/IME.h>
 #include <Core/CPU/Processor.h>
 
+using namespace API;
+
 namespace Core
 {
 // 0xF3 DI

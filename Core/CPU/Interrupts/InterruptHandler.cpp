@@ -13,6 +13,8 @@
 #include "Types/Timer.h"
 #include <array>
 
+using namespace API;
+
 namespace Core
 {
 static const std::array<const Interrupt, INTERRUPT_COUNT> InterruptTable
