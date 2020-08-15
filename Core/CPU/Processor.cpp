@@ -74,12 +74,6 @@ const size_t Processor::Clock()
 		return clock_cycle;
 	}
 
-	// Unhalting takes 4 cycles.
-	if (WAS_PROCESSOR_HALTED && !Processor::IsHalted())
-	{
-		clock_cycle += 4;
-	}
-
 	if (Processor::IsStopped())
 	{
 		LOG("STOP called!");
@@ -109,32 +103,40 @@ const size_t Processor::Clock()
 	// If prefix is enabled, we need to disable it.
 	Processor::ClearPrefixCommand();
 
-	// The compute amount is the amount of cycles the command needs.
-	clock_cycle = command_to_execute.cycles_amount;
+	// If the HALT bug occurred.
+	if (WAS_PROCESSOR_HALTED && !Processor::IsHalted())
+	{
+		// HALT mode is not entered. HALT bug occurs: The CPU fails to increase PC when
+		// executing the next instruction. The IF flags aren't cleared. This results on weird
+		// behaviour.
+		PC -= 1;
+
+		// It takes 1 cycle to exit halt mode, even if the CPU doesn't jump to the interrupt vector.
+		clock_cycle += 1;
+	}
 
 	// If the command wants to forward the PC, we need to add the bytes size.
 	if (command_to_execute.Execute())
 	{
-		// If we aren't on the HALT bug.
-		if (!(WAS_PROCESSOR_HALTED && !Processor::IsHalted()))
-		{
-			// Change the PC!
-			PC += command_to_execute.bytes_size;
-		}
+		// Change the PC!
+		PC += command_to_execute.bytes_size;
 
 		if (command_to_execute.extended_cycles_amount != 0)
 		{
 			// The operation didn't successfully happen.
-			clock_cycle = command_to_execute.extended_cycles_amount;
+			clock_cycle += command_to_execute.extended_cycles_amount;
+		}
+		else
+		{
+			// This was not a branching command, so it did successfully happen.
+			clock_cycle += command_to_execute.cycles_amount;
 		}
 	}
 	else
 	{
-		if (command_to_execute.extended_cycles_amount != 0)
-		{
-			// The operation did successfully happen.
-			clock_cycle = command_to_execute.cycles_amount;
-		}
+		// The operation did successfully happen.
+		// The compute amount is the amount of cycles the command needs.
+		clock_cycle += command_to_execute.cycles_amount;
 	}
 
 #if _DEBUG

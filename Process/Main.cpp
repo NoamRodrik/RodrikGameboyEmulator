@@ -25,14 +25,14 @@ int main(int argc, char** argv)
 
 	LoadGame();
 
-	do
+	while (true)
 	{
 		// CPU needs to syncronize clocks.
 		for (size_t current_cycle = Processor::Clock(); current_cycle > 0; --current_cycle)
 		{
 			Clock::SyncClock();
 		}
-	} while (true);
+	}
 
 	return EXIT_SUCCESS;
 }

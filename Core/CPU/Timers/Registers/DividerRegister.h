@@ -22,6 +22,9 @@ public:
 
 public:
 	static constexpr API::address_t DIVIDER_REGISTER_ADDRESS{0xFF04};
+	static constexpr API::address_t DIVIDER_REGISTER_ADDRESS_LSB{0xFF03};
+	static constexpr API::data_t DIVIDER_REGISTER_DEFAULT_VALUE{0xAB};
+	static constexpr API::data_t DIVIDER_REGISTER_DEFAULT_VALUE_LSB{0xCC};
 };
 } // Core
 

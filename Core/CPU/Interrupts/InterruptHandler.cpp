@@ -72,8 +72,8 @@ size_t InterruptHandler::ProcessInterrupts()
 		// 3) PC = Interrupt Service Routine
 		PC = interrupt_to_run->jump_address;
 
-		// It takes 20 clocks to dispatch an interrupt. If CPU is in HALT mode, another extra 4 clocks are needed.
-		return 20 + WAS_PROCESSOR_HALTED ? 4 : 0;
+		// It takes 5 cycles to dispatch an interrupt. If CPU is in HALT mode, another extra cycle is needed.
+		return 5 + static_cast<size_t>(WAS_PROCESSOR_HALTED);
 	}
 
 	return 0;

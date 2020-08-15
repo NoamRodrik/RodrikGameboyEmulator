@@ -24,9 +24,11 @@ namespace Core
 class IORAM : public API::IMemoryDevice
 {
 public:
-	constexpr IORAM(API::IMemoryDeviceAccess& memory_accessor) : API::IMemoryDevice{START_ADDRESS, END_ADDRESS, memory_accessor }, m_memory{}
+	constexpr IORAM(API::IMemoryDeviceAccess& memory_accessor) : API::IMemoryDevice{START_ADDRESS, END_ADDRESS, memory_accessor}, m_memory{}
 	{
 		// Default values
+		this->m_memory[GetFixedAddress(DividerRegister::DIVIDER_REGISTER_ADDRESS_LSB)] = DividerRegister::DIVIDER_REGISTER_DEFAULT_VALUE_LSB;
+		this->m_memory[GetFixedAddress(DividerRegister::DIVIDER_REGISTER_ADDRESS)] = DividerRegister::DIVIDER_REGISTER_DEFAULT_VALUE;
 		this->m_memory[GetFixedAddress(TimerCounter::TIMER_COUNTER_ADDRESS)] = TimerCounter::TIMER_COUNTER_DEFAULT_VALUE;
 		this->m_memory[GetFixedAddress(TimerModulo::TIMER_MODULO_ADDRESS)] = TimerModulo::TIMER_MODULO_DEFAULT_VALUE;
 		this->m_memory[GetFixedAddress(TimerControl::TIMER_CONTROL_ADDRESS)] = TimerControl::TIMER_CONTROL_DEFAULT_VALUE;
@@ -136,6 +138,8 @@ private:
 			{
 				// Writing to the divier register resets the divider timer.
 				this->m_memory[GetFixedAddress(address)] = 0;
+				// Also the LSB turns into 0.
+				this->m_memory[GetFixedAddress(address - 1)] = 0;
 				return false;
 				break;
 			}
