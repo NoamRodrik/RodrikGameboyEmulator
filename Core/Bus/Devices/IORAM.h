@@ -117,9 +117,7 @@ private:
 			{
 				if (Timer::IsCounterOverflow(data))
 				{
-					Timer::CounterOverflowInterrupt();
-					TimerModulo modulo{};
-					this->m_memory[GetFixedAddress(TimerCounter::TIMER_COUNTER_ADDRESS)] = modulo;
+					Timer::AssignCounterToModulo();
 					return false;
 				}
 

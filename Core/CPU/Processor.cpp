@@ -92,9 +92,9 @@ const size_t Processor::Clock()
 	// While halted, the CPU spins on NOP
 	// The CPU will be unhalted on any triggered interrupt
 	const auto& command_to_execute = Processor::IsHalted() ? GENERAL_LOOKUP_TABLE[0] :
-									    (Processor::IsPrefix() ?
-										 PREFIX_LOOKUP_TABLE[READ_DATA_AT(PC_const)] :
-										 GENERAL_LOOKUP_TABLE[READ_DATA_AT(PC_const)]);
+		(Processor::IsPrefix() ?
+			PREFIX_LOOKUP_TABLE[READ_DATA_AT(PC_const)] :
+			GENERAL_LOOKUP_TABLE[READ_DATA_AT(PC_const)]);
 
 #if _DEBUG
 	Processor::PrintInstruction(command_to_execute);
@@ -156,9 +156,6 @@ const size_t Processor::Clock()
 	LOG("");
 #endif
 #endif
-
-	// Timer additions
-	clock_cycle += Timer::Clock();
 
 	return clock_cycle;
 }

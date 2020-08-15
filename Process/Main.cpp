@@ -14,6 +14,7 @@
 using namespace Core;
 
 void LoadGame();
+const size_t SystemCycle();
 
 int main(int argc, char** argv)
 {
@@ -28,13 +29,22 @@ int main(int argc, char** argv)
 	while (true)
 	{
 		// CPU needs to syncronize clocks.
-		for (size_t current_cycle = Processor::Clock(); current_cycle > 0; --current_cycle)
+		for (size_t current_cycle = SystemCycle(); current_cycle > 0; --current_cycle)
 		{
 			Clock::SyncClock();
 		}
 	}
 
 	return EXIT_SUCCESS;
+}
+
+const size_t SystemCycle()
+{
+	size_t cycles = Processor::Clock();
+	
+	Timer::Clock(cycles);
+
+	return cycles;
 }
 
 void LoadGame()

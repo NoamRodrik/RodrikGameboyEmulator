@@ -15,27 +15,30 @@ namespace Core
 class Timer : public API::StaticInstance<Timer>
 {
 public:
-	static void Tick();
-
 	// Returns the amount of cycles the operation took.
-	static size_t Clock();
-	
-	static bool IsTimerDividerElapsed();
-	static bool IsTimerCounterElapsed();
+	static void Clock(size_t cycles);
 	static void AssignCounterToModulo();
 	static bool IsCounterOverflow(const API::data_t new_timer_counter);
+
+private:
 	static size_t TimerControlThreshold();
-	static void CounterOverflowInterrupt();
-	static size_t IncreaseDivider(const API::data_t amount = 1);
-	static size_t IncreaseCounter(const API::data_t amount = 1);
 	static bool IsTimerEnabled();
+	static void HandleInterruptOnOverflow();
+	static void IncreaseDivider(const API::data_t cycles = 1);
+	static void IncreaseCounter(const API::data_t cycles = 1);
+	static bool TimerCounterStarted();
+	static void ResetCounterStarted();
+	static void SetCounterStarted();
+	static bool OverflowOccurred();
+	static void ResetOverflowOccurred();
+	static void SetOverflowOccurred();
+	static bool IsTimerElapsed();
+	static void SetTimerElapsed(bool condition);
 
 private:
-	static constexpr auto DIVIDER_THRESHOLD = 16;
-
-private:
-	size_t m_divider_tick_amount{0};
-	size_t m_counter_tick_amount{0};
+	bool m_counter_started{false};
+	bool m_save_timer_elapse{false};
+	bool m_overflow_occurred{false};
 };
 } // Core
 

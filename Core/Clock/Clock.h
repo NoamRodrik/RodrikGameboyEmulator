@@ -23,9 +23,6 @@ public:
 	static void SyncClock();
 
 private:
-	static void Update();
-
-private:
 	using lr35902_clock_period = std::chrono::duration<int64_t, std::ratio<1, API::LR35902_HZ_CLOCK>>;
 	static constexpr lr35902_clock_period one_clock_period{1};
 	using clock = std::chrono::high_resolution_clock;

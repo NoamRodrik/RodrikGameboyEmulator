@@ -18,13 +18,5 @@ void Clock::SyncClock()
 	// the "native" duration of high_resolution_clock
 	Clock::GetInstance().m_last_tick =
 		std::chrono::time_point_cast<clock::duration>(Clock::GetInstance().m_last_tick + one_clock_period);
-
-	// Update all devices that need the clock that the clock has ticked.
-	Clock::Update();
-}
-
-void Clock::Update()
-{
-	Timer::Tick();
 }
 } // Core

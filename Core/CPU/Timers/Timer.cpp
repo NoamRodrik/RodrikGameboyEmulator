@@ -11,71 +11,63 @@ using namespace API;
 
 namespace Core
 {
-size_t Timer::Clock()
+void Timer::Clock(size_t cycles)
 {
-	return Timer::IsTimerDividerElapsed() ? Timer::IncreaseDivider() : 0 +
-		   Timer::IsTimerCounterElapsed() ? Timer::IncreaseCounter() : 0;
-}
-	
-void Timer::Tick()
-{
-	Timer::GetInstance().m_divider_tick_amount += 1;
-	Timer::GetInstance().m_counter_tick_amount += 1;
+	// Order here is important!
+	Timer::IncreaseDivider(static_cast<const data_t>(cycles));
+	Timer::IncreaseCounter(static_cast<const data_t>(cycles));
 }
 
-bool Timer::IsTimerDividerElapsed()
+void Timer::IncreaseDivider(const data_t cycles)
 {
-	// If we passed the amount of divider ticks, we can clock the divider.
-	if (Timer::GetInstance().m_divider_tick_amount % LR35902_HZ_DIVIDER_CLOCK == 0)
-	{
-		Timer::GetInstance().m_divider_tick_amount = 0;
-		return true;
-	}
-
-	return false;
-}
-
-bool Timer::IsTimerCounterElapsed()
-{
-	// If we passed the amount of counter ticks, we can clock the counter.
-	if (Timer::GetInstance().m_counter_tick_amount % Timer::TimerControlThreshold() == 0)
-	{
-		Timer::GetInstance().m_counter_tick_amount = 0;
-		return true;
-	}
-
-	return false;
-}
-
-size_t Timer::IncreaseDivider(const data_t amount)
-{
-	DividerRegister divider{};
+	address_t full_divider = static_cast<data_t>(DividerRegister{}) << 8 | READ_DATA_AT(DividerRegister::DIVIDER_REGISTER_ADDRESS_LSB);
+	full_divider += cycles;
 
 	// We need to write to register with force - otherwise it will get reset. (This is the OFFICIAL way to change the counter)
-	static gsl::not_null<IORAM*> io_ram = static_cast<IORAM*>(Processor::GetInstance().GetMemory().m_device_manager.GetDeviceAtAddress(DividerRegister::DIVIDER_REGISTER_ADDRESS));
-	io_ram->m_memory[io_ram->GetFixedAddress(DividerRegister::DIVIDER_REGISTER_ADDRESS)] += amount;
-
-	if (divider >= DIVIDER_THRESHOLD)
-	{
-		io_ram->m_memory[io_ram->GetFixedAddress(DividerRegister::DIVIDER_REGISTER_ADDRESS)] = divider - DIVIDER_THRESHOLD;
-	}
-
-	// Takes 1 cycle.
-	return 1;
+	static gsl::not_null<IORAM*> io_ram{static_cast<IORAM*>(Processor::GetInstance().GetMemory().m_device_manager.GetDeviceAtAddress(DividerRegister::DIVIDER_REGISTER_ADDRESS))};
+	io_ram->m_memory[io_ram->GetFixedAddress(DividerRegister::DIVIDER_REGISTER_ADDRESS)] = (full_divider >> 8) & 0x00FF;
+	io_ram->m_memory[io_ram->GetFixedAddress(DividerRegister::DIVIDER_REGISTER_ADDRESS_LSB)] = full_divider & 0x00FF;
 }
 
-size_t Timer::IncreaseCounter(const data_t amount)
+void Timer::IncreaseCounter(const data_t cycles)
 {
 	if (Timer::IsTimerEnabled())
 	{
-		TimerCounter timer_counter{};
-		timer_counter = timer_counter + amount;
+		// Fetching the internal clock
+		const address_t full_divider = static_cast<data_t>(DividerRegister{}) << 8 | READ_DATA_AT(DividerRegister::DIVIDER_REGISTER_ADDRESS_LSB);
 
-		// Takes 1 cycle.
-		return 1;
+		// If the timer just started, we will save the clock count at start
+		// This way we don't increment the timer to early, because the internal
+		// clock may be not zero at this time.
+		const address_t previous_full_divider = Timer::TimerCounterStarted() ? full_divider - 1 : full_divider - cycles;
+		Timer::SetCounterStarted();
+
+		const size_t clock_bit{(API::LR35902_HZ_CLOCK / Timer::TimerControlThreshold()) >> 1};
+		for (size_t clock = static_cast<size_t>(previous_full_divider) + 1; clock <= full_divider; ++clock)
+		{
+			Timer::HandleInterruptOnOverflow();
+			const bool TIMER_ELAPSE_CHECK = ((clock & clock_bit) != 0);
+
+			if (Timer::IsTimerElapsed() && !TIMER_ELAPSE_CHECK)
+			{
+				TimerCounter timer_counter{};
+
+				// Overflow
+				if (Timer::IsCounterOverflow(static_cast<data_t>(timer_counter) + 1))
+				{
+					Timer::SetOverflowOccurred();
+				}
+
+				timer_counter = timer_counter + 1;
+			}
+
+			Timer::SetTimerElapsed(TIMER_ELAPSE_CHECK);
+		}
 	}
-
-	return 0;
+	else
+	{
+		Timer::ResetCounterStarted();
+	}
 }
 
 bool Timer::IsCounterOverflow(const data_t new_timer_counter)
@@ -84,9 +76,13 @@ bool Timer::IsCounterOverflow(const data_t new_timer_counter)
 	return old_timer_counter == 0xFF && new_timer_counter == 0;
 }
 
-void Timer::CounterOverflowInterrupt()
+void Timer::HandleInterruptOnOverflow()
 {
-	InterruptHandler::IRQ(EInterrupts::TIMER);
+	if (Timer::OverflowOccurred())
+	{
+		Timer::ResetOverflowOccurred();
+		InterruptHandler::IRQ(EInterrupts::TIMER);
+	}
 }
 
 bool Timer::IsTimerEnabled()
@@ -95,10 +91,49 @@ bool Timer::IsTimerEnabled()
 	return timer_control & 0b00000100;
 }
 
+bool Timer::TimerCounterStarted()
+{
+	return Timer::GetInstance().m_counter_started;
+}
+
+void Timer::SetCounterStarted()
+{
+	Timer::GetInstance().m_counter_started = true;
+}
+
+void Timer::ResetCounterStarted()
+{
+	Timer::GetInstance().m_counter_started = false;
+}
+
+bool Timer::OverflowOccurred()
+{
+	return Timer::GetInstance().m_overflow_occurred;
+}
+
+void Timer::SetOverflowOccurred()
+{
+	Timer::GetInstance().m_overflow_occurred = true;
+}
+
+void Timer::ResetOverflowOccurred()
+{
+	Timer::GetInstance().m_overflow_occurred = false;
+}
+
+bool Timer::IsTimerElapsed()
+{
+	return Timer::GetInstance().m_save_timer_elapse;
+}
+
+void Timer::SetTimerElapsed(bool condition)
+{
+	Timer::GetInstance().m_save_timer_elapse = condition;
+}
+
 void Timer::AssignCounterToModulo()
 {
-	const TimerModulo timer_modulo{};
-	TimerCounter timer_counter{timer_modulo};
+	TimerCounter timer_counter{TimerModulo{}};
 }
 
 size_t Timer::TimerControlThreshold()
