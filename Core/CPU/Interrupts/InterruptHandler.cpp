@@ -35,7 +35,7 @@ static const std::array<const Interrupt, 0x05> InterruptTable
 	Interrupt{HIGH_LOW_PIN_NUMBER_INTERRUPT, 0x60, EInterrupts::H_L_P}
 };
 	
-size_t InterruptHandler::ProcessInterrupts()
+bool InterruptHandler::ProcessInterrupts()
 {
 	// Interrupt Handling
 	IME::EnableInterruptsIfScheduled();
@@ -54,7 +54,7 @@ size_t InterruptHandler::ProcessInterrupts()
 		if (!IME::IsEnabled())
 		{
 			// The master enable isn't on, we can't use interrupts yet.
-			return 0;
+			return false;
 		}
 
 		// Clear interrupt.
@@ -72,11 +72,10 @@ size_t InterruptHandler::ProcessInterrupts()
 		// 3) PC = Interrupt Service Routine
 		PC = interrupt_to_run->jump_address;
 
-		// It takes 5 cycles to dispatch an interrupt. If CPU is in HALT mode, another extra cycle is needed.
-		return 5 + static_cast<size_t>(WAS_PROCESSOR_HALTED);
+		return true;
 	}
 
-	return 0;
+	return false;
 }
 
 void InterruptHandler::ClearInterrupt(const EInterrupts interrupt)

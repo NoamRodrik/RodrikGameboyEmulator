@@ -117,7 +117,8 @@ private:
 			{
 				if (Timer::IsCounterOverflow(data))
 				{
-					Timer::AssignCounterToModulo();
+					this->m_memory[GetFixedAddress(address)] = this->m_memory[GetFixedAddress(TimerModulo::TIMER_MODULO_ADDRESS)];
+					Timer::LaunchInterrupt();
 					return false;
 				}
 

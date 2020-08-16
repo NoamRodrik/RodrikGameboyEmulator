@@ -12,7 +12,6 @@ namespace Core
 {
 inline const auto TIMER_INTERRUPT = []()
 {
-	LOG("Timer has timed out!");
 	return true;
 };
 } // Core

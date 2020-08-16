@@ -14,7 +14,7 @@ namespace Core
 class InterruptHandler
 {
 public:
-	static size_t ProcessInterrupts();
+	static bool ProcessInterrupts();
 
 	static void IRQ(const EInterrupts interrupt);
 	static void ClearInterrupt(const EInterrupts interrupt);

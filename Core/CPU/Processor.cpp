@@ -23,7 +23,7 @@ namespace Core
 #if _DEBUG
 void Processor::PrintInstruction(const Instruction& instruction_to_print)
 {
-	LOG("%04X %02X %s ", static_cast<const address_t>(PC_const), READ_DATA_AT(PC_const), instruction_to_print.operation_string.c_str());
+	LOG("%04X %02X %s %02X%02X", static_cast<const address_t>(PC_const), READ_DATA_AT(PC_const), instruction_to_print.operation_string.c_str(), READ_DATA_AT(PC_const + 1), READ_DATA_AT(PC_const + 2));
 }
 
 void Processor::PrintRegisters()
@@ -61,18 +61,59 @@ void Processor::PrintInterruptRegisters()
 	
 const size_t Processor::Clock()
 {
-	const bool WAS_PROCESSOR_HALTED{Processor::IsHalted()};
+	size_t clock_cycle{0};
 
-	// Interrupts check.
-	size_t clock_cycle = InterruptHandler::ProcessInterrupts();
-
-	if (clock_cycle != 0)
+	if (!Processor::IsHalted())
 	{
+		// The CPU will be unhalted on any triggered interrupt
+		const auto& command_to_execute = Processor::IsPrefix() ?
+							PREFIX_LOOKUP_TABLE[READ_DATA_AT(PC_const)] :
+							GENERAL_LOOKUP_TABLE[READ_DATA_AT(PC_const)];
+
 #if _DEBUG
-		LOG("Interrupt called!");
+		Processor::PrintInstruction(command_to_execute);
 #endif
-		return clock_cycle;
+
+		// If prefix is enabled, we need to disable it.
+		Processor::ClearPrefixCommand();
+
+		// If the command wants to forward the PC, we need to add the bytes size.
+		if (command_to_execute.Execute())
+		{
+			// Change the PC!
+			PC += command_to_execute.bytes_size;
+
+			if (command_to_execute.extended_cycles_amount != 0)
+			{
+				// The operation didn't successfully happen.
+				clock_cycle += command_to_execute.extended_cycles_amount;
+			}
+			else
+			{
+				// This was not a branching command, so it did successfully happen.
+				clock_cycle += command_to_execute.cycles_amount;
+			}
+		}
+		else
+		{
+			// The operation did successfully happen.
+			// The compute amount is the amount of cycles the command needs.
+			clock_cycle += command_to_execute.cycles_amount;
+		}
 	}
+	else
+	{
+		// While halted, the CPU spins on NOP
+		clock_cycle += 1;
+	}
+
+	Message("Need to check powermode here");
+
+	// Interrupts check + Adjust (Takes 5 cycles for a process to dispatch)
+	clock_cycle += static_cast<size_t>(InterruptHandler::ProcessInterrupts()) * 5;
+
+	// Clock adjust
+	clock_cycle *= 4;
 
 	if (Processor::IsStopped())
 	{
@@ -88,55 +129,10 @@ const size_t Processor::Clock()
 		// Requires no clock cycles
 		return 0;
 	}
-
-	// While halted, the CPU spins on NOP
-	// The CPU will be unhalted on any triggered interrupt
-	const auto& command_to_execute = Processor::IsHalted() ? GENERAL_LOOKUP_TABLE[0] :
-		(Processor::IsPrefix() ?
-			PREFIX_LOOKUP_TABLE[READ_DATA_AT(PC_const)] :
-			GENERAL_LOOKUP_TABLE[READ_DATA_AT(PC_const)]);
-
-#if _DEBUG
-	Processor::PrintInstruction(command_to_execute);
-#endif
-
-	// If prefix is enabled, we need to disable it.
-	Processor::ClearPrefixCommand();
-
-	// If the HALT bug occurred.
-	if (WAS_PROCESSOR_HALTED && !Processor::IsHalted())
-	{
-		// HALT mode is not entered. HALT bug occurs: The CPU fails to increase PC when
-		// executing the next instruction. The IF flags aren't cleared. This results on weird
-		// behaviour.
-		PC -= 1;
-
-		// It takes 1 cycle to exit halt mode, even if the CPU doesn't jump to the interrupt vector.
-		clock_cycle += 1;
-	}
-
-	// If the command wants to forward the PC, we need to add the bytes size.
-	if (command_to_execute.Execute())
-	{
-		// Change the PC!
-		PC += command_to_execute.bytes_size;
-
-		if (command_to_execute.extended_cycles_amount != 0)
-		{
-			// The operation didn't successfully happen.
-			clock_cycle += command_to_execute.extended_cycles_amount;
-		}
-		else
-		{
-			// This was not a branching command, so it did successfully happen.
-			clock_cycle += command_to_execute.cycles_amount;
-		}
-	}
 	else
 	{
-		// The operation did successfully happen.
-		// The compute amount is the amount of cycles the command needs.
-		clock_cycle += command_to_execute.cycles_amount;
+		// If it's not stopped, update devices.
+		Timer::Clock(clock_cycle);
 	}
 
 #if _DEBUG

@@ -11,63 +11,84 @@ using namespace API;
 
 namespace Core
 {
+size_t Timer::TimerObject::GetTime() const
+{
+	return this->m_time;
+}
+
+void Timer::TimerObject::Increase(size_t amount)
+{
+	this->m_time += amount;
+}
+
+void Timer::TimerObject::Lower(size_t amount)
+{
+	this->m_time -= amount;
+}
+
 void Timer::Clock(size_t cycles)
 {
-	// Order here is important!
-	Timer::IncreaseDivider(static_cast<const data_t>(cycles));
-	Timer::IncreaseCounter(static_cast<const data_t>(cycles));
+	Timer::Machine().Increase(cycles);
+
+	while (Timer::MachinePassedThreshold())
+	{
+		Timer::Machine().Lower(Timer::TIMER_THRESHOLD);
+		Timer::Tick();
+	}
 }
 
-void Timer::IncreaseDivider(const data_t cycles)
+void Timer::Tick()
 {
-	address_t full_divider = static_cast<data_t>(DividerRegister{}) << 8 | READ_DATA_AT(DividerRegister::DIVIDER_REGISTER_ADDRESS_LSB);
-	full_divider += cycles;
+	DividerRegister divider_register{};
+	TimerCounter timer_counter{};
 
-	// We need to write to register with force - otherwise it will get reset. (This is the OFFICIAL way to change the counter)
-	static gsl::not_null<IORAM*> io_ram{static_cast<IORAM*>(Processor::GetInstance().GetMemory().m_device_manager.GetDeviceAtAddress(DividerRegister::DIVIDER_REGISTER_ADDRESS))};
-	io_ram->m_memory[io_ram->GetFixedAddress(DividerRegister::DIVIDER_REGISTER_ADDRESS)] = (full_divider >> 8) & 0x00FF;
-	io_ram->m_memory[io_ram->GetFixedAddress(DividerRegister::DIVIDER_REGISTER_ADDRESS_LSB)] = full_divider & 0x00FF;
-}
+	Timer::Counter().Increase(1);
+	Timer::Divider().Increase(1);
 
-void Timer::IncreaseCounter(const data_t cycles)
-{
+	if (Timer::DividerPassedThreshold())
+	{
+		Timer::Divider().Lower(Timer::TIMER_THRESHOLD);
+		divider_register = divider_register + 1;
+	}
+
 	if (Timer::IsTimerEnabled())
 	{
-		// Fetching the internal clock
-		const address_t full_divider = static_cast<data_t>(DividerRegister{}) << 8 | READ_DATA_AT(DividerRegister::DIVIDER_REGISTER_ADDRESS_LSB);
-
-		// If the timer just started, we will save the clock count at start
-		// This way we don't increment the timer to early, because the internal
-		// clock may be not zero at this time.
-		const address_t previous_full_divider = Timer::TimerCounterStarted() ? full_divider - 1 : full_divider - cycles;
-		Timer::SetCounterStarted();
-
-		const size_t clock_bit{(API::LR35902_HZ_CLOCK / Timer::TimerControlThreshold()) >> 1};
-		for (size_t clock = static_cast<size_t>(previous_full_divider) + 1; clock <= full_divider; ++clock)
+		while (Timer::CounterPassedThreshold())
 		{
-			Timer::HandleInterruptOnOverflow();
-			const bool TIMER_ELAPSE_CHECK = ((clock & clock_bit) != 0);
-
-			if (Timer::IsTimerElapsed() && !TIMER_ELAPSE_CHECK)
-			{
-				TimerCounter timer_counter{};
-
-				// Overflow
-				if (Timer::IsCounterOverflow(static_cast<data_t>(timer_counter) + 1))
-				{
-					Timer::SetOverflowOccurred();
-				}
-
-				timer_counter = timer_counter + 1;
-			}
-
-			Timer::SetTimerElapsed(TIMER_ELAPSE_CHECK);
+			Timer::Counter().Lower(Timer::TimerControlThreshold());
+			timer_counter = timer_counter + 1;
 		}
 	}
-	else
-	{
-		Timer::ResetCounterStarted();
-	}
+}
+
+Timer::TimerObject& Timer::Machine()
+{
+	return Timer::GetInstance().m_machine;
+}
+
+Timer::TimerObject& Timer::Counter()
+{
+	return Timer::GetInstance().m_counter;
+}
+
+Timer::TimerObject& Timer::Divider()
+{
+	return Timer::GetInstance().m_divider;
+}
+
+bool Timer::MachinePassedThreshold()
+{
+	return Timer::Machine().GetTime() >= Timer::TIMER_THRESHOLD;
+}
+
+bool Timer::CounterPassedThreshold()
+{
+	return Timer::Counter().GetTime() >= Timer::TimerControlThreshold();
+}
+
+bool Timer::DividerPassedThreshold()
+{
+	return Timer::Divider().GetTime() >= Timer::TIMER_THRESHOLD;
 }
 
 bool Timer::IsCounterOverflow(const data_t new_timer_counter)
@@ -76,59 +97,15 @@ bool Timer::IsCounterOverflow(const data_t new_timer_counter)
 	return old_timer_counter == 0xFF && new_timer_counter == 0;
 }
 
-void Timer::HandleInterruptOnOverflow()
+void Timer::LaunchInterrupt()
 {
-	if (Timer::OverflowOccurred())
-	{
-		Timer::ResetOverflowOccurred();
-		InterruptHandler::IRQ(EInterrupts::TIMER);
-	}
+	InterruptHandler::IRQ(EInterrupts::TIMER);
 }
 
 bool Timer::IsTimerEnabled()
 {
 	const TimerControl timer_control{};
 	return timer_control & 0b00000100;
-}
-
-bool Timer::TimerCounterStarted()
-{
-	return Timer::GetInstance().m_counter_started;
-}
-
-void Timer::SetCounterStarted()
-{
-	Timer::GetInstance().m_counter_started = true;
-}
-
-void Timer::ResetCounterStarted()
-{
-	Timer::GetInstance().m_counter_started = false;
-}
-
-bool Timer::OverflowOccurred()
-{
-	return Timer::GetInstance().m_overflow_occurred;
-}
-
-void Timer::SetOverflowOccurred()
-{
-	Timer::GetInstance().m_overflow_occurred = true;
-}
-
-void Timer::ResetOverflowOccurred()
-{
-	Timer::GetInstance().m_overflow_occurred = false;
-}
-
-bool Timer::IsTimerElapsed()
-{
-	return Timer::GetInstance().m_save_timer_elapse;
-}
-
-void Timer::SetTimerElapsed(bool condition)
-{
-	Timer::GetInstance().m_save_timer_elapse = condition;
 }
 
 void Timer::AssignCounterToModulo()
@@ -145,22 +122,22 @@ size_t Timer::TimerControlThreshold()
 	{
 	    case (0): /* 4.096 KHz (1024 cycles) */
 		{
-			return (1u << 10);
+			return (1u << 6);
 		}
 		
 	    case (1): /* 262.144 KHz (16 cycles) */
 		{
-		    return (1u << 4);
+		    return (1u << 0);
 		}
 	       
 	    case (2): /* 65.536 KHz (64 cycles) */
 	    {
-			return (1u << 6);
+			return (1u << 2);
 		}
 		
 	    case (3): /* 16.384 KHz (256 cycles) */
 		{
-			return (1u << 8);
+			return (1u << 4);
 		}
 
 		default:

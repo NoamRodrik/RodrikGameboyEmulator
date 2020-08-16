@@ -95,8 +95,7 @@ namespace API
 	static constexpr address_t OVERRIDE_BOOTROM_ADDRESS{0xFF50};
 
 	/* Timer Definitions */
-	static constexpr auto LR35902_HZ_CLOCK = 1'048'576;
-	static constexpr auto LR35902_HZ_DIVIDER_CLOCK = 1'024;
+	static constexpr auto LR35902_HZ_CLOCK = 4'194'304;
 
 	/* Boot Definitions */
 #ifdef SKIP_BOOT
