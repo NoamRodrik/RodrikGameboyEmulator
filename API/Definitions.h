@@ -19,13 +19,17 @@ namespace API
 	using r8_t = int8_t;
 
 	/* RAM */
-	static constexpr uint32_t MEMORY_SIZE = Tools::KilobitsToBits(std::numeric_limits<address_t>::digits);
+	static constexpr uint32_t MEMORY_SIZE{Tools::KilobitsToBits(std::numeric_limits<address_t>::digits)};
 
-	/* Main memory constants */
+	/* Main memory */
+	static constexpr address_t ROM_BEGIN_ADDRESS{0x0100};
 	static constexpr address_t ZERO_PAGE_ADDRESS{0xFF00};
 
 	/* Devices on BUS */
-	static constexpr uint8_t DEVICES_ON_BUS = 10;
+	static constexpr uint8_t DEVICES_ON_BUS{10};
+
+	/* Memory bank controllers */
+	static constexpr uint8_t MEMORY_BANK_CONTROLLERS_AMOUNT{28};
 
 	/* Serial */
 	static constexpr address_t SERIAL_TRANSFER_DATA{0xFF01};

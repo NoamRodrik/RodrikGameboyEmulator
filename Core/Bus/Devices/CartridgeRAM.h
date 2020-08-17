@@ -50,7 +50,8 @@ public:
 	static constexpr uint16_t END_ADDRESS = 0x7FFF;
 	static constexpr size_t   SIZE = END_ADDRESS - START_ADDRESS + 1;
 
-protected:
+public:
+	// Public for all the MBCS
 	virtual uint8_t* GetMemoryPointer() override { return this->m_memory.GetMemoryPointer(); }
 
 private:

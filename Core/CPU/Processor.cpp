@@ -3,7 +3,6 @@
  * @author		Noam Rodrik
  * @description Main logic of processor
  */
-
 #include <Core/CPU/Interrupts/Registers/InterruptEnable.h>
 #include <Core/CPU/Instructions/Prefix/LookupTable.h>
 #include <Core/CPU/Instructions/General/LookupTable.h>

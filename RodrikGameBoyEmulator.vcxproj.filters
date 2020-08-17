@@ -36,6 +36,15 @@
     <ClCompile Include="Core\CPU\Timers\Timer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="API\Cartridge\Header.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Cartridge\MBC\Controller.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Cartridge\MBC\Implementations\ROM_0x00.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tools\Tools.h">
@@ -339,6 +348,24 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Core\CPU\Instructions\General\LookupTable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="API\Cartridge\IMemoryBankController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="API\Cartridge\Header.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Cartridge\MBC\Implementations\ROM_0x00.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Cartridge\MBC\Controller.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="API\Cartridge\Loader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="API\Cartridge\ILoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
