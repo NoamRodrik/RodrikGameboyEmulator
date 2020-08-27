@@ -5,8 +5,8 @@
  */
 #include "Controller.h"
 
-#include <Core/Cartridge/MBC/Implementations/ROM_0x00.h>
-#include <Core/Cartridge/MBC/Implementations/MBC_0x01.h>
+#include <Core/Cartridge/Implementations/ROM_0x00.h>
+#include <Core/Cartridge/Implementations/MBC_0x01.h>
 #include <API/Cartridge/Header.h>
 
 using namespace API;

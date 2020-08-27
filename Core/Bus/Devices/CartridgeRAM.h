@@ -7,7 +7,6 @@
 #define __LR35902_MEMORY_DEVICE_CARTRIDGE_RAM_H__
 
 #include <API/Memory/Device/IMemoryDeviceAccess.h>
-#include <Core/Cartridge/Loader/BinaryLoader.h>
 #include <API/Memory/Device/IMemoryDevice.h>
 #include <API/Memory/Memory.h>
 #include <API/Definitions.h>
@@ -61,7 +60,6 @@ private:
 
 private:
 	friend class DeviceManager;
-	friend class GameLoader;
 };
 } // Core
 

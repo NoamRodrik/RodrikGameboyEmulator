@@ -8,7 +8,7 @@
 
 #include <API/Memory/Device/IMemoryDeviceAccess.h>
 #include <Core/Bus/DeviceManager/DeviceManager.h>
-#include <Core/Cartridge/MBC/Controller.h>
+#include <Core/Cartridge/Controller.h>
 
 namespace Core
 {

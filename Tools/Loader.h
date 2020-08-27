@@ -3,18 +3,18 @@
  * @author		Noam Rodrik
  * @description Serves as a service to load from the hard-disk.
  */
-#ifndef __API_LOADER_H__
-#define __API_LOADER_H__
+#ifndef __TOOLS_LOADER_H__
+#define __TOOLS_LOADER_H__
 
+#include <API/Cartridge/ILoader.h>
 #include <Contrib/GSL/not_null.h>
 #include <API/Definitions.h>
 #include <Tools/Tools.h>
-#include "ILoader.h"
 #include <string>
 
-namespace API
+namespace Tools
 {
-class Loader : public ILoader
+class Loader : public API::ILoader
 {
 public:
 	Loader(const std::string& binary_path) : m_binary_path{binary_path}, m_binary_file{fopen(binary_path.c_str(), FILE_READ_MODE)}
@@ -41,4 +41,4 @@ private:
 };
 } // API
 
-#endif // __API_LOADER_H__
+#endif // __TOOLS_LOADER_H__

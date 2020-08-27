@@ -39,13 +39,13 @@
     <ClCompile Include="API\Cartridge\Header.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Core\Cartridge\MBC\Controller.cpp">
+    <ClCompile Include="Core\Cartridge\Implementations\MBC_0x01.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Core\Cartridge\MBC\Implementations\ROM_0x00.cpp">
+    <ClCompile Include="Core\Cartridge\Implementations\ROM_0x00.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Core\Cartridge\MBC\Implementations\MBC_0x01.cpp">
+    <ClCompile Include="Core\Cartridge\Controller.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -60,12 +60,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Core\GPU\Engine\MainPixelEngine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Cartridge\Loader\GameLoader\GameLoader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Cartridge\Loader\BinaryLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Core\CPU\Interrupts\Registers\InterruptEnable.h">
@@ -359,22 +353,22 @@
     <ClInclude Include="API\Cartridge\Header.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Cartridge\MBC\Implementations\ROM_0x00.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Cartridge\MBC\Controller.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="API\Cartridge\Loader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="API\Cartridge\ILoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Cartridge\MBC\Implementations\MBC_0x01.h">
+    <ClInclude Include="Core\Bus\DeviceTools.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Bus\DeviceTools.h">
+    <ClInclude Include="Tools\Loader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Cartridge\Implementations\MBC_0x01.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Cartridge\Implementations\ROM_0x00.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Cartridge\Controller.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

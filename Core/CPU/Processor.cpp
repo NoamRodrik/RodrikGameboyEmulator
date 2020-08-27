@@ -5,7 +5,6 @@
  */
 #include <Core/CPU/Interrupts/Registers/InterruptEnable.h>
 #include <Core/CPU/Interrupts/Registers/InterruptFlag.h>
-#include <Core/Cartridge/Loader/GameLoader/GameLoader.h>
 #include <Core/CPU/Instructions/General/LookupTable.h>
 #include <Core/CPU/Instructions/Prefix/LookupTable.h>
 #include <Core/CPU/Interrupts/InterruptHandler.h>
@@ -13,6 +12,7 @@
 #include <Core/CPU/Timers/Timer.h>
 #include <Core/CPU/Processor.h>
 #include <Core/Clock/Clock.h>
+#include <Tools/Loader.h>
 #include <filesystem>
 #include <time.h>
 #include <cmath>
@@ -181,7 +181,7 @@ void Processor::LoadGame()
 		--index;
 	}
 
-	std::shared_ptr<GameLoader> game_loader{std::make_shared<GameLoader>((*directory_iterator).path().string())};
+	std::shared_ptr<Tools::Loader> game_loader{std::make_shared<Tools::Loader>((*directory_iterator).path().string())};
 	this->m_bus.SetMemoryBankController(std::static_pointer_cast<API::ILoader>(game_loader));
 }
 } // Core
