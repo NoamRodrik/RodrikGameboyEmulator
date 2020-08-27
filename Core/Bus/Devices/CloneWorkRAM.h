@@ -32,11 +32,8 @@ public:
 
 		API::data_t work_ram_data{0};
 
-		if (!this->m_memory_accessor.Read(0xC000 + GetFixedAddress(absolute_address), work_ram_data))
-		{
-			LOG("Failed reading from WorkRAM");
-			return false;
-		}
+		RET_FALSE_IF_FAIL(this->m_memory_accessor.Read(0xC000 + GetFixedAddress(absolute_address), work_ram_data),
+						  "Failed reading from WorkRAM");
 
 		if (work_ram_data != data)
 		{

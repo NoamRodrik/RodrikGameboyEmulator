@@ -22,14 +22,9 @@ using namespace API;
 
 namespace Core
 {
-DeviceManager::DeviceManager() : m_devices{}, m_last_added_device{0}
+DeviceManager::DeviceManager()
 {
 	this->StartDevices();
-}
-
-DeviceManager::~DeviceManager()
-{
-	this->ClearDevices();
 }
 
 void DeviceManager::SetMemoryBankController(std::unique_ptr<API::IMemoryBankController> memory_bank_controller)
@@ -48,20 +43,20 @@ void DeviceManager::StartDevices()
 	static_assert(CartridgeRAM::SIZE + VideoRAM::SIZE + ExternalRAM::SIZE + WorkRAM::SIZE + CloneWorkRAM::SIZE +
 				  OAMRAM::SIZE + UnusedRAM::SIZE + IORAM::SIZE + HighRAM::SIZE + InterruptSwitch::SIZE == MEMORY_SIZE);
 
-	static gsl::not_null<IMemoryDevice*> devices_array[] = {new CartridgeRAM(*this),
-															new VideoRAM(*this),
-															new ExternalRAM(*this),
-															new WorkRAM(*this),
-															new CloneWorkRAM(*this),
-															new OAMRAM(*this),
-															new UnusedRAM(*this),
-															new IORAM(*this),
-															new HighRAM(*this),
-															new InterruptSwitch(*this)};
+	std::unique_ptr<IMemoryDevice> devices_array[] = {std::make_unique<CartridgeRAM>(*this),
+	 											      std::make_unique<VideoRAM>(*this),
+	 											      std::make_unique<ExternalRAM>(*this),
+	 											      std::make_unique<WorkRAM>(*this),
+	 											      std::make_unique<CloneWorkRAM>(*this),
+	 											      std::make_unique<OAMRAM>(*this),
+	 											      std::make_unique<UnusedRAM>(*this),
+	 											      std::make_unique<IORAM>(*this),
+	 											      std::make_unique<HighRAM>(*this),
+	 											      std::make_unique<InterruptSwitch>(*this)};
 
-	for (IMemoryDevice* device : devices_array)
+	for (auto&& device : devices_array)
 	{
-		SANITY(this->RegisterDevice(device), "Failed registering device to the device manager!");
+		SANITY(this->RegisterDevice(std::move(device)), "Failed registering device to the device manager!");
 	}
 }
 
@@ -75,9 +70,9 @@ bool DeviceManager::Write(const address_t absolute_address, const API::data_t da
 		return true;
 	}
 
-	for (const gsl::not_null<IMemoryDevice*> device : this->m_devices)
+	for (auto&& device : this->m_devices)
 	{
-		if (AddressInRange(absolute_address, device))
+		if (AddressInRange(absolute_address, device.get()))
 		{
 			return device->Write(absolute_address, data);
 		}
@@ -97,9 +92,9 @@ bool DeviceManager::Read(const address_t absolute_address, API::data_t& result) 
 		return true;
 	}
 
-	for (const gsl::not_null<IMemoryDevice*> device : this->m_devices)
+	for (auto&& device : this->m_devices)
 	{
-		if (AddressInRange(absolute_address, device))
+		if (AddressInRange(absolute_address, device.get()))
 		{
 			return device->Read(absolute_address, result);
 		}
@@ -111,11 +106,11 @@ bool DeviceManager::Read(const address_t absolute_address, API::data_t& result) 
 
 IMemoryDevice* DeviceManager::GetDeviceAtAddress(const address_t absolute_address)
 {
-	for (auto* device : this->m_devices)
+	for (auto&& device : this->m_devices)
 	{
-		if (AddressInRange(absolute_address, device))
+		if (AddressInRange(absolute_address, device.get()))
 		{
-			return device;
+			return device.get();
 		}
 	}
 

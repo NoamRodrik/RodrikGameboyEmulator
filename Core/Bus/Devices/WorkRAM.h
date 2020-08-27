@@ -35,11 +35,8 @@ public:
 		{
 			API::data_t clone_data{0};
 			
-			if (!this->m_memory_accessor.Read(CloneWorkRAM::START_ADDRESS + GetFixedAddress(absolute_address), clone_data))
-			{
-				LOG("Failed reading from CloneWorkRAM");
-				return false;
-			}
+			RET_FALSE_IF_FAIL(this->m_memory_accessor.Read(CloneWorkRAM::START_ADDRESS + GetFixedAddress(absolute_address), clone_data),
+							  "Failed reading from CloneWorkRAM");
 
 			if (clone_data != data)
 			{
