@@ -193,7 +193,9 @@
     <ClInclude Include="Core\Bus\Bus.h" />
     <ClInclude Include="Core\Bus\DeviceManager\DeviceManager.h" />
     <ClInclude Include="API\Cartridge\Loader.h" />
+    <ClInclude Include="Core\Bus\DeviceTools.h" />
     <ClInclude Include="Core\Cartridge\MBC\Controller.h" />
+    <ClInclude Include="Core\Cartridge\MBC\Implementations\MBC_0x01.h" />
     <ClInclude Include="Core\Cartridge\MBC\Implementations\ROM_0x00.h" />
     <ClInclude Include="Core\GPU\Engine\MainPixelEngine.h" />
     <ClInclude Include="Core\CPU\Interrupts\SpecialRegisters\IME.h" />
@@ -297,6 +299,7 @@
     <ClCompile Include="API\Cartridge\Header.cpp" />
     <ClCompile Include="Core\Bus\DeviceManager\DeviceManager.cpp" />
     <ClCompile Include="Core\Cartridge\MBC\Controller.cpp" />
+    <ClCompile Include="Core\Cartridge\MBC\Implementations\MBC_0x01.cpp" />
     <ClCompile Include="Core\Cartridge\MBC\Implementations\ROM_0x00.cpp" />
     <ClCompile Include="Core\CPU\Interrupts\InterruptHandler.cpp" />
     <ClCompile Include="Core\Clock\Clock.cpp" />

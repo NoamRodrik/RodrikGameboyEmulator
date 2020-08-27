@@ -8,6 +8,7 @@
 
 #include <API/Memory/Device/IMemoryDeviceAccess.h>
 #include <Core/Bus/DeviceManager/DeviceManager.h>
+#include <Core/Cartridge/MBC/Controller.h>
 
 namespace Core
 {
@@ -18,9 +19,9 @@ public:
 	virtual ~Bus() = default;
 
 public:
-	virtual void Write(const API::address_t absolute_address, const API::data_t data) override
+	virtual bool Write(const API::address_t absolute_address, const API::data_t data) override
 	{
-		this->m_device_manager.Write(absolute_address, data);
+		return this->m_device_manager.Write(absolute_address, data);
 	}
 
 	virtual bool Read(const API::address_t absolute_address, API::data_t& result) const override
@@ -33,8 +34,13 @@ public:
 		return this->m_device_manager.GetDeviceAtAddress(absolute_address);
 	}
 
+	void SetMemoryBankController(std::shared_ptr<API::ILoader> loader)
+	{
+		this->m_device_manager.SetMemoryBankController(std::make_unique<MBCController>(*this, loader));
+	}
+
 private:
-	DeviceManager m_device_manager;
+	DeviceManager m_device_manager{};
 
 private:
 	friend class Timer;

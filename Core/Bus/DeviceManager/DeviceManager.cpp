@@ -32,6 +32,17 @@ DeviceManager::~DeviceManager()
 	this->ClearDevices();
 }
 
+void DeviceManager::SetMemoryBankController(std::unique_ptr<API::IMemoryBankController> memory_bank_controller)
+{
+	this->m_mbc_controller = std::move(memory_bank_controller);
+
+	// Loading cartridge.
+	if (this->m_mbc_controller != nullptr)
+	{
+		this->m_mbc_controller->LoadMBC();
+	}
+}
+
 void DeviceManager::StartDevices()
 {
 	static_assert(CartridgeRAM::SIZE + VideoRAM::SIZE + ExternalRAM::SIZE + WorkRAM::SIZE + CloneWorkRAM::SIZE +
@@ -54,8 +65,16 @@ void DeviceManager::StartDevices()
 	}
 }
 
-void DeviceManager::Write(const address_t absolute_address, const API::data_t data)
+bool DeviceManager::Write(const address_t absolute_address, const API::data_t data)
 {
+	// If the MBC Controller decides to overwrite, no need to call devices.
+	if (this->m_mbc_controller != nullptr &&
+		this->m_mbc_controller->Write(absolute_address, data))
+	{
+		// Over-written.
+		return true;
+	}
+
 	for (const gsl::not_null<IMemoryDevice*> device : this->m_devices)
 	{
 		if (AddressInRange(absolute_address, device))
@@ -64,11 +83,20 @@ void DeviceManager::Write(const address_t absolute_address, const API::data_t da
 		}
 	}
 
-	STOP_RUNNING("Didn't write anything to the devices.");
+	LOG("Didn't write anything to the devices.");
+	return false;
 }
 
 bool DeviceManager::Read(const address_t absolute_address, API::data_t& result) const
 {
+	// If the MBC Controller decides to overwrite, no need to call devices.
+	if (this->m_mbc_controller != nullptr &&
+		this->m_mbc_controller->Read(absolute_address, result))
+	{
+		// Over-written.
+		return true;
+	}
+
 	for (const gsl::not_null<IMemoryDevice*> device : this->m_devices)
 	{
 		if (AddressInRange(absolute_address, device))
@@ -77,7 +105,7 @@ bool DeviceManager::Read(const address_t absolute_address, API::data_t& result) 
 		}
 	}
 
-	STOP_RUNNING("Failed reading from device -> The address is illegal and not in range!");
+	LOG("Failed reading from device -> The address is illegal and not in range!");
 	return false;
 }
 

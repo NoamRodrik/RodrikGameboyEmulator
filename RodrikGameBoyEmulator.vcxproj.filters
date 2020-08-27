@@ -45,6 +45,9 @@
     <ClCompile Include="Core\Cartridge\MBC\Implementations\ROM_0x00.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Core\Cartridge\MBC\Implementations\MBC_0x01.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tools\Tools.h">
@@ -366,6 +369,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="API\Cartridge\ILoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Cartridge\MBC\Implementations\MBC_0x01.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Bus\DeviceTools.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

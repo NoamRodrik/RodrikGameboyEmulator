@@ -6,13 +6,14 @@
 #include "Controller.h"
 
 #include <Core/Cartridge/MBC/Implementations/ROM_0x00.h>
+#include <Core/Cartridge/MBC/Implementations/MBC_0x01.h>
 #include <API/Cartridge/Header.h>
 
 using namespace API;
 
 namespace Core
 {
-MBCController::MBCController(IMemoryDeviceAccess& memory_accessor, API::ILoader& loader) :
+MBCController::MBCController(IMemoryDeviceAccess& memory_accessor, std::shared_ptr<API::ILoader> loader) :
 	AMemoryBankController{memory_accessor, loader}
 {
 	std::fill(this->m_mbcs.begin(), this->m_mbcs.end(), nullptr);
@@ -22,6 +23,7 @@ MBCController::MBCController(IMemoryDeviceAccess& memory_accessor, API::ILoader&
 void MBCController::Setup()
 {
 	this->m_mbcs[0] = std::make_unique<MemoryBankController_ROM>(this->m_memory_device, this->m_loader);
+	this->m_mbcs[1] = std::make_unique<MemoryBankController_1>(this->m_memory_device, this->m_loader);
 }
 
 bool MBCController::UpdateMBC()
@@ -47,10 +49,28 @@ CartridgeHeader::CartridgeType MBCController::Type() const
 	return this->m_mbcs[this->m_chosen_mbc]->Type();
 }
 
-void MBCController::LoadROMBankZero()
+size_t MBCController::BankSize() const
 {
 	SANITY(this->m_mbcs[this->m_chosen_mbc].get() != nullptr, "Failed fetching MBC");
-	this->m_mbcs[this->m_chosen_mbc]->LoadROMBankZero();
+	return this->m_mbcs[this->m_chosen_mbc]->BankSize();
 }
 
+void MBCController::LoadMBC()
+{
+	SANITY(this->UpdateMBC(), "Failed updating the MBC");
+	SANITY(this->m_mbcs[this->m_chosen_mbc].get() != nullptr, "Failed fetching MBC");
+	this->m_mbcs[this->m_chosen_mbc]->LoadMBC();
+}
+
+bool MBCController::Read(const API::address_t absolute_address, API::data_t& result) const
+{
+	SANITY(this->m_mbcs[this->m_chosen_mbc].get() != nullptr, "Failed fetching MBC");
+	return this->m_mbcs[this->m_chosen_mbc]->Read(absolute_address, result);
+}
+
+bool MBCController::Write(const API::address_t absolute_address, const API::data_t data)
+{
+	SANITY(this->m_mbcs[this->m_chosen_mbc].get() != nullptr, "Failed fetching MBC");
+	return this->m_mbcs[this->m_chosen_mbc]->Write(absolute_address, data);
+}
 }

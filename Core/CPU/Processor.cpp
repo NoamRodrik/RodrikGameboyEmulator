@@ -4,14 +4,16 @@
  * @description Main logic of processor
  */
 #include <Core/CPU/Interrupts/Registers/InterruptEnable.h>
-#include <Core/CPU/Instructions/Prefix/LookupTable.h>
-#include <Core/CPU/Instructions/General/LookupTable.h>
 #include <Core/CPU/Interrupts/Registers/InterruptFlag.h>
+#include <Core/Cartridge/Loader/GameLoader/GameLoader.h>
+#include <Core/CPU/Instructions/General/LookupTable.h>
+#include <Core/CPU/Instructions/Prefix/LookupTable.h>
 #include <Core/CPU/Interrupts/InterruptHandler.h>
 #include <Core/CPU/Instructions/Shortcuts.h>
 #include <Core/CPU/Timers/Timer.h>
 #include <Core/CPU/Processor.h>
 #include <Core/Clock/Clock.h>
+#include <filesystem>
 #include <time.h>
 #include <cmath>
 
@@ -153,5 +155,33 @@ const size_t Processor::Clock()
 #endif
 
 	return clock_cycle;
+}
+
+void Processor::LoadGame()
+{
+    // Choose ROMS from GB folder
+	size_t index{1};
+	for (const auto& file : std::filesystem::directory_iterator("TestROM"))
+	{
+		MAIN_LOG("%llu) %s", index++, file.path().string().c_str());
+	}
+
+	uint32_t chosen_index{0};
+	do
+	{
+		MAIN_LOG("Choose a wanted file from the file list.");
+		scanf_s("%u", &chosen_index);
+	} while (chosen_index >= index || chosen_index < 1);
+	index = chosen_index;
+
+	auto directory_iterator = std::filesystem::directory_iterator("TestROM");
+	while (index > 1)
+	{
+		++directory_iterator;
+		--index;
+	}
+
+	std::shared_ptr<GameLoader> game_loader{std::make_shared<GameLoader>((*directory_iterator).path().string())};
+	this->m_bus.SetMemoryBankController(std::static_pointer_cast<API::ILoader>(game_loader));
 }
 } // Core

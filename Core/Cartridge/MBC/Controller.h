@@ -9,7 +9,7 @@
 #include <API/Memory/Device/IMemoryDeviceAccess.h>
 #include <API/Cartridge/IMemoryBankController.h>
 #include <API/Definitions.h>
-#include <utility>
+#include <memory>
 #include <array>
 
 namespace Core
@@ -21,8 +21,8 @@ namespace Core
 class MBCController : public API::AMemoryBankController
 {
 public:
-	MBCController(API::IMemoryDeviceAccess& memory_accessor, API::ILoader& loader);
-	~MBCController() = default;
+	MBCController(API::IMemoryDeviceAccess& memory_accessor, std::shared_ptr<API::ILoader> loader);
+	virtual ~MBCController() = default;
 
 public:
 	/**
@@ -35,7 +35,10 @@ public:
 
 public:
 	virtual API::CartridgeHeader::CartridgeType Type() const override;
-	virtual void LoadROMBankZero() override;
+	virtual size_t BankSize() const override;
+	virtual void LoadMBC() override;
+	virtual bool Read(const API::address_t absolute_address, API::data_t& result) const override;
+	virtual bool Write(const API::address_t absolute_address, const API::data_t data) override;
 
 private:
 	void Setup();

@@ -19,7 +19,8 @@ namespace API
 	using r8_t = int8_t;
 
 	/* RAM */
-	static constexpr uint32_t MEMORY_SIZE{Tools::KilobitsToBits(std::numeric_limits<address_t>::digits)};
+	static constexpr size_t MEMORY_SIZE{Tools::SlotsToBytes(std::numeric_limits<address_t>::digits)};
+	static constexpr size_t MEMORY_BANK_SIZE{0x4000};
 
 	/* Main memory */
 	static constexpr address_t ROM_BEGIN_ADDRESS{0x0100};

@@ -10,30 +10,32 @@
 #include <API/Cartridge/ILoader.h>
 #include <API/Cartridge/Header.h>
 #include <cstdint>
+#include <memory>
 
 namespace API
 {
-class IMemoryBankController
+class IMemoryBankController : public IMemoryDeviceAccess
 {
 public:
 	virtual ~IMemoryBankController() = default;
 
 public:
 	virtual CartridgeHeader::CartridgeType Type() const = 0;
-	virtual void LoadROMBankZero() = 0;
+	virtual size_t BankSize() const = 0;
+	virtual void LoadMBC() = 0;
 };
 
 class AMemoryBankController : public IMemoryBankController
 {
 public:
-	AMemoryBankController(IMemoryDeviceAccess& memory_device, ILoader& loader) :
+	AMemoryBankController(IMemoryDeviceAccess& memory_device, std::shared_ptr<ILoader> loader) :
 		m_memory_device{memory_device},
 		m_loader{loader} {}
 	virtual ~AMemoryBankController() = default;
 
 protected:
 	IMemoryDeviceAccess& m_memory_device;
-	ILoader& m_loader;
+	std::shared_ptr<ILoader> m_loader;
 };
 }
 

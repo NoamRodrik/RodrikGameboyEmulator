@@ -69,17 +69,19 @@ public:
 		return true;
 	}
 
-	virtual void Write(const API::address_t absolute_address, const API::data_t data) override
+	virtual bool Write(const API::address_t absolute_address, const API::data_t data) override
 	{
 		if (this->ManipulateData(data, absolute_address))
 		{
 			this->m_memory[GetFixedAddress(absolute_address)] = data;
 		}
+
+		return true;
 	}
 
 public:
-	static constexpr uint16_t START_ADDRESS = 0xFF00;
-	static constexpr uint16_t END_ADDRESS = 0xFF7F;
+	static constexpr API::address_t START_ADDRESS = 0xFF00;
+	static constexpr API::address_t END_ADDRESS = 0xFF7F;
 	static constexpr size_t   SIZE = END_ADDRESS - START_ADDRESS + 1;
 
 protected:

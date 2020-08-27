@@ -18,7 +18,13 @@ public:
 
 public:
 	virtual API::CartridgeHeader::CartridgeType Type() const override { return API::CartridgeHeader::CartridgeType::ROM; }
-	virtual void LoadROMBankZero() override;
+	virtual size_t BankSize() const override;
+	virtual void LoadMBC() override;
+	virtual bool Read(const API::address_t absolute_address, API::data_t& result) const override;
+	virtual bool Write(const API::address_t absolute_address, const API::data_t data) override;
+
+public:
+	static constexpr size_t BANK_SIZE = 2;
 };
 }
 

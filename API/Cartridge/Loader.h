@@ -29,7 +29,7 @@ public:
 	virtual void Load(API::data_t* const destination, const long size, const long offset = 0) override
 	{
 		SANITY(fseek(this->m_binary_file, offset, SEEK_SET) == 0, "Failed seeking!");
-		SANITY(fread(destination, 1, size, this->m_binary_file) == size, "Failed reading from file!");
+		SANITY(fread(destination, 1, size, this->m_binary_file) <= size, "Failed reading from file!");
 	}
 
 private:

@@ -8,6 +8,7 @@
 
 #include <API/Memory/Device/MemoryDeviceOperations.h>
 #include <API/Memory/Device/IMemoryDeviceAccess.h>
+#include <API/Cartridge/IMemoryBankController.h>
 #include <Contrib/GSL/not_null.h>
 #include <API/Definitions.h>
 #include <cstdint>
@@ -21,10 +22,12 @@ public:
 	virtual ~DeviceManager();
 
 public:
-	virtual void Write(const API::address_t absolute_address, const API::data_t data) override;
+	virtual bool Write(const API::address_t absolute_address, const API::data_t data) override;
 	virtual bool Read(const API::address_t absolute_address, API::data_t& result) const override;
 
 	API::IMemoryDevice* GetDeviceAtAddress(const API::address_t absolute_address);
+
+	void SetMemoryBankController(std::unique_ptr<API::IMemoryBankController> memory_bank_controller);
 
 protected:
 	constexpr bool RegisterDevice(gsl::not_null<API::IMemoryDevice*> new_device)
@@ -57,6 +60,7 @@ private:
 
 protected:
 	std::array<API::IMemoryDevice*, API::DEVICES_ON_BUS> m_devices;
+	std::unique_ptr<API::IMemoryBankController> m_mbc_controller{nullptr};
 	uint32_t m_last_added_device;
 };
 } // Core
