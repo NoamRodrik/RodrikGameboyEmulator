@@ -20,17 +20,19 @@ public:
 		this->ClearRAM();
 	}
 
-	constexpr data_t& operator[](const address_t address)
+	constexpr data_t& operator[](const size_t index)
 	{
-		return this->m_ram[address];
+		return this->m_ram[index];
 	}
 
-	constexpr const data_t& operator[](const address_t address) const
+	constexpr const data_t& operator[](const size_t index) const
 	{
-		return this->m_ram[address];
+		return this->m_ram[index];
 	}
 
 	constexpr data_t* GetMemoryPointer() { return this->m_ram.data(); }
+
+	static constexpr size_t MEMORY_SIZE = SIZE;
 
 private:
 	constexpr void ClearRAM()

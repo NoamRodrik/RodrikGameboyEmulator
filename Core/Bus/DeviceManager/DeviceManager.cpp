@@ -62,11 +62,11 @@ void DeviceManager::StartDevices()
 
 bool DeviceManager::Write(const address_t absolute_address, const API::data_t data)
 {
-	// If the MBC Controller decides to overwrite, no need to call devices.
+	// If the MBC Controller decides to intercept, no need to call devices.
 	if (this->m_mbc_controller != nullptr &&
 		this->m_mbc_controller->Write(absolute_address, data))
 	{
-		// Over-written.
+		// Intercepted.
 		return true;
 	}
 

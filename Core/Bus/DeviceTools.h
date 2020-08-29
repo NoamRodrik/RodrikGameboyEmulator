@@ -24,7 +24,17 @@ public:
 		SANITY(amount_to_map <= device_at_address->GetEndAddress() - address_to_map,
 			   "Can't map %llu bytes from %04X to %04X!", amount_to_map, address_to_map, device_at_address->GetEndAddress());
 
-		std::copy(memory_to_map_ptr.get(), memory_to_map_ptr.get() + amount_to_map, device_at_address->GetMemoryPointer());
+		std::copy(memory_to_map_ptr.get(), memory_to_map_ptr.get() + amount_to_map, device_at_address->GetMemoryPointer() + address_to_map);
+	}
+
+	static void Unmap(gsl::not_null<API::data_t*> memory_to_unmap_ptr, const size_t amount_to_map, const API::address_t address_to_unmap)
+	{
+		gsl::not_null<API::IMemoryDevice*> device_at_address = Processor::GetInstance().GetMemory().GetDeviceAtAddress(address_to_unmap);
+
+		SANITY(amount_to_map <= device_at_address->GetEndAddress() - address_to_unmap,
+			   "Can't unmap %llu bytes from %04X to %04X!", amount_to_map, address_to_unmap, device_at_address->GetEndAddress());
+
+		std::copy(device_at_address->GetMemoryPointer() + address_to_unmap, device_at_address->GetMemoryPointer() + address_to_unmap + amount_to_map, memory_to_unmap_ptr.get());
 	}
 };
 } // Core

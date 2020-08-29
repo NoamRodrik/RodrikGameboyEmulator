@@ -72,7 +72,9 @@ const size_t Processor::Clock()
 							GENERAL_LOOKUP_TABLE[READ_DATA_AT(PC_const)];
 
 #if _DEBUG
+#ifndef NO_PRINT_COMMANDS
 		Processor::PrintInstruction(command_to_execute);
+#endif
 #endif
 
 		// If prefix is enabled, we need to disable it.
@@ -113,9 +115,6 @@ const size_t Processor::Clock()
 	// Interrupts check + Adjust (Takes 5 cycles for a process to dispatch)
 	clock_cycle += static_cast<size_t>(InterruptHandler::ProcessInterrupts()) * 5;
 
-	// Clock adjust
-	clock_cycle *= 4;
-
 	if (Processor::IsStopped())
 	{
 		LOG("STOP called!");
@@ -126,12 +125,12 @@ const size_t Processor::Clock()
 		static_cast<void>(getchar());
 		Processor::ClearStop();
 		LOG("STOP cleared!");
-
-		// Requires no clock cycles
-		return 0;
 	}
 	else
 	{
+		// Clock adjust
+		clock_cycle *= 4;
+
 		// If it's not stopped, update devices.
 		Timer::Clock(clock_cycle);
 	}
@@ -149,7 +148,7 @@ const size_t Processor::Clock()
 	Processor::PrintRegisters();
 #endif
 
-#ifndef NO_PRINT
+#ifndef NO_PRINT_COMMANDS
 	LOG("");
 #endif
 #endif
