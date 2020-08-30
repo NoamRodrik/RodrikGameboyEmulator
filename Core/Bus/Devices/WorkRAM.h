@@ -23,6 +23,7 @@ public:
 	virtual bool Read(const API::address_t absolute_address, API::data_t& result) const override
 	{
 		result = this->m_memory[absolute_address - START_ADDRESS];
+
 		return true;
 	}
 

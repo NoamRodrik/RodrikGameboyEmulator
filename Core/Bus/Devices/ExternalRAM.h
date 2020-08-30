@@ -16,7 +16,7 @@ namespace Core
 class ExternalRAM : public API::IMemoryDevice
 {
 public:
-	constexpr ExternalRAM(API::IMemoryDeviceAccess& memory_accessor) : API::IMemoryDevice{START_ADDRESS, END_ADDRESS, memory_accessor }, m_memory{} {}
+	constexpr ExternalRAM(API::IMemoryDeviceAccess& memory_accessor) : API::IMemoryDevice{START_ADDRESS, END_ADDRESS, memory_accessor}, m_memory{} {}
 
 	virtual bool Read(const API::address_t absolute_address, API::data_t& result) const override
 	{

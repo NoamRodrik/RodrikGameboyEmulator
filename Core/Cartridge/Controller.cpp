@@ -7,7 +7,9 @@
 
 #include <Core/Cartridge/Implementations/ROM_0x00.h>
 #include <Core/Cartridge/Implementations/MBC_0x01.h>
+#include <Core/Bus/Devices/CartridgeRAM.h>
 #include <API/Cartridge/Header.h>
+#include <Core/CPU/Processor.h>
 
 using namespace API;
 
@@ -18,6 +20,12 @@ MBCController::MBCController(IMemoryDeviceAccess& memory_accessor, std::shared_p
 {
 	std::fill(this->m_mbcs.begin(), this->m_mbcs.end(), nullptr);
 	this->Setup();
+
+	// Load the first 8KB with the game data.
+	this->m_loader->Load(static_cast<CartridgeRAM*>(Processor::GetInstance().GetMemory().GetDeviceAtAddress(CartridgeRAM::START_ADDRESS))->GetMemoryPointer(),
+						 Tools::BytesInROMBanks(1) / 2);
+
+	SANITY(this->UpdateMBC(), "Failed updating the MBC");
 }
 
 void MBCController::Setup()
@@ -57,7 +65,6 @@ size_t MBCController::BankSize() const
 
 void MBCController::LoadMBC()
 {
-	SANITY(this->UpdateMBC(), "Failed updating the MBC");
 	SANITY(this->m_mbcs[this->m_chosen_mbc].get() != nullptr, "Failed fetching MBC");
 	this->m_mbcs[this->m_chosen_mbc]->LoadMBC();
 }

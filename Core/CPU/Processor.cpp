@@ -24,7 +24,11 @@ namespace Core
 #if _DEBUG
 void Processor::PrintInstruction(const Instruction& instruction_to_print)
 {
+#ifdef PRINT_ONLY_PC
+	LOG_NO_ENTER("%04X ", static_cast<const address_t>(PC_const));
+#else
 	LOG("%04X %02X %s %02X%02X", static_cast<const address_t>(PC_const), READ_DATA_AT(PC_const), instruction_to_print.operation_string.c_str(), READ_DATA_AT(PC_const + 1), READ_DATA_AT(PC_const + 2));
+#endif
 }
 
 void Processor::PrintRegisters()
@@ -115,16 +119,11 @@ const size_t Processor::Clock()
 	// Interrupts check + Adjust (Takes 5 cycles for a process to dispatch)
 	clock_cycle += static_cast<size_t>(InterruptHandler::ProcessInterrupts()) * 5;
 
+	
 	if (Processor::IsStopped())
 	{
-		LOG("STOP called!");
-
-		Message("Make this better!");
-		// If there's a button press.
-		static_cast<void>(getchar());
-		static_cast<void>(getchar());
+		MAIN_LOG_NO_ENTER(" Stopped ");
 		Processor::ClearStop();
-		LOG("STOP cleared!");
 	}
 	else
 	{
@@ -149,7 +148,7 @@ const size_t Processor::Clock()
 #endif
 
 #ifndef NO_PRINT_COMMANDS
-	LOG("");
+	//LOG("");
 #endif
 #endif
 

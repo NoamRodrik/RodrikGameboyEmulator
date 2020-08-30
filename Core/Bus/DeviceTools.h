@@ -21,7 +21,7 @@ public:
 	{
 		gsl::not_null<API::IMemoryDevice*> device_at_address = Processor::GetInstance().GetMemory().GetDeviceAtAddress(address_to_map);
 
-		SANITY(amount_to_map <= device_at_address->GetEndAddress() - address_to_map,
+		SANITY(amount_to_map <= device_at_address->GetEndAddress() - address_to_map + 1,
 			   "Can't map %llu bytes from %04X to %04X!", amount_to_map, address_to_map, device_at_address->GetEndAddress());
 
 		std::copy(memory_to_map_ptr.get(), memory_to_map_ptr.get() + amount_to_map, device_at_address->GetMemoryPointer() + address_to_map);
@@ -31,10 +31,20 @@ public:
 	{
 		gsl::not_null<API::IMemoryDevice*> device_at_address = Processor::GetInstance().GetMemory().GetDeviceAtAddress(address_to_unmap);
 
-		SANITY(amount_to_map <= device_at_address->GetEndAddress() - address_to_unmap,
+		SANITY(amount_to_map <= device_at_address->GetEndAddress() - address_to_unmap + 1,
 			   "Can't unmap %llu bytes from %04X to %04X!", amount_to_map, address_to_unmap, device_at_address->GetEndAddress());
 
 		std::copy(device_at_address->GetMemoryPointer() + address_to_unmap, device_at_address->GetMemoryPointer() + address_to_unmap + amount_to_map, memory_to_unmap_ptr.get());
+	}
+
+	static void Clear(const API::address_t address, const size_t amount_to_clear)
+	{
+		gsl::not_null<API::IMemoryDevice*> device_at_address = Processor::GetInstance().GetMemory().GetDeviceAtAddress(address);
+
+		SANITY(amount_to_clear <= device_at_address->GetEndAddress() - address + 1,
+			"Can't unmap %llu bytes from %04X to %04X!", amount_to_clear, address, device_at_address->GetEndAddress());
+
+		std::fill(device_at_address->GetMemoryPointer() + address, device_at_address->GetMemoryPointer() + address + amount_to_clear, 0);
 	}
 };
 } // Core

@@ -15,13 +15,15 @@
 
 #define NO_PIXEL_ENGINE
 #define TESTING
+//#define DONT_WAIT
 
 Message("If you want to print, comment this here, otherwise uncomment.");
 //#define NO_PRINT
 #define NO_PRINT_FLAGS
 #define NO_PRINT_REGISTERS
 #define NO_PRINT_IF_AND_IE
-#define NO_PRINT_COMMANDS
+//#define NO_PRINT_COMMANDS
+//#define PRINT_ONLY_PC
 
 #ifndef NO_PRINT
 #define LOG_NO_ENTER(fmt, ...)				\
@@ -135,9 +137,14 @@ static constexpr void MutateBitByCondition(const bool condition, uint8_t& data, 
 	(condition ? SetBit(data, index) : ClearBit(data, index));
 }
 
-static constexpr size_t BytesInBanks(const size_t bank_size)
+static constexpr size_t BytesInROMBanks(const size_t bank_size)
 {
-	return bank_size * 16'384;
+	return bank_size * 0x4000;
+}
+
+static constexpr size_t BytesInRAMBanks(const size_t bank_size)
+{
+	return bank_size * 0x2000;
 }
 } // Tools
 

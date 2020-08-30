@@ -17,10 +17,12 @@ namespace Core
 {
 void MemoryBankController_1::LoadMBC()
 {
-	this->m_loader->Load(this->m_memory.GetMemoryPointer(), MBC_SIZE);
+	this->m_loader->Load(this->m_rom_memory.GetMemoryPointer(), MBC_SIZE);
 
 	// $0000-$3FFF Always contains the first 16KB of the cartridge, the first memory bank. It is unable to be switched or modified.
-	DeviceTools::Map(this->m_memory.GetMemoryPointer(), API::MEMORY_BANK_SIZE, CartridgeRAM::START_ADDRESS);
+	// $4000-7FFFF will contain the second 16KB of the cartridge.
+	DeviceTools::Map(this->m_rom_memory.GetMemoryPointer(), Tools::BytesInROMBanks(2), CartridgeRAM::START_ADDRESS);
+	this->m_selected_rom_bank = 1;
 } 
 
 size_t MemoryBankController_1::BankSize() const
@@ -50,6 +52,11 @@ bool MemoryBankController_1::Write(const API::address_t absolute_address, const 
 	{
 		return this->RomBankNumberAction(data);
 	}
+	else if (absolute_address >= MemoryBankController_1::RAM_ROM_BANK_NUMBER_START &&
+		     absolute_address <= MemoryBankController_1::RAM_ROM_BANK_NUMBER_END)
+	{
+		return this->RamRomBankNumberAction(data);
+	}
 	else if (absolute_address >= MemoryBankController_1::RAM_ROM_MODE_SELECT_START &&
 		     absolute_address <= MemoryBankController_1::RAM_ROM_MODE_SELECT_END)
 	{
@@ -57,12 +64,35 @@ bool MemoryBankController_1::Write(const API::address_t absolute_address, const 
 
 		// We need to check what mode is selected, then we can intercept the request.
 		this->m_mode = static_cast<Mode>(data);
+
+		switch (this->m_mode)
+		{
+			case (Mode::ROM_MODE):
+			{
+				// Only RAM Bank 00h can be used during ROM mode.
+				this->SaveSelectedRAMBank();
+				this->m_selected_ram_bank = 0;
+				this->LoadSelectedRAMBank();
+
+				break;
+			}
+
+			case (Mode::RAM_MODE):
+			{
+				// Only ROM Banks 00-1Fh can be used during RAM mode.
+				this->m_selected_rom_bank &= 0x1F;
+				this->LoadSelectedROMBank();
+
+				break;
+			}
+			
+			default:
+			{
+				STOP_RUNNING("Not supposed to be here");
+			}
+		}
+
 		return true;
-	}
-	else if (absolute_address >= MemoryBankController_1::RAM_ROM_BANK_NUMBER_START &&
-			 absolute_address <= MemoryBankController_1::RAM_ROM_BANK_NUMBER_END)
-	{
-		return this->RamRomBankNumberAction(data);
 	}
 
 	return false;
@@ -71,20 +101,18 @@ bool MemoryBankController_1::Write(const API::address_t absolute_address, const 
 bool MemoryBankController_1::RamRomBankNumberAction(const data_t data)
 {
 	// If in ROM mode (no RAM bank switching), it will specify the upper two bits of the ROM bank number.
-	// In this mode, only RAM bank $00 may be used.
 	if (this->m_mode == Mode::ROM_MODE)
 	{
 		// Select the upper 2 bits of the bank number.
-		const data_t UPPER_BITS_BANK_NUMBER = (data & 0x03) << 5;
-
-		// Saving and selecting a new bank.
-		this->SaveSelectedROMBank();
-		this->m_selected_rom_bank = this->m_selected_rom_bank | UPPER_BITS_BANK_NUMBER;
+		// Selecting a new ROM bank.
+		this->m_selected_rom_bank = ((data & 0x03) << 5) | (this->m_selected_rom_bank & 0x1F);
 		this->LoadSelectedROMBank();
 	}
-	else if (this->m_mode == Mode::RAM_MODE)
-	{
-		Message("TODO RAM mode");
+	else if (this->m_mode == Mode::RAM_MODE && this->m_ram_enable)
+	{	
+		this->SaveSelectedRAMBank();
+		this->m_selected_ram_bank = data;
+		this->LoadSelectedRAMBank();
 	}
 	else
 	{
@@ -98,73 +126,38 @@ bool MemoryBankController_1::RomBankNumberAction(const data_t data)
 {
 	// Select the lower 5 bits of the bank number.
 	const data_t LOWER_BITS_BANK_NUMBER = data & static_cast<data_t>(0x1F);
-
-	this->SaveSelectedROMBank();
-	this->m_selected_rom_bank = this->m_selected_rom_bank | LOWER_BITS_BANK_NUMBER;
-	size_t new_bank_offset{Tools::BytesInBanks(this->m_selected_rom_bank)};
-
-	// Apply bug.
-	switch (LOWER_BITS_BANK_NUMBER)
-	{
-		// When these values are written,
-		// instead of addressing the correct ROM banks
-		// they will address banks n+1 instead.
-		case (0x00):
-		case (0x20):
-		case (0x40):
-		case (0x60):
-		{
-			this->m_selected_rom_bank += 1;
-
-			[[fallthrough]];
-		}
-		default:
-		{
-			break;
-		}
-	}
-
+	this->m_selected_rom_bank = (this->m_selected_rom_bank & 0x60) | (LOWER_BITS_BANK_NUMBER == 0x0 ? 0x1 : LOWER_BITS_BANK_NUMBER);
 	this->LoadSelectedROMBank();
-
-	// Undo bug.
-	switch (LOWER_BITS_BANK_NUMBER)
-	{
-		case (0x00):
-		case (0x20):
-		case (0x40):
-		case (0x60):
-		{
-			this->m_selected_rom_bank -= 1;
-
-			[[fallthrough]];
-		}
-		default:
-		{
-			break;
-		}
-	}
 
 	return true;
 }
 
-void MemoryBankController_1::SaveSelectedROMBank()
-{
-	// If we loaded an earlier bank.
-	if (this->m_selected_rom_bank != 0)
-	{
-		const size_t OLDER_BANK_OFFSET{Tools::BytesInBanks(this->m_selected_rom_bank)};
-		SANITY(OLDER_BANK_OFFSET < this->m_memory.MEMORY_SIZE, "Wrong offset");
-	
-		// Unmap the older bank.
-		DeviceTools::Unmap(this->m_memory.GetMemoryPointer() + OLDER_BANK_OFFSET, API::MEMORY_BANK_SIZE, ADDITIONAL_BANKS_OFFSET);
-	}
-}
-
 void MemoryBankController_1::LoadSelectedROMBank()
 {
+	DeviceTools::Clear(ADDITIONAL_ROM_BANKS_OFFSET, API::MEMORY_ROM_BANK_SIZE);
+
 	// Mapping the new bank into the cartridge.
-	const size_t NEW_BANK_OFFSET{Tools::BytesInBanks(this->m_selected_rom_bank)};
-	SANITY(NEW_BANK_OFFSET < this->m_memory.MEMORY_SIZE, "Wrong offset");
-	DeviceTools::Map(this->m_memory.GetMemoryPointer() + NEW_BANK_OFFSET, API::MEMORY_BANK_SIZE, ADDITIONAL_BANKS_OFFSET);
+	const size_t NEW_BANK_OFFSET{Tools::BytesInROMBanks(this->m_selected_rom_bank)};
+	SANITY(NEW_BANK_OFFSET + API::MEMORY_ROM_BANK_SIZE < this->m_rom_memory.MEMORY_SIZE, "Wrong offset");
+	DeviceTools::Map(this->m_rom_memory.GetMemoryPointer() + NEW_BANK_OFFSET, API::MEMORY_ROM_BANK_SIZE, ADDITIONAL_ROM_BANKS_OFFSET);
+}
+
+void MemoryBankController_1::SaveSelectedRAMBank()
+{
+	const size_t OLDER_BANK_OFFSET{Tools::BytesInRAMBanks(this->m_selected_ram_bank)};
+	SANITY(OLDER_BANK_OFFSET + API::MEMORY_RAM_BANK_SIZE < this->m_ram_memory.MEMORY_SIZE, "Wrong offset");
+	
+	// Unmap the older bank.
+	DeviceTools::Unmap(this->m_ram_memory.GetMemoryPointer() + OLDER_BANK_OFFSET, API::MEMORY_RAM_BANK_SIZE, ADDITIONAL_RAM_BANKS_OFFSET);
+}
+
+void MemoryBankController_1::LoadSelectedRAMBank()
+{
+	DeviceTools::Clear(ADDITIONAL_RAM_BANKS_OFFSET, API::MEMORY_RAM_BANK_SIZE);
+
+	// Mapping the new bank into the cartridge.
+	const size_t NEW_BANK_OFFSET{Tools::BytesInRAMBanks(this->m_selected_ram_bank)};
+	SANITY(NEW_BANK_OFFSET + API::MEMORY_RAM_BANK_SIZE < this->m_ram_memory.MEMORY_SIZE, "Wrong offset");
+	DeviceTools::Map(this->m_ram_memory.GetMemoryPointer() + NEW_BANK_OFFSET, API::MEMORY_RAM_BANK_SIZE, ADDITIONAL_RAM_BANKS_OFFSET);
 }
 }
