@@ -15,12 +15,15 @@
 
 #define NO_PIXEL_ENGINE
 #define TESTING
+//#define DONT_WAIT
 
 Message("If you want to print, comment this here, otherwise uncomment.");
 //#define NO_PRINT
 #define NO_PRINT_FLAGS
 #define NO_PRINT_REGISTERS
-//#define NO_PRINT_IF_AND_IE
+#define NO_PRINT_IF_AND_IE
+//#define NO_PRINT_COMMANDS
+//#define PRINT_ONLY_PC
 
 #ifndef NO_PRINT
 #define LOG_NO_ENTER(fmt, ...)				\
@@ -97,14 +100,21 @@ Message("If you want to print, comment this here, otherwise uncomment.");
 
 namespace Tools
 {
-static constexpr uint32_t pow(uint32_t base, uint32_t power)
+static constexpr size_t pow(size_t base, size_t power)
 {
 	return power == 0 ? 1 : pow(base, power - 1) * base;
 }
 
-static constexpr uint32_t KilobitsToBits(uint32_t kb)
+static constexpr size_t SlotsToBytes(const uint32_t slots)
 {
-	return pow(2, kb);
+	return pow(2, slots);
+}
+
+static constexpr size_t MebibytesToBytes(size_t mebibytes)
+{
+	// 1 Mebibyte = 1024 Kibibyte
+	// = 1024 * 1024 bytes
+	return mebibytes * 1'024 * 1'024;
 }
 
 static constexpr bool IsBitSet(const uint8_t data, const size_t index)
@@ -125,6 +135,16 @@ static constexpr void ClearBit(uint8_t& data, const size_t index)
 static constexpr void MutateBitByCondition(const bool condition, uint8_t& data, const size_t index)
 {
 	(condition ? SetBit(data, index) : ClearBit(data, index));
+}
+
+static constexpr size_t BytesInROMBanks(const size_t bank_size)
+{
+	return bank_size * 0x4000;
+}
+
+static constexpr size_t BytesInRAMBanks(const size_t bank_size)
+{
+	return bank_size * 0x2000;
 }
 } // Tools
 

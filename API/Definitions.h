@@ -19,13 +19,19 @@ namespace API
 	using r8_t = int8_t;
 
 	/* RAM */
-	static constexpr uint32_t MEMORY_SIZE = Tools::KilobitsToBits(std::numeric_limits<address_t>::digits);
+	static constexpr size_t MEMORY_SIZE{Tools::SlotsToBytes(std::numeric_limits<address_t>::digits)};
+	static constexpr size_t MEMORY_ROM_BANK_SIZE{0x4000};
+	static constexpr size_t MEMORY_RAM_BANK_SIZE{0x2000};
 
-	/* Main memory constants */
+	/* Main memory */
+	static constexpr address_t ROM_BEGIN_ADDRESS{0x0100};
 	static constexpr address_t ZERO_PAGE_ADDRESS{0xFF00};
 
 	/* Devices on BUS */
-	static constexpr uint8_t DEVICES_ON_BUS = 10;
+	static constexpr uint8_t DEVICES_ON_BUS{10};
+
+	/* Memory bank controllers */
+	static constexpr uint8_t MEMORY_BANK_CONTROLLERS_AMOUNT{28};
 
 	/* Serial */
 	static constexpr address_t SERIAL_TRANSFER_DATA{0xFF01};
@@ -62,11 +68,13 @@ namespace API
 	static constexpr address_t OBP1_ADDRESS{0xFF49};
 	static constexpr address_t WY_ADDRESS  {0xFF4A};
 	static constexpr address_t WX_ADDRESS  {0xFF4B};
+	static constexpr address_t KEY1_ADDRESS{0xFF4D};
+	static constexpr address_t RP_ADDRESS  {0xFF56};
 	static constexpr address_t NR10_DEFAULT_VALUE{0x80};
 	static constexpr address_t NR11_DEFAULT_VALUE{0xBF};
 	static constexpr address_t NR12_DEFAULT_VALUE{0xF3};
 	static constexpr address_t NR14_DEFAULT_VALUE{0xBF};
-	static constexpr address_t NR21_DEFAULT_VALUE{0xF3};
+	static constexpr address_t NR21_DEFAULT_VALUE{0x3F};
 	static constexpr address_t NR22_DEFAULT_VALUE{0x00};
 	static constexpr address_t NR24_DEFAULT_VALUE{0xBF};
 	static constexpr address_t NR30_DEFAULT_VALUE{0x7F};

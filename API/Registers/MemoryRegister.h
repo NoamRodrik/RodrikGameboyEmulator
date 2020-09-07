@@ -23,7 +23,7 @@ public:
 
 	MemoryRegister& operator=(const T other)
 	{
-		Processor::GetInstance().GetMemory().Write(MEMORY_ADDRESS, other);
+		SANITY(Processor::GetInstance().GetMemory().Write(MEMORY_ADDRESS, other), "Failed writing to memory");
 		return *this;
 	}
 

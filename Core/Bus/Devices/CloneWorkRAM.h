@@ -26,24 +26,26 @@ public:
 		return true;
 	}
 
-	virtual void Write(const API::address_t absolute_address, const API::data_t data) override
+	virtual bool Write(const API::address_t absolute_address, const API::data_t data) override
 	{
 		this->m_memory[GetFixedAddress(absolute_address)] = data;
 
 		API::data_t work_ram_data{0};
 
-		SANITY(this->m_memory_accessor.Read(0xC000 + GetFixedAddress(absolute_address), work_ram_data),
-			"Failed reading from WorkRAM");
+		RET_FALSE_IF_FAIL(this->m_memory_accessor.Read(0xC000 + GetFixedAddress(absolute_address), work_ram_data),
+						  "Failed reading from WorkRAM");
 
 		if (work_ram_data != data)
 		{
-			this->m_memory_accessor.Write(0xC000 + GetFixedAddress(absolute_address), work_ram_data);
+			return this->m_memory_accessor.Write(0xC000 + GetFixedAddress(absolute_address), work_ram_data);
 		}
+
+		return true;
 	}
 
 public:
-	static constexpr uint16_t START_ADDRESS = 0xE000;
-	static constexpr uint16_t END_ADDRESS = 0xFDFF;
+	static constexpr API::address_t START_ADDRESS = 0xE000;
+	static constexpr API::address_t END_ADDRESS = 0xFDFF;
 	static constexpr size_t   SIZE = END_ADDRESS - START_ADDRESS + 1;
 
 protected:

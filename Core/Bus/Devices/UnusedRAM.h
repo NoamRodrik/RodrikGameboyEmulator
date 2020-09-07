@@ -24,14 +24,15 @@ public:
 		return true;
 	}
 
-	virtual void Write(const API::address_t absolute_address, const API::data_t data) override
+	virtual bool Write(const API::address_t absolute_address, const API::data_t data) override
 	{
 		this->m_memory[absolute_address - START_ADDRESS] = data;
+		return true;
 	}
 
 public:
-	static constexpr uint16_t START_ADDRESS = 0xFEA0;
-	static constexpr uint16_t END_ADDRESS = 0xFEFF;
+	static constexpr API::address_t START_ADDRESS = 0xFEA0;
+	static constexpr API::address_t END_ADDRESS = 0xFEFF;
 	static constexpr size_t   SIZE = END_ADDRESS - START_ADDRESS + 1;
 
 protected:

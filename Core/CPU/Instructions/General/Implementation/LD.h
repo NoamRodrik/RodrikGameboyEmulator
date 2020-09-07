@@ -28,12 +28,14 @@ static constexpr auto LD_ADDR = [](const address_t addr, const auto& value)
 {
 	if constexpr (sizeof(value) == sizeof(data_t))
 	{
-		memory.Write(addr, value);
+		SANITY(memory.Write(addr, value),
+			   "Failed writing data_t to memory");
 	}
 	else if constexpr (sizeof(value) == sizeof(address_t))
 	{
-		memory.Write(addr, static_cast<data_t>(value & 0x00FF));
-		memory.Write(addr + 1, static_cast<data_t>((value >> 8) & 0x00FF));
+		SANITY(memory.Write(addr, static_cast<data_t>(value & 0x00FF)) && 
+			   memory.Write(addr + 1, static_cast<data_t>((value >> 8) & 0x00FF)),
+			"Failed writing address_t to memory");
 	}
 	else
 	{

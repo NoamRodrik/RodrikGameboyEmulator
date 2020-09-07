@@ -37,12 +37,14 @@ public:
 
 	virtual void Pop(API::data_t& data) override
 	{
-		this->m_memory_context.Read(this->m_data++, data);
+		SANITY(this->m_memory_context.Read(this->m_data++, data),
+			   "Failed reading from memory");
 	}
 
 	virtual void Push(const API::data_t data) override
 	{
-		this->m_memory_context.Write(--this->m_data, data);
+		SANITY(this->m_memory_context.Write(--this->m_data, data),
+			   "Failed writing to memory");
 	}
 
 private:

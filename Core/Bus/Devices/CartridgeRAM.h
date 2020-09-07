@@ -7,7 +7,6 @@
 #define __LR35902_MEMORY_DEVICE_CARTRIDGE_RAM_H__
 
 #include <API/Memory/Device/IMemoryDeviceAccess.h>
-#include <Core/Cartridge/Loader/BinaryLoader.h>
 #include <API/Memory/Device/IMemoryDevice.h>
 #include <API/Memory/Memory.h>
 #include <API/Definitions.h>
@@ -35,9 +34,10 @@ public:
 		return true;
 	}
 
-	virtual void Write(const API::address_t absolute_address, const API::data_t data) override
+	virtual bool Write(const API::address_t absolute_address, const API::data_t data) override
 	{
 		this->m_memory[absolute_address - START_ADDRESS] = data;
+		return true;
 	}
 
 	/**
@@ -46,11 +46,12 @@ public:
 	inline void CoverSystemBoot() { this->m_covered_system_boot = true; }
 
 public:
-	static constexpr uint16_t START_ADDRESS = 0x0000;
-	static constexpr uint16_t END_ADDRESS = 0x7FFF;
+	static constexpr API::address_t START_ADDRESS = 0x0000;
+	static constexpr API::address_t END_ADDRESS = 0x7FFF;
 	static constexpr size_t   SIZE = END_ADDRESS - START_ADDRESS + 1;
 
-protected:
+public:
+	// Public for all the MBCS
 	virtual uint8_t* GetMemoryPointer() override { return this->m_memory.GetMemoryPointer(); }
 
 private:
@@ -59,7 +60,6 @@ private:
 
 private:
 	friend class DeviceManager;
-	friend class GameLoader;
 };
 } // Core
 

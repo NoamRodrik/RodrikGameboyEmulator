@@ -8,7 +8,9 @@
 
 #define OLC_PGE_APPLICATION
 
+#pragma warning( push, 0 )
 #include <Contrib/PixelGameEngine/OLCPixelGameEngine.h>
+#pragma warning ( pop )
 
 namespace Core
 {

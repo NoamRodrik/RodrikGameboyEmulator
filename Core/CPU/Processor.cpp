@@ -3,16 +3,17 @@
  * @author		Noam Rodrik
  * @description Main logic of processor
  */
-
 #include <Core/CPU/Interrupts/Registers/InterruptEnable.h>
-#include <Core/CPU/Instructions/Prefix/LookupTable.h>
-#include <Core/CPU/Instructions/General/LookupTable.h>
 #include <Core/CPU/Interrupts/Registers/InterruptFlag.h>
+#include <Core/CPU/Instructions/General/LookupTable.h>
+#include <Core/CPU/Instructions/Prefix/LookupTable.h>
 #include <Core/CPU/Interrupts/InterruptHandler.h>
 #include <Core/CPU/Instructions/Shortcuts.h>
 #include <Core/CPU/Timers/Timer.h>
 #include <Core/CPU/Processor.h>
 #include <Core/Clock/Clock.h>
+#include <Tools/Loader.h>
+#include <filesystem>
 #include <time.h>
 #include <cmath>
 
@@ -23,7 +24,11 @@ namespace Core
 #if _DEBUG
 void Processor::PrintInstruction(const Instruction& instruction_to_print)
 {
+#ifdef PRINT_ONLY_PC
+	LOG_NO_ENTER("%04X ", static_cast<const address_t>(PC_const));
+#else
 	LOG("%04X %02X %s %02X%02X", static_cast<const address_t>(PC_const), READ_DATA_AT(PC_const), instruction_to_print.operation_string.c_str(), READ_DATA_AT(PC_const + 1), READ_DATA_AT(PC_const + 2));
+#endif
 }
 
 void Processor::PrintRegisters()
@@ -71,7 +76,9 @@ const size_t Processor::Clock()
 							GENERAL_LOOKUP_TABLE[READ_DATA_AT(PC_const)];
 
 #if _DEBUG
+#ifndef NO_PRINT_COMMANDS
 		Processor::PrintInstruction(command_to_execute);
+#endif
 #endif
 
 		// If prefix is enabled, we need to disable it.
@@ -112,25 +119,17 @@ const size_t Processor::Clock()
 	// Interrupts check + Adjust (Takes 5 cycles for a process to dispatch)
 	clock_cycle += static_cast<size_t>(InterruptHandler::ProcessInterrupts()) * 5;
 
-	// Clock adjust
-	clock_cycle *= 4;
-
+	
 	if (Processor::IsStopped())
 	{
-		LOG("STOP called!");
-
-		Message("Make this better!");
-		// If there's a button press.
-		static_cast<void>(getchar());
-		static_cast<void>(getchar());
+		MAIN_LOG_NO_ENTER(" Stopped ");
 		Processor::ClearStop();
-		LOG("STOP cleared!");
-
-		// Requires no clock cycles
-		return 0;
 	}
 	else
 	{
+		// Clock adjust
+		clock_cycle *= 4;
+
 		// If it's not stopped, update devices.
 		Timer::Clock(clock_cycle);
 	}
@@ -148,11 +147,39 @@ const size_t Processor::Clock()
 	Processor::PrintRegisters();
 #endif
 
-#ifndef NO_PRINT
-	LOG("");
+#ifndef NO_PRINT_COMMANDS
+	//LOG("");
 #endif
 #endif
 
 	return clock_cycle;
+}
+
+void Processor::LoadGame()
+{
+    // Choose ROMS from GB folder
+	size_t index{1};
+	for (const auto& file : std::filesystem::directory_iterator("TestROM"))
+	{
+		MAIN_LOG("%llu) %s", index++, file.path().string().c_str());
+	}
+
+	uint32_t chosen_index{0};
+	do
+	{
+		MAIN_LOG("Choose a wanted file from the file list.");
+		scanf_s("%u", &chosen_index);
+	} while (chosen_index >= index || chosen_index < 1);
+	index = chosen_index;
+
+	auto directory_iterator = std::filesystem::directory_iterator("TestROM");
+	while (index > 1)
+	{
+		++directory_iterator;
+		--index;
+	}
+
+	std::shared_ptr<Tools::Loader> game_loader{std::make_shared<Tools::Loader>((*directory_iterator).path().string())};
+	this->m_bus.SetMemoryBankController(std::static_pointer_cast<API::ILoader>(game_loader));
 }
 } // Core

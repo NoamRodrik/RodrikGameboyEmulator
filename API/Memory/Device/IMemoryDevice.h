@@ -11,12 +11,17 @@
 #include <Tools/Tools.h>
 #include <stdint.h>
 
+namespace Core
+{
+class DeviceTools;
+}
+
 namespace API
 {
 class IMemoryDevice : public IMemoryDeviceAccess
 {
 public:
-	constexpr IMemoryDevice(const uint32_t start_address, const uint32_t end_address, IMemoryDeviceAccess& memory_accessor) :
+	constexpr IMemoryDevice(const API::address_t start_address, const API::address_t end_address, IMemoryDeviceAccess& memory_accessor) :
 		m_start_address{start_address},
 		m_end_address{end_address},
 		m_memory_accessor{memory_accessor}
@@ -25,8 +30,8 @@ public:
 
 	virtual ~IMemoryDevice() = default;
 
-	constexpr uint32_t GetStartAddress() const { return this->m_start_address; }
-	constexpr uint32_t GetEndAddress() const { return this->m_end_address; }
+	constexpr API::address_t GetStartAddress() const { return this->m_start_address; }
+	constexpr API::address_t GetEndAddress() const { return this->m_end_address; }
 
 protected:
 	virtual uint8_t* GetMemoryPointer() = 0;
@@ -34,8 +39,11 @@ protected:
 	IMemoryDeviceAccess& m_memory_accessor;
 
 private:
-	const uint32_t m_start_address;
-	const uint32_t m_end_address;
+	const API::address_t m_start_address;
+	const API::address_t m_end_address;
+
+private:
+	friend class Core::DeviceTools;
 };
 } // API
 

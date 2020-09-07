@@ -37,6 +37,9 @@ public:
 	static inline void ClearStop() { Processor::GetInstance().m_stop_request = false; }
 	static inline void ClearHalt() { Processor::GetInstance().m_halted = false; }
 
+public:
+	void LoadGame();
+
 private:
 	Processor() = default;
 	~Processor() = default;

@@ -23,10 +23,11 @@ public:
 	virtual bool Read(const API::address_t absolute_address, API::data_t& result) const override
 	{
 		result = this->m_memory[absolute_address - START_ADDRESS];
+
 		return true;
 	}
 
-	virtual void Write(const API::address_t absolute_address, const API::data_t data) override
+	virtual bool Write(const API::address_t absolute_address, const API::data_t data) override
 	{
 		this->m_memory[GetFixedAddress(absolute_address)] = data;
 
@@ -34,20 +35,23 @@ public:
 		if (CloneWorkRAM::START_ADDRESS + GetFixedAddress(absolute_address) < OAMRAM::START_ADDRESS)
 		{
 			API::data_t clone_data{0};
-			SANITY(this->m_memory_accessor.Read(CloneWorkRAM::START_ADDRESS + GetFixedAddress(absolute_address), clone_data),
-				"Failed reading from CloneWorkRAM");
+			
+			RET_FALSE_IF_FAIL(this->m_memory_accessor.Read(CloneWorkRAM::START_ADDRESS + GetFixedAddress(absolute_address), clone_data),
+							  "Failed reading from CloneWorkRAM");
 
 			if (clone_data != data)
 			{
 				// Clones to the CloneWorkRAM
-				this->m_memory_accessor.Write(CloneWorkRAM::START_ADDRESS + GetFixedAddress(absolute_address), data);
+				return this->m_memory_accessor.Write(CloneWorkRAM::START_ADDRESS + GetFixedAddress(absolute_address), data);
 			}
 		}
+
+		return true;
 	}
 
 public:
-	static constexpr uint16_t START_ADDRESS = 0xC000;
-	static constexpr uint16_t END_ADDRESS = 0xDFFF;
+	static constexpr API::address_t START_ADDRESS = 0xC000;
+	static constexpr API::address_t END_ADDRESS = 0xDFFF;
 	static constexpr size_t   SIZE = END_ADDRESS - START_ADDRESS + 1;
 
 protected:

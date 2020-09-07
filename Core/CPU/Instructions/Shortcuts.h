@@ -58,7 +58,7 @@ const auto RUN_COMMAND_ON_ADDRESS = [](const auto& address, const auto& command)
 {
 	API::data_t data{READ_DATA_AT(address)};
 	const bool result = command(data);
-	memory.Write(address, data);
+	SANITY(memory.Write(address, data), "Failed writing to memory");
 	return result;
 };
 
