@@ -5,6 +5,7 @@
  */
 #include "Controller.h"
 
+#include <Core/Cartridge/Implementations/MBC1_0x02.h>
 #include <Core/Cartridge/Implementations/ROM_0x00.h>
 #include <Core/Cartridge/Implementations/MBC_0x01.h>
 #include <Core/Bus/Devices/CartridgeRAM.h>
@@ -23,7 +24,7 @@ MBCController::MBCController(IMemoryDeviceAccess& memory_accessor, std::shared_p
 
 	// Load the first 8KB with the game data.
 	this->m_loader->Load(static_cast<CartridgeRAM*>(Processor::GetInstance().GetMemory().GetDeviceAtAddress(CartridgeRAM::START_ADDRESS))->GetMemoryPointer(),
-						 Tools::BytesInROMBanks(1) / 2);
+						 static_cast<long>(Tools::BytesInROMBanks(1) / 2));
 
 	SANITY(this->UpdateMBC(), "Failed updating the MBC");
 }
@@ -32,6 +33,7 @@ void MBCController::Setup()
 {
 	this->m_mbcs[0] = std::make_unique<MemoryBankController_ROM>(this->m_memory_device, this->m_loader);
 	this->m_mbcs[1] = std::make_unique<MemoryBankController_1>(this->m_memory_device, this->m_loader);
+	this->m_mbcs[2] = std::make_unique<MemoryBankController_2>(this->m_memory_device, this->m_loader);
 }
 
 bool MBCController::UpdateMBC()
