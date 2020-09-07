@@ -58,16 +58,6 @@ namespace API
 	static constexpr address_t NR50_ADDRESS{0xFF24};
 	static constexpr address_t NR51_ADDRESS{0xFF25};
 	static constexpr address_t NR52_ADDRESS{0xFF26};
-	static constexpr address_t LCDC_ADDRESS{0xFF40};
-	static constexpr address_t SCY_ADDRESS {0xFF42};
-	static constexpr address_t SCX_ADDRESS {0xFF43};
-	static constexpr address_t LY_ADDRESS  {0xFF44};
-	static constexpr address_t LYC_ADDRESS {0xFF45};
-	static constexpr address_t BGP_ADDRESS {0xFF47};
-	static constexpr address_t OBP0_ADDRESS{0xFF48};
-	static constexpr address_t OBP1_ADDRESS{0xFF49};
-	static constexpr address_t WY_ADDRESS  {0xFF4A};
-	static constexpr address_t WX_ADDRESS  {0xFF4B};
 	static constexpr address_t KEY1_ADDRESS{0xFF4D};
 	static constexpr address_t RP_ADDRESS  {0xFF56};
 	static constexpr address_t NR10_DEFAULT_VALUE{0x80};
@@ -88,16 +78,6 @@ namespace API
 	static constexpr address_t NR50_DEFAULT_VALUE{0x77};
 	static constexpr address_t NR51_DEFAULT_VALUE{0xF3};
 	static constexpr address_t NR52_DEFAULT_VALUE{0xF1};
-	static constexpr address_t LCDC_DEFAULT_VALUE{0x91};
-	static constexpr address_t SCY_DEFAULT_VALUE {0x00};
-	static constexpr address_t SCX_DEFAULT_VALUE {0x00};
-	static constexpr address_t LY_DEFAULT_VALUE  {0x90};
-	static constexpr address_t LYC_DEFAULT_VALUE {0x00};
-	static constexpr address_t BGP_DEFAULT_VALUE {0xFC};
-	static constexpr address_t OBP0_DEFAULT_VALUE{0xFF};
-	static constexpr address_t OBP1_DEFAULT_VALUE{0xFF};
-	static constexpr address_t WY_DEFAULT_VALUE  {0x00};
-	static constexpr address_t WX_DEFAULT_VALUE  {0x00};
 
 	/* Special Registers */
 	static constexpr address_t OVERRIDE_BOOTROM_ADDRESS{0xFF50};
@@ -111,8 +91,8 @@ namespace API
 #endif
 
 	Message("Cancel this if you don't want to skip the Boot");
-	#define SKIP_BOOT 1
-	//#define SKIP_BOOT 0
+	//#define SKIP_BOOT 1
+	#define SKIP_BOOT 0
 
 	// Extracted from DMG_boot.bin.
 	static constexpr std::array<data_t, 0x100> SYSTEM_BOOT_CODE =

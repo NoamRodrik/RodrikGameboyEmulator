@@ -19,7 +19,7 @@ template <typename T>
 class MemoryRegister
 {
 public:
-	MemoryRegister(const API::address_t address) : MEMORY_ADDRESS{address} {}
+	constexpr MemoryRegister(const API::address_t address) : MEMORY_ADDRESS{address} {}
 
 	MemoryRegister& operator=(const T other)
 	{

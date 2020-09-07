@@ -14,10 +14,22 @@
 #include <API/Memory/Device/IMemoryDeviceAccess.h>
 #include <Core/CPU/Timers/Registers/TimerModulo.h>
 #include <API/Memory/Device/IMemoryDevice.h>
+#include <Core/GPU/Registers/LCDC_Control.h>
+#include <Core/GPU/Registers/LCDC_Status.h>
 #include <Core/Bus/Devices/CartridgeRAM.h>
+#include <Core/GPU/Registers/OBP1.h>
+#include <Core/GPU/Registers/OBP0.h>
+#include <Core/GPU/Registers/BGP.h>
+#include <Core/GPU/Registers/DMA.h>
+#include <Core/GPU/Registers/SCX.h>
+#include <Core/GPU/Registers/SCY.h>
+#include <Core/GPU/Registers/LYC.h>
+#include <Core/GPU/Registers/LY.h>
+#include <Core/GPU/Registers/WY.h>
+#include <Core/GPU/Registers/WX.h>
 #include <Core/CPU/Timers/Timer.h>
-#include <API/Definitions.h>
 #include <API/Memory/Memory.h>
+#include <API/Definitions.h>
 
 namespace Core
 {
@@ -50,16 +62,19 @@ public:
 		this->m_memory[GetFixedAddress(API::NR50_ADDRESS)] = API::NR50_DEFAULT_VALUE;
 		this->m_memory[GetFixedAddress(API::NR51_ADDRESS)] = API::NR51_DEFAULT_VALUE;
 		this->m_memory[GetFixedAddress(API::NR52_ADDRESS)] = API::NR52_DEFAULT_VALUE;
-		this->m_memory[GetFixedAddress(API::LCDC_ADDRESS)] = API::LCDC_DEFAULT_VALUE;
-		this->m_memory[GetFixedAddress(API::SCY_ADDRESS)] = API::SCY_DEFAULT_VALUE;
-		this->m_memory[GetFixedAddress(API::SCX_ADDRESS)] = API::SCX_DEFAULT_VALUE;
-		this->m_memory[GetFixedAddress(API::LY_ADDRESS)] = API::LY_DEFAULT_VALUE;
-		this->m_memory[GetFixedAddress(API::LYC_ADDRESS)] = API::LYC_DEFAULT_VALUE;
-		this->m_memory[GetFixedAddress(API::BGP_ADDRESS)] = API::BGP_DEFAULT_VALUE;
-		this->m_memory[GetFixedAddress(API::OBP0_ADDRESS)] = API::OBP0_DEFAULT_VALUE;
-		this->m_memory[GetFixedAddress(API::OBP1_ADDRESS)] = API::OBP1_DEFAULT_VALUE;
-		this->m_memory[GetFixedAddress(API::WY_ADDRESS)] = API::WY_DEFAULT_VALUE;
-		this->m_memory[GetFixedAddress(API::WX_ADDRESS)] = API::WX_DEFAULT_VALUE;
+		this->m_memory[GetFixedAddress(LCDC_Control::LCDC_ADDRESS)] = LCDC_Control::LCDC_DEFAULT_VALUE;
+		this->m_memory[GetFixedAddress(LCDC_Status::LCDC_ADDRESS)] = LCDC_Status::LCDC_DEFAULT_VALUE;
+		this->m_memory[GetFixedAddress(SCY::SCY_ADDRESS)] = SCY::SCY_DEFAULT_VALUE;
+		this->m_memory[GetFixedAddress(SCX::SCX_ADDRESS)] = SCX::SCX_DEFAULT_VALUE;
+		this->m_memory[GetFixedAddress(LY::LY_ADDRESS)] = LY::LY_DEFAULT_VALUE;
+		this->m_memory[GetFixedAddress(LYC::LYC_ADDRESS)] = LYC::LYC_DEFAULT_VALUE;
+		this->m_memory[GetFixedAddress(DMA::DMA_ADDRESS)] = DMA::DMA_DEFAULT_VALUE;
+		this->m_memory[GetFixedAddress(BGP::BGP_ADDRESS)] = BGP::BGP_DEFAULT_VALUE;
+		this->m_memory[GetFixedAddress(OBP0::OBP0_ADDRESS)] = OBP0::OBP0_DEFAULT_VALUE;
+		this->m_memory[GetFixedAddress(OBP1::OBP1_ADDRESS)] = OBP1::OBP1_DEFAULT_VALUE;
+		this->m_memory[GetFixedAddress(WY::WY_ADDRESS)] = WY::WY_DEFAULT_VALUE;
+		this->m_memory[GetFixedAddress(WX::WX_ADDRESS)] = WX::WX_DEFAULT_VALUE;
+
 		this->m_memory[GetFixedAddress(InterruptFlag::INTERRUPT_FLAG_ADDRESS)] = InterruptFlag::INTERRUPT_FLAG_DEFAULT_VALUE;
 	}
 
