@@ -15,7 +15,7 @@ int main(int argc, char** argv)
 {
 #ifndef NO_PIXEL_ENGINE
 	MainPixelEngine pixel_engine{};
-	SANITY(pixel_engine.Construct(160, 144, 4, 4), "Failed constructing pixel engine");
+	SANITY(pixel_engine.Construct(160, 144, 3, 3), "Failed constructing pixel engine");
 	pixel_engine.Start();
 #endif
 

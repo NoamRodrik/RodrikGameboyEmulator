@@ -13,7 +13,6 @@
 #define MacroStr2(x)  MacroStr(x)
 #define Message(desc) __pragma(message(__FILE__ "(" MacroStr2(__LINE__) ") : " desc))
 
-#define NO_PIXEL_ENGINE
 #define TESTING
 //#define DONT_WAIT
 

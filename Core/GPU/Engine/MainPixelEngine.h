@@ -10,6 +10,7 @@
 
 #pragma warning( push, 0 )
 #include <Contrib/PixelGameEngine/OLCPixelGameEngine.h>
+#include <Tools\Tools.h>
 #pragma warning ( pop )
 
 namespace Core
@@ -29,14 +30,14 @@ public:
 	virtual bool OnUserCreate() override
 	{
 		// Called once at the start, so create things here
+		for (int x = 0; x < ScreenWidth(); x++)
+			for (int y = 0; y < ScreenHeight(); y++)
+				SANITY(Draw(x, y, olc::Pixel(255, 255, 255)), "Failed to draw pixel");
 		return true;
 	}
 
 	virtual bool OnUserUpdate(float fElapsedTime) override
 	{
-		for (int x = 0; x < ScreenWidth(); x++)
-			for (int y = 0; y < ScreenHeight(); y++)
-				Draw(x, y, olc::Pixel(x % 256, y % 256, (x*y) % 256));
 		return true;
 	}
 };

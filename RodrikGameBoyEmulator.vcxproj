@@ -193,6 +193,10 @@
     <ClInclude Include="Core\Bus\Bus.h" />
     <ClInclude Include="Core\Bus\DeviceManager\DeviceManager.h" />
     <ClInclude Include="Core\Cartridge\Implementations\MBC1_0x02.h" />
+    <ClInclude Include="Core\GPU\Definitions.h" />
+    <ClInclude Include="Core\GPU\Entities\PaletteMap.h" />
+    <ClInclude Include="Core\GPU\Entities\PixelRow.h" />
+    <ClInclude Include="Core\GPU\Entities\Tile.h" />
     <ClInclude Include="Core\GPU\Registers\BGP.h" />
     <ClInclude Include="Core\GPU\Registers\DMA.h" />
     <ClInclude Include="Core\GPU\Registers\LCDC_Control.h" />
@@ -315,6 +319,7 @@
     <ClCompile Include="Core\Cartridge\Implementations\ROM_0x00.cpp" />
     <ClCompile Include="Core\CPU\Interrupts\InterruptHandler.cpp" />
     <ClCompile Include="Core\Clock\Clock.cpp" />
+    <ClCompile Include="Core\GPU\Entities\Tile.cpp" />
     <ClCompile Include="Core\Joypad\Joypad.cpp" />
     <ClCompile Include="Core\CPU\Processor.cpp" />
     <ClCompile Include="Core\CPU\Timers\Timer.cpp" />

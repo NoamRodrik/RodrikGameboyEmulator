@@ -24,35 +24,59 @@ public:
 	struct Control
 	{
 		// BG_EN
+		// 0: Off
+		static constexpr API::data_t BACKGROUND_OFF{0x00};
+		// 1: On
+		static constexpr API::data_t BACKGROUND_ON{0x01};
 		API::data_t background_enable : 1;
 
 		// OBJ_EN
+		// 0: Off
+		static constexpr API::data_t SPRITE_OFF{0x00};
+		// 1: On
+		static constexpr API::data_t SPRITE_ON{0x01};
 		API::data_t sprite_enable : 1;
 
 		// OBJ_SIZE
 		// 0: 8 * 8
+		static constexpr API::data_t SPRITE_SIZE_8_BY_8{0x00};
 		// 1: 8 * 16 (width * height)
+		static constexpr API::data_t SPRITE_SIZE_8_BY_16{0x01};
 		API::data_t sprite_size : 1;
 
 		// BG_MAP
-		// 0: $9800  -$9BFF
+		// 0: $9800 - $9BFF
+		static constexpr API::data_t BACKGROUND_MAP_9800_98FF{0x00};
 		// 1: $9C00 - $9FFF
+		static constexpr API::data_t BACKGROUND_MAP_9C00_9FFF{0x01};
 		API::data_t background_map_select : 1;
 
 		// TILE_SEL
-		// 0: $8800  -$97FF
-		// 1: $8000 - $8FFF < -Same area as OBJ
+		// 0: $8800 - $97FF
+		static constexpr API::data_t TILE_MAP_SELECT_8800_97FF{0x00};
+		// 1: $8000 - $8FFF <- Same area as OBJ
+		static constexpr API::data_t TILE_MAP_SELECT_8000_8FFF{0x01};
 		API::data_t tile_select : 1;
 
 		// WIN_EN
+		// 0: Off
+		static constexpr API::data_t WINDOW_OFF{0x00};
+		// 1: On
+		static constexpr API::data_t WINDOW_ON{0x01};
 		API::data_t window_enable : 1;
 
 		// WIN_MAP
 		// 0: $9800 - $9BFF
+		static constexpr API::data_t WINDOWS_MAP_9800_9BFF{0x00};
 		// 1: $9C00 - $9FFF
+		static constexpr API::data_t WINDOWS_MAP_9C00_9FFF{0x01};
 		API::data_t window_map_select : 1;
 
 		// LCD_EN
+		// 0: Stop completely (no picture on screen)
+		static constexpr API::data_t LCD_STOP{0x00};
+		// 1: operation
+		static constexpr API::data_t LCD_OPERATION{0x01};
 		API::data_t lcd_operation : 1;
 
 		constexpr operator API::data_t() const
@@ -73,7 +97,10 @@ public:
 				  "Control too big! Supposed to of size data_t!");
 
 public:
-	const Control GetSettings() const
+	/**
+	 * Mutate/Access the LCDC via a bit field structure.
+	 */
+	operator Control()
 	{
 		return {this->operator API::data_t()};
 	}
