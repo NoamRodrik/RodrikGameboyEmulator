@@ -166,6 +166,9 @@ private:
 				if (data == 0x01)
 				{
 					static_cast<CartridgeRAM*>(Processor::GetInstance().GetMemory().GetDeviceAtAddress(CartridgeRAM::START_ADDRESS))->CoverSystemBoot();
+
+					// At this point, we should also load ppu data.
+					SANITY(Processor::GetInstance().GetPPU()->Load(), "Failed loading ppu components");
 				}
 
 				break;

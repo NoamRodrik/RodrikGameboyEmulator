@@ -8,6 +8,7 @@
 
 #include <Core/CPU/Registers/RegisterEngine.h>
 #include <API/StaticInstance.h>
+#include <Core/GPU/IPPU.h>
 #include <Core/Bus/Bus.h>
 
 namespace Core
@@ -21,6 +22,7 @@ public:
 	static const size_t Clock();
 	RegisterEngine& GetRegisters() { return this->m_registers; }
 	Bus& GetMemory() { return this->m_bus; }
+	gsl::not_null<IPPU*> GetPPU();
 
 	const RegisterEngine& GetRegisters() const { return this->m_registers; }
 	const Bus& GetMemory() const { return this->m_bus; }
@@ -53,16 +55,17 @@ private:
 #endif
 
 private:
-	Bus						 m_bus{};
-	RegisterEngine			 m_registers{m_bus};
+	std::unique_ptr<IPPU> m_ppu{nullptr};
+	Bus					  m_bus{};
+	RegisterEngine		  m_registers{m_bus};
 	/* Wait until a key is pressed on the screen! */
-	bool					 m_stop_request{false};
+	bool				  m_stop_request{false};
 	/* Wait until an interrupt is done executing! */
-	bool					 m_halted{false};
+	bool				  m_halted{false};
 	/* If the last command was PREFIX */
-	bool					 m_last_command_prefix{false};
+	bool				  m_last_command_prefix{false};
 	/* The global amount of cycles. */
-	size_t					 m_global_cycles{0};
+	size_t				  m_global_cycles{0};
 
 private:
 	friend class API::StaticInstance<Processor>;

@@ -46,7 +46,7 @@ public:
 
 		// BG_MAP
 		// 0: $9800 - $9BFF
-		static constexpr API::data_t BACKGROUND_MAP_9800_98FF{0x00};
+		static constexpr API::data_t BACKGROUND_MAP_9800_9BFF{0x00};
 		// 1: $9C00 - $9FFF
 		static constexpr API::data_t BACKGROUND_MAP_9C00_9FFF{0x01};
 		API::data_t background_map_select : 1;

@@ -8,6 +8,7 @@
 #include <Core/CPU/Instructions/General/LookupTable.h>
 #include <Core/CPU/Instructions/Prefix/LookupTable.h>
 #include <Core/CPU/Interrupts/InterruptHandler.h>
+#include <Core/GPU/Engine/MainPixelEngine.h>
 #include <Core/CPU/Instructions/Shortcuts.h>
 #include <Core/CPU/Timers/Timer.h>
 #include <Core/CPU/Processor.h>
@@ -21,6 +22,16 @@ using namespace API;
 
 namespace Core
 {
+gsl::not_null<IPPU*> Processor::GetPPU()
+{
+	if (this->m_ppu.get() == nullptr)
+	{
+		this->m_ppu.reset(gsl::not_null<MainPixelEngine*>{new MainPixelEngine{}}.get());
+	}
+
+	return this->m_ppu.get();
+}
+
 #if _DEBUG
 void Processor::PrintInstruction(const Instruction& instruction_to_print)
 {

@@ -4,7 +4,6 @@
  * @description Program entry point
  */
 #include <Core/CPU/Interrupts/SpecialRegisters/IME.h>
-#include <Core/GPU/Engine/MainPixelEngine.h>
 #include <Core/CPU/Timers/Timer.h>
 #include <Core/CPU/Processor.h>
 #include <Core/Clock/Clock.h>
@@ -13,12 +12,7 @@ using namespace Core;
 
 int main(int argc, char** argv)
 {
-#ifndef NO_PIXEL_ENGINE
-	MainPixelEngine pixel_engine{};
-	SANITY(pixel_engine.Construct(160, 144, 3, 3), "Failed constructing pixel engine");
-	pixel_engine.Start();
-#endif
-
+	Processor::GetInstance().GetPPU()->Startup();
 	Processor::GetInstance().LoadGame();
 
 	while (true)
