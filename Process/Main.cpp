@@ -12,8 +12,8 @@ using namespace Core;
 
 int main(int argc, char** argv)
 {
-	Processor::GetInstance().GetPPU()->Startup();
 	Processor::GetInstance().LoadGame();
+	Processor::GetInstance().GetPPU()->Startup();
 
 	while (true)
 	{

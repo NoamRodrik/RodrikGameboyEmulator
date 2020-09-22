@@ -7,6 +7,7 @@
 #define __LR35902_DEFINITIONS_H__
 
 #include <API/Definitions.h>
+#include <Tools/Tools.h>
 
 namespace Core
 {
@@ -31,6 +32,10 @@ enum class PaletteColor : API::data_t
 	THIRD_PALETTE = 0x02,
 	FOURTH_PALETTE = 0x03
 };
+
+static constexpr const char ENGINE_WINDOW_NAME[] = {"RodrikGameBoyEmulator"};
+static constexpr size_t     BACKGROUND_MAP_SIZE = Tools::SlotsToBytes(10);
+
 }
 
 #endif // __LR35902_DEFINITIONS_H__

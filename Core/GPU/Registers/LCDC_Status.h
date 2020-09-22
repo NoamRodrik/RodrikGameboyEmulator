@@ -74,6 +74,17 @@ public:
 									 lcd_enable;
 			return DATA;
 		}
+
+		constexpr bool Validate() const
+		{
+			return (lcd_enable == DURING_H_BLANK || lcd_enable == DURING_V_BLANK ||
+				    lcd_enable == DURING_SEARCH_OAM_RAM || lcd_enable == DURING_DATA_TRANSFER_LCD) &&
+				   (coincidence_flag == LYC_NOT_EQUAL_LCDC || coincidence_flag == LYC_EQUAL_LCDC) &&
+				   (mode_0 == MODE_NO_SELECTION || mode_0 == MODE_SELECTION) &&
+				   (mode_1 == MODE_NO_SELECTION || mode_1 == MODE_SELECTION) &&
+				   (mode_2 == MODE_NO_SELECTION || mode_2 == MODE_SELECTION) &&
+				   (mode_lyc == MODE_NO_SELECTION || mode_lyc == MODE_SELECTION);
+		}
 	};
 
 	static_assert(sizeof(Status) == sizeof(API::data_t),
@@ -83,7 +94,7 @@ public:
 	/**
 	 * Mutate/Access the LCDC via a bit field structure.
 	 */
-	operator Status()
+	operator const Status() const
 	{
 		return {this->operator API::data_t()};
 	}

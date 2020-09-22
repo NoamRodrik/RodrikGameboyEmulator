@@ -26,7 +26,7 @@ gsl::not_null<IPPU*> Processor::GetPPU()
 {
 	if (this->m_ppu.get() == nullptr)
 	{
-		this->m_ppu.reset(gsl::not_null<MainPixelEngine*>{new MainPixelEngine{}}.get());
+		this->m_ppu.reset(gsl::not_null<MainPixelEngine*>{new MainPixelEngine{this->m_bus}}.get());
 	}
 
 	return this->m_ppu.get();
@@ -143,6 +143,7 @@ const size_t Processor::Clock()
 
 		// If it's not stopped, update devices.
 		Timer::Clock(clock_cycle);
+		Processor::GetInstance().GetPPU()->Clock(clock_cycle);
 	}
 
 #if _DEBUG

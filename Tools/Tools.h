@@ -14,6 +14,7 @@
 #define Message(desc) __pragma(message(__FILE__ "(" MacroStr2(__LINE__) ") : " desc))
 
 #define TESTING
+#define FULL_PALETTE_TEST
 //#define DONT_WAIT
 
 Message("If you want to print, comment this here, otherwise uncomment.");

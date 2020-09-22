@@ -21,9 +21,11 @@ public:
 
 public:
 	bool LoadTile(API::address_t start_address);
+	const PixelRow& GetPixelRow(std::size_t index) const;
 
 public:
-	static constexpr std::size_t HEIGHT_PIXELS{8};
+	static constexpr std::size_t    HEIGHT_PIXELS{8};
+	static constexpr API::address_t TILE_SIZE{sizeof(PixelRow) * HEIGHT_PIXELS};
 
 private:
 	// 8x8

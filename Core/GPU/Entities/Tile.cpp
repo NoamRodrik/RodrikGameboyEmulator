@@ -27,3 +27,9 @@ bool Tile::LoadTile(API::address_t start_address)
 
 	return true;
 }
+
+const PixelRow& Tile::GetPixelRow(std::size_t index) const
+{
+	SANITY(index < sizeof(this->m_pixels), "Got an invalid index size!");
+	return this->m_pixels[index];
+}

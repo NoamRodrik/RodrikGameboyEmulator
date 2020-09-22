@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @file		MainPixelEngine.h
  * @author		Noam Rodrik
  * @description The main class using the pixel game engine v2.0.7.
@@ -10,12 +10,15 @@
 
 #pragma warning( push, 0 )
 #include <Contrib/PixelGameEngine/OLCPixelGameEngine.h>
+#include <API/Memory/Device/IMemoryDeviceAccess.h>
 #include <Core/GPU/Registers/LCDC_Control.h>
 #include <Core/GPU/Entities/PaletteMap.h>
+#include <Core/GPU/Entities/Tile.h>
 #include <Core/GPU/Definitions.h>
 #include <API/Definitions.h>
 #include <Core/GPU/IPPU.h>
 #include <Tools/Tools.h>
+#include <array>
 #pragma warning ( pop )
 
 namespace Core
@@ -23,28 +26,33 @@ namespace Core
 class MainPixelEngine : public olc::PixelGameEngine, public IPPU
 {
 public:
-	MainPixelEngine()
+	MainPixelEngine(API::IMemoryDeviceAccess& memory) : m_memory{memory}
 	{
 		// Name your application
-		sAppName = "RodrikGameBoyEmulator";
+		sAppName = ENGINE_WINDOW_NAME;
 	}
 
 	virtual ~MainPixelEngine() = default;
 
 public:
-	virtual bool Load() override
-	{
-		return this->LoadTileset();
-	}
-
 	virtual bool Startup() override
 	{
 #ifndef NO_PIXEL_ENGINE
+#ifdef FULL_PALETTE_TEST
+		RET_FALSE_IF_FAIL(this->Construct(256, 256, 3, 3), "Failed constructing pixel engine");
+#else
 		RET_FALSE_IF_FAIL(this->Construct(160, 144, 3, 3), "Failed constructing pixel engine");
-		this->Start();
+#endif
+		this->m_gpu_thread.reset(gsl::not_null<std::thread*>{new std::thread{&MainPixelEngine::StartWithoutUpdate, this}});
 #endif
 
 		return true;
+	}
+
+	virtual void Clock(std::size_t clock) override
+	{
+		this->m_clock += clock;
+		this->TriggerUpdate();
 	}
 
 private:
@@ -55,53 +63,84 @@ private:
 		{
 			for (int32_t y = 0; y < ScreenHeight(); ++y)
 			{
-				SANITY(DrawPixel(x, y, PixelColor::WHITE), "Failed to draw pixel");
+				RET_FALSE_IF_FAIL(DrawPixel(x, y, PixelColor::WHITE), "Failed to draw pixel");
 			}
 		}
 
 		return true;
 	}
 
-	virtual bool OnUserUpdate(float fElapsedTime) override
+	virtual bool OnUserUpdate(float) override
 	{
-		return DrawBackground();
-	}
-
-	bool LoadTileset()
-	{
-		LCDC_Control lcdc_control{};
-		
-		API::address_t start_address{0x00};
-		API::address_t end_address{0x00};
-
-		if (static_cast<LCDC_Control::Control>(lcdc_control).background_map_select == LCDC_Control::Control::BACKGROUND_MAP_9800_9BFF)
+		if (!this->DrawBackground())
 		{
-			start_address = 0x9800;
-			end_address = 0x9BFF;
-		}
-		else if (static_cast<LCDC_Control::Control>(lcdc_control).background_map_select == LCDC_Control::Control::BACKGROUND_MAP_9C00_9FFF)
-		{
-			start_address = 0x9C00;
-			end_address = 0x9FFF;
-		}
-		else
-		{
-			LOG("Got an invalid valid for background map select of the LCDC control");
-			return false;
+			MAIN_LOG("Failed drawing background");
 		}
 
-		Message("TODO: Load tileset");
+		Message("TODO: The canvas isn't supposed to be entirely drawn on each epoch.");
+		/*
+		if (!this->DrawCanvas())
+		{
+			MAIN_LOG("Failed drawing canvas");
+		}
+		*/
+
 		return true;
 	}
 
 	bool DrawBackground()
 	{
-		LCDC_Control lcdc_control{};
+		auto lcdc_register{LCDC_Control{}};
+		auto lcdc_control{static_cast<LCDC_Control::Control>(lcdc_register)};
+
+		RET_FALSE_IF_FAIL(lcdc_control.Validate(), "Failed validating lcdc control");
 
 		// If the background has been enabled.
-		if (static_cast<LCDC_Control::Control>(lcdc_control).background_enable == LCDC_Control::Control::BACKGROUND_ON)
+		if (lcdc_control.IsBackgroundEnabled())
 		{
+			static_assert(sizeof(m_canvas) / sizeof(m_canvas[0]) >= BACKGROUND_MAP_SIZE, "Canvas is too small for background mapping size");
+
 			// Here we start drawing the background.
+			for (API::address_t canvas_slot = 0; canvas_slot < BACKGROUND_MAP_SIZE; ++canvas_slot)
+			{
+				API::data_t data{0x00};
+				RET_FALSE_IF_FAIL(this->m_memory.Read(canvas_slot + lcdc_control.GetBackgroundMapStart(), data), "Failed reading memory for canvas");
+				RET_FALSE_IF_FAIL(canvas_slot < this->m_canvas.size(), "Invalid indexing");
+
+				API::address_t address_to_load_tile{lcdc_control.GetTileSelectOffset()};
+				address_to_load_tile += lcdc_control.IsSigned() && data > 127 ? -1 * static_cast<int32_t>(data) : static_cast<int32_t>(data);
+				RET_FALSE_IF_FAIL(this->m_canvas[canvas_slot].LoadTile(address_to_load_tile), "Failed to load tile!");
+			}
+		}
+
+		return true;
+	}
+
+	bool DrawCanvas()
+	{
+		for (int32_t current_height = 0; current_height < API::CANVAS_HEIGHT; ++current_height)
+		{
+			for (API::data_t current_pixel_row = 0; current_pixel_row < Tile::HEIGHT_PIXELS; ++current_pixel_row)
+			{
+				for (int32_t current_width = 0; current_width < API::CANVAS_WIDTH; ++current_width)
+				{
+					RET_FALSE_IF_FAIL(current_height * API::CANVAS_HEIGHT + current_width < this->m_canvas.size(), "Buffer overflow");
+					RET_FALSE_IF_FAIL(this->DrawPixelRow(current_width * Tile::HEIGHT_PIXELS, current_height * Tile::HEIGHT_PIXELS + current_pixel_row,
+										this->m_canvas[current_height * API::CANVAS_HEIGHT + current_width].GetPixelRow(current_pixel_row)),
+						              "Failed to draw pixel row!");
+				}
+			}
+		}
+
+		return true;
+	}
+
+	bool DrawPixelRow(int32_t x, int32_t y, PixelRow pixel_row)
+	{
+		for (int32_t pixel_index = 7; pixel_index >= 0; --pixel_index)
+		{
+			RET_FALSE_IF_FAIL(this->DrawPalette(x + pixel_index, y, pixel_row.GetColorByIndex(pixel_index)),
+				             "Failed drawing pixel row (%d, %d)", x + pixel_index, y);
 		}
 
 		return true;
@@ -143,6 +182,12 @@ private:
 			}
 		}
 	}
+
+private:
+	API::IMemoryDeviceAccess&		   m_memory;
+	std::array<Tile, API::CANVAS_SIZE> m_canvas{};
+	std::unique_ptr<std::thread>       m_gpu_thread{nullptr};
+	std::size_t                        m_clock{0};
 };
 }
 

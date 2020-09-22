@@ -603,6 +603,7 @@ namespace olc
 		olc::rcode Construct(int32_t screen_w, int32_t screen_h, int32_t pixel_w, int32_t pixel_h,
 			bool full_screen = false, bool vsync = false, bool cohesion = false);
 		olc::rcode Start();
+		olc::rcode StartWithoutUpdate();
 
 	public: // User Override Interfaces
 		// Called once on application startup, use to load your resources
@@ -611,6 +612,8 @@ namespace olc
 		virtual bool OnUserUpdate(float fElapsedTime);
 		// Called once on application termination, so you can be one clean coder
 		virtual bool OnUserDestroy();
+		// User can update freely.
+		void TriggerUpdate();
 
 	public: // Hardware Interfaces
 		// Returns true if window is currently in focus
@@ -807,6 +810,8 @@ namespace olc
 
 		// The main engine thread
 		void		EngineThread();
+		void		EngineWithoutUpdate();
+		void		Update();
 
 		// At the very end of this file, chooses which
 		// components to compile
@@ -815,6 +820,7 @@ namespace olc
 		// If anything sets this flag to false, the engine
 		// "should" shut down gracefully
 		static std::atomic<bool> bAtomActive;
+		static std::atomic<bool> bAtomTrigger;
 
 	public:
 		// "Break In" Functions
@@ -1398,8 +1404,30 @@ namespace olc
 
 		return olc::OK;
 	}
-#endif
 
+	olc::rcode PixelGameEngine::StartWithoutUpdate()
+	{
+		if (platform->ApplicationStartUp() != olc::OK) return olc::FAIL;
+
+		// Construct the window
+		if (platform->CreateWindowPane({ 30,30 }, vWindowSize, bFullScreen) != olc::OK) return olc::FAIL;
+		olc_UpdateWindowSize(vWindowSize.x, vWindowSize.y);
+
+		// Start the thread
+		bAtomActive = true;
+		std::thread t = std::thread(&PixelGameEngine::EngineWithoutUpdate, this);
+
+		// Some implementations may form an event loop here
+		platform->StartSystemEventLoop();
+
+		// Wait for thread to be exited
+		t.join();
+
+		if (platform->ApplicationCleanUp() != olc::OK) return olc::FAIL;
+
+		return olc::OK;
+	}
+#endif
 	void PixelGameEngine::SetDrawTarget(Sprite* target)
 	{
 		if (target)
@@ -2507,6 +2535,36 @@ namespace olc
 		bAtomActive = false;
 	}
 
+	void PixelGameEngine::EngineWithoutUpdate()
+	{
+		// Allow platform to do stuff here if needed, since its now in the
+		// context of this thread
+		if (platform->ThreadStartUp() == olc::FAIL)	return;
+
+		// Do engine context specific initialisation
+		olc_PrepareEngine();
+
+		// Create user resources as part of this thread
+		if (!OnUserCreate()) bAtomActive = false;
+
+		while (true)
+		{
+			// Allow the user to free resources if they have overrided the destroy function
+			while (bAtomActive)
+			{
+				this->Update();
+			}
+
+			if (!OnUserDestroy())
+			{
+				// User denied destroy for some reason, so continue running
+				bAtomActive = true;
+			}
+		}
+
+		platform->ThreadCleanUp();
+	}
+
 	void PixelGameEngine::EngineThread()
 	{
 		// Allow platform to do stuff here if needed, since its now in the
@@ -2533,6 +2591,23 @@ namespace olc
 		}
 
 		platform->ThreadCleanUp();
+	}
+
+	void PixelGameEngine::TriggerUpdate()
+	{
+		bAtomTrigger = true;
+	}
+
+	void PixelGameEngine::Update()
+	{
+		if (bAtomActive)
+		{
+			if (bAtomTrigger)
+			{
+				this->olc_CoreUpdate();
+				bAtomTrigger = false;
+			}
+		}
 	}
 
 	void PixelGameEngine::olc_PrepareEngine()
@@ -2703,6 +2778,7 @@ namespace olc
 	// Need a couple of statics as these are singleton instances
 	// read from multiple locations
 	std::atomic<bool> PixelGameEngine::bAtomActive{ false };
+	std::atomic<bool> PixelGameEngine::bAtomTrigger{ true };
 	olc::PixelGameEngine* olc::PGEX::pge = nullptr;
 	olc::PixelGameEngine* olc::Platform::ptrPGE = nullptr;
 	olc::PixelGameEngine* olc::Renderer::ptrPGE = nullptr;

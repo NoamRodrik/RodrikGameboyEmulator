@@ -6,6 +6,8 @@
 #ifndef __CORE_IPPU_H__
 #define __CORE_IPPU_H__
 
+#include <cstddef>
+
 namespace Core
 {
 class IPPU
@@ -14,8 +16,8 @@ public:
 	virtual ~IPPU() = default;
 
 public:
-	virtual bool Load() = 0;
 	virtual bool Startup() = 0;
+	virtual void Clock(std::size_t clock) = 0;
 };
 }
 

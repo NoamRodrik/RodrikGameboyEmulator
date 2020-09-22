@@ -30,6 +30,11 @@ public:
 		static constexpr API::data_t BACKGROUND_ON{0x01};
 		API::data_t background_enable : 1;
 
+		constexpr bool IsBackgroundEnabled()
+		{
+			return background_enable == BACKGROUND_ON;
+		}
+
 		// OBJ_EN
 		// 0: Off
 		static constexpr API::data_t SPRITE_OFF{0x00};
@@ -51,12 +56,35 @@ public:
 		static constexpr API::data_t BACKGROUND_MAP_9C00_9FFF{0x01};
 		API::data_t background_map_select : 1;
 
+		constexpr API::address_t GetBackgroundMapStart()
+		{
+			return background_map_select == BACKGROUND_MAP_9800_9BFF ?
+					0x9800 : 0x9C00;
+		}
+
+		constexpr API::address_t GetBackgroundMapEnd()
+		{
+			return background_map_select == BACKGROUND_MAP_9800_9BFF ?
+				0x9BFF : 0x9FFF;
+		}
+
 		// TILE_SEL
 		// 0: $8800 - $97FF
 		static constexpr API::data_t TILE_MAP_SELECT_8800_97FF{0x00};
 		// 1: $8000 - $8FFF <- Same area as OBJ
 		static constexpr API::data_t TILE_MAP_SELECT_8000_8FFF{0x01};
 		API::data_t tile_select : 1;
+
+		constexpr API::address_t GetTileSelectOffset()
+		{
+			return tile_select == TILE_MAP_SELECT_8000_8FFF ?
+				API::TILE_SET_BANK_0_OFFSET : API::TILE_SET_BANK_1_OFFSET;
+		}
+
+		constexpr bool IsSigned()
+		{
+			return tile_select == TILE_MAP_SELECT_8800_97FF;
+		}
 
 		// WIN_EN
 		// 0: Off
@@ -91,6 +119,17 @@ public:
 									 background_enable;
 			return DATA;
 		}
+
+		constexpr bool Validate() const
+		{
+			return (lcd_operation == LCD_STOP || lcd_operation == LCD_OPERATION) &&
+				   (window_map_select == WINDOWS_MAP_9800_9BFF || window_map_select == WINDOWS_MAP_9C00_9FFF) &&
+				   (window_enable == WINDOW_OFF || window_enable == WINDOW_ON) &&
+				   (tile_select == TILE_MAP_SELECT_8000_8FFF || tile_select == TILE_MAP_SELECT_8800_97FF) &&
+				   (sprite_size == SPRITE_SIZE_8_BY_8 || sprite_size == SPRITE_SIZE_8_BY_16) &&
+				   (sprite_enable == SPRITE_ON || sprite_enable == SPRITE_OFF) &&
+				   (background_enable == BACKGROUND_OFF || background_enable == BACKGROUND_ON);
+		}
 	};
 
 	static_assert(sizeof(Control) == sizeof(API::data_t),
@@ -100,7 +139,7 @@ public:
 	/**
 	 * Mutate/Access the LCDC via a bit field structure.
 	 */
-	operator Control()
+	operator const Control() const
 	{
 		return {this->operator API::data_t()};
 	}

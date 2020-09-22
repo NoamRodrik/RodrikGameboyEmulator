@@ -18,6 +18,15 @@ namespace API
 	using data_t = uint8_t;
 	using r8_t = int8_t;
 
+	/* PPU */
+	static constexpr address_t TILE_SET_BANK_0_OFFSET{0x8000};
+	static constexpr address_t TILE_SET_BANK_1_OFFSET{0x9000};
+	static constexpr address_t TILE_MAP_START{0x8000};
+	static constexpr address_t TILE_SET_SIZE{0x180};
+	static constexpr int32_t   CANVAS_HEIGHT{0x20};
+	static constexpr int32_t   CANVAS_WIDTH{0x20};
+	static constexpr address_t CANVAS_SIZE{CANVAS_HEIGHT * CANVAS_WIDTH};
+
 	/* RAM */
 	static constexpr size_t MEMORY_SIZE{Tools::SlotsToBytes(std::numeric_limits<address_t>::digits)};
 	static constexpr size_t MEMORY_ROM_BANK_SIZE{0x4000};
