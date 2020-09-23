@@ -36,51 +36,51 @@ namespace Core
 class IORAM : public API::IMemoryDevice
 {
 public:
-	constexpr IORAM(API::IMemoryDeviceAccess& memory_accessor) : API::IMemoryDevice{START_ADDRESS, END_ADDRESS, memory_accessor}, m_memory{}
+	constexpr IORAM(API::IMemoryDeviceAccess& memory_accessor) : API::IMemoryDevice{START_ADDRESS, END_ADDRESS, memory_accessor}
 	{
 		// Default values
-		this->m_memory[GetFixedAddress(DividerRegister::DIVIDER_REGISTER_ADDRESS_LSB)] = DividerRegister::DIVIDER_REGISTER_DEFAULT_VALUE_LSB;
-		this->m_memory[GetFixedAddress(DividerRegister::DIVIDER_REGISTER_ADDRESS)] = DividerRegister::DIVIDER_REGISTER_DEFAULT_VALUE;
-		this->m_memory[GetFixedAddress(TimerCounter::TIMER_COUNTER_ADDRESS)] = TimerCounter::TIMER_COUNTER_DEFAULT_VALUE;
-		this->m_memory[GetFixedAddress(TimerModulo::TIMER_MODULO_ADDRESS)] = TimerModulo::TIMER_MODULO_DEFAULT_VALUE;
-		this->m_memory[GetFixedAddress(TimerControl::TIMER_CONTROL_ADDRESS)] = TimerControl::TIMER_CONTROL_DEFAULT_VALUE;
-		this->m_memory[GetFixedAddress(API::NR10_ADDRESS)] = API::NR10_DEFAULT_VALUE;
-		this->m_memory[GetFixedAddress(API::NR11_ADDRESS)] = API::NR11_DEFAULT_VALUE;
-		this->m_memory[GetFixedAddress(API::NR12_ADDRESS)] = API::NR12_DEFAULT_VALUE;
-		this->m_memory[GetFixedAddress(API::NR14_ADDRESS)] = API::NR14_DEFAULT_VALUE;
-		this->m_memory[GetFixedAddress(API::NR21_ADDRESS)] = API::NR21_DEFAULT_VALUE;
-		this->m_memory[GetFixedAddress(API::NR22_ADDRESS)] = API::NR22_DEFAULT_VALUE;
-		this->m_memory[GetFixedAddress(API::NR24_ADDRESS)] = API::NR24_DEFAULT_VALUE;
-		this->m_memory[GetFixedAddress(API::NR30_ADDRESS)] = API::NR30_DEFAULT_VALUE;
-		this->m_memory[GetFixedAddress(API::NR31_ADDRESS)] = API::NR31_DEFAULT_VALUE;
-		this->m_memory[GetFixedAddress(API::NR32_ADDRESS)] = API::NR32_DEFAULT_VALUE;
-		this->m_memory[GetFixedAddress(API::NR33_ADDRESS)] = API::NR33_DEFAULT_VALUE;
-		this->m_memory[GetFixedAddress(API::NR41_ADDRESS)] = API::NR41_DEFAULT_VALUE;
-		this->m_memory[GetFixedAddress(API::NR42_ADDRESS)] = API::NR42_DEFAULT_VALUE;
-		this->m_memory[GetFixedAddress(API::NR43_ADDRESS)] = API::NR43_DEFAULT_VALUE;
-		this->m_memory[GetFixedAddress(API::NR44_ADDRESS)] = API::NR44_DEFAULT_VALUE;
-		this->m_memory[GetFixedAddress(API::NR50_ADDRESS)] = API::NR50_DEFAULT_VALUE;
-		this->m_memory[GetFixedAddress(API::NR51_ADDRESS)] = API::NR51_DEFAULT_VALUE;
-		this->m_memory[GetFixedAddress(API::NR52_ADDRESS)] = API::NR52_DEFAULT_VALUE;
-		this->m_memory[GetFixedAddress(LCDC_Control::LCDC_ADDRESS)] = LCDC_Control::LCDC_DEFAULT_VALUE;
-		this->m_memory[GetFixedAddress(LCDC_Status::LCDC_ADDRESS)] = LCDC_Status::LCDC_DEFAULT_VALUE;
-		this->m_memory[GetFixedAddress(SCY::SCY_ADDRESS)] = SCY::SCY_DEFAULT_VALUE;
-		this->m_memory[GetFixedAddress(SCX::SCX_ADDRESS)] = SCX::SCX_DEFAULT_VALUE;
-		this->m_memory[GetFixedAddress(LY::LY_ADDRESS)] = LY::LY_DEFAULT_VALUE;
-		this->m_memory[GetFixedAddress(LYC::LYC_ADDRESS)] = LYC::LYC_DEFAULT_VALUE;
-		this->m_memory[GetFixedAddress(DMA::DMA_ADDRESS)] = DMA::DMA_DEFAULT_VALUE;
-		this->m_memory[GetFixedAddress(BGP::BGP_ADDRESS)] = BGP::BGP_DEFAULT_VALUE;
-		this->m_memory[GetFixedAddress(OBP0::OBP0_ADDRESS)] = OBP0::OBP0_DEFAULT_VALUE;
-		this->m_memory[GetFixedAddress(OBP1::OBP1_ADDRESS)] = OBP1::OBP1_DEFAULT_VALUE;
-		this->m_memory[GetFixedAddress(WY::WY_ADDRESS)] = WY::WY_DEFAULT_VALUE;
-		this->m_memory[GetFixedAddress(WX::WX_ADDRESS)] = WX::WX_DEFAULT_VALUE;
+		this->_memory[GetFixedAddress(DividerRegister::DIVIDER_REGISTER_ADDRESS_LSB)] = DividerRegister::DIVIDER_REGISTER_DEFAULT_VALUE_LSB;
+		this->_memory[GetFixedAddress(DividerRegister::DIVIDER_REGISTER_ADDRESS)] = DividerRegister::DIVIDER_REGISTER_DEFAULT_VALUE;
+		this->_memory[GetFixedAddress(TimerCounter::TIMER_COUNTER_ADDRESS)] = TimerCounter::TIMER_COUNTER_DEFAULT_VALUE;
+		this->_memory[GetFixedAddress(TimerModulo::TIMER_MODULO_ADDRESS)] = TimerModulo::TIMER_MODULO_DEFAULT_VALUE;
+		this->_memory[GetFixedAddress(TimerControl::TIMER_CONTROL_ADDRESS)] = TimerControl::TIMER_CONTROL_DEFAULT_VALUE;
+		this->_memory[GetFixedAddress(API::NR10_ADDRESS)] = API::NR10_DEFAULT_VALUE;
+		this->_memory[GetFixedAddress(API::NR11_ADDRESS)] = API::NR11_DEFAULT_VALUE;
+		this->_memory[GetFixedAddress(API::NR12_ADDRESS)] = API::NR12_DEFAULT_VALUE;
+		this->_memory[GetFixedAddress(API::NR14_ADDRESS)] = API::NR14_DEFAULT_VALUE;
+		this->_memory[GetFixedAddress(API::NR21_ADDRESS)] = API::NR21_DEFAULT_VALUE;
+		this->_memory[GetFixedAddress(API::NR22_ADDRESS)] = API::NR22_DEFAULT_VALUE;
+		this->_memory[GetFixedAddress(API::NR24_ADDRESS)] = API::NR24_DEFAULT_VALUE;
+		this->_memory[GetFixedAddress(API::NR30_ADDRESS)] = API::NR30_DEFAULT_VALUE;
+		this->_memory[GetFixedAddress(API::NR31_ADDRESS)] = API::NR31_DEFAULT_VALUE;
+		this->_memory[GetFixedAddress(API::NR32_ADDRESS)] = API::NR32_DEFAULT_VALUE;
+		this->_memory[GetFixedAddress(API::NR33_ADDRESS)] = API::NR33_DEFAULT_VALUE;
+		this->_memory[GetFixedAddress(API::NR41_ADDRESS)] = API::NR41_DEFAULT_VALUE;
+		this->_memory[GetFixedAddress(API::NR42_ADDRESS)] = API::NR42_DEFAULT_VALUE;
+		this->_memory[GetFixedAddress(API::NR43_ADDRESS)] = API::NR43_DEFAULT_VALUE;
+		this->_memory[GetFixedAddress(API::NR44_ADDRESS)] = API::NR44_DEFAULT_VALUE;
+		this->_memory[GetFixedAddress(API::NR50_ADDRESS)] = API::NR50_DEFAULT_VALUE;
+		this->_memory[GetFixedAddress(API::NR51_ADDRESS)] = API::NR51_DEFAULT_VALUE;
+		this->_memory[GetFixedAddress(API::NR52_ADDRESS)] = API::NR52_DEFAULT_VALUE;
+		this->_memory[GetFixedAddress(LCDC_Control::LCDC_ADDRESS)] = LCDC_Control::LCDC_DEFAULT_VALUE;
+		this->_memory[GetFixedAddress(LCDC_Status::LCDC_ADDRESS)] = LCDC_Status::LCDC_DEFAULT_VALUE;
+		this->_memory[GetFixedAddress(SCY::SCY_ADDRESS)] = SCY::SCY_DEFAULT_VALUE;
+		this->_memory[GetFixedAddress(SCX::SCX_ADDRESS)] = SCX::SCX_DEFAULT_VALUE;
+		this->_memory[GetFixedAddress(LY::LY_ADDRESS)] = LY::LY_DEFAULT_VALUE;
+		this->_memory[GetFixedAddress(LYC::LYC_ADDRESS)] = LYC::LYC_DEFAULT_VALUE;
+		this->_memory[GetFixedAddress(DMA::DMA_ADDRESS)] = DMA::DMA_DEFAULT_VALUE;
+		this->_memory[GetFixedAddress(BGP::BGP_ADDRESS)] = BGP::BGP_DEFAULT_VALUE;
+		this->_memory[GetFixedAddress(OBP0::OBP0_ADDRESS)] = OBP0::OBP0_DEFAULT_VALUE;
+		this->_memory[GetFixedAddress(OBP1::OBP1_ADDRESS)] = OBP1::OBP1_DEFAULT_VALUE;
+		this->_memory[GetFixedAddress(WY::WY_ADDRESS)] = WY::WY_DEFAULT_VALUE;
+		this->_memory[GetFixedAddress(WX::WX_ADDRESS)] = WX::WX_DEFAULT_VALUE;
 
-		this->m_memory[GetFixedAddress(InterruptFlag::INTERRUPT_FLAG_ADDRESS)] = InterruptFlag::INTERRUPT_FLAG_DEFAULT_VALUE;
+		this->_memory[GetFixedAddress(InterruptFlag::INTERRUPT_FLAG_ADDRESS)] = InterruptFlag::INTERRUPT_FLAG_DEFAULT_VALUE;
 	}
 
 	virtual bool Read(const API::address_t absolute_address, API::data_t& result) const override
 	{
-		result = this->m_memory[GetFixedAddress(absolute_address)];
+		result = this->_memory[GetFixedAddress(absolute_address)];
 		return true;
 	}
 
@@ -88,7 +88,7 @@ public:
 	{
 		if (this->ManipulateData(data, absolute_address))
 		{
-			this->m_memory[GetFixedAddress(absolute_address)] = data;
+			this->_memory[GetFixedAddress(absolute_address)] = data;
 		}
 
 		return true;
@@ -101,7 +101,7 @@ public:
 
 protected:
 	static constexpr API::address_t GetFixedAddress(const API::address_t address) { return address - START_ADDRESS; }
-	virtual uint8_t* GetMemoryPointer() override { return this->m_memory.GetMemoryPointer(); }
+	virtual uint8_t* GetMemoryPointer() override { return this->_memory.GetMemoryPointer(); }
 
 private:
 	bool ManipulateData(const API::data_t data, const API::address_t address)
@@ -125,7 +125,7 @@ private:
 			case (TimerModulo::TIMER_MODULO_ADDRESS):
 			{
 				// Writing also onto the timer counter!
-				this->m_memory[GetFixedAddress(TimerCounter::TIMER_COUNTER_ADDRESS)] = data;
+				this->_memory[GetFixedAddress(TimerCounter::TIMER_COUNTER_ADDRESS)] = data;
 
 				break;
 			}
@@ -134,7 +134,7 @@ private:
 			{
 				if (Timer::IsCounterOverflow(data))
 				{
-					this->m_memory[GetFixedAddress(address)] = this->m_memory[GetFixedAddress(TimerModulo::TIMER_MODULO_ADDRESS)];
+					this->_memory[GetFixedAddress(address)] = this->_memory[GetFixedAddress(TimerModulo::TIMER_MODULO_ADDRESS)];
 					Timer::LaunchInterrupt();
 					return false;
 				}
@@ -145,7 +145,7 @@ private:
 			case (TimerControl::TIMER_CONTROL_ADDRESS):
 			{
 				// Using only the allowed portion of the TAC.
-				this->m_memory[GetFixedAddress(address)] = data & 0x07;
+				this->_memory[GetFixedAddress(address)] = data & 0x07;
 				return false;
 				break;
 			}
@@ -153,9 +153,9 @@ private:
 			case (DividerRegister::DIVIDER_REGISTER_ADDRESS):
 			{
 				// Writing to the divier register resets the divider timer.
-				this->m_memory[GetFixedAddress(address)] = 0;
+				this->_memory[GetFixedAddress(address)] = 0;
 				// Also the LSB turns into 0.
-				this->m_memory[GetFixedAddress(address - 1)] = 0;
+				this->_memory[GetFixedAddress(address - 1)] = 0;
 				return false;
 				break;
 			}
@@ -176,7 +176,7 @@ private:
 	}
 	
 private:
-	API::Memory<SIZE> m_memory;
+	API::Memory<SIZE> _memory;
 
 private:
 	friend class DeviceManager;

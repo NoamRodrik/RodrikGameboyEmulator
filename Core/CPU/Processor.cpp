@@ -24,12 +24,12 @@ namespace Core
 {
 gsl::not_null<IPPU*> Processor::GetPPU()
 {
-	if (this->m_ppu.get() == nullptr)
+	if (this->_ppu.get() == nullptr)
 	{
-		this->m_ppu.reset(gsl::not_null<MainPixelEngine*>{new MainPixelEngine{this->m_bus}}.get());
+		this->_ppu.reset(gsl::not_null<MainPixelEngine*>{new MainPixelEngine{this->_bus}}.get());
 	}
 
-	return this->m_ppu.get();
+	return this->_ppu.get();
 }
 
 #if _DEBUG
@@ -192,6 +192,6 @@ void Processor::LoadGame()
 	}
 
 	std::shared_ptr<Tools::Loader> game_loader{std::make_shared<Tools::Loader>((*directory_iterator).path().string())};
-	this->m_bus.SetMemoryBankController(std::static_pointer_cast<API::ILoader>(game_loader));
+	this->_bus.SetMemoryBankController(std::static_pointer_cast<API::ILoader>(game_loader));
 }
 } // Core

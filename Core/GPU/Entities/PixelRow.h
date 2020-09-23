@@ -27,8 +27,8 @@ class PixelRow
 {
 public:
 	constexpr PixelRow() = default;
-	constexpr PixelRow(API::data_t upper, API::data_t lower) : m_upper{upper},
-															   m_lower{lower} {}
+	constexpr PixelRow(API::data_t upper, API::data_t lower) : _upper{upper},
+															   _lower{lower} {}
 	PixelRow(API::address_t address)
 	{
 		SANITY(this->LoadPixelRow(address), "Failed loading pixel row");
@@ -39,22 +39,22 @@ public:
 public:
 	bool LoadPixelRow(API::address_t address)
 	{
-		return Processor::GetInstance().GetMemory().Read(address, m_upper) &&
-		       Processor::GetInstance().GetMemory().Read(address + 1, m_lower);
+		return Processor::GetInstance().GetMemory().Read(address, this->_upper) &&
+		       Processor::GetInstance().GetMemory().Read(address + 1, this->_lower);
 	}
 
 	constexpr auto GetColorByIndex(uint8_t index) const
 	{
 		SANITY(index <= 7, "Can't get an index higher than bits");
-		return PaletteColor{(m_upper >> index) & 0x01 | (((m_lower >> index) & 0x01) << 1)};
+		return PaletteColor{(this->_upper >> index) & 0x01 | (((this->_lower >> index) & 0x01) << 1)};
 	}
 
 public:
 	static constexpr auto PIXEL_COUNT{8};
 
 private:
-	API::data_t m_upper{0};
-	API::data_t m_lower{0};
+	API::data_t _upper{0};
+	API::data_t _lower{0};
 };
 }
 

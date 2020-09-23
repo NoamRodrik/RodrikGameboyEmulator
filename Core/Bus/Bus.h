@@ -21,26 +21,26 @@ public:
 public:
 	virtual bool Write(const API::address_t absolute_address, const API::data_t data) override
 	{
-		return this->m_device_manager.Write(absolute_address, data);
+		return this->_device_manager.Write(absolute_address, data);
 	}
 
 	virtual bool Read(const API::address_t absolute_address, API::data_t& result) const override
 	{
-		return this->m_device_manager.Read(absolute_address, result);
+		return this->_device_manager.Read(absolute_address, result);
 	}
 
 	API::IMemoryDevice* GetDeviceAtAddress(const API::address_t absolute_address)
 	{
-		return this->m_device_manager.GetDeviceAtAddress(absolute_address);
+		return this->_device_manager.GetDeviceAtAddress(absolute_address);
 	}
 
 	void SetMemoryBankController(std::shared_ptr<API::ILoader> loader)
 	{
-		this->m_device_manager.SetMemoryBankController(std::make_unique<MBCController>(*this, loader));
+		this->_device_manager.SetMemoryBankController(std::make_unique<MBCController>(*this, loader));
 	}
 
 private:
-	DeviceManager m_device_manager{};
+	DeviceManager _device_manager{};
 
 private:
 	friend class Timer;

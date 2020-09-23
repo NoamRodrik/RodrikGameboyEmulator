@@ -15,28 +15,28 @@ namespace Core
 class RegisterEngine
 {
 public:
-	RegisterEngine(Bus& memory) : m_memory{memory} {}
+	RegisterEngine(Bus& memory) : _memory{memory} {}
 
 	API::StackRegisterBase& GetStackRegister()
 	{
-		return this->m_stack_pointer;
+		return this->_stack_pointer;
 	}
 
 	API::AddressRegisterBase& GetProgramCounter()
 	{
-		return this->m_program_counter;
+		return this->_program_counter;
 	}
 
 	LogicRegisters& GetLogicRegisters()
 	{
-		return this->m_logic_registers;
+		return this->_logic_registers;
 	}
 
 private:
-	Bus&		   m_memory;
-	LogicRegisters m_logic_registers{};
-	SP_Register	   m_stack_pointer{0xFFFE, this->m_memory};		   // 3.2.4. Stack Pointer
-	PC_Register	   m_program_counter{SKIP_BOOT ? API::ROM_BEGIN_ADDRESS : 0x0000}; // 3.2.3.Program Counter
+	Bus&		   _memory;
+	LogicRegisters _logic_registers{};
+	SP_Register	   _stack_pointer{0xFFFE, this->_memory};		   // 3.2.4. Stack Pointer
+	PC_Register	   _program_counter{SKIP_BOOT ? API::ROM_BEGIN_ADDRESS : 0x0000}; // 3.2.3.Program Counter
 
 private:
 	/* Only processors can create register engines. */

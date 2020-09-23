@@ -20,7 +20,7 @@ bool Tile::LoadTile(API::address_t start_address)
 {
 	RET_FALSE_IF_FAIL(start_address < MEMORY_SIZE - Tile::HEIGHT_PIXELS, "Loading tiles out of memory range");
 
-	for (auto&& pixel : m_pixels)
+	for (auto&& pixel : this->_pixels)
 	{
 		RET_FALSE_IF_FAIL(pixel.LoadPixelRow(start_address++), "Failed loading pixel row %04X", start_address - 1);
 	}
@@ -30,6 +30,6 @@ bool Tile::LoadTile(API::address_t start_address)
 
 const PixelRow& Tile::GetPixelRow(std::size_t index) const
 {
-	SANITY(index < sizeof(this->m_pixels), "Got an invalid index size!");
-	return this->m_pixels[index];
+	SANITY(index < sizeof(this->_pixels), "Got an invalid index size!");
+	return this->_pixels[index];
 }

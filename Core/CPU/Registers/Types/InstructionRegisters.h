@@ -17,7 +17,7 @@ public:
 	using API::AddressRegisterBase::RegisterType;
 
 public:
-	inline void Next() { this->m_data += 1; }
+	inline void Next() { this->_data += 1; }
 };
 
 static_assert(sizeof(PC_Register) == sizeof(PC_Register::RegisterType));

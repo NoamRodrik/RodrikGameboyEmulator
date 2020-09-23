@@ -23,21 +23,21 @@ public:
 	static_assert(std::is_integral<T>::value, "Got a non-integral register-base data type.");
 
 public:
-	constexpr RegisterBase(T&& data) : m_data{data} {};
+	constexpr RegisterBase(T&& data) : _data{data} {};
 
 	operator T&()
 	{
-		return this->m_data;
+		return this->_data;
 	}
 
 	operator T() const
 	{
-		return this->m_data;
+		return this->_data;
 	}
 
 protected:
 	using RegisterType = T;
-	T m_data;
+	T _data;
 };
 
 /**
@@ -52,7 +52,7 @@ public:
 
 	AddressRegisterBase& operator=(const address_t data)
 	{
-		this->m_data = data;
+		this->_data = data;
 		return *this;
 	}
 };
@@ -88,17 +88,17 @@ public:
 protected:
 	constexpr bool GetFlag(const data_t bit_index) const
 	{
-		return (this->m_data >> bit_index) & 0x01;
+		return (this->_data >> bit_index) & 0x01;
 	}
 
 	inline void SetFlag(const data_t flag)
 	{
-		this->m_data |= (0x1 << flag);
+		this->_data |= (0x1 << flag);
 	}
 
 	inline void ClearFlag(const data_t flag)
 	{
-		this->m_data &= ((0x1 << flag) ^ 0b11111111);
+		this->_data &= ((0x1 << flag) ^ 0b11111111);
 	}
 };
 

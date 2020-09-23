@@ -13,17 +13,17 @@ namespace Core
 {
 size_t Timer::TimerObject::GetTime() const
 {
-	return this->m_time;
+	return this->_time;
 }
 
 void Timer::TimerObject::Increase(size_t amount)
 {
-	this->m_time += amount;
+	this->_time += amount;
 }
 
 void Timer::TimerObject::Lower(size_t amount)
 {
-	this->m_time -= amount;
+	this->_time -= amount;
 }
 
 void Timer::Clock(size_t cycles)
@@ -63,17 +63,17 @@ void Timer::Tick()
 
 Timer::TimerObject& Timer::Machine()
 {
-	return Timer::GetInstance().m_machine;
+	return Timer::GetInstance()._machine;
 }
 
 Timer::TimerObject& Timer::Counter()
 {
-	return Timer::GetInstance().m_counter;
+	return Timer::GetInstance()._counter;
 }
 
 Timer::TimerObject& Timer::Divider()
 {
-	return Timer::GetInstance().m_divider;
+	return Timer::GetInstance()._divider;
 }
 
 bool Timer::MachinePassedThreshold()

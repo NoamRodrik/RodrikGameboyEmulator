@@ -17,18 +17,18 @@ namespace Core
 class CartridgeRAM : public API::IMemoryDevice
 {
 public:
-	CartridgeRAM(API::IMemoryDeviceAccess& m_memory_accessor) : API::IMemoryDevice{START_ADDRESS, END_ADDRESS, m_memory_accessor}, m_memory{} {}
+	CartridgeRAM(API::IMemoryDeviceAccess& _memory_accessor) : API::IMemoryDevice{START_ADDRESS, END_ADDRESS, _memory_accessor} {}
 
 	virtual bool Read(const API::address_t absolute_address, API::data_t& result) const override
 	{
 		// While 0xFF50 isn't 0x1, we still return the system_boot code.
-		if (!this->m_covered_system_boot && (absolute_address - START_ADDRESS) <= 0xFF)
+		if (!this->_covered_system_boot && (absolute_address - START_ADDRESS) <= 0xFF)
 		{
 			result = API::SYSTEM_BOOT_CODE[absolute_address - START_ADDRESS];
 		}
 		else
 		{
-			result = this->m_memory[absolute_address - START_ADDRESS];
+			result = this->_memory[absolute_address - START_ADDRESS];
 		}
 
 		return true;
@@ -36,14 +36,14 @@ public:
 
 	virtual bool Write(const API::address_t absolute_address, const API::data_t data) override
 	{
-		this->m_memory[absolute_address - START_ADDRESS] = data;
+		this->_memory[absolute_address - START_ADDRESS] = data;
 		return true;
 	}
 
 	/**
 	 * Will be called when the system boot code will be swapped with the cartridge code.
 	 */
-	inline void CoverSystemBoot() { this->m_covered_system_boot = true; }
+	inline void CoverSystemBoot() { this->_covered_system_boot = true; }
 
 public:
 	static constexpr API::address_t START_ADDRESS = 0x0000;
@@ -52,11 +52,11 @@ public:
 
 public:
 	// Public for all the MBCS
-	virtual uint8_t* GetMemoryPointer() override { return this->m_memory.GetMemoryPointer(); }
+	virtual uint8_t* GetMemoryPointer() override { return this->_memory.GetMemoryPointer(); }
 
 private:
-	API::Memory<SIZE> m_memory;
-	bool              m_covered_system_boot{SKIP_BOOT ? true : false};
+	API::Memory<SIZE> _memory;
+	bool              _covered_system_boot{SKIP_BOOT ? true : false};
 
 private:
 	friend class DeviceManager;

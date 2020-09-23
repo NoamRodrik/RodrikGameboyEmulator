@@ -26,7 +26,7 @@ namespace Core
 class MainPixelEngine : public olc::PixelGameEngine, public IPPU
 {
 public:
-	MainPixelEngine(API::IMemoryDeviceAccess& memory) : m_memory{memory}
+	MainPixelEngine(API::IMemoryDeviceAccess& memory) : _memory{memory}
 	{
 		// Name your application
 		sAppName = ENGINE_WINDOW_NAME;
@@ -43,7 +43,7 @@ public:
 #else
 		RET_FALSE_IF_FAIL(this->Construct(160, 144, 3, 3), "Failed constructing pixel engine");
 #endif
-		this->m_gpu_thread.reset(gsl::not_null<std::thread*>{new std::thread{&MainPixelEngine::StartWithoutUpdate, this}});
+		this->_gpu_thread.reset(gsl::not_null<std::thread*>{new std::thread{&MainPixelEngine::StartWithoutUpdate, this}});
 #endif
 
 		return true;
@@ -51,7 +51,7 @@ public:
 
 	virtual void Clock(std::size_t clock) override
 	{
-		this->m_clock += clock;
+		this->_clock += clock;
 		this->TriggerUpdate();
 	}
 
@@ -98,18 +98,18 @@ private:
 		// If the background has been enabled.
 		if (lcdc_control.IsBackgroundEnabled())
 		{
-			static_assert(sizeof(m_canvas) / sizeof(m_canvas[0]) >= BACKGROUND_MAP_SIZE, "Canvas is too small for background mapping size");
+			static_assert(sizeof(this->_canvas) / sizeof(this->_canvas[0]) >= BACKGROUND_MAP_SIZE, "Canvas is too small for background mapping size");
 
 			// Here we start drawing the background.
 			for (API::address_t canvas_slot = 0; canvas_slot < BACKGROUND_MAP_SIZE; ++canvas_slot)
 			{
 				API::data_t data{0x00};
-				RET_FALSE_IF_FAIL(this->m_memory.Read(canvas_slot + lcdc_control.GetBackgroundMapStart(), data), "Failed reading memory for canvas");
-				RET_FALSE_IF_FAIL(canvas_slot < this->m_canvas.size(), "Invalid indexing");
+				RET_FALSE_IF_FAIL(this->_memory.Read(canvas_slot + lcdc_control.GetBackgroundMapStart(), data), "Failed reading memory for canvas");
+				RET_FALSE_IF_FAIL(canvas_slot < this->_canvas.size(), "Invalid indexing");
 
 				API::address_t address_to_load_tile{lcdc_control.GetTileSelectOffset()};
 				address_to_load_tile += lcdc_control.IsSigned() && data > 127 ? -1 * static_cast<int32_t>(data) : static_cast<int32_t>(data);
-				RET_FALSE_IF_FAIL(this->m_canvas[canvas_slot].LoadTile(address_to_load_tile), "Failed to load tile!");
+				RET_FALSE_IF_FAIL(this->_canvas[canvas_slot].LoadTile(address_to_load_tile), "Failed to load tile!");
 			}
 		}
 
@@ -124,9 +124,9 @@ private:
 			{
 				for (int32_t current_width = 0; current_width < API::CANVAS_WIDTH; ++current_width)
 				{
-					RET_FALSE_IF_FAIL(current_height * API::CANVAS_HEIGHT + current_width < this->m_canvas.size(), "Buffer overflow");
+					RET_FALSE_IF_FAIL(current_height * API::CANVAS_HEIGHT + current_width < this->_canvas.size(), "Buffer overflow");
 					RET_FALSE_IF_FAIL(this->DrawPixelRow(current_width * Tile::HEIGHT_PIXELS, current_height * Tile::HEIGHT_PIXELS + current_pixel_row,
-										this->m_canvas[current_height * API::CANVAS_HEIGHT + current_width].GetPixelRow(current_pixel_row)),
+										this->_canvas[current_height * API::CANVAS_HEIGHT + current_width].GetPixelRow(current_pixel_row)),
 						              "Failed to draw pixel row!");
 				}
 			}
@@ -184,10 +184,10 @@ private:
 	}
 
 private:
-	API::IMemoryDeviceAccess&		   m_memory;
-	std::array<Tile, API::CANVAS_SIZE> m_canvas{};
-	std::unique_ptr<std::thread>       m_gpu_thread{nullptr};
-	std::size_t                        m_clock{0};
+	API::IMemoryDeviceAccess&		   _memory;
+	std::array<Tile, API::CANVAS_SIZE> _canvas{};
+	std::unique_ptr<std::thread>       _gpu_thread{nullptr};
+	std::size_t                        _clock{0};
 };
 }
 

@@ -29,7 +29,7 @@ public:
 
 private:
 	// 8x8
-	PixelRow m_pixels[HEIGHT_PIXELS]{};
+	PixelRow _pixels[HEIGHT_PIXELS]{};
 };
 }
 

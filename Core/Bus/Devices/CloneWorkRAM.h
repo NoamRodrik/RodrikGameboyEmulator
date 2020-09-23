@@ -18,26 +18,26 @@ class WorkRAM;
 class CloneWorkRAM : public API::IMemoryDevice
 {
 public:
-	constexpr CloneWorkRAM(API::IMemoryDeviceAccess& m_memory_accessor) : API::IMemoryDevice{START_ADDRESS, END_ADDRESS, m_memory_accessor}, m_memory{} {}
+	constexpr CloneWorkRAM(API::IMemoryDeviceAccess& m_memory_accessor) : API::IMemoryDevice{START_ADDRESS, END_ADDRESS, m_memory_accessor} {}
 
 	virtual bool Read(const API::address_t absolute_address, API::data_t& result) const override
 	{
-		result = this->m_memory[absolute_address - START_ADDRESS];
+		result = this->_memory[absolute_address - START_ADDRESS];
 		return true;
 	}
 
 	virtual bool Write(const API::address_t absolute_address, const API::data_t data) override
 	{
-		this->m_memory[GetFixedAddress(absolute_address)] = data;
+		this->_memory[GetFixedAddress(absolute_address)] = data;
 
 		API::data_t work_ram_data{0};
 
-		RET_FALSE_IF_FAIL(this->m_memory_accessor.Read(0xC000 + GetFixedAddress(absolute_address), work_ram_data),
+		RET_FALSE_IF_FAIL(this->_memory_accessor.Read(0xC000 + GetFixedAddress(absolute_address), work_ram_data),
 						  "Failed reading from WorkRAM");
 
 		if (work_ram_data != data)
 		{
-			return this->m_memory_accessor.Write(0xC000 + GetFixedAddress(absolute_address), work_ram_data);
+			return this->_memory_accessor.Write(0xC000 + GetFixedAddress(absolute_address), work_ram_data);
 		}
 
 		return true;
@@ -49,13 +49,13 @@ public:
 	static constexpr size_t   SIZE = END_ADDRESS - START_ADDRESS + 1;
 
 protected:
-	virtual uint8_t* GetMemoryPointer() override { return this->m_memory.GetMemoryPointer(); }
+	virtual uint8_t* GetMemoryPointer() override { return this->_memory.GetMemoryPointer(); }
 
 private:
 	static constexpr API::address_t GetFixedAddress(const API::address_t address) { return address - START_ADDRESS; }
 
 private:
-	API::Memory<SIZE> m_memory;
+	API::Memory<SIZE> _memory;
 
 private:
 	friend class DeviceManager;

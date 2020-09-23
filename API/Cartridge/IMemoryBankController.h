@@ -29,13 +29,13 @@ class AMemoryBankController : public IMemoryBankController
 {
 public:
 	AMemoryBankController(IMemoryDeviceAccess& memory_device, std::shared_ptr<ILoader> loader) :
-		m_memory_device{memory_device},
-		m_loader{loader} {}
+		_memory_device{memory_device},
+		_loader{loader} {}
 	virtual ~AMemoryBankController() = default;
 
 protected:
-	IMemoryDeviceAccess& m_memory_device;
-	std::shared_ptr<ILoader> m_loader;
+	IMemoryDeviceAccess& _memory_device;
+	std::shared_ptr<ILoader> _loader;
 };
 }
 

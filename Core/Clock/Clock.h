@@ -28,7 +28,7 @@ private:
 	using clock = std::chrono::high_resolution_clock;
 
 private:
-	decltype(clock::now()) m_last_tick{std::chrono::time_point_cast<clock::duration>(clock::now() + one_clock_period)};
+	decltype(clock::now()) _last_tick{std::chrono::time_point_cast<clock::duration>(clock::now() + one_clock_period)};
 };
 } // Core
 

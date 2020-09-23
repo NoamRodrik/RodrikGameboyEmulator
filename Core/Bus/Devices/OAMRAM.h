@@ -16,17 +16,17 @@ namespace Core
 class OAMRAM : public API::IMemoryDevice
 {
 public:
-	constexpr OAMRAM(API::IMemoryDeviceAccess& memory_accessor) : API::IMemoryDevice{START_ADDRESS, END_ADDRESS, memory_accessor }, m_memory{} {}
+	constexpr OAMRAM(API::IMemoryDeviceAccess& memory_accessor) : API::IMemoryDevice{START_ADDRESS, END_ADDRESS, memory_accessor} {}
 
 	virtual bool Read(const API::address_t absolute_address, API::data_t& result) const override
 	{
-		result = this->m_memory[absolute_address - START_ADDRESS];
+		result = this->_memory[absolute_address - START_ADDRESS];
 		return true;
 	}
 
 	virtual bool Write(const API::address_t absolute_address, const API::data_t data) override
 	{
-		this->m_memory[absolute_address - START_ADDRESS] = data;
+		this->_memory[absolute_address - START_ADDRESS] = data;
 		return true;
 	}
 
@@ -36,10 +36,10 @@ public:
 	static constexpr size_t   SIZE = END_ADDRESS - START_ADDRESS + 1;
 
 protected:
-	virtual uint8_t* GetMemoryPointer() override { return this->m_memory.GetMemoryPointer(); }
+	virtual uint8_t* GetMemoryPointer() override { return this->_memory.GetMemoryPointer(); }
 
 private:
-	API::Memory<SIZE> m_memory;
+	API::Memory<SIZE> _memory;
 
 private:
 	friend class DeviceManager;

@@ -17,7 +17,7 @@ class MemoryBankController_2 : public API::AMemoryBankController
 public:
 	MemoryBankController_2(IMemoryDeviceAccess& memory_device, std::shared_ptr<API::ILoader> loader) :
 		API::AMemoryBankController{memory_device, loader},
-		m_inner_mbc{memory_device, loader} {}
+		_inner_mbc{memory_device, loader} {}
 	virtual ~MemoryBankController_2() = default;
 
 public:
@@ -54,11 +54,11 @@ private:
 	static constexpr API::address_t RAM_ROM_MODE_SELECT_END = 0x7FFF;
 
 private:
-	MemoryBankController_1                 m_inner_mbc;
-	API::Memory<Tools::BytesInRAMBanks(4)> m_ram_memory;
-	API::data_t							   m_selected_ram_bank{0};
-	Mode								   m_mode{Mode::ROM_MODE};
-	bool								   m_ram_enable{false};
+	MemoryBankController_1                 _inner_mbc;
+	API::Memory<Tools::BytesInRAMBanks(4)> _ram_memory;
+	API::data_t							   _selected_ram_bank{0};
+	Mode								   _mode{Mode::ROM_MODE};
+	bool								   _ram_enable{false};
 };
 }
 

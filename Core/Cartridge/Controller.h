@@ -44,8 +44,8 @@ private:
 	void Setup();
 
 private:
-	std::array<std::unique_ptr<API::IMemoryBankController>, API::MEMORY_BANK_CONTROLLERS_AMOUNT> m_mbcs{};
-	std::size_t m_chosen_mbc{0};
+	std::array<std::unique_ptr<API::IMemoryBankController>, API::MEMORY_BANK_CONTROLLERS_AMOUNT> _mbcs{};
+	std::size_t _chosen_mbc{0};
 };
 }
 

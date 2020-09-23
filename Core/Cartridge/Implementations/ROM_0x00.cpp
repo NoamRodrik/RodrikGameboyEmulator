@@ -16,7 +16,7 @@ void MemoryBankController_ROM::LoadMBC()
 {
 	// All that's needed is to load all the ROM, since that is what
 	// this MBC does.
-	this->m_loader->Load(static_cast<CartridgeRAM*>(Processor::GetInstance().GetMemory().GetDeviceAtAddress(CartridgeRAM::START_ADDRESS))->GetMemoryPointer(),
+	this->_loader->Load(static_cast<CartridgeRAM*>(Processor::GetInstance().GetMemory().GetDeviceAtAddress(CartridgeRAM::START_ADDRESS))->GetMemoryPointer(),
 						 static_cast<long>(CartridgeRAM::SIZE));
 }
 

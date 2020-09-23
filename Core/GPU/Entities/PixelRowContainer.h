@@ -25,16 +25,16 @@ public:
 	{
 		// Reset data.
 		this->ResetPixelRowIndex();
-		this->m_pixel_source = pixel_source;
-		return m_current_pixel_row.LoadPixelRow(address);
+		this->_pixel_source = pixel_source;
+		return this->_current_pixel_row.LoadPixelRow(address);
 	}
 
 	const bool LoadPixelRow(const PixelRow& pixel_row, const PixelSource pixel_source = PixelSource::BGP)
 	{
 		// Reset data.
 		this->ResetPixelRowIndex();
-		this->m_pixel_source = pixel_source;
-		this->m_current_pixel_row = pixel_row;
+		this->_pixel_source = pixel_source;
+		this->_current_pixel_row = pixel_row;
 		return true;
 	}
 
@@ -44,7 +44,7 @@ public:
 	 */
 	const bool IsEmpty() const
 	{
-		return this->m_pixel_row_index > PixelRow::PIXEL_COUNT;
+		return this->_pixel_row_index > PixelRow::PIXEL_COUNT;
 	}
 
 	/**
@@ -52,9 +52,9 @@ public:
 	 */
 	const PaletteColor GetNextPixel()
 	{
-		SANITY(this->m_pixel_row_index >= 1 && this->m_pixel_row_index <= PixelRow::PIXEL_COUNT,
+		SANITY(this->_pixel_row_index >= 1 && this->_pixel_row_index <= PixelRow::PIXEL_COUNT,
 			   "Got invalid values for pixel row index");
-		return this->m_current_pixel_row.GetColorByIndex(PixelRow::PIXEL_COUNT - this->m_pixel_row_index++);
+		return this->_current_pixel_row.GetColorByIndex(PixelRow::PIXEL_COUNT - this->_pixel_row_index++);
 	}
 
 	/**
@@ -62,19 +62,19 @@ public:
 	 */
 	const PixelSource GetSource() const
 	{
-		return this->m_pixel_source;
+		return this->_pixel_source;
 	}
 
 private:
 	void ResetPixelRowIndex()
 	{
-		this->m_pixel_row_index = 1;
+		this->_pixel_row_index = 1;
 	}
 
 private:
-	PixelRow    m_current_pixel_row{};
-	std::size_t m_pixel_row_index{1};
-	PixelSource m_pixel_source{PixelSource::BGP};
+	PixelRow    _current_pixel_row{};
+	std::size_t _pixel_row_index{1};
+	PixelSource _pixel_source{PixelSource::BGP};
 };
 }
 

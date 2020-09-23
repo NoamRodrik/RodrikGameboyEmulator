@@ -15,7 +15,7 @@ class SP_Register : public API::StackRegisterBase
 {
 public:
 	SP_Register(RegisterType&& reg_value, API::IMemoryDeviceAccess& memory_context) :
-				API::StackRegisterBase{std::move(reg_value)}, m_memory_context{memory_context} {}
+				API::StackRegisterBase{std::move(reg_value)}, _memory_context{memory_context} {}
 
 	virtual ~SP_Register() = default;
 
@@ -37,18 +37,18 @@ public:
 
 	virtual void Pop(API::data_t& data) override
 	{
-		SANITY(this->m_memory_context.Read(this->m_data++, data),
+		SANITY(this->_memory_context.Read(this->_data++, data),
 			   "Failed reading from memory");
 	}
 
 	virtual void Push(const API::data_t data) override
 	{
-		SANITY(this->m_memory_context.Write(--this->m_data, data),
+		SANITY(this->_memory_context.Write(--this->_data, data),
 			   "Failed writing to memory");
 	}
 
 private:
-	API::IMemoryDeviceAccess& m_memory_context;
+	API::IMemoryDeviceAccess& _memory_context;
 };
 } // Core
 

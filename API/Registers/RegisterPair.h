@@ -17,7 +17,7 @@ static_assert(std::numeric_limits<address_t>::digits == std::numeric_limits<data
 class RegisterPair
 {
 public:
-	constexpr RegisterPair(data_t& msb, data_t& lsb) : m_msb{msb}, m_lsb{lsb} {}
+	constexpr RegisterPair(data_t& msb, data_t& lsb) : _msb{msb}, _lsb{lsb} {}
 
 	constexpr RegisterPair() = delete;
 	constexpr RegisterPair(const RegisterPair& other) = delete;
@@ -25,19 +25,19 @@ public:
 
 	constexpr RegisterPair& operator=(const RegisterPair& other)
 	{
-		m_msb = other.m_msb;
-		m_lsb = other.m_lsb;
+		_msb = other._msb;
+		_lsb = other._lsb;
 		return *this;
 	}
 	constexpr RegisterPair& operator=(const address_t other)
 	{
-		m_msb = get_msb(other);
-		m_lsb = get_lsb(other);
+		_msb = get_msb(other);
+		_lsb = get_lsb(other);
 		return *this;
 	}
 	constexpr operator address_t() const
 	{
-		return ((address_t{m_msb} << std::numeric_limits<data_t>::digits) & 0xFF00) | (m_lsb & 0x00FF);
+		return ((address_t{_msb} << std::numeric_limits<data_t>::digits) & 0xFF00) | (_lsb & 0x00FF);
 	}
 
 private:
@@ -52,8 +52,8 @@ private:
 	}
 
 private:
-	data_t& m_msb;
-	data_t& m_lsb;
+	data_t& _msb;
+	data_t& _lsb;
 };
 
 constexpr RegisterPair& operator+=(RegisterPair& reg_pair, const address_t value)
