@@ -16,12 +16,13 @@ class WorkRAM;
 class CloneWorkRAM : public RAMDevice<0xE000, 0xFDFF>
 {
 public:
-	using RAMDevice::RAMDevice;
+	CloneWorkRAM(API::IMemoryDeviceAccess& memory_accessor) : RAMDevice{memory_accessor} {}
+	virtual ~CloneWorkRAM() override = default;
 
 public:
 	virtual bool Write(const API::address_t absolute_address, const API::data_t data) override
 	{
-		this->_memory[this->RelativeAddress(absolute_address)] = data;
+		RET_FALSE_IF_FAIL(RAMDevice::Write(absolute_address, data), "Failed writing CloneWorkRAM data");
 
 		API::data_t work_ram_data{0};
 

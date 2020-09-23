@@ -16,7 +16,8 @@ namespace Core
 class CartridgeRAM : public RAMDevice<0x0000, 0x7FFF>
 {
 public:
-	using RAMDevice::RAMDevice;
+	CartridgeRAM(API::IMemoryDeviceAccess& memory_accessor) : RAMDevice{memory_accessor} {}
+	virtual ~CartridgeRAM() override = default;
 
 public:
 	virtual bool Read(const API::address_t absolute_address, API::data_t& result) const override
@@ -28,7 +29,7 @@ public:
 		}
 		else
 		{
-			result = this->_memory[this->RelativeAddress(absolute_address)];
+			return RAMDevice::Read(absolute_address, result);
 		}
 
 		return true;

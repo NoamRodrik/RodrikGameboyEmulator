@@ -14,7 +14,8 @@ namespace Core
 class UnusedRAM : public RAMDevice<0xFEA0, 0xFEFF>
 {
 public:
-	using RAMDevice::RAMDevice;
+	UnusedRAM(API::IMemoryDeviceAccess& memory_accessor) : RAMDevice{memory_accessor} {}
+	virtual ~UnusedRAM() override = default;
 
 private:
 	friend class DeviceManager;

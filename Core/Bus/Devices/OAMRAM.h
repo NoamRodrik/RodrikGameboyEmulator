@@ -14,7 +14,8 @@ namespace Core
 class OAMRAM : public RAMDevice<0xFE00, 0xFE9F>
 {
 public:
-	using RAMDevice::RAMDevice;
+	OAMRAM(API::IMemoryDeviceAccess& memory_accessor) : RAMDevice{memory_accessor} {}
+	virtual ~OAMRAM() override = default;
 
 private:
 	friend class DeviceManager;

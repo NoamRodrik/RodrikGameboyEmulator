@@ -14,7 +14,8 @@ namespace Core
 class HighRAM : public RAMDevice<0xFF80, 0xFFFE>
 {
 public:
-	using RAMDevice::RAMDevice;
+	HighRAM(API::IMemoryDeviceAccess& memory_accessor) : RAMDevice{memory_accessor} {}
+	virtual ~HighRAM() override = default;
 
 private:
 	friend class DeviceManager;

@@ -15,12 +15,13 @@ namespace Core
 class InterruptSwitch : public RAMDevice<0xFFFF, 0xFFFF>
 {
 public:
-	constexpr InterruptSwitch(API::IMemoryDeviceAccess& memory_accessor) : RAMDevice{memory_accessor}
+	InterruptSwitch(API::IMemoryDeviceAccess& memory_accessor) : RAMDevice{memory_accessor}
 	{
-		// Default value for the interrupt flag
-		this->_memory[this->RelativeAddress(InterruptEnable::INTERRUPT_ENABLE_ADDRESS)] =
-					   InterruptEnable::INTERRUPT_ENABLE_DEFAULT_VALUE;
+		SANITY(this->Write(InterruptEnable::INTERRUPT_ENABLE_ADDRESS, InterruptEnable::INTERRUPT_ENABLE_DEFAULT_VALUE),
+			   "Failed setting interrupt switch");
 	}
+
+	virtual ~InterruptSwitch() override = default;
 
 private:
 	friend class DeviceManager;

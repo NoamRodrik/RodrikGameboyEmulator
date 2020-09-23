@@ -14,7 +14,8 @@ namespace Core
 class VideoRAM : public RAMDevice<0x8000, 0x9FFF>
 {
 public:
-	using RAMDevice::RAMDevice;
+	VideoRAM(API::IMemoryDeviceAccess& memory_accessor) : RAMDevice{memory_accessor} {}
+	virtual ~VideoRAM() override = default;
 
 private:
 	friend class DeviceManager;

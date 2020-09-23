@@ -14,7 +14,8 @@ namespace Core
 class ExternalRAM : public RAMDevice<0xA000, 0xBFFF>
 {
 public:
-	using RAMDevice::RAMDevice;
+	ExternalRAM(API::IMemoryDeviceAccess& memory_accessor) : RAMDevice{memory_accessor} {}
+	virtual ~ExternalRAM() override = default;
 
 private:
 	friend class DeviceManager;

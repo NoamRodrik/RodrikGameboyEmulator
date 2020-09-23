@@ -16,12 +16,13 @@ namespace Core
 class WorkRAM : public RAMDevice<0xC000, 0xDFFF>
 {
 public:
-	using RAMDevice::RAMDevice;
+	WorkRAM(API::IMemoryDeviceAccess& memory_accessor) : RAMDevice{memory_accessor} {}
+	virtual ~WorkRAM() override = default;
 
 public:
 	virtual bool Write(const API::address_t absolute_address, const API::data_t data) override
 	{
-		this->_memory[this->RelativeAddress(absolute_address)] = data;
+		RET_FALSE_IF_FAIL(RAMDevice::Write(absolute_address, data), "Failed modifying data");
 
 		// We don't want to randomly write into the other rams.
 		if (CloneWorkRAM::START_ADDRESS + this->RelativeAddress(absolute_address) < OAMRAM::START_ADDRESS)

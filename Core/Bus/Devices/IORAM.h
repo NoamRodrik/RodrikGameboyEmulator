@@ -34,9 +34,8 @@ namespace Core
 class IORAM : public RAMDevice<0xFF00, 0xFF7F>
 {
 public:
-	constexpr IORAM(API::IMemoryDeviceAccess& memory_accessor) : RAMDevice{memory_accessor}
+	IORAM(API::IMemoryDeviceAccess& memory_accessor) : RAMDevice{memory_accessor}
 	{
-		// Default values
 		this->_memory[this->RelativeAddress(DividerRegister::DIVIDER_REGISTER_ADDRESS_LSB)] = DividerRegister::DIVIDER_REGISTER_DEFAULT_VALUE_LSB;
 		this->_memory[this->RelativeAddress(DividerRegister::DIVIDER_REGISTER_ADDRESS)] = DividerRegister::DIVIDER_REGISTER_DEFAULT_VALUE;
 		this->_memory[this->RelativeAddress(TimerCounter::TIMER_COUNTER_ADDRESS)] = TimerCounter::TIMER_COUNTER_DEFAULT_VALUE;
@@ -75,20 +74,10 @@ public:
 		this->_memory[this->RelativeAddress(InterruptFlag::INTERRUPT_FLAG_ADDRESS)] = InterruptFlag::INTERRUPT_FLAG_DEFAULT_VALUE;
 	}
 
-	virtual bool Write(const API::address_t absolute_address, const API::data_t data) override
-	{
-		if (this->ManipulateData(data, absolute_address))
-		{
-			this->_memory[this->RelativeAddress(absolute_address)] = data;
-		}
-
-		return true;
-	}
-
 private:
-	bool ManipulateData(const API::data_t data, const API::address_t address)
+	virtual bool Intercept(const API::address_t absolute_address, const API::data_t data) override
 	{
-		switch (address)
+		switch (absolute_address)
 		{
 			case (API::SERIAL_TRANSFER_CONTROL):
 			{
@@ -107,6 +96,7 @@ private:
 			case (TimerModulo::TIMER_MODULO_ADDRESS):
 			{
 				// Writing also onto the timer counter!
+				// NOTE: This can't be *Write* since it will cause an infinite loop!
 				this->_memory[this->RelativeAddress(TimerCounter::TIMER_COUNTER_ADDRESS)] = data;
 
 				break;
@@ -116,9 +106,10 @@ private:
 			{
 				if (Timer::IsCounterOverflow(data))
 				{
-					this->_memory[this->RelativeAddress(address)] = this->_memory[this->RelativeAddress(TimerModulo::TIMER_MODULO_ADDRESS)];
+					// NOTE: This can't be *Write* since it will cause an infinite loop!
+					this->_memory[this->RelativeAddress(absolute_address)] = this->_memory[this->RelativeAddress(TimerModulo::TIMER_MODULO_ADDRESS)];
 					Timer::LaunchInterrupt();
-					return false;
+					return true;
 				}
 
 				break;
@@ -127,19 +118,20 @@ private:
 			case (TimerControl::TIMER_CONTROL_ADDRESS):
 			{
 				// Using only the allowed portion of the TAC.
-				this->_memory[this->RelativeAddress(address)] = data & 0x07;
-				return false;
-				break;
+				// NOTE: This can't be *Write* since it will cause an infinite loop!
+				this->_memory[this->RelativeAddress(absolute_address)] = data & 0x07;
+				return true;
 			}
 
 			case (DividerRegister::DIVIDER_REGISTER_ADDRESS):
 			{
 				// Writing to the divier register resets the divider timer.
-				this->_memory[this->RelativeAddress(address)] = 0;
+				// NOTE: This can't be *Write* since it will cause an infinite loop!
+				this->_memory[this->RelativeAddress(absolute_address)] = 0;
 				// Also the LSB turns into 0.
-				this->_memory[this->RelativeAddress(address - 1)] = 0;
-				return false;
-				break;
+				// NOTE: This can't be *Write* since it will cause an infinite loop!
+				this->_memory[this->RelativeAddress(absolute_address - 1)] = 0;
+				return true;
 			}
 
 			case (API::OVERRIDE_BOOTROM_ADDRESS):
@@ -154,7 +146,7 @@ private:
 			}
 		}
 
-		return true;
+		return false;
 	}
 
 private:

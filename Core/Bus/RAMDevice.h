@@ -8,16 +8,19 @@
 
 #include <API/Memory/Device/IMemoryDeviceAccess.h>
 #include <API/Memory/Device/IMemoryDevice.h>
+#include <Core/Bus/IRAMDevice.h>
 #include <API/Memory/Memory.h>
 #include <API/Definitions.h>
 
 namespace Core
 {
 template <API::address_t START, API::address_t END>
-class RAMDevice : public API::IMemoryDevice
+class RAMDevice : public IRAMDevice, public API::IMemoryDevice
 {
 public:
-	constexpr RAMDevice(API::IMemoryDeviceAccess& memory_accessor) : API::IMemoryDevice{START, END, memory_accessor} {}
+	RAMDevice(API::IMemoryDeviceAccess& memory_accessor) : API::IMemoryDevice{START, END, memory_accessor} {}
+
+	virtual ~RAMDevice() override = default;
 
 public:
 	/**
@@ -34,8 +37,18 @@ public:
 	 */
 	virtual bool Write(const API::address_t absolute_address, const API::data_t data) override
 	{
-		this->_memory[this->RelativeAddress(absolute_address)] = data;
+		if (!this->Intercept(absolute_address, data))
+		{
+			this->_memory[this->RelativeAddress(absolute_address)] = data;
+		}
+
 		return true;
+	}
+
+protected:
+	virtual bool Intercept(const API::address_t absolute_address, const API::data_t data) override
+	{
+		return false;
 	}
 
 public:
