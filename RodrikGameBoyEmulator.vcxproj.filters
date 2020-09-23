@@ -431,6 +431,9 @@
     <ClInclude Include="Core\GPU\IPPU.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Core\GPU\Entities\PixelRowContainer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="BootROM\tetris.gb" />

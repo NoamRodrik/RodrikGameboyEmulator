@@ -33,6 +33,16 @@ enum class PaletteColor : API::data_t
 	FOURTH_PALETTE = 0x03
 };
 
+/**
+ * The source in which the pixel is written from.
+ */
+enum class PixelSource : API::data_t
+{
+	BGP = 0x00,
+	OBP0 = 0x01,
+	OBP1 = 0x02
+};
+
 static constexpr const char ENGINE_WINDOW_NAME[] = {"RodrikGameBoyEmulator"};
 static constexpr size_t     BACKGROUND_MAP_SIZE = Tools::SlotsToBytes(10);
 

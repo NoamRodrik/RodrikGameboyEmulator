@@ -49,6 +49,9 @@ public:
 		return PaletteColor{(m_upper >> index) & 0x01 | (((m_lower >> index) & 0x01) << 1)};
 	}
 
+public:
+	static constexpr auto PIXEL_COUNT{8};
+
 private:
 	API::data_t m_upper{0};
 	API::data_t m_lower{0};
