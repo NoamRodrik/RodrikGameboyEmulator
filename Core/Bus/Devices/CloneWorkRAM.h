@@ -18,7 +18,7 @@ class WorkRAM;
 class CloneWorkRAM : public API::IMemoryDevice
 {
 public:
-	constexpr CloneWorkRAM(API::IMemoryDeviceAccess& m_memory_accessor) : API::IMemoryDevice{START_ADDRESS, END_ADDRESS, m_memory_accessor} {}
+	constexpr CloneWorkRAM(API::IMemoryDeviceAccess& memory_accessor) : API::IMemoryDevice{START_ADDRESS, END_ADDRESS, memory_accessor} {}
 
 	virtual bool Read(const API::address_t absolute_address, API::data_t& result) const override
 	{
