@@ -81,13 +81,13 @@ private:
 		{
 			case (API::SERIAL_TRANSFER_CONTROL):
 			{
-#ifdef TESTING
+#ifdef SERIAL_TRANSFER_PRINT_DEBUG
 				Message("This is for testing purposes");
 				if (data == (API::SERIAL_TRANSFER_START | API::SERIAL_TRANSFER_CLOCK_SOURCE))
 				{
 					API::data_t byte_read{0};
 					SANITY(this->Read(API::SERIAL_TRANSFER_DATA, byte_read), "Failed reading serial data");
-					SECONDARY_OUTPUT(byte_read);
+					MAIN_LOG_NO_ENTER("%c", byte_read);
 				}
 #endif
 				break;

@@ -11,10 +11,8 @@ namespace Core
 {
 void Clock::SyncClock()
 {
-#ifndef DONT_WAIT
 	// Sleep until one tick has passed.
 	std::this_thread::sleep_until(Clock::GetInstance()._last_tick);
-#endif
 
 	// Use time_point_cast to convert (via truncation towards zero) back to
 	// the "native" duration of high_resolution_clock
