@@ -40,8 +40,10 @@ void DeviceManager::SetMemoryBankController(std::unique_ptr<API::IMemoryBankCont
 
 void DeviceManager::StartDevices()
 {
-	static_assert(CartridgeRAM::SIZE + VideoRAM::SIZE + ExternalRAM::SIZE + WorkRAM::SIZE + CloneWorkRAM::SIZE +
-				  OAMRAM::SIZE + UnusedRAM::SIZE + IORAM::SIZE + HighRAM::SIZE + InterruptSwitch::SIZE == MEMORY_SIZE);
+	static constexpr auto DEVICE_MEMORY_SIZE = CartridgeRAM::SIZE + VideoRAM::SIZE + ExternalRAM::SIZE + WorkRAM::SIZE + CloneWorkRAM::SIZE +
+		OAMRAM::SIZE + UnusedRAM::SIZE + IORAM::SIZE + HighRAM::SIZE + InterruptSwitch::SIZE;
+
+	static_assert(DEVICE_MEMORY_SIZE == MEMORY_SIZE, "Size of memory is invalid.");
 
 	std::unique_ptr<IMemoryDevice> devices_array[] = {std::make_unique<CartridgeRAM>(*this),
 	 											      std::make_unique<VideoRAM>(*this),
