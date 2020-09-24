@@ -446,6 +446,9 @@
     <ClInclude Include="Core\GPU\Mechanics\PixelFIFO.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Core\GPU\Mechanics\LCDRender.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="BootROM\tetris.gb" />

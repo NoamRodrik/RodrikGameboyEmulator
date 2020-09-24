@@ -27,19 +27,108 @@ namespace Core
 class Fetcher
 {
 public:
-	constexpr Fetcher() = default;
+	constexpr Fetcher(PixelFIFO& fifo) : _fifo{fifo} {}
 	~Fetcher() = default;
 
+private:
+	enum class State
+	{
+		FETCH_TILE = 0x00,
+		READ_DATA_0 = 0x01,
+		READ_DATA_1 = 0x02,
+		WAIT_FOR_FIFO = 0x03
+	};
+
 public:
-	constexpr bool PixelRowLoaded() const
+	constexpr bool LoadedPixelRow() const
 	{
 		return this->_loaded_pixel_row;
 	}
 
+	constexpr bool Execute()
+	{
+		switch (this->_state)
+		{
+			case (State::FETCH_TILE):
+			{
+				return this->FetchTile();
+			}
+
+			case (State::READ_DATA_0):
+			{
+				return this->ReadDataUpper();
+			}
+
+			case (State::READ_DATA_1):
+			{
+				return this->ReadDataLower();
+			}
+
+			case (State::WAIT_FOR_FIFO):
+			{
+				return this->WaitForFIFO();
+			}
+
+			default:
+			{
+				LOG("Got into an impossible state in the fetcher!");
+				return false;
+			}
+		}
+	}
+
 private:
+	/**
+	 * Fetch tile state -> Read data 0 state
+	 */
+	bool FetchTile()
+	{
+		Message("TODO!");
+		this->_state = State::READ_DATA_0;
+		return true;
+	}
+
+	/**
+	 * Read data 0 state -> Read data 1 state
+	 */
+	bool ReadDataUpper()
+	{
+		Message("TODO!");
+		this->_state = State::READ_DATA_1;
+		return true;
+	}
+
+	/**
+	 * Read data 1 state -> Wait for FIFO state
+	 */
+	bool ReadDataLower()
+	{
+		Message("TODO!");
+		this->_state = State::WAIT_FOR_FIFO;
+		return true;
+	}
+
+	/**
+	 * Wait for FIFO state -> Fetch tile state
+	 */
+	bool WaitForFIFO()
+	{
+		if (this->_fifo.NeedsFill())
+		{
+			this->_fifo.Fill(_pixel_row_container);
+			this->_pixel_row_container.Clear();
+			this->_state = State::FETCH_TILE;
+		}
+
+		return true;
+	}
+
+private:
+	State             _state{State::FETCH_TILE};
 	API::address_t    _fetcher_tile{0x00};
 	PixelRowContainer _pixel_row_container{};
 	bool              _loaded_pixel_row{false};
+	PixelFIFO&        _fifo;
 };
 }
 

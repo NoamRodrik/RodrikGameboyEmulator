@@ -10,7 +10,7 @@
 
 namespace Core
 {
-/* Read only! */
+/* Read only (for the game!) */
 class LY : public MemoryRegister<API::data_t>
 {
 public:

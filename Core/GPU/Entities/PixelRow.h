@@ -43,10 +43,24 @@ public:
 		       Processor::GetInstance().GetMemory().Read(address + 1, this->_lower);
 	}
 
+	/**
+	 * Index is zero based!
+	 */
 	constexpr auto GetColorByIndex(uint8_t index) const
 	{
 		SANITY(index <= 7, "Can't get an index higher than bits");
 		return PaletteColor{(this->_upper >> index) & 0x01 | (((this->_lower >> index) & 0x01) << 1)};
+	}
+
+	/**
+	 * Index is zero based!
+	 */
+	constexpr void SetColorToIndex(PaletteColor pixel_color, uint8_t index)
+	{
+		Tools::ClearBit(this->_upper, index);
+		Tools::ClearBit(this->_lower, index);
+		Tools::MutateBitByCondition(static_cast<API::data_t>(pixel_color) & 0x02, this->_upper, index);
+		Tools::MutateBitByCondition(static_cast<API::data_t>(pixel_color) & 0x01, this->_lower, index);
 	}
 
 public:

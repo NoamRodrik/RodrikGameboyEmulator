@@ -204,6 +204,7 @@
     <ClInclude Include="Core\GPU\Entities\PixelRow.h" />
     <ClInclude Include="Core\GPU\Entities\Tile.h" />
     <ClInclude Include="Core\GPU\Mechanics\Fetcher.h" />
+    <ClInclude Include="Core\GPU\Mechanics\LCDRender.h" />
     <ClInclude Include="Core\GPU\Mechanics\PixelFIFO.h" />
     <ClInclude Include="Core\GPU\Registers\BGP.h" />
     <ClInclude Include="Core\GPU\Registers\DMA.h" />

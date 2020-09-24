@@ -7,7 +7,6 @@
 #define __LR35902_PIXEL_FIFO_H__
 
 #include <Core/GPU/Entities/PixelRowContainer.h>
-#include <Core/GPU/Mechanics/Fetcher.h>
 #include <API/Definitions.h>
 #include <Tools/Tools.h>
 
@@ -23,10 +22,63 @@ public:
 	constexpr PixelFIFO() = default;
 	~PixelFIFO() = default;
 
+public:
+	constexpr auto FetchNextPixel()
+	{
+		SANITY(!this->_first_row.IsEmpty() || !this->_second_row.IsEmpty(),
+			   "Both pixel containers in the FIFO are empty!");
+
+		// Fetching from the first row if it isn't empty.
+		if (!this->_first_row.IsEmpty())
+		{
+			const auto FETCHED_PALETTE_COLOR{this->_first_row.GetNextPixel()};
+			
+			// If the second row isn't empty, take the left bit from the second row
+			// and apply it to the right bit of the first row.
+			if (!this->_second_row.IsEmpty())
+			{
+				this->_first_row.SetLastPixel(this->_second_row.GetNextPixel());
+			}
+
+			return FETCHED_PALETTE_COLOR;
+		}
+		else
+		{
+			return this->_second_row.GetNextPixel();
+		}
+	}
+
+	constexpr bool IsEmpty() const
+	{
+		return this->_first_row.IsEmpty() && this->_second_row.IsEmpty();
+	}
+
+	constexpr bool NeedsFill() const
+	{
+		return this->_second_row.IsEmpty();
+	}
+
+	const bool Execute()
+	{
+		Message("TODO!");
+		return true;
+	}
+
+	constexpr void Fill(const PixelRowContainer& pixel_row_container)
+	{
+		if (this->IsEmpty())
+		{
+			this->_first_row = pixel_row_container;
+		}
+		else
+		{
+			this->_second_row = pixel_row_container;
+		}
+	}
+
 private:
 	PixelRowContainer _first_row{};
 	PixelRowContainer _second_row{};
-	Fetcher           _fetcher{};
 };
 }
 

@@ -12,6 +12,7 @@
 #include <Contrib/PixelGameEngine/OLCPixelGameEngine.h>
 #include <API/Memory/Device/IMemoryDeviceAccess.h>
 #include <Core/GPU/Registers/LCDC_Control.h>
+#include <Core/GPU/Mechanics/LCDRender.h>
 #include <Core/GPU/Entities/PaletteMap.h>
 #include <Core/GPU/Entities/Tile.h>
 #include <Core/GPU/Definitions.h>
@@ -72,20 +73,21 @@ private:
 
 	virtual bool OnUserUpdate(float) override
 	{
+		Message("TODO: The background needs to be divided between clocks.");
+		Message("TODO: The canvas isn't supposed to be entirely drawn on each epoch.");
+		/*
 		if (!this->DrawBackground())
 		{
 			MAIN_LOG("Failed drawing background");
 		}
 
-		Message("TODO: The canvas isn't supposed to be entirely drawn on each epoch.");
-		/*
 		if (!this->DrawCanvas())
 		{
 			MAIN_LOG("Failed drawing canvas");
 		}
 		*/
 
-		return true;
+		return this->_render.Execute(std::exchange(this->_clock, 0));
 	}
 
 	bool DrawBackground()
@@ -187,6 +189,7 @@ private:
 	API::IMemoryDeviceAccess&		   _memory;
 	std::array<Tile, API::CANVAS_SIZE> _canvas{};
 	std::unique_ptr<std::thread>       _gpu_thread{nullptr};
+	LCDRender                          _render{};
 	std::size_t                        _clock{0};
 };
 }
