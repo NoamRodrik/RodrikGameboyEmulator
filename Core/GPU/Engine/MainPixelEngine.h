@@ -15,7 +15,6 @@
 #include <Core/GPU/Mechanics/LCDRender.h>
 #include <Core/GPU/Entities/PaletteMap.h>
 #include <Core/Bus/Devices/IORAM.h>
-#include <Core/GPU/Entities/Tile.h>
 #include <Core/GPU/Definitions.h>
 #include <API/Definitions.h>
 #include <Core/GPU/IPPU.h>
@@ -140,11 +139,10 @@ private:
 	}
 
 private:
-	Processor&						   _processor;
-	std::array<Tile, API::CANVAS_SIZE> _canvas{};
-	std::unique_ptr<std::thread>       _gpu_thread{nullptr};
-	LCDRender                          _render{this->_processor.GetMemory(), *this};
-	std::size_t                        _clock{0};
+	Processor&					 _processor;
+	std::unique_ptr<std::thread> _gpu_thread{nullptr};
+	LCDRender                    _render{this->_processor.GetMemory(), *this};
+	std::size_t                  _clock{0};
 };
 }
 

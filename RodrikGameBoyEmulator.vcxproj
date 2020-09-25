@@ -203,7 +203,6 @@
     <ClInclude Include="Core\GPU\IPPU.h" />
     <ClInclude Include="Core\GPU\Entities\PaletteMap.h" />
     <ClInclude Include="Core\GPU\Entities\PixelRow.h" />
-    <ClInclude Include="Core\GPU\Entities\Tile.h" />
     <ClInclude Include="Core\GPU\Mechanics\Fetcher.h" />
     <ClInclude Include="Core\GPU\Mechanics\LCDRender.h" />
     <ClInclude Include="Core\GPU\Mechanics\PixelFIFO.h" />
@@ -329,7 +328,6 @@
     <ClCompile Include="Core\Cartridge\Implementations\ROM_0x00.cpp" />
     <ClCompile Include="Core\CPU\Interrupts\InterruptHandler.cpp" />
     <ClCompile Include="Core\Clock\Clock.cpp" />
-    <ClCompile Include="Core\GPU\Entities\Tile.cpp" />
     <ClCompile Include="Core\Joypad\Joypad.cpp" />
     <ClCompile Include="Core\CPU\Processor.cpp" />
     <ClCompile Include="Core\CPU\Timers\Timer.cpp" />

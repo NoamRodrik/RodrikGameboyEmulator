@@ -116,6 +116,7 @@ private:
 			{
 				// Set if not in vblank
 				this->_fifo.SetY(this->_fifo.GetY() + 1);
+				this->_fetcher.NextRowOffset();
 
 				RET_FALSE_IF_FAIL(this->InterruptLCDModeChange(LCDC_Status::Status::DURING_SEARCH_OAM_RAM), "Failed changing LCDC_Status or interrupting");
 
@@ -168,7 +169,6 @@ private:
 			{
 				this->_fifo.Clear();
 				this->_fetcher.Clear();
-				this->_fetcher.NextRowOffset();
 
 				RET_FALSE_IF_FAIL(this->InterruptLCDModeChange(LCDC_Status::Status::DURING_H_BLANK), "Failed changing LCDC_Status or interrupting");
 				this->_state = State::H_BLANK;
