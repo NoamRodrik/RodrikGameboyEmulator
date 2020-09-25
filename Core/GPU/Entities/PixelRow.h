@@ -7,7 +7,6 @@
 #define __LR35902_PIXEL_ROW_H__
 
 #include <Core/GPU/Definitions.h>
-#include <Core/CPU/Processor.h>
 #include <API/Definitions.h>
 #include <Tools/Tools.h>
 
@@ -29,27 +28,27 @@ public:
 	constexpr PixelRow() = default;
 	constexpr PixelRow(API::data_t upper, API::data_t lower) : _upper{upper},
 															   _lower{lower} {}
-	PixelRow(API::address_t address)
-	{
-		SANITY(this->LoadPixelRow(address), "Failed loading pixel row");
-	}
 
 	~PixelRow() = default;
 
-public:
-	bool LoadPixelRow(API::address_t address)
+	constexpr void SetUpper(API::data_t upper)
 	{
-		return Processor::GetInstance().GetMemory().Read(address, this->_upper) &&
-		       Processor::GetInstance().GetMemory().Read(address + 1, this->_lower);
+		this->_upper = upper;
 	}
 
+	constexpr void SetLower(API::data_t lower)
+	{
+		this->_lower = lower;
+	}
+
+public:
 	/**
 	 * Index is zero based!
 	 */
 	constexpr auto GetColorByIndex(uint8_t index) const
 	{
 		SANITY(index <= 7, "Can't get an index higher than bits");
-		return PaletteColor{(this->_upper >> index) & 0x01 | (((this->_lower >> index) & 0x01) << 1)};
+		return PaletteColor{(static_cast<uint8_t>(Tools::IsBitSet(this->_upper, index)) << 1) | (static_cast<uint8_t>(Tools::IsBitSet(this->_lower, index)))};
 	}
 
 	/**

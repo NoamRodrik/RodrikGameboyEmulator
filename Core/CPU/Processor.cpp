@@ -130,7 +130,6 @@ const size_t Processor::Clock()
 	// Interrupts check + Adjust (Takes 5 cycles for a process to dispatch)
 	clock_cycle += static_cast<size_t>(InterruptHandler::ProcessInterrupts()) * 5;
 
-	
 	if (Processor::IsStopped())
 	{
 		MAIN_LOG_NO_ENTER(" Stopped ");
@@ -144,6 +143,7 @@ const size_t Processor::Clock()
 		// If it's not stopped, update devices.
 		Timer::Clock(clock_cycle);
 		Processor::GetInstance().GetPPU()->Clock(clock_cycle);
+		Processor::GetInstance().GetPPU()->Wait();
 	}
 
 #if _DEBUG

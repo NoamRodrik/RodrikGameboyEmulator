@@ -43,8 +43,10 @@ enum class PixelSource : API::data_t
 	OBP1 = 0x02
 };
 
-static constexpr const char ENGINE_WINDOW_NAME[] = {"RodrikGameBoyEmulator"};
-static constexpr size_t     BACKGROUND_MAP_SIZE = Tools::SlotsToBytes(10);
+static constexpr const char ENGINE_WINDOW_NAME[]{"RodrikGameBoyEmulator"};
+static constexpr size_t     BACKGROUND_MAP_SIZE{Tools::SlotsToBytes(10)};
+static constexpr size_t     SCREEN_WIDTH_PIXELS{160};
+static constexpr size_t     SCREEN_HEIGHT_PIXELS{144};
 
 }
 

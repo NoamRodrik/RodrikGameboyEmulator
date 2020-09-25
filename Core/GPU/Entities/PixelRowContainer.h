@@ -21,14 +21,6 @@ public:
 	~PixelRowContainer() = default;
 
 public:
-	bool LoadPixelRow(const API::address_t address, const PixelSource pixel_source = PixelSource::BGP)
-	{
-		// Reset data.
-		this->Clear();
-		this->_pixel_source = pixel_source;
-		return this->_current_pixel_row.LoadPixelRow(address);
-	}
-
 	constexpr bool LoadPixelRow(const PixelRow& pixel_row, const PixelSource pixel_source = PixelSource::BGP)
 	{
 		// Reset data.
@@ -36,6 +28,16 @@ public:
 		this->_pixel_source = pixel_source;
 		this->_current_pixel_row = pixel_row;
 		return true;
+	}
+
+	constexpr void SetUpper(API::data_t upper)
+	{
+		this->_current_pixel_row.SetUpper(upper);
+	}
+
+	constexpr void SetLower(API::data_t lower)
+	{
+		this->_current_pixel_row.SetLower(lower);
 	}
 
 public:

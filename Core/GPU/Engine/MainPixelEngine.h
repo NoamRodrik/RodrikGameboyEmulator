@@ -42,7 +42,7 @@ public:
 #ifdef FULL_PALETTE_TEST
 		RET_FALSE_IF_FAIL(this->Construct(256, 256, 3, 3), "Failed constructing pixel engine");
 #else
-		RET_FALSE_IF_FAIL(this->Construct(160, 144, 3, 3), "Failed constructing pixel engine");
+		RET_FALSE_IF_FAIL(this->Construct(SCREEN_WIDTH_PIXELS, SCREEN_HEIGHT_PIXELS, 3, 3), "Failed constructing pixel engine");
 #endif
 		this->_gpu_thread.reset(gsl::not_null<std::thread*>{new std::thread{&MainPixelEngine::StartWithoutUpdate, this}});
 #endif
@@ -57,6 +57,11 @@ public:
 	}
 
 private:
+	virtual void Wait() const override
+	{
+		while (PixelGameEngine::bAtomTrigger);
+	}
+
 	virtual bool OnUserCreate() override
 	{
 		// Called once at startup, drawing white pixels.
@@ -86,8 +91,18 @@ private:
 			MAIN_LOG("Failed drawing canvas");
 		}
 		*/
+		Message("TODO!");
+		/*auto lcdc_register{LCDC_Control{}};
+		auto lcdc_control{static_cast<LCDC_Control::Control>(lcdc_register)};
 
+		RET_FALSE_IF_FAIL(lcdc_control.Validate(), "Failed validating lcdc control");
+
+		if (lcdc_control.IsLCDEnabled())
+		{*/
 		return this->_render.Execute(std::exchange(this->_clock, 0));
+		/*}
+
+		return true;*/
 	}
 
 	bool DrawBackground()
@@ -137,7 +152,7 @@ private:
 		return true;
 	}
 
-	bool DrawPixelRow(int32_t x, int32_t y, PixelRow pixel_row)
+	virtual bool DrawPixelRow(int32_t x, int32_t y, PixelRow pixel_row) override
 	{
 		for (int32_t pixel_index = 7; pixel_index >= 0; --pixel_index)
 		{
@@ -148,13 +163,13 @@ private:
 		return true;
 	}
 
-	bool DrawPalette(int32_t x, int32_t y, PaletteColor color)
+	virtual bool DrawPalette(int32_t x, int32_t y, PaletteColor color) override
 	{
 		return DrawPixel(x, y, PaletteMap::ColorOf(color));
 	}
 
-	bool DrawPixel(int32_t x, int32_t y, PixelColor color)
-	{	
+	virtual bool DrawPixel(int32_t x, int32_t y, PixelColor color) override
+	{
 		switch (color)
 		{
 			case (PixelColor::WHITE):
@@ -179,7 +194,7 @@ private:
 
 			default:
 			{
-				LOG("Got an invalid pixel color: %u", static_cast<uint32_t>(color));
+				MAIN_LOG("Got an invalid pixel color: %u", static_cast<uint32_t>(color));
 				return false;
 			}
 		}
@@ -189,7 +204,7 @@ private:
 	API::IMemoryDeviceAccess&		   _memory;
 	std::array<Tile, API::CANVAS_SIZE> _canvas{};
 	std::unique_ptr<std::thread>       _gpu_thread{nullptr};
-	LCDRender                          _render{};
+	LCDRender                          _render{this->_memory, *this};
 	std::size_t                        _clock{0};
 };
 }

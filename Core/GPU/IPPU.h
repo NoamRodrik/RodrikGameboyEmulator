@@ -6,11 +6,12 @@
 #ifndef __CORE_IPPU_H__
 #define __CORE_IPPU_H__
 
+#include <Core/GPU/Entities/IScreenDrawer.h>
 #include <cstddef>
 
 namespace Core
 {
-class IPPU
+class IPPU : public IScreenDrawer
 {
 public:
 	virtual ~IPPU() = default;
@@ -18,6 +19,7 @@ public:
 public:
 	virtual bool Startup() = 0;
 	virtual void Clock(std::size_t clock) = 0;
+	virtual void Wait() const = 0;
 };
 }
 

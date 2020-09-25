@@ -107,6 +107,11 @@ public:
 		static constexpr API::data_t LCD_OPERATION{0x01};
 		API::data_t lcd_operation : 1;
 
+		inline constexpr const bool IsLCDEnabled() const
+		{
+			return this->lcd_operation == LCD_OPERATION;
+		}
+
 		constexpr operator API::data_t() const
 		{
 			const API::data_t DATA = lcd_operation << 7 |
@@ -126,6 +131,7 @@ public:
 				   (window_map_select == WINDOWS_MAP_9800_9BFF || window_map_select == WINDOWS_MAP_9C00_9FFF) &&
 				   (window_enable == WINDOW_OFF || window_enable == WINDOW_ON) &&
 				   (tile_select == TILE_MAP_SELECT_8000_8FFF || tile_select == TILE_MAP_SELECT_8800_97FF) &&
+				   (background_map_select == BACKGROUND_MAP_9800_9BFF || background_map_select == BACKGROUND_MAP_9C00_9FFF) &&
 				   (sprite_size == SPRITE_SIZE_8_BY_8 || sprite_size == SPRITE_SIZE_8_BY_16) &&
 				   (sprite_enable == SPRITE_ON || sprite_enable == SPRITE_OFF) &&
 				   (background_enable == BACKGROUND_OFF || background_enable == BACKGROUND_ON);

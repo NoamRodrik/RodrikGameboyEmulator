@@ -764,6 +764,9 @@ namespace olc
 	public: // Branding
 		std::string sAppName;
 
+	protected:
+		static std::atomic<bool> bAtomTrigger;
+
 	private: // Inner mysterious workings
 		Sprite* pDrawTarget = nullptr;
 		Pixel::Mode	nPixelMode = Pixel::NORMAL;
@@ -820,7 +823,6 @@ namespace olc
 		// If anything sets this flag to false, the engine
 		// "should" shut down gracefully
 		static std::atomic<bool> bAtomActive;
-		static std::atomic<bool> bAtomTrigger;
 
 	public:
 		// "Break In" Functions

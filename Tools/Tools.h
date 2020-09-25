@@ -14,7 +14,7 @@
 #define Message(desc) __pragma(message(__FILE__ "(" MacroStr2(__LINE__) ") : " desc))
 
 #define SERIAL_TRANSFER_PRINT_DEBUG
-#define FULL_PALETTE_TEST
+//#define FULL_PALETTE_TEST
 
 Message("If you want to print, comment this here, otherwise uncomment.");
 //#define NO_PRINT
@@ -61,7 +61,7 @@ Message("If you want to print, comment this here, otherwise uncomment.");
 #define STOP_RUNNING(fmt, ...)				   \
 		do									   \
 		{									   \
-			LOG(fmt, __VA_ARGS__);			   \
+			MAIN_LOG(fmt, __VA_ARGS__);		   \
 			std::abort();					   \
 		} while (false)
 
@@ -70,7 +70,7 @@ Message("If you want to print, comment this here, otherwise uncomment.");
 		{									   \
 			if (!(cond))					   \
 			{								   \
-				LOG(fmt, __VA_ARGS__);         \
+				MAIN_LOG(fmt, __VA_ARGS__);    \
 				return false;				   \
 			}								   \
 		} while (false)

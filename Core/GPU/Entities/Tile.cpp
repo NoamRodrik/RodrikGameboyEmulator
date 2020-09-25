@@ -22,7 +22,7 @@ bool Tile::LoadTile(API::address_t start_address)
 
 	for (auto&& pixel : this->_pixels)
 	{
-		RET_FALSE_IF_FAIL(pixel.LoadPixelRow(start_address++), "Failed loading pixel row %04X", start_address - 1);
+		//RET_FALSE_IF_FAIL(pixel.LoadPixelRow(start_address++), "Failed loading pixel row %04X", start_address - 1);
 	}
 
 	return true;
