@@ -161,7 +161,6 @@ private:
 		// Save this to fill the executed clocks in HBlank mode.
 		this->_executed_clocks += this->_clocks;
 
-		constexpr std::size_t FIFO_PIXEL_CLOCKS{4};
 		while (this->_clocks >= FIFO_PIXEL_CLOCKS)
 		{
 			// If we need an HBlank, we've gotten to the end.
@@ -189,8 +188,6 @@ private:
 	 */
 	constexpr bool InnerExecute()
 	{
-		constexpr std::size_t FIFO_PIXEL_CLOCKS{4};
-		constexpr std::size_t FETCHER_OPERATION_CLOCKS{8};
 		if (this->_clocks == FIFO_PIXEL_CLOCKS)
 		{
 			if (this->_fifo.NeedsFill())
@@ -249,6 +246,7 @@ private:
 
 	const bool NeedsHBlank() const
 	{
+		// -1 since we start counting from 0
 		return (this->_fifo.GetX() - this->_fifo.scx) >= SCREEN_WIDTH_PIXELS - 1;
 	}
 
@@ -257,6 +255,8 @@ public:
 	static constexpr std::size_t PIXEL_RENDER_MAXIMUM_CYCLES{172};
 	static constexpr std::size_t HBLANK_CLOCK_MAXIMUM_CYCLES{204};
 	static constexpr std::size_t VBLANK_LINES_LEN{10};
+	static constexpr std::size_t FIFO_PIXEL_CLOCKS{4};
+	static constexpr std::size_t FETCHER_OPERATION_CLOCKS{8};
 
 private:
 	constexpr bool InterruptLCDModeChange(API::data_t new_mode)

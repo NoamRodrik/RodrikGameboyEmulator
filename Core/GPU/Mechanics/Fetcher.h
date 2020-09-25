@@ -109,7 +109,6 @@ private:
 	 */
 	constexpr bool FetchTile()
 	{
-		constexpr std::size_t FETCH_TILE_CLOCKS{8};
 		if (this->_clocks >= FETCH_TILE_CLOCKS)
 		{
 			auto lcdc_register{LCDC_Control{}};
@@ -131,7 +130,6 @@ private:
 	 */
 	constexpr bool ReadDataUpper()
 	{
-		constexpr std::size_t READ_DATA_0_CLOCKS{8};
 		if (this->_clocks >= READ_DATA_0_CLOCKS)
 		{
 			auto& [container, source] = this->GetUpperTileByte();
@@ -148,7 +146,6 @@ private:
 	 */
 	constexpr bool ReadDataLower()
 	{
-		constexpr std::size_t READ_DATA_1_CLOCKS{8};
 		if (this->_clocks >= READ_DATA_1_CLOCKS)
 		{
 			auto& [container, source] = this->GetLowerTileByte();
@@ -166,7 +163,6 @@ private:
 	 */
 	constexpr bool WaitForFIFO()
 	{
-		constexpr std::size_t WAIT_FOR_FIFO_CLOCKS{8};
 		if (this->_clocks >= WAIT_FOR_FIFO_CLOCKS)
 		{
 			// Will anyways use up clocks
@@ -217,6 +213,10 @@ private:
 	}
 
 private:
+	static constexpr std::size_t READ_DATA_0_CLOCKS{8};
+	static constexpr std::size_t READ_DATA_1_CLOCKS{8};
+	static constexpr std::size_t WAIT_FOR_FIFO_CLOCKS{8};
+	static constexpr std::size_t FETCH_TILE_CLOCKS{8};
 	static constexpr std::size_t TILES_IN_ROW{0x20};
 
 private:
