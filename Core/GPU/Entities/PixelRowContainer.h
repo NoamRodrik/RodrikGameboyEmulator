@@ -21,26 +21,22 @@ public:
 	~PixelRowContainer() = default;
 
 public:
-	constexpr bool LoadPixelRow(const PixelRow& pixel_row, const PixelSource pixel_source = PixelSource::BGP)
-	{
-		// Reset data.
-		this->Clear();
-		this->_pixel_source = pixel_source;
-		this->_current_pixel_row = pixel_row;
-		return true;
-	}
-
-	constexpr void SetUpper(API::data_t upper)
+	constexpr void SetUpper(const API::data_t upper)
 	{
 		this->_current_pixel_row.SetUpper(upper);
 	}
 
-	constexpr void SetLower(API::data_t lower)
+	constexpr void SetLower(const API::data_t lower)
 	{
 		this->_current_pixel_row.SetLower(lower);
 	}
 
-public:
+	constexpr void Initialize(const PixelSource pixel_source = PixelSource::BGP)
+	{
+		this->_pixel_source = pixel_source;
+		this->_pixel_row_index = UNUSED_PIXEL_ROW_INDEX_COUNT;
+	}
+
 	/**
 	 * No pixels left in the pixel container.
 	 */
@@ -54,16 +50,16 @@ public:
 	 */
 	constexpr PaletteColor GetNextPixel()
 	{
-		SANITY(this->_pixel_row_index >= 1 && this->_pixel_row_index <= PixelRow::PIXEL_COUNT,
+		SANITY(this->_pixel_row_index >= UNUSED_PIXEL_ROW_INDEX_COUNT && this->_pixel_row_index <= PixelRow::PIXEL_COUNT,
 			   "Got invalid values for pixel row index");
-		return this->_current_pixel_row.GetColorByIndex(PixelRow::PIXEL_COUNT - this->_pixel_row_index++);
+		this->_pixel_row_index += 1;
+		return this->_current_pixel_row.StealTopColor();
 	}
 
 	constexpr void SetLastPixel(PaletteColor pixel_color)
 	{
-		SANITY(this->_pixel_row_index > 1, "Setting too many pixels!");
-		constexpr std::size_t RIGHT_BIT_INDEX{0};
-		this->_current_pixel_row.SetColorToIndex(pixel_color, RIGHT_BIT_INDEX);
+		this->_pixel_row_index -= 1;
+		this->_current_pixel_row.SetBottomColor(pixel_color);
 	}
 
 	/**
@@ -76,23 +72,23 @@ public:
 
 	constexpr void Clear()
 	{
-		this->ResetPixelRowIndex();
+		this->_pixel_row_index = EMPTY_PIXEL_ROW_INDEX_COUNT;
 		this->_pixel_source = PixelSource::BGP;
 		this->_current_pixel_row = PixelRow{};
 	}
 
-private:
-	/**
-	 * Pixel row index is one based!
-	 */
-	constexpr void ResetPixelRowIndex()
+	constexpr std::size_t EmptyBitsAmount()
 	{
-		this->_pixel_row_index = 1;
+		return PixelRow::PIXEL_COUNT - (EMPTY_PIXEL_ROW_INDEX_COUNT - this->_pixel_row_index);
 	}
 
 private:
+	static constexpr std::size_t UNUSED_PIXEL_ROW_INDEX_COUNT{1};
+	static constexpr std::size_t EMPTY_PIXEL_ROW_INDEX_COUNT{9};
+
+private:
 	PixelRow    _current_pixel_row{};
-	std::size_t _pixel_row_index{1};
+	std::size_t _pixel_row_index{EMPTY_PIXEL_ROW_INDEX_COUNT};
 	PixelSource _pixel_source{PixelSource::BGP};
 };
 }

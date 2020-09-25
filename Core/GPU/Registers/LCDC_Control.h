@@ -69,10 +69,10 @@ public:
 		}
 
 		// TILE_SEL
-		// 0: $8800 - $97FF
-		static constexpr API::data_t TILE_MAP_SELECT_8800_97FF{0x00};
-		// 1: $8000 - $8FFF <- Same area as OBJ
-		static constexpr API::data_t TILE_MAP_SELECT_8000_8FFF{0x01};
+		// 0: $8000 - $8FFF <- Same area as OBJ
+		static constexpr API::data_t TILE_MAP_SELECT_8000_8FFF{0x00};
+		// 1: $8800 - $97FF
+		static constexpr API::data_t TILE_MAP_SELECT_8800_97FF{0x01};
 		API::data_t tile_select : 1;
 
 		constexpr API::address_t GetTileSelectOffset()

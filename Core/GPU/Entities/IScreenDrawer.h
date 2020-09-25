@@ -18,9 +18,11 @@ public:
 	virtual ~IScreenDrawer() = default;
 
 public:
-	virtual bool DrawPixelRow(int32_t x, int32_t y, PixelRow pixel_row) = 0;
 	virtual bool DrawPalette(int32_t x, int32_t y, PaletteColor color) = 0;
 	virtual bool DrawPixel(int32_t x, int32_t y, PixelColor color) = 0;
+
+public:
+	virtual void SetYCoordinate(API::data_t y) = 0;
 };
 }
 

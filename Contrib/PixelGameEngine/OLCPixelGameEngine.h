@@ -232,6 +232,7 @@ int main()
 // O------------------------------------------------------------------------------O
 // | COMPILER CONFIGURATION ODDITIES                                              |
 // O------------------------------------------------------------------------------O
+using namespace std::literals::chrono_literals;
 #define USE_EXPERIMENTAL_FS
 
 #if defined(_WIN32)

@@ -71,7 +71,7 @@ public:
 	}
 
 private:
-	constexpr bool OAMSearch()
+	const bool OAMSearch()
 	{
 		RET_FALSE_IF_FAIL(this->NeedsOAMSearch(), "Running OAM search when not needed!");
 
@@ -80,9 +80,9 @@ private:
 		{
 			this->_initialized = true;
 			this->_fifo.ResetOffset();
+			this->_fetcher.ResetOffset();
 			RET_FALSE_IF_FAIL(this->InterruptLCDModeChange(LCDC_Status::Status::DURING_SEARCH_OAM_RAM),
 							  "Failed changing LCDC_Status or interrupting");
-
 		}
 
 		if (this->_clocks >= OAM_SEARCH_MAXIMUM_CYCLES)
@@ -105,8 +105,6 @@ private:
 
 		if (this->_executed_clocks >= HBLANK_CLOCKS)
 		{
-			this->_fifo.SetY(this->_fifo.y + 1);
-
 			if (this->NeedsVBlank())
 			{
 				RET_FALSE_IF_FAIL(this->InterruptLCDModeChange(LCDC_Status::Status::DURING_V_BLANK), "Failed changing LCDC_Status or interrupting");
@@ -116,15 +114,20 @@ private:
 			}
 			else
 			{
+				// Set if not in vblank
+				this->_fifo.SetY(this->_fifo.GetY() + 1);
+
 				RET_FALSE_IF_FAIL(this->InterruptLCDModeChange(LCDC_Status::Status::DURING_SEARCH_OAM_RAM), "Failed changing LCDC_Status or interrupting");
 
 				// We need to return to OAM search.
 				this->_state = State::OAM_SEARCH;
 			}
 			
-			this->_executed_clocks = 0;
 			this->_clocks = this->_executed_clocks - HBLANK_CLOCKS;
+			this->_executed_clocks = 0;
 		}
+
+		this->_clocks = 0;
 
 		return true;
 	}
@@ -134,12 +137,19 @@ private:
 		constexpr auto VBLANK_CLOCKS{OAM_SEARCH_MAXIMUM_CYCLES + PIXEL_RENDER_MAXIMUM_CYCLES + HBLANK_CLOCK_MAXIMUM_CYCLES};
 		if (this->_clocks >= VBLANK_CLOCKS)
 		{
-			// Going back to the beginning.
-			// FIRST FIFO and then FETCHER!
-			this->_fifo.ResetOffset();
-			this->_fetcher.ResetOffset();
+			this->_lines += 1;
+			this->_fifo.SetY(this->_fifo.GetY() + 1);
 			this->_clocks -= VBLANK_CLOCKS;
-			this->_state = State::OAM_SEARCH;
+
+			if (this->_lines == VBLANK_LINES_LEN)
+			{
+				// Going back to the beginning.
+				// FIRST FIFO and then FETCHER!
+				this->_lines = 0;
+				this->_fifo.ResetOffset();
+				this->_fetcher.ResetOffset();
+				this->_state = State::OAM_SEARCH;
+			}
 		}
 
 		return true;
@@ -150,8 +160,8 @@ private:
 		// Save this to fill the executed clocks in HBlank mode.
 		this->_executed_clocks += this->_clocks;
 
-		constexpr std::size_t PIXEL_FETCH_OPERATION_CLOCKS{2};
-		while (this->_clocks >= PIXEL_FETCH_OPERATION_CLOCKS)
+		constexpr std::size_t FIFO_PIXEL_CLOCKS{4};
+		while (this->_clocks >= FIFO_PIXEL_CLOCKS)
 		{
 			// If we need an HBlank, we've gotten to the end.
 			if (this->NeedsHBlank())
@@ -169,12 +179,7 @@ private:
 			RET_FALSE_IF_FAIL(this->InnerExecute(), "Failed executing fifo and fetcher");
 		}
 
-		// If there's still a clock remaining, use it on FIFO.
-		while (this->_clocks > 0)
-		{
-			RET_FALSE_IF_FAIL(this->_fifo.Execute(), "Failed executing the FIFO!");
-			this->_clocks -= 1;
-		}
+		this->_clocks = 0;
 
 		return true;
 	}
@@ -184,11 +189,30 @@ private:
 	 */
 	constexpr bool InnerExecute()
 	{
-		if (this->_fifo.NeedsFill())
+		constexpr std::size_t FIFO_PIXEL_CLOCKS{4};
+		constexpr std::size_t FETCHER_OPERATION_CLOCKS{8};
+		if (this->_clocks == FIFO_PIXEL_CLOCKS)
 		{
-			RET_FALSE_IF_FAIL(this->_fetcher.Execute(this->_clocks), "Failed executing the fetcher!");
+			if (this->_fifo.NeedsFill())
+			{
+				RET_FALSE_IF_FAIL(this->_fetcher.Execute(FIFO_PIXEL_CLOCKS), "Failed executing the fetcher!");
+				RET_FALSE_IF_FAIL(this->_fifo.Execute(), "Failed executing the FIFO!");
+			}
+			else
+			{
+				RET_FALSE_IF_FAIL(this->_fifo.Execute(), "Failed executing the FIFO!");
+				RET_FALSE_IF_FAIL(this->_fetcher.Execute(FIFO_PIXEL_CLOCKS), "Failed executing the fetcher!");
+			}
+
+			this->_clocks = 0;
+		}
+		else if (this->_fifo.NeedsFill())
+		{
+			RET_FALSE_IF_FAIL(this->_fetcher.Execute(FETCHER_OPERATION_CLOCKS), "Failed executing the fetcher!");
 			RET_FALSE_IF_FAIL(this->_fifo.Execute(), "Failed executing the FIFO #1!");
 			RET_FALSE_IF_FAIL(this->_fifo.Execute(), "Failed executing the FIFO #2!");
+
+			this->_clocks -= FETCHER_OPERATION_CLOCKS;
 		}
 		else
 		{
@@ -196,39 +220,43 @@ private:
 
 			if (this->_fifo.NeedsFill())
 			{
-				RET_FALSE_IF_FAIL(this->_fetcher.Execute(this->_clocks), "Failed executing the fetcher!");
+				RET_FALSE_IF_FAIL(this->_fetcher.Execute(FETCHER_OPERATION_CLOCKS), "Failed executing the fetcher!");
 				RET_FALSE_IF_FAIL(this->_fifo.Execute(), "Failed executing the FIFO #2!");
 			}
 			else
 			{
 				RET_FALSE_IF_FAIL(this->_fifo.Execute(), "Failed executing the FIFO #2!");
-				RET_FALSE_IF_FAIL(this->_fetcher.Execute(this->_clocks), "Failed executing the fetcher!");
+				RET_FALSE_IF_FAIL(this->_fetcher.Execute(FETCHER_OPERATION_CLOCKS), "Failed executing the fetcher!");
 			}
+
+			this->_clocks -= FETCHER_OPERATION_CLOCKS;
 		}
 
 		return true;
 	}
 
 private:
-	constexpr bool NeedsOAMSearch() const
+	const bool NeedsOAMSearch() const
 	{
-		return this->_fifo.x == 0;
+		return this->_fifo.GetX() == 0x00;
 	}
 
 	const bool NeedsVBlank() const
 	{
-		return (this->_fifo.y - this->_fifo.scy) == SCREEN_HEIGHT_PIXELS;
+		// -1 since we start counting from 0
+		return (this->_fifo.GetY() - this->_fifo.scy) >= SCREEN_HEIGHT_PIXELS - 1;
 	}
 
 	const bool NeedsHBlank() const
 	{
-		return (this->_fifo.x - this->_fifo.scx) == SCREEN_WIDTH_PIXELS;
+		return (this->_fifo.GetX() - this->_fifo.scx) >= SCREEN_WIDTH_PIXELS - 1;
 	}
 
 public:
 	static constexpr std::size_t OAM_SEARCH_MAXIMUM_CYCLES{80};
 	static constexpr std::size_t PIXEL_RENDER_MAXIMUM_CYCLES{172};
 	static constexpr std::size_t HBLANK_CLOCK_MAXIMUM_CYCLES{204};
+	static constexpr std::size_t VBLANK_LINES_LEN{10};
 
 private:
 	constexpr bool InterruptLCDModeChange(API::data_t new_mode)
@@ -253,6 +281,7 @@ public:
 	std::size_t				  _clocks{0x00};
 	std::size_t               _executed_clocks{0x00};
 	bool                      _initialized{false};
+	std::size_t               _lines{0x00};
 };
 }
 

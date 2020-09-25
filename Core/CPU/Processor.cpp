@@ -26,7 +26,7 @@ gsl::not_null<IPPU*> Processor::GetPPU()
 {
 	if (this->_ppu.get() == nullptr)
 	{
-		this->_ppu.reset(gsl::not_null<MainPixelEngine*>{new MainPixelEngine{this->_bus}}.get());
+		this->_ppu.reset(gsl::not_null<MainPixelEngine*>{new MainPixelEngine{*this}}.get());
 	}
 
 	return this->_ppu.get();

@@ -42,27 +42,25 @@ public:
 	}
 
 public:
-	/**
-	 * Index is zero based!
-	 */
-	constexpr auto GetColorByIndex(uint8_t index) const
+	constexpr auto StealTopColor()
 	{
-		SANITY(index <= 7, "Can't get an index higher than bits");
-		return PaletteColor{(static_cast<uint8_t>(Tools::IsBitSet(this->_upper, index)) << 1) | (static_cast<uint8_t>(Tools::IsBitSet(this->_lower, index)))};
+		auto color = PaletteColor{(static_cast<uint8_t>(Tools::IsBitSet(this->_upper, TOP_COLOR_INDEX)) << 1) |
+								  (static_cast<uint8_t>(Tools::IsBitSet(this->_lower, TOP_COLOR_INDEX)))};
+		this->_lower <<= 1;
+		this->_upper <<= 1;
+		return color;
 	}
 
-	/**
-	 * Index is zero based!
-	 */
-	constexpr void SetColorToIndex(PaletteColor pixel_color, uint8_t index)
+	constexpr void SetBottomColor(PaletteColor pixel_color)
 	{
-		Tools::ClearBit(this->_upper, index);
-		Tools::ClearBit(this->_lower, index);
-		Tools::MutateBitByCondition(static_cast<API::data_t>(pixel_color) & 0x02, this->_upper, index);
-		Tools::MutateBitByCondition(static_cast<API::data_t>(pixel_color) & 0x01, this->_lower, index);
+		Tools::ClearBit(this->_upper, 0);
+		Tools::ClearBit(this->_lower, 0);
+		Tools::MutateBitByCondition(static_cast<API::data_t>(pixel_color) & 0x02, this->_upper, 0);
+		Tools::MutateBitByCondition(static_cast<API::data_t>(pixel_color) & 0x01, this->_lower, 0);
 	}
 
 public:
+	static constexpr auto TOP_COLOR_INDEX{7};
 	static constexpr auto PIXEL_COUNT{8};
 
 private:

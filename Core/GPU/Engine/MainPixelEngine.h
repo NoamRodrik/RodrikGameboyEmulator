@@ -14,6 +14,7 @@
 #include <Core/GPU/Registers/LCDC_Control.h>
 #include <Core/GPU/Mechanics/LCDRender.h>
 #include <Core/GPU/Entities/PaletteMap.h>
+#include <Core/Bus/Devices/IORAM.h>
 #include <Core/GPU/Entities/Tile.h>
 #include <Core/GPU/Definitions.h>
 #include <API/Definitions.h>
@@ -27,7 +28,7 @@ namespace Core
 class MainPixelEngine : public olc::PixelGameEngine, public IPPU
 {
 public:
-	MainPixelEngine(API::IMemoryDeviceAccess& memory) : _memory{memory}
+	MainPixelEngine(Processor& processor) : _processor{processor}
 	{
 		// Name your application
 		sAppName = ENGINE_WINDOW_NAME;
@@ -59,7 +60,8 @@ public:
 private:
 	virtual void Wait() const override
 	{
-		while (PixelGameEngine::bAtomTrigger);
+		Message("Wait cancelled");
+		//while (PixelGameEngine::bAtomTrigger);
 	}
 
 	virtual bool OnUserCreate() override
@@ -78,19 +80,6 @@ private:
 
 	virtual bool OnUserUpdate(float) override
 	{
-		Message("TODO: The background needs to be divided between clocks.");
-		Message("TODO: The canvas isn't supposed to be entirely drawn on each epoch.");
-		/*
-		if (!this->DrawBackground())
-		{
-			MAIN_LOG("Failed drawing background");
-		}
-
-		if (!this->DrawCanvas())
-		{
-			MAIN_LOG("Failed drawing canvas");
-		}
-		*/
 		Message("TODO!");
 		/*auto lcdc_register{LCDC_Control{}};
 		auto lcdc_control{static_cast<LCDC_Control::Control>(lcdc_register)};
@@ -103,64 +92,6 @@ private:
 		/*}
 
 		return true;*/
-	}
-
-	bool DrawBackground()
-	{
-		auto lcdc_register{LCDC_Control{}};
-		auto lcdc_control{static_cast<LCDC_Control::Control>(lcdc_register)};
-
-		RET_FALSE_IF_FAIL(lcdc_control.Validate(), "Failed validating lcdc control");
-
-		// If the background has been enabled.
-		if (lcdc_control.IsBackgroundEnabled())
-		{
-			static_assert(sizeof(this->_canvas) / sizeof(this->_canvas[0]) >= BACKGROUND_MAP_SIZE, "Canvas is too small for background mapping size");
-
-			// Here we start drawing the background.
-			for (API::address_t canvas_slot = 0; canvas_slot < BACKGROUND_MAP_SIZE; ++canvas_slot)
-			{
-				API::data_t data{0x00};
-				RET_FALSE_IF_FAIL(this->_memory.Read(canvas_slot + lcdc_control.GetBackgroundMapStart(), data), "Failed reading memory for canvas");
-				RET_FALSE_IF_FAIL(canvas_slot < this->_canvas.size(), "Invalid indexing");
-
-				API::address_t address_to_load_tile{lcdc_control.GetTileSelectOffset()};
-				address_to_load_tile += lcdc_control.IsSigned() && data > 127 ? -1 * static_cast<int32_t>(data) : static_cast<int32_t>(data);
-				RET_FALSE_IF_FAIL(this->_canvas[canvas_slot].LoadTile(address_to_load_tile), "Failed to load tile!");
-			}
-		}
-
-		return true;
-	}
-
-	bool DrawCanvas()
-	{
-		for (int32_t current_height = 0; current_height < API::CANVAS_HEIGHT; ++current_height)
-		{
-			for (API::data_t current_pixel_row = 0; current_pixel_row < Tile::HEIGHT_PIXELS; ++current_pixel_row)
-			{
-				for (int32_t current_width = 0; current_width < API::CANVAS_WIDTH; ++current_width)
-				{
-					RET_FALSE_IF_FAIL(current_height * API::CANVAS_HEIGHT + current_width < this->_canvas.size(), "Buffer overflow");
-					RET_FALSE_IF_FAIL(this->DrawPixelRow(current_width * Tile::HEIGHT_PIXELS, current_height * Tile::HEIGHT_PIXELS + current_pixel_row,
-										this->_canvas[current_height * API::CANVAS_HEIGHT + current_width].GetPixelRow(current_pixel_row)),
-						              "Failed to draw pixel row!");
-				}
-			}
-		}
-
-		return true;
-	}
-
-	virtual bool DrawPixelRow(int32_t x, int32_t y, PixelRow pixel_row) override
-	{
-		for (int32_t pixel_index = 7; pixel_index >= 0; --pixel_index)
-		{
-			RET_FALSE_IF_FAIL(this->DrawPalette(x + pixel_index, y, pixel_row.GetColorByIndex(pixel_index)),
-				             "Failed drawing pixel row (%d, %d)", x + pixel_index, y);
-		}
-
-		return true;
 	}
 
 	virtual bool DrawPalette(int32_t x, int32_t y, PaletteColor color) override
@@ -200,11 +131,19 @@ private:
 		}
 	}
 
+	/**
+	 * Setting the value through LY will reset the counter.
+	 */
+	virtual void SetYCoordinate(API::data_t y) override
+	{
+		static_cast<IORAM*>(this->_processor.GetMemory().GetDeviceAtAddress(LY::LY_ADDRESS))->GetMemoryPointer()[LY::LY_ADDRESS - IORAM::START_ADDRESS] = y;
+	}
+
 private:
-	API::IMemoryDeviceAccess&		   _memory;
+	Processor&						   _processor;
 	std::array<Tile, API::CANVAS_SIZE> _canvas{};
 	std::unique_ptr<std::thread>       _gpu_thread{nullptr};
-	LCDRender                          _render{this->_memory, *this};
+	LCDRender                          _render{this->_processor.GetMemory(), *this};
 	std::size_t                        _clock{0};
 };
 }

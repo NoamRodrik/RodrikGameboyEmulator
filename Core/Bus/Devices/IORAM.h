@@ -144,12 +144,20 @@ private:
 
 				break;
 			}
+
+			case (LY::LY_ADDRESS):
+			{
+				// Writing will reset the counter.
+				this->_memory[this->RelativeAddress(absolute_address)] = 0;
+				return true;
+			}
 		}
 
 		return false;
 	}
 
 private:
+	friend class MainPixelEngine;
 	friend class DeviceManager;
 	friend class Timer;
 };

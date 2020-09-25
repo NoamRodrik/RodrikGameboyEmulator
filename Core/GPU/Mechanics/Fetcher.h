@@ -44,8 +44,8 @@ private:
 public:
 	void ResetOffset()
 	{
-		// Reset it to the first line of the SCY.
-		this->_tile_offset = static_cast<API::address_t>((static_cast<double>(this->_fifo.scy) / static_cast<double>(0x08)) * TILES_IN_ROW);
+		// Reset it to the first line of the SCY
+		this->_tile_offset = (this->_fifo.scy - (this->_fifo.scy % PixelRow::PIXEL_COUNT)) * 4;
 	}
 
 	constexpr void Clear()
@@ -54,36 +54,45 @@ public:
 		this->_state = State::FETCH_TILE;
 	}
 
-	constexpr void NextRowOffset()
+	const void NextRowOffset()
 	{
-		// Complete the tile offset until the end of the row.
-		this->_tile_offset += TILES_IN_ROW - (this->_tile_offset % TILES_IN_ROW);
+		// If we completed a row, we jump to the next row offset, otherwise we go back.
+		if (this->_fifo.GetY() % 8 == 0 && this->_fifo.GetY() != 0)
+		{
+			// Complete the tile offset until the end of the row.
+			this->_tile_offset += TILES_IN_ROW - (this->_tile_offset % TILES_IN_ROW);
+		}
+		else
+		{
+			// Go back.
+			this->_tile_offset -= (this->_tile_offset % TILES_IN_ROW);
+		}
 	}
 
-	constexpr bool Execute(std::size_t& io_clocks)
+	constexpr bool Execute(std::size_t clocks)
 	{
-		this->_clocks += io_clocks;
+		this->_clocks += clocks;
 
 		switch (this->_state)
 		{
 			case (State::FETCH_TILE):
 			{
-				return this->FetchTile(io_clocks);
+				return this->FetchTile();
 			}
 
 			case (State::READ_DATA_0):
 			{
-				return this->ReadDataUpper(io_clocks);
+				return this->ReadDataUpper();
 			}
 
 			case (State::READ_DATA_1):
 			{
-				return this->ReadDataLower(io_clocks);
+				return this->ReadDataLower();
 			}
 
 			case (State::WAIT_FOR_FIFO):
 			{
-				return this->WaitForFIFO(io_clocks);
+				return this->WaitForFIFO();
 			}
 
 			default:
@@ -98,9 +107,9 @@ private:
 	/**
 	 * Fetch tile state -> Read data 0 state
 	 */
-	constexpr bool FetchTile(std::size_t& io_clocks)
+	constexpr bool FetchTile()
 	{
-		constexpr std::size_t FETCH_TILE_CLOCKS{2};
+		constexpr std::size_t FETCH_TILE_CLOCKS{8};
 		if (this->_clocks >= FETCH_TILE_CLOCKS)
 		{
 			auto lcdc_register{LCDC_Control{}};
@@ -109,7 +118,7 @@ private:
 			RET_FALSE_IF_FAIL(this->_fifo.GetMemory().Read(lcdc_control.GetBackgroundMapStart() + this->_tile_offset, this->_tile_index),
 							  "Failed reading memory for canvas");
 
-			io_clocks -= FETCH_TILE_CLOCKS;
+			this->_tile_offset += 1;
 			this->_clocks -= FETCH_TILE_CLOCKS;
 			this->_state = State::READ_DATA_0;
 		}
@@ -120,14 +129,13 @@ private:
 	/**
 	 * Read data 0 state -> Read data 1 state
 	 */
-	constexpr bool ReadDataUpper(std::size_t& io_clocks)
+	constexpr bool ReadDataUpper()
 	{
-		constexpr std::size_t READ_DATA_0_CLOCKS{2};
+		constexpr std::size_t READ_DATA_0_CLOCKS{8};
 		if (this->_clocks >= READ_DATA_0_CLOCKS)
 		{
-			this->_pixel_row_container.SetUpper(this->GetTileByte());
-			this->_tile_index += 1;
-			io_clocks -= READ_DATA_0_CLOCKS;
+			auto& [container, source] = this->GetUpperTileByte();
+			this->_pixel_row_container.SetUpper(container);
 			this->_clocks -= READ_DATA_0_CLOCKS;
 			this->_state = State::READ_DATA_1;
 		}
@@ -138,13 +146,14 @@ private:
 	/**
 	 * Read data 1 state -> Wait for FIFO state
 	 */
-	constexpr bool ReadDataLower(std::size_t& io_clocks)
+	constexpr bool ReadDataLower()
 	{
-		constexpr std::size_t READ_DATA_1_CLOCKS{2};
+		constexpr std::size_t READ_DATA_1_CLOCKS{8};
 		if (this->_clocks >= READ_DATA_1_CLOCKS)
 		{
-			this->_pixel_row_container.SetLower(this->GetTileByte(true));
-			io_clocks -= READ_DATA_1_CLOCKS;
+			auto& [container, source] = this->GetLowerTileByte();
+			this->_pixel_row_container.SetLower(container);
+			this->_pixel_row_container.Initialize(source);
 			this->_clocks -= READ_DATA_1_CLOCKS;
 			this->_state = State::WAIT_FOR_FIFO;
 		}
@@ -155,45 +164,56 @@ private:
 	/**
 	 * Wait for FIFO state -> Fetch tile state
 	 */
-	constexpr bool WaitForFIFO(std::size_t& io_clocks)
+	constexpr bool WaitForFIFO()
 	{
-		constexpr std::size_t WAIT_FOR_FIFO_CLOCKS{2};
+		constexpr std::size_t WAIT_FOR_FIFO_CLOCKS{8};
 		if (this->_clocks >= WAIT_FOR_FIFO_CLOCKS)
 		{
+			// Will anyways use up clocks
+			this->_clocks -= WAIT_FOR_FIFO_CLOCKS;
+
 			if (this->_fifo.NeedsFill())
 			{
-				this->_fifo.Fill(_pixel_row_container);
+				this->_fifo.Fill(this->_pixel_row_container);
 				this->_pixel_row_container.Clear();
-				io_clocks -= WAIT_FOR_FIFO_CLOCKS;
-				this->_clocks -= WAIT_FOR_FIFO_CLOCKS;
 				this->_state = State::FETCH_TILE;
 			}
 		}
-		
 
 		return true;
 	}
 
 private:
-	constexpr API::data_t GetTileByte(bool lower = false)
+	std::pair<API::data_t, PixelSource> GetUpperTileByte()
+	{
+		return this->GetTileInformation(false);
+	}
+
+	std::pair<API::data_t, PixelSource> GetLowerTileByte()
+	{
+		return this->GetTileInformation(true);
+	}
+
+	std::pair<API::data_t, PixelSource> GetTileInformation(bool lower = false)
 	{
 		auto lcdc_register{LCDC_Control{}};
 		auto lcdc_control{static_cast<LCDC_Control::Control>(lcdc_register)};
-		RET_FALSE_IF_FAIL(lcdc_control.Validate(), "Failed validating lcdc control");
+		SANITY(lcdc_control.Validate(), "Failed validating lcdc control");
 
 		// Fetching address of the tile.
 		constexpr API::address_t SIZE_OF_TILE{16};
-		const API::address_t TILE_INDEX_OFFSET{(lcdc_control.IsSigned() && this->_tile_index > 127) ? static_cast<API::data_t>(-1 * this->_tile_index) : this->_tile_index};
+		const int TILE_INDEX_OFFSET{(lcdc_control.IsSigned() && this->_tile_index > 127) ? -1 * this->_tile_index : this->_tile_index};
 
 		// Setting pixel row's upper to the fetched tile byte.
 		API::data_t tile_byte{0x00};
-		
+
 		// Fetching the tile according to the Y axis * 2 (2 bytes for each row, thus in jumps of 2)
 		SANITY(this->_fifo.GetMemory().Read(lcdc_control.GetTileSelectOffset() + SIZE_OF_TILE * TILE_INDEX_OFFSET +
-										    static_cast<API::data_t>(lower) +
-			   2*(this->_fifo.y % PixelRow::PIXEL_COUNT), tile_byte), "Failed reading tile byte!");
+										    2*(this->_fifo.GetY() % PixelRow::PIXEL_COUNT) +
+											static_cast<API::data_t>(lower), tile_byte), "Failed reading tile byte!");
 
-		return tile_byte;
+		Message("TODO! Make this customizable");
+		return {tile_byte, PixelSource::BGP};
 	}
 
 private:
