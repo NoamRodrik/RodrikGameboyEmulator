@@ -12,7 +12,7 @@ namespace Core
 {
 inline const auto HIGH_LOW_PIN_NUMBER_INTERRUPT = []()
 {
-	return false;
+	return true;
 };
 } // Core
 

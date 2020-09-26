@@ -12,7 +12,7 @@ namespace Core
 {
 inline const auto VBLANK_INTERRUPT = []()
 {
-	return false;
+	return true;
 };
 } // Core
 

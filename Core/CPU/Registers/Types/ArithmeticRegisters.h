@@ -19,37 +19,37 @@ public:
 
 	ArithmeticRegister& operator>>=(int amount)
 	{
-		this->m_data >>= amount;
+		this->_data >>= amount;
 		return *this;
 	}
 
 	ArithmeticRegister& operator<<=(int amount)
 	{
-		this->m_data <<= amount;
+		this->_data <<= amount;
 		return *this;
 	}
 
 	ArithmeticRegister& operator&=(API::data_t data)
 	{
-		this->m_data &= data;
+		this->_data &= data;
 		return *this;
 	}
 
 	ArithmeticRegister& operator|=(API::data_t data)
 	{
-		this->m_data |= data;
+		this->_data |= data;
 		return *this;
 	}
 
 	ArithmeticRegister& operator=(API::data_t data)
 	{
-		this->m_data = data;
+		this->_data = data;
 		return *this;
 	}
 
 	auto operator ~()
 	{
-		return ~this->m_data;
+		return ~this->_data;
 	}
 
 	void operator<<=(API::data_t) const = delete;

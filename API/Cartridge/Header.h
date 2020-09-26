@@ -99,7 +99,7 @@ public:
 	};
 
 public:
-	CartridgeHeader(IMemoryDeviceAccess& device_access) : m_device_access(device_access) {}
+	CartridgeHeader(IMemoryDeviceAccess& device_access) : _device_access(device_access) {}
 	~CartridgeHeader() = default;
 
 public:
@@ -126,7 +126,7 @@ private:
 	inline const data_t Fetch() const
 	{
 		data_t data{0};
-		SANITY(this->m_device_access.Read(OFFSET, data),
+		SANITY(this->_device_access.Read(OFFSET, data),
 			   "Failed to read from device access");
 		return data;
 	}
@@ -137,7 +137,7 @@ private:
 	static constexpr std::size_t RAM_SIZE_OFFSET{0x0149};
 
 private:
-	IMemoryDeviceAccess& m_device_access;
+	IMemoryDeviceAccess& _device_access;
 };
 }
 

@@ -41,8 +41,8 @@ private:
 	static constexpr API::address_t ROM_UPPER_BANK_NUMBER_END = 0x5FFF;
 
 private:
-	API::Memory<MBC_SIZE>				   m_rom_memory;
-	API::data_t							   m_selected_rom_bank{0};
+	API::Memory<MBC_SIZE>				   _rom_memory;
+	API::data_t							   _selected_rom_bank{0};
 
 private:
 	friend class MemoryBankController_2;

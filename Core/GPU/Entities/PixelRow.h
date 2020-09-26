@@ -7,7 +7,6 @@
 #define __LR35902_PIXEL_ROW_H__
 
 #include <Core/GPU/Definitions.h>
-#include <Core/CPU/Processor.h>
 #include <API/Definitions.h>
 #include <Tools/Tools.h>
 
@@ -27,31 +26,46 @@ class PixelRow
 {
 public:
 	constexpr PixelRow() = default;
-	constexpr PixelRow(API::data_t upper, API::data_t lower) : m_upper{upper},
-															   m_lower{lower} {}
-	PixelRow(API::address_t address)
-	{
-		SANITY(this->LoadPixelRow(address), "Failed loading pixel row");
-	}
+	constexpr PixelRow(API::data_t upper, API::data_t lower) : _upper{upper},
+															   _lower{lower} {}
 
 	~PixelRow() = default;
 
-public:
-	bool LoadPixelRow(API::address_t address)
+	constexpr void SetUpper(API::data_t upper)
 	{
-		return Processor::GetInstance().GetMemory().Read(address, m_upper) &&
-		       Processor::GetInstance().GetMemory().Read(address + 1, m_lower);
+		this->_upper = upper;
 	}
 
-	constexpr auto GetColorByIndex(uint8_t index) const
+	constexpr void SetLower(API::data_t lower)
 	{
-		SANITY(index <= 7, "Can't get an index higher than bits");
-		return PaletteColor{(m_upper >> index) & 0x01 | (((m_lower >> index) & 0x01) << 1)};
+		this->_lower = lower;
 	}
+
+public:
+	constexpr auto StealTopColor()
+	{
+		auto color = PaletteColor{(static_cast<uint8_t>(Tools::IsBitSet(this->_upper, TOP_COLOR_INDEX)) << 1) |
+								  (static_cast<uint8_t>(Tools::IsBitSet(this->_lower, TOP_COLOR_INDEX)))};
+		this->_lower <<= 1;
+		this->_upper <<= 1;
+		return color;
+	}
+
+	constexpr void SetBottomColor(PaletteColor pixel_color)
+	{
+		Tools::ClearBit(this->_upper, 0);
+		Tools::ClearBit(this->_lower, 0);
+		Tools::MutateBitByCondition(static_cast<API::data_t>(pixel_color) & 0x02, this->_upper, 0);
+		Tools::MutateBitByCondition(static_cast<API::data_t>(pixel_color) & 0x01, this->_lower, 0);
+	}
+
+public:
+	static constexpr auto TOP_COLOR_INDEX{7};
+	static constexpr auto PIXEL_COUNT{8};
 
 private:
-	API::data_t m_upper{0};
-	API::data_t m_lower{0};
+	API::data_t _upper{0};
+	API::data_t _lower{0};
 };
 }
 

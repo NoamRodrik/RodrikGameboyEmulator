@@ -16,10 +16,10 @@ namespace Core
 class Instruction
 {
 public:
-	inline bool Execute() const { return this->m_func(); }
+	inline bool Execute() const { return this->_func(); }
 
 public:
-	const std::function<bool()> m_func{nullptr};
+	const std::function<bool()> _func{nullptr};
 	const uint8_t				bytes_size{0};
 	const uint8_t				cycles_amount{0};
 	const uint8_t				extended_cycles_amount{cycles_amount};

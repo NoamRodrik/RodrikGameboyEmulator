@@ -23,7 +23,7 @@ private:
 		void Lower(size_t amount);
 
 	private:
-		size_t m_time{0};
+		size_t _time{0};
 	};
 public:
 	static void Clock(size_t cycles);
@@ -48,9 +48,9 @@ private:
 	static constexpr auto TIMER_THRESHOLD{16};
 
 private:
-	TimerObject m_machine{};
-	TimerObject m_counter{};
-	TimerObject m_divider{};
+	TimerObject _machine{};
+	TimerObject _counter{};
+	TimerObject _divider{};
 };
 } // Core
 

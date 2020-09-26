@@ -32,17 +32,17 @@ public:
 protected:
 	bool RegisterDevice(gsl::unique_ptr<API::IMemoryDevice> new_device)
 	{
-		SANITY(this->m_last_added_device < this->m_devices.size(), "Added too many elements, overflow!");
+		SANITY(this->_last_added_device < this->_devices.size(), "Added too many elements, overflow!");
 
-		for (size_t device_index = 0; device_index < this->m_last_added_device; ++device_index)
+		for (size_t device_index = 0; device_index < this->_last_added_device; ++device_index)
 		{
-			SANITY(this->m_devices[device_index] != nullptr, "Found a null device?");
-			RET_FALSE_IF_FAIL(!MemoryOverlap(this->m_devices[device_index].get(), new_device.get()),
+			SANITY(this->_devices[device_index] != nullptr, "Found a null device?");
+			RET_FALSE_IF_FAIL(!MemoryOverlap(this->_devices[device_index].get(), new_device.get()),
 				"Two devices are sharing the same memory addresses, error!");
 		}
 
 		// Adding to the pool of devices.
-		this->m_devices[this->m_last_added_device++] = std::move(new_device);
+		this->_devices[this->_last_added_device++] = std::move(new_device);
 		return true;
 	}
 
@@ -50,9 +50,9 @@ private:
 	void StartDevices();
 
 protected:
-	std::array<std::unique_ptr<API::IMemoryDevice>, API::DEVICES_ON_BUS> m_devices{};
-	std::unique_ptr<API::IMemoryBankController> m_mbc_controller{nullptr};
-	uint32_t m_last_added_device{0};
+	std::array<std::unique_ptr<API::IMemoryDevice>, API::DEVICES_ON_BUS> _devices{};
+	std::unique_ptr<API::IMemoryBankController> _mbc_controller{nullptr};
+	uint32_t _last_added_device{0};
 };
 } // Core
 

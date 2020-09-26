@@ -10,7 +10,7 @@
 
 namespace Core
 {
-/* Read only! */
+/* Read only (for the game!) */
 class LY : public MemoryRegister<API::data_t>
 {
 public:
@@ -23,7 +23,7 @@ public:
 
 public:
 	static constexpr API::address_t LY_ADDRESS{0xFF44};
-	static constexpr API::address_t LY_DEFAULT_VALUE{0x90};
+	static constexpr API::address_t LY_DEFAULT_VALUE{0x00};
 };
 }
 

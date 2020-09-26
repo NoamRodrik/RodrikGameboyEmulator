@@ -8,6 +8,7 @@
 #include <Core/CPU/Instructions/General/LookupTable.h>
 #include <Core/CPU/Instructions/Prefix/LookupTable.h>
 #include <Core/CPU/Interrupts/InterruptHandler.h>
+#include <Core/GPU/Engine/MainPixelEngine.h>
 #include <Core/CPU/Instructions/Shortcuts.h>
 #include <Core/CPU/Timers/Timer.h>
 #include <Core/CPU/Processor.h>
@@ -21,6 +22,16 @@ using namespace API;
 
 namespace Core
 {
+gsl::not_null<IPPU*> Processor::GetPPU()
+{
+	if (this->_ppu.get() == nullptr)
+	{
+		this->_ppu.reset(gsl::not_null<MainPixelEngine*>{new MainPixelEngine{*this}}.get());
+	}
+
+	return this->_ppu.get();
+}
+
 #if _DEBUG
 void Processor::PrintInstruction(const Instruction& instruction_to_print)
 {
@@ -70,8 +81,10 @@ const size_t Processor::Clock()
 
 	if (!Processor::IsHalted())
 	{
-		// The CPU will be unhalted on any triggered interrupt
-		const auto& command_to_execute = Processor::IsPrefix() ?
+		do
+		{
+			// The CPU will be unhalted on any triggered interrupt
+			const auto command_to_execute = Processor::IsPrefix() ?
 							PREFIX_LOOKUP_TABLE[READ_DATA_AT(PC_const)] :
 							GENERAL_LOOKUP_TABLE[READ_DATA_AT(PC_const)];
 
@@ -81,32 +94,33 @@ const size_t Processor::Clock()
 #endif
 #endif
 
-		// If prefix is enabled, we need to disable it.
-		Processor::ClearPrefixCommand();
+			// If prefix is enabled, we need to disable it.
+			Processor::ClearPrefixCommand();
 
-		// If the command wants to forward the PC, we need to add the bytes size.
-		if (command_to_execute.Execute())
-		{
-			// Change the PC!
-			PC += command_to_execute.bytes_size;
-
-			if (command_to_execute.extended_cycles_amount != 0)
+			// If the command wants to forward the PC, we need to add the bytes size.
+			if (command_to_execute.Execute())
 			{
-				// The operation didn't successfully happen.
-				clock_cycle += command_to_execute.extended_cycles_amount;
+				// Change the PC!
+				PC += command_to_execute.bytes_size;
+
+				if (command_to_execute.extended_cycles_amount != 0)
+				{
+					// The operation didn't successfully happen.
+					clock_cycle += command_to_execute.extended_cycles_amount;
+				}
+				else
+				{
+					// This was not a branching command, so it did successfully happen.
+					clock_cycle += command_to_execute.cycles_amount;
+				}
 			}
 			else
 			{
-				// This was not a branching command, so it did successfully happen.
+				// The operation did successfully happen.
+				// The compute amount is the amount of cycles the command needs.
 				clock_cycle += command_to_execute.cycles_amount;
 			}
-		}
-		else
-		{
-			// The operation did successfully happen.
-			// The compute amount is the amount of cycles the command needs.
-			clock_cycle += command_to_execute.cycles_amount;
-		}
+		} while (Processor::IsPrefix());
 	}
 	else
 	{
@@ -119,7 +133,9 @@ const size_t Processor::Clock()
 	// Interrupts check + Adjust (Takes 5 cycles for a process to dispatch)
 	clock_cycle += static_cast<size_t>(InterruptHandler::ProcessInterrupts()) * 5;
 
-	
+	// Clock adjust
+	clock_cycle *= 4;
+
 	if (Processor::IsStopped())
 	{
 		MAIN_LOG_NO_ENTER(" Stopped ");
@@ -127,10 +143,8 @@ const size_t Processor::Clock()
 	}
 	else
 	{
-		// Clock adjust
-		clock_cycle *= 4;
-
 		// If it's not stopped, update devices.
+		Processor::GetInstance().GetPPU()->Clock(clock_cycle);
 		Timer::Clock(clock_cycle);
 	}
 
@@ -180,6 +194,6 @@ void Processor::LoadGame()
 	}
 
 	std::shared_ptr<Tools::Loader> game_loader{std::make_shared<Tools::Loader>((*directory_iterator).path().string())};
-	this->m_bus.SetMemoryBankController(std::static_pointer_cast<API::ILoader>(game_loader));
+	this->_bus.SetMemoryBankController(std::static_pointer_cast<API::ILoader>(game_loader));
 }
 } // Core

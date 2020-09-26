@@ -51,9 +51,6 @@
     <ClCompile Include="Core\Cartridge\Implementations\MBC1_0x02.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Core\GPU\Entities\Tile.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tools\Tools.h">
@@ -120,9 +117,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Core\Bus\Devices\UnusedRAM.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Bus\Devices\VideoRAM.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Core\Bus\Devices\WorkRAM.h">
@@ -416,9 +410,6 @@
     <ClInclude Include="Core\GPU\Registers\WY.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Core\GPU\Entities\Tile.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Core\GPU\Definitions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -426,6 +417,30 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Core\GPU\Entities\PaletteMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\GPU\IPPU.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\GPU\Entities\PixelRowContainer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Bus\RAMDevice.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Bus\IRAMDevice.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\GPU\Mechanics\Fetcher.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\GPU\Mechanics\PixelFIFO.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\GPU\Mechanics\LCDRender.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Bus\Devices\VideoRAM.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

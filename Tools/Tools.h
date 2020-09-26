@@ -13,11 +13,10 @@
 #define MacroStr2(x)  MacroStr(x)
 #define Message(desc) __pragma(message(__FILE__ "(" MacroStr2(__LINE__) ") : " desc))
 
-#define TESTING
-//#define DONT_WAIT
+#define SERIAL_TRANSFER_PRINT_DEBUG
 
 Message("If you want to print, comment this here, otherwise uncomment.");
-//#define NO_PRINT
+#define NO_PRINT
 #define NO_PRINT_FLAGS
 #define NO_PRINT_REGISTERS
 #define NO_PRINT_IF_AND_IE
@@ -61,7 +60,7 @@ Message("If you want to print, comment this here, otherwise uncomment.");
 #define STOP_RUNNING(fmt, ...)				   \
 		do									   \
 		{									   \
-			LOG(fmt, __VA_ARGS__);			   \
+			MAIN_LOG(fmt, __VA_ARGS__);		   \
 			std::abort();					   \
 		} while (false)
 
@@ -70,43 +69,21 @@ Message("If you want to print, comment this here, otherwise uncomment.");
 		{									   \
 			if (!(cond))					   \
 			{								   \
-				LOG(fmt, __VA_ARGS__);         \
+				MAIN_LOG(fmt, __VA_ARGS__);    \
 				return false;				   \
 			}								   \
 		} while (false)
 
-
-#if _DEBUG
-#ifdef _MSC_BUILD
-#include <Windows.h>
-#include <iostream>
-#include <sstream>
-
-#define VISUAL_STUDIO_OUTPUT_VIEW_PRINT(character) \
-		do{										   \
-			std::wostringstream os_{};			   \
-			os_ << static_cast<char>(character);   \
-			OutputDebugStringW(os_.str().c_str()); \
-		} while(false)
-
-#define SECONDARY_OUTPUT(character) VISUAL_STUDIO_OUTPUT_VIEW_PRINT(character)
-#else
-#define SECONDARY_OUTPUT(character) LOG("%c", character)
-#endif
-#else
-#define SECONDARY_OUTPUT(character) MAIN_LOG_NO_ENTER("%c", character)
-#endif
-
 namespace Tools
 {
-static constexpr size_t pow(size_t base, size_t power)
+static constexpr size_t Pow(size_t base, size_t power)
 {
-	return power == 0 ? 1 : pow(base, power - 1) * base;
+	return power == 0 ? 1 : Pow(base, power - 1) * base;
 }
 
 static constexpr size_t SlotsToBytes(const uint32_t slots)
 {
-	return pow(2, slots);
+	return Pow(2, slots);
 }
 
 static constexpr size_t MebibytesToBytes(size_t mebibytes)

@@ -29,19 +29,21 @@ DeviceManager::DeviceManager()
 
 void DeviceManager::SetMemoryBankController(std::unique_ptr<API::IMemoryBankController> memory_bank_controller)
 {
-	this->m_mbc_controller = std::move(memory_bank_controller);
+	this->_mbc_controller = std::move(memory_bank_controller);
 
 	// Loading cartridge.
-	if (this->m_mbc_controller != nullptr)
+	if (this->_mbc_controller != nullptr)
 	{
-		this->m_mbc_controller->LoadMBC();
+		this->_mbc_controller->LoadMBC();
 	}
 }
 
 void DeviceManager::StartDevices()
 {
-	static_assert(CartridgeRAM::SIZE + VideoRAM::SIZE + ExternalRAM::SIZE + WorkRAM::SIZE + CloneWorkRAM::SIZE +
-				  OAMRAM::SIZE + UnusedRAM::SIZE + IORAM::SIZE + HighRAM::SIZE + InterruptSwitch::SIZE == MEMORY_SIZE);
+	static constexpr auto DEVICE_MEMORY_SIZE = CartridgeRAM::SIZE + VideoRAM::SIZE + ExternalRAM::SIZE + WorkRAM::SIZE + CloneWorkRAM::SIZE +
+		OAMRAM::SIZE + UnusedRAM::SIZE + IORAM::SIZE + HighRAM::SIZE + InterruptSwitch::SIZE;
+
+	static_assert(DEVICE_MEMORY_SIZE == MEMORY_SIZE, "Size of memory is invalid.");
 
 	std::unique_ptr<IMemoryDevice> devices_array[] = {std::make_unique<CartridgeRAM>(*this),
 	 											      std::make_unique<VideoRAM>(*this),
@@ -63,14 +65,14 @@ void DeviceManager::StartDevices()
 bool DeviceManager::Write(const address_t absolute_address, const API::data_t data)
 {
 	// If the MBC Controller decides to intercept, no need to call devices.
-	if (this->m_mbc_controller != nullptr &&
-		this->m_mbc_controller->Write(absolute_address, data))
+	if (this->_mbc_controller != nullptr &&
+		this->_mbc_controller->Write(absolute_address, data))
 	{
 		// Intercepted.
 		return true;
 	}
 
-	for (auto&& device : this->m_devices)
+	for (auto&& device : this->_devices)
 	{
 		if (AddressInRange(absolute_address, device.get()))
 		{
@@ -85,14 +87,14 @@ bool DeviceManager::Write(const address_t absolute_address, const API::data_t da
 bool DeviceManager::Read(const address_t absolute_address, API::data_t& result) const
 {
 	// If the MBC Controller decides to overwrite, no need to call devices.
-	if (this->m_mbc_controller != nullptr &&
-		this->m_mbc_controller->Read(absolute_address, result))
+	if (this->_mbc_controller != nullptr &&
+		this->_mbc_controller->Read(absolute_address, result))
 	{
 		// Over-written.
 		return true;
 	}
 
-	for (auto&& device : this->m_devices)
+	for (auto&& device : this->_devices)
 	{
 		if (AddressInRange(absolute_address, device.get()))
 		{
@@ -106,7 +108,7 @@ bool DeviceManager::Read(const address_t absolute_address, API::data_t& result) 
 
 IMemoryDevice* DeviceManager::GetDeviceAtAddress(const address_t absolute_address)
 {
-	for (auto&& device : this->m_devices)
+	for (auto&& device : this->_devices)
 	{
 		if (AddressInRange(absolute_address, device.get()))
 		{

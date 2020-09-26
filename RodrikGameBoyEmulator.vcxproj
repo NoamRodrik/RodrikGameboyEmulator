@@ -127,6 +127,7 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <CompileAs>CompileAsCpp</CompileAs>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -176,6 +177,7 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <CompileAs>CompileAsCpp</CompileAs>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -192,11 +194,18 @@
     <ClInclude Include="API\Registers\RegisterPair.h" />
     <ClInclude Include="Core\Bus\Bus.h" />
     <ClInclude Include="Core\Bus\DeviceManager\DeviceManager.h" />
+    <ClInclude Include="Core\Bus\Devices\VideoRAM.h" />
+    <ClInclude Include="Core\Bus\IRAMDevice.h" />
+    <ClInclude Include="Core\Bus\RAMDevice.h" />
     <ClInclude Include="Core\Cartridge\Implementations\MBC1_0x02.h" />
     <ClInclude Include="Core\GPU\Definitions.h" />
+    <ClInclude Include="Core\GPU\Entities\PixelRowContainer.h" />
+    <ClInclude Include="Core\GPU\IPPU.h" />
     <ClInclude Include="Core\GPU\Entities\PaletteMap.h" />
     <ClInclude Include="Core\GPU\Entities\PixelRow.h" />
-    <ClInclude Include="Core\GPU\Entities\Tile.h" />
+    <ClInclude Include="Core\GPU\Mechanics\Fetcher.h" />
+    <ClInclude Include="Core\GPU\Mechanics\LCDRender.h" />
+    <ClInclude Include="Core\GPU\Mechanics\PixelFIFO.h" />
     <ClInclude Include="Core\GPU\Registers\BGP.h" />
     <ClInclude Include="Core\GPU\Registers\DMA.h" />
     <ClInclude Include="Core\GPU\Registers\LCDC_Control.h" />
@@ -233,7 +242,6 @@
     <ClInclude Include="Core\Bus\Devices\IORAM.h" />
     <ClInclude Include="Core\Bus\Devices\OAMRAM.h" />
     <ClInclude Include="Core\Bus\Devices\UnusedRAM.h" />
-    <ClInclude Include="Core\Bus\Devices\VideoRAM.h" />
     <ClInclude Include="Core\Bus\Devices\WorkRAM.h" />
     <ClInclude Include="API\Definitions.h" />
     <ClInclude Include="API\Memory\Device\IMemoryDeviceAccess.h" />
@@ -319,7 +327,6 @@
     <ClCompile Include="Core\Cartridge\Implementations\ROM_0x00.cpp" />
     <ClCompile Include="Core\CPU\Interrupts\InterruptHandler.cpp" />
     <ClCompile Include="Core\Clock\Clock.cpp" />
-    <ClCompile Include="Core\GPU\Entities\Tile.cpp" />
     <ClCompile Include="Core\Joypad\Joypad.cpp" />
     <ClCompile Include="Core\CPU\Processor.cpp" />
     <ClCompile Include="Core\CPU\Timers\Timer.cpp" />
