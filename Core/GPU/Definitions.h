@@ -40,7 +40,8 @@ enum class PixelSource : API::data_t
 {
 	BGP = 0x00,
 	OBP0 = 0x01,
-	OBP1 = 0x02
+	OBP1 = 0x02,
+	WIN = 0x03
 };
 
 static constexpr const char ENGINE_WINDOW_NAME[]{"RodrikGameBoyEmulator"};

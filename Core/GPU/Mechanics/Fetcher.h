@@ -11,6 +11,8 @@
 #include <Core/GPU/Mechanics/PixelFIFO.h>
 #include <Core/Bus/Devices/VideoRAM.h>
 #include <Core/GPU/Registers/SCY.h>
+#include <Core/GPU/Registers/WY.h>
+#include <Core/GPU/Registers/WX.h>
 #include <API/Definitions.h>
 #include <Tools/Tools.h>
 
@@ -82,7 +84,26 @@ public:
 				auto lcdc_control{static_cast<LCDC_Control::Control>(lcdc_control_register)};
 				RET_FALSE_IF_FAIL(lcdc_control.Validate(), "Invalid lcdc control");
 
-				if (lcdc_control.background_enable == lcdc_control.BACKGROUND_ON)
+				if (lcdc_control.IsWindowEnabled())
+				{
+					WY wy{};
+					WX wx{};
+
+					if (this->_fifo.GetY() >= static_cast<API::data_t>(wy) &&
+						this->_fifo.GetX() >= static_cast<API::data_t>(wx))
+					{
+						// If they're equal, clear fifo and restart fetcher
+						if (this->_fifo.GetX() == static_cast<API::data_t>(wx))
+						{
+							this->Clear();
+							this->ResetOffset();
+							this->_fifo.ResetNewLine();
+						}
+
+						return this->FetchWindowTile();
+					}
+				}
+				else if (lcdc_control.IsBackgroundEnabled())
 				{
 					return this->FetchBackgroundTile();
 				}
@@ -117,6 +138,27 @@ private:
 	/**
 	 * Fetch tile state -> Read data 0 state
 	 */
+	bool FetchWindowTile()
+	{
+		if (this->_clocks >= FETCH_TILE_CLOCKS)
+		{
+			auto lcdc_register{LCDC_Control{}};
+			auto lcdc_control{static_cast<LCDC_Control::Control>(lcdc_register)};
+			RET_FALSE_IF_FAIL(lcdc_control.Validate(), "Failed validating lcdc control");
+			static auto* vram_memory_ptr{static_cast<VideoRAM*>(this->_ppu.GetProcessor().GetMemory().GetDeviceAtAddress(VideoRAM::START_ADDRESS))->GetMemoryPointer()};
+			this->_tile_index = vram_memory_ptr[lcdc_control.GetWindowMapStart() + this->_tile_offset - VideoRAM::START_ADDRESS];
+			this->_tile_offset += 1;
+			this->_pixel_row_container.Initialize(PixelSource::WIN);
+			this->_clocks -= FETCH_TILE_CLOCKS;
+			this->_state = State::READ_DATA_0;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Fetch tile state -> Read data 0 state
+	 */
 	bool FetchBackgroundTile()
 	{
 		if (this->_clocks >= FETCH_TILE_CLOCKS)
@@ -134,6 +176,7 @@ private:
 			static auto* vram_memory_ptr{static_cast<VideoRAM*>(this->_ppu.GetProcessor().GetMemory().GetDeviceAtAddress(VideoRAM::START_ADDRESS))->GetMemoryPointer()};
 			this->_tile_index = vram_memory_ptr[lcdc_control.GetBackgroundMapStart() + this->_tile_offset - VideoRAM::START_ADDRESS];
 			this->_tile_offset += 1;
+			this->_pixel_row_container.Initialize(PixelSource::BGP);
 			this->_clocks -= FETCH_TILE_CLOCKS;
 			this->_state = State::READ_DATA_0;
 		}
@@ -148,8 +191,7 @@ private:
 	{
 		if (this->_clocks >= READ_DATA_0_CLOCKS)
 		{
-			auto& [container, source] = this->GetUpperTileByte();
-			this->_pixel_row_container.SetUpper(container);
+			this->_pixel_row_container.SetUpper(this->GetUpperTileByte());
 			this->_clocks -= READ_DATA_0_CLOCKS;
 			this->_state = State::READ_DATA_1;
 		}
@@ -164,9 +206,7 @@ private:
 	{
 		if (this->_clocks >= READ_DATA_1_CLOCKS)
 		{
-			auto& [container, source] = this->GetLowerTileByte();
-			this->_pixel_row_container.SetLower(container);
-			this->_pixel_row_container.Initialize(source);
+			this->_pixel_row_container.SetLower(this->GetLowerTileByte());
 			this->_clocks -= READ_DATA_1_CLOCKS;
 			this->_state = State::WAIT_FOR_FIFO;
 		}
@@ -196,17 +236,17 @@ private:
 	}
 
 private:
-	std::pair<API::data_t, PixelSource> GetUpperTileByte()
+	API::data_t GetUpperTileByte()
 	{
 		return this->GetTileInformation(false);
 	}
 
-	std::pair<API::data_t, PixelSource> GetLowerTileByte()
+	API::data_t GetLowerTileByte()
 	{
 		return this->GetTileInformation(true);
 	}
 
-	std::pair<API::data_t, PixelSource> GetTileInformation(bool lower = false)
+	API::data_t GetTileInformation(bool lower = false)
 	{
 		auto lcdc_register{LCDC_Control{}};
 		auto lcdc_control{static_cast<LCDC_Control::Control>(lcdc_register)};
@@ -218,10 +258,10 @@ private:
 		// Fetching the tile according to the Y axis * 2 (2 bytes for each row, thus in jumps of 2)
 		static auto* vram_memory_ptr{static_cast<VideoRAM*>(this->_ppu.GetProcessor().GetMemory().GetDeviceAtAddress(VideoRAM::START_ADDRESS))->GetMemoryPointer()};
 		constexpr API::address_t SIZE_OF_TILE{16};
-		Message("TODO! Make this customizable");
-		return {vram_memory_ptr[lcdc_control.GetTileSelectOffset() + SIZE_OF_TILE * TILE_INDEX_OFFSET +
+
+		return vram_memory_ptr[lcdc_control.GetTileSelectOffset() + SIZE_OF_TILE * TILE_INDEX_OFFSET +
 							  2 * (this->_fifo.GetY() % PixelRow::PIXEL_COUNT) +
-							  static_cast<API::data_t>(lower) - VideoRAM::START_ADDRESS], PixelSource::BGP};
+							  static_cast<API::data_t>(lower) - VideoRAM::START_ADDRESS];
 	}
 
 private:

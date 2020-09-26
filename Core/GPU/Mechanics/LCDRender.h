@@ -283,7 +283,6 @@ private:
 
 		auto lcdc_status_register{LCDC_Status{}};
 		auto lcdc_status{static_cast<LCDC_Status::Status>(lcdc_status_register)};
-		RET_FALSE_IF_FAIL(lcdc_status.Validate(), "Failed validating LCDC status register");
 
 		lcdc_status.lcd_enable = static_cast<API::data_t>(new_state);
 
@@ -340,6 +339,7 @@ private:
 		}
 
 		lcdc_status_register = lcdc_status;
+		RET_FALSE_IF_FAIL(lcdc_status.Validate(), "Failed validating LCDC status register");
 
 		if (trigger_interrupt)
 		{

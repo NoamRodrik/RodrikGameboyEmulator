@@ -34,12 +34,12 @@ public:
 		this->_lower_row.Clear();
 		this->_upper_row.Clear();
 		this->scx = SCX{};
+		this->scy = SCY{};
 		this->SetX(0x00);
 	}
 
 	void ResetNewFrame()
 	{
-		this->scy = SCY{};
 		this->SetY(this->scy);
 	}
 

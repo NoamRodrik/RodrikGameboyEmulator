@@ -127,7 +127,7 @@ private:
 	using time_duration_t = std::chrono::duration<float, std::milli>;
 
 public:
-	static constexpr float FRAMES_PER_SECOND{57.3f};
+	static constexpr float FRAMES_PER_SECOND{59.7f};
 	static constexpr float DELAYED_TIME{1000.0f / FRAMES_PER_SECOND};
 
 private:

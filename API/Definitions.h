@@ -94,15 +94,6 @@ namespace API
 	/* Timer Definitions */
 	static constexpr auto LR35902_HZ_CLOCK = 4'194'304;
 
-	/* Boot Definitions */
-#ifdef SKIP_BOOT
-#undef SKIP_BOOT
-#endif
-
-	Message("Cancel this if you don't want to skip the Boot");
-	//#define SKIP_BOOT 1
-	#define SKIP_BOOT 0
-
 	// Extracted from DMG_boot.bin.
 	static constexpr std::array<data_t, 0x100> SYSTEM_BOOT_CODE =
 	{
