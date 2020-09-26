@@ -33,14 +33,12 @@ public:
 	{
 		this->_lower_row.Clear();
 		this->_upper_row.Clear();
-		this->scx = SCX{};
-		this->scy = SCY{};
 		this->SetX(0x00);
 	}
 
 	void ResetNewFrame()
 	{
-		this->SetY(this->scy);
+		this->SetY(SCY{});
 	}
 
 	auto FetchNextPixel()
@@ -85,15 +83,16 @@ public:
 		}
 
 		const auto PIXEL{this->FetchNextPixel()};
-
-		if (this->scx <= this->GetX())
+		const API::data_t scx{SCX{}};
+		const API::data_t scy{SCY{}};
+		if (scx <= this->GetX())
 		{
-			const API::data_t DRAWN_X = this->GetX() - this->scx;
-			const API::data_t DRAWN_Y = this->GetY() - this->scy;
+			const API::data_t DRAWN_X = this->GetX() - scx;
+			const API::data_t DRAWN_Y = this->GetY() - scy;
 
 			RET_FALSE_IF_FAIL(this->DrawPalette(DRAWN_X, DRAWN_Y, PIXEL),
 							  "Failed drawing palette (%u, %u) for SCX %u and SCY %u, x %u y %u!",
-			                    DRAWN_X, DRAWN_Y, this->scx, this->scy, this->GetX(), this->GetY());
+			                    DRAWN_X, DRAWN_Y, scx, scy, this->GetX(), this->GetY());
 			
 		}
 
@@ -190,10 +189,6 @@ private:
 
 		return true;
 	}
-
-public:
-	API::data_t scx{0x00};
-	API::data_t scy{0x00};
 
 private:
 	API::data_t			      _x{0x00};

@@ -69,13 +69,13 @@ public:
 		_128_KB = 128,
 		_256_KB = 256,
 		_512_KB = 512,
-		_1000_KB = 1000,
-		_2000_KB = 2000,
-		_4000_KB = 4000,
-		_8000_KB = 8000,
-		_1100_KB = 1100,
-		_1200_KB = 1200,
-		_1500_KB = 1500
+		_1000_KB = 1024,
+		_2000_KB = 2048,
+		_4000_KB = 4096,
+		_8000_KB = 8192,
+		_1100_KB = 1152,
+		_1200_KB = 1280,
+		_1500_KB = 1536
 	};
 
 	enum class RAMSizeType : std::uint8_t
@@ -118,8 +118,8 @@ public:
 		return static_cast<RAMSizeType>(CartridgeHeader::Fetch<RAM_SIZE_OFFSET>());
 	}
 
-	inline const CartridgeHeader::ROMSizeValue CartridgeHeader::ROMSize() const;
-	inline const CartridgeHeader::RAMSizeValue CartridgeHeader::RAMSize() const;
+	const ROMSizeValue ROMSize() const;
+	const RAMSizeValue RAMSize() const;
 
 private:
 	template <std::size_t OFFSET>

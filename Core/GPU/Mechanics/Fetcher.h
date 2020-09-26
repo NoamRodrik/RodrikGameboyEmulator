@@ -49,7 +49,8 @@ public:
 	void ResetOffset()
 	{
 		// Reset it to the first line of the SCY
-		this->_tile_offset = (this->_fifo.scy - (this->_fifo.scy % PixelRow::PIXEL_COUNT)) * 4;
+		const API::data_t scy{SCY{}};
+		this->_tile_offset = (scy - (scy % PixelRow::PIXEL_COUNT)) * 4;
 	}
 
 	void Clear()
@@ -163,13 +164,6 @@ private:
 	{
 		if (this->_clocks >= FETCH_TILE_CLOCKS)
 		{
-			// If X isn't updated with SCX, update it.
-			if (this->_fifo.GetX() < this->_fifo.scx)
-			{
-				this->_fifo.SetX(this->_fifo.scx);
-				this->_tile_offset = this->_fifo.scx % PixelRow::PIXEL_COUNT;
-			}
-
 			auto lcdc_register{LCDC_Control{}};
 			auto lcdc_control{static_cast<LCDC_Control::Control>(lcdc_register)};
 			RET_FALSE_IF_FAIL(lcdc_control.Validate(), "Failed validating lcdc control");

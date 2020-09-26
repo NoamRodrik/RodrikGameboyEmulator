@@ -13,7 +13,7 @@ namespace Core
 inline const auto SERIAL_INTERRUPT = []()
 {
 	LOG("Not implementing serial interrupts in this emulator yet!");
-	return false;
+	return true;
 };
 } // Core
 

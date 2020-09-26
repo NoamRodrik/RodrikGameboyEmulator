@@ -90,7 +90,9 @@ public:
 	{
 		// Reset LY
 		LY ly{0x00};
-		return this->InterruptLCDModeChange(State::H_BLANK);
+		//return this->InterruptLCDModeChange(State::H_BLANK);
+		this->_state = State::H_BLANK;
+		return true;
 	}
 
 private:
@@ -257,13 +259,13 @@ private:
 	const bool NeedsVBlank() const
 	{
 		// -1 since we start counting from 0
-		return (this->_fifo.GetY() - this->_fifo.scy) >= SCREEN_HEIGHT_PIXELS - 1;
+		return (this->_fifo.GetY() - SCY{}) >= SCREEN_HEIGHT_PIXELS - 1;
 	}
 
 	const bool NeedsHBlank() const
 	{
 		// -1 since we start counting from 0
-		return (this->_fifo.GetX() - this->_fifo.scx) >= SCREEN_WIDTH_PIXELS - 1;
+		return (this->_fifo.GetX() - SCX{}) >= SCREEN_WIDTH_PIXELS - 1;
 	}
 
 public:

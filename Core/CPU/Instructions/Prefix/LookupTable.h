@@ -309,7 +309,7 @@ namespace Core
 
 		// 0x46 BIT 0,(HL)
 		// Z 0 1 -
-		Instruction{BIT_0x46, 1, 4, 0, "BIT 0,(HL)"},
+		Instruction{BIT_0x46, 1, 3, 0, "BIT 0,(HL)"},
 
 		// 0x47 BIT 0,A
 		// Z 0 1 -
@@ -341,7 +341,7 @@ namespace Core
 
 		// 0x4E BIT 1,(HL)
 		// Z 0 1 -
-		Instruction{BIT_0x4E, 1, 4, 0, "BIT 1,(HL)"},
+		Instruction{BIT_0x4E, 1, 3, 0, "BIT 1,(HL)"},
 
 		// 0x4F BIT 1,A
 		// Z 0 1 -
@@ -373,7 +373,7 @@ namespace Core
 
 		// 0x56 BIT 2,(HL)
 		// Z 0 1 -
-		Instruction{BIT_0x56, 1, 4, 0, "BIT 2,(HL)"},
+		Instruction{BIT_0x56, 1, 3, 0, "BIT 2,(HL)"},
 
 		// 0x57 BIT 2,A
 		// Z 0 1 -
@@ -405,7 +405,7 @@ namespace Core
 
 		// 0x5E BIT 3,(HL)
 		// Z 0 1 -
-		Instruction{BIT_0x5E, 1, 4, 0, "BIT 3,(HL)"},
+		Instruction{BIT_0x5E, 1, 3, 0, "BIT 3,(HL)"},
 
 		// 0x5F BIT 3,A
 		// Z 0 1 -
@@ -437,7 +437,7 @@ namespace Core
 
 		// 0x66 BIT 4,(HL)
 		// Z 0 1 -
-		Instruction{BIT_0x66, 1, 4, 0, "BIT 4,(HL)"},
+		Instruction{BIT_0x66, 1, 3, 0, "BIT 4,(HL)"},
 
 		// 0x67 BIT 4,A
 		// Z 0 1 -
@@ -469,7 +469,7 @@ namespace Core
 
 		// 0x6E BIT 5,(HL)
 		// Z 0 1 -
-		Instruction{BIT_0x6E, 1, 4, 0, "BIT 5,(HL)"},
+		Instruction{BIT_0x6E, 1, 3, 0, "BIT 5,(HL)"},
 
 		// 0x6F BIT 5,A
 		// Z 0 1 -
@@ -501,7 +501,7 @@ namespace Core
 
 		// 0x76 BIT 6,(HL)
 		// Z 0 1 -
-		Instruction{BIT_0x76, 1, 4, 0, "BIT 6,(HL)"},
+		Instruction{BIT_0x76, 1, 3, 0, "BIT 6,(HL)"},
 
 		// 0x77 BIT 6,A
 		// Z 0 1 -
@@ -533,7 +533,7 @@ namespace Core
 
 		// 0x7E BIT 7,(HL)
 		// Z 0 1 -
-		Instruction{BIT_0x7E, 1, 4, 0, "BIT 7,(HL)"},
+		Instruction{BIT_0x7E, 1, 3, 0, "BIT 7,(HL)"},
 
 		// 0x7F BIT 7,A
 		// Z 0 1 -

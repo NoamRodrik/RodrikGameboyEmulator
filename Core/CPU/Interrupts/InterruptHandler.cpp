@@ -45,10 +45,9 @@ bool InterruptHandler::ProcessInterrupts()
 	// If there's an interrupt.
 	if (interrupt_to_run != nullptr)
 	{
-		const bool WAS_PROCESSOR_HALTED{Processor::IsHalted()};
-
 		// When any enabled interrupt is raised it will bring the CPU out of halt mode to service it, if required.
 		Processor::ClearHalt();
+		Processor::ClearStop();
 		
 		// If the IME is or isn't disable it won't affect the HALT, but the interrupt needs IME.
 		if (!IME::IsEnabled())

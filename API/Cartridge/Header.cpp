@@ -7,38 +7,40 @@
 
 namespace API
 {
-inline const CartridgeHeader::ROMSizeValue CartridgeHeader::ROMSize() const
+const CartridgeHeader::ROMSizeValue CartridgeHeader::ROMSize() const
 {
 	switch (CartridgeHeader::ROM())
 	{
 		case (ROMSizeType::_32_KB):
 			return ROMSizeValue::_32_KB;
-		case (ROMSizeType::_2000_KB):
-			return ROMSizeValue::_2000_KB;
-		case (ROMSizeType::_256_KB):
-			return ROMSizeValue::_256_KB;
-		case (ROMSizeType::_4000_KB):
-			return ROMSizeValue::_4000_KB;
-		case (ROMSizeType::_512_KB):
-			return ROMSizeValue::_512_KB;
 		case (ROMSizeType::_64_KB):
 			return ROMSizeValue::_64_KB;
-		case (ROMSizeType::_8000_KB):
-			return ROMSizeValue::_8000_KB;
+		case (ROMSizeType::_128_KB):
+			return ROMSizeValue::_128_KB;
+		case (ROMSizeType::_256_KB):
+			return ROMSizeValue::_256_KB;
+		case (ROMSizeType::_512_KB):
+			return ROMSizeValue::_512_KB;
 		case(ROMSizeType::_1000_KB):
 			return ROMSizeValue::_1000_KB;
+		case (ROMSizeType::_2000_KB):
+			return ROMSizeValue::_2000_KB;
+		case (ROMSizeType::_4000_KB):
+			return ROMSizeValue::_4000_KB;
+		case (ROMSizeType::_8000_KB):
+			return ROMSizeValue::_8000_KB;
 		case (ROMSizeType::_1100_KB):
 			return ROMSizeValue::_1100_KB;
 		case (ROMSizeType::_1200_KB):
 			return ROMSizeValue::_1200_KB;
-		case (ROMSizeType::_128_KB):
-			return ROMSizeValue::_128_KB;
 		case (ROMSizeType::_1500_KB):
 			return ROMSizeValue::_1500_KB;
 	}
+
+	return ROMSizeValue::_2000_KB;
 }
 
-inline const CartridgeHeader::RAMSizeValue CartridgeHeader::RAMSize() const
+const CartridgeHeader::RAMSizeValue CartridgeHeader::RAMSize() const
 {
 	switch (CartridgeHeader::RAM())
 	{

@@ -144,8 +144,8 @@ const size_t Processor::Clock()
 	else
 	{
 		// If it's not stopped, update devices.
-		Processor::GetInstance().GetPPU()->Clock(clock_cycle);
 		Timer::Clock(clock_cycle);
+		Processor::GetInstance().GetPPU()->Clock(clock_cycle);
 	}
 
 #if _DEBUG

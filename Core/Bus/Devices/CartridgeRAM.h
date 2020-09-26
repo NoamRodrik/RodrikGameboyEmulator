@@ -46,7 +46,7 @@ public:
 	virtual uint8_t* GetMemoryPointer() override { return RAMDevice::GetMemoryPointer(); }
 
 private:
-	bool _covered_system_boot{false};
+	bool _covered_system_boot{SKIP_BOOT ? true : false};
 
 private:
 	friend class DeviceManager;

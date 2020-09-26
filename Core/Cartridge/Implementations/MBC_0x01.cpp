@@ -64,9 +64,12 @@ bool MemoryBankController_1::RomUpperBankNumberAction(const data_t data)
 
 bool MemoryBankController_1::RomLowerBankNumberAction(const data_t data)
 {
+	CartridgeHeader cartridge_header{this->_memory_device};
+
 	// Select the lower 5 bits of the bank number.
 	const data_t LOWER_BITS_BANK_NUMBER = data & static_cast<data_t>(0x1F);
 	this->_selected_rom_bank = (this->_selected_rom_bank & 0x60) | (LOWER_BITS_BANK_NUMBER == 0x0 ? 0x1 : LOWER_BITS_BANK_NUMBER);
+	this->_selected_rom_bank &= (static_cast<std::size_t>(cartridge_header.ROMSize()) / 16) - 1;
 	this->LoadSelectedROMBank();
 
 	return true;
