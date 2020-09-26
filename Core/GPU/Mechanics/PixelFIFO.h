@@ -29,7 +29,7 @@ public:
 	~PixelFIFO() = default;
 
 public:
-	void Clear()
+	void ResetNewLine()
 	{
 		this->_lower_row.Clear();
 		this->_upper_row.Clear();
@@ -37,7 +37,7 @@ public:
 		this->SetX(0x00);
 	}
 
-	void ResetOffset()
+	void ResetNewFrame()
 	{
 		this->scy = SCY{};
 		this->SetY(this->scy);
@@ -132,14 +132,14 @@ public:
 
 	void SetY(const API::data_t y)
 	{
-		this->_y = y;
 		static auto* io_ram_memory_ptr{static_cast<IORAM*>(this->_ppu.GetProcessor().GetMemory().GetDeviceAtAddress(LY::LY_ADDRESS))->GetMemoryPointer()};
 		io_ram_memory_ptr[LY::LY_ADDRESS - IORAM::START_ADDRESS] = y;
 	}
 
 	const API::data_t GetY() const
 	{
-		return this->_y;
+		static auto* io_ram_memory_ptr{ static_cast<IORAM*>(this->_ppu.GetProcessor().GetMemory().GetDeviceAtAddress(LY::LY_ADDRESS))->GetMemoryPointer() };
+		return io_ram_memory_ptr[LY::LY_ADDRESS - IORAM::START_ADDRESS];
 	}
 
 	const API::data_t GetX() const
@@ -197,7 +197,6 @@ public:
 
 private:
 	API::data_t			      _x{0x00};
-	API::data_t			      _y{0x00};
 	IPPU&                     _ppu;
 	PixelRowContainer		  _lower_row{};
 	PixelRowContainer		  _upper_row{};

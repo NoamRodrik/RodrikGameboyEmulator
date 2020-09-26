@@ -82,9 +82,9 @@ private:
 	{
 		auto& screen = this->_render.GetScreen();
 
-		for (std::size_t height = 0; height < SCREEN_HEIGHT_PIXELS; ++height)
+		for (int32_t height = 0; height < SCREEN_HEIGHT_PIXELS; ++height)
 		{
-			for (std::size_t width = 0; width < SCREEN_WIDTH_PIXELS; ++width)
+			for (int32_t width = 0; width < SCREEN_WIDTH_PIXELS; ++width)
 			{
 				RET_FALSE_IF_FAIL(this->Draw(width, height, screen[height][width]), "Failed drawing pixel");
 			}

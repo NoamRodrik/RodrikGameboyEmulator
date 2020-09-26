@@ -78,7 +78,16 @@ public:
 		{
 			case (State::FETCH_TILE):
 			{
-				return this->FetchTile();
+				auto lcdc_control_register{LCDC_Control{}};
+				auto lcdc_control{static_cast<LCDC_Control::Control>(lcdc_control_register)};
+				RET_FALSE_IF_FAIL(lcdc_control.Validate(), "Invalid lcdc control");
+
+				if (lcdc_control.background_enable == lcdc_control.BACKGROUND_ON)
+				{
+					return this->FetchBackgroundTile();
+				}
+
+				return true;
 			}
 
 			case (State::READ_DATA_0):
@@ -108,7 +117,7 @@ private:
 	/**
 	 * Fetch tile state -> Read data 0 state
 	 */
-	bool FetchTile()
+	bool FetchBackgroundTile()
 	{
 		if (this->_clocks >= FETCH_TILE_CLOCKS)
 		{
