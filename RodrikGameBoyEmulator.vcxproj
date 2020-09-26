@@ -194,6 +194,7 @@
     <ClInclude Include="API\Registers\RegisterPair.h" />
     <ClInclude Include="Core\Bus\Bus.h" />
     <ClInclude Include="Core\Bus\DeviceManager\DeviceManager.h" />
+    <ClInclude Include="Core\Bus\Devices\VideoRAM.h" />
     <ClInclude Include="Core\Bus\IRAMDevice.h" />
     <ClInclude Include="Core\Bus\RAMDevice.h" />
     <ClInclude Include="Core\Cartridge\Implementations\MBC1_0x02.h" />

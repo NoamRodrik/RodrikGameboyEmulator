@@ -7,6 +7,7 @@
 #define __LR35902_LCDC_CONTROL_H__
 
 #include <Core/CPU/Registers/MemoryRegister.h>
+#include <API/Definitions.h>
 
 namespace Core
 {
@@ -23,6 +24,18 @@ public:
 public:
 	struct Control
 	{
+	public:
+		constexpr Control(const API::data_t data) :
+			background_enable    ((data & 0b00000001) >> 0),
+			sprite_enable        ((data & 0b00000010) >> 1),
+			sprite_size          ((data & 0b00000100) >> 2),
+			background_map_select((data & 0b00001000) >> 3),
+			tile_select          ((data & 0b00010000) >> 4),
+			window_enable        ((data & 0b00100000) >> 5),
+			window_map_select    ((data & 0b01000000) >> 6),
+			lcd_operation        ((data & 0b10000000) >> 7) {}
+
+	public:
 		// BG_EN
 		// 0: Off
 		static constexpr API::data_t BACKGROUND_OFF{0x00};
@@ -69,10 +82,10 @@ public:
 		}
 
 		// TILE_SEL
-		// 0: $8000 - $8FFF <- Same area as OBJ
-		static constexpr API::data_t TILE_MAP_SELECT_8000_8FFF{0x00};
-		// 1: $8800 - $97FF
-		static constexpr API::data_t TILE_MAP_SELECT_8800_97FF{0x01};
+		// 0: $8800 - $97FF
+		static constexpr API::data_t TILE_MAP_SELECT_8800_97FF{0x00};
+		// 1: $8000 - $8FFF <- Same area as OBJ
+		static constexpr API::data_t TILE_MAP_SELECT_8000_8FFF{0x01};
 		API::data_t tile_select : 1;
 
 		constexpr API::address_t GetTileSelectOffset()
@@ -81,7 +94,7 @@ public:
 				API::TILE_SET_BANK_0_OFFSET : API::TILE_SET_BANK_1_OFFSET;
 		}
 
-		constexpr bool IsSigned()
+		constexpr bool IsSigned() const
 		{
 			return tile_select == TILE_MAP_SELECT_8800_97FF;
 		}

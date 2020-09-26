@@ -54,14 +54,8 @@ private:
 	{
 		// Called once at startup, drawing white pixels.
 		this->SetPixelMode(olc::Pixel::Mode::NORMAL);
-		for (int32_t x = 0; x < ScreenWidth(); ++x)
-		{
-			for (int32_t y = 0; y < ScreenHeight(); ++y)
-			{
-				RET_FALSE_IF_FAIL(Draw(x, y, olc::Pixel{WHITE_PIXEL[0], WHITE_PIXEL[1], WHITE_PIXEL[2]}), "Failed to draw pixel");
-			}
-		}
-		return true;
+
+		return this->FillPixels({WHITE_PIXEL[0], WHITE_PIXEL[1], WHITE_PIXEL[2]});
 	}
 
 	virtual bool OnUserUpdate(float) override
@@ -74,6 +68,22 @@ private:
 		std::this_thread::sleep_for(SLEEP_LEFT_BETWEEN_FRAMES);
 
 		this->_previous = CURRENT;
+
+		auto lcdc_control_register{LCDC_Control{}};
+		auto lcdc_control{static_cast<LCDC_Control::Control>(lcdc_control_register)};
+		RET_FALSE_IF_FAIL(lcdc_control.Validate(), "Invalid lcdc control");
+		
+		if (!lcdc_control.IsLCDEnabled())
+		{
+			// Disable LCD.
+			static IORAM* io_ram_memory_ptr{static_cast<IORAM*>(this->_processor.GetMemory().GetDeviceAtAddress(LCDC_Status::LCDC_ADDRESS))};
+			io_ram_memory_ptr->MaskLCDCStatus(0xFC);
+
+			// Draw all black.
+			RET_FALSE_IF_FAIL(this->FillPixels({BLACK_PIXEL[0], BLACK_PIXEL[1], BLACK_PIXEL[2]}), "Failed drawing black onto screen");
+			RET_FALSE_IF_FAIL(this->_render.ResetLCD(), "Failed resetting LCD");
+			return true;
+		}
 
 		return this->Render();
 	}
@@ -96,6 +106,20 @@ private:
 	virtual Processor& GetProcessor() override
 	{
 		return this->_processor;
+	}
+
+private:
+	bool FillPixels(olc::Pixel color)
+	{
+		for (int32_t x = 0; x < ScreenWidth(); ++x)
+		{
+			for (int32_t y = 0; y < ScreenHeight(); ++y)
+			{
+				RET_FALSE_IF_FAIL(Draw(x, y, color), "Failed to draw pixel");
+			}
+		}
+
+		return true;
 	}
 
 private:

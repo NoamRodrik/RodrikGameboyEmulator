@@ -28,6 +28,7 @@
 #include <Core/CPU/Timers/Timer.h>
 #include <Core/Bus/RAMDevice.h>
 #include <API/Definitions.h>
+#include <mutex>
 
 namespace Core
 {
@@ -148,8 +149,21 @@ private:
 			case (LY::LY_ADDRESS):
 			{
 				// Writing will reset the counter.
+				std::lock_guard lock{this->_mutex};
 				this->_memory[this->RelativeAddress(absolute_address)] = 0;
 				return true;
+			
+				break;
+			}
+
+			case (LCDC_Status::LCDC_ADDRESS):
+			{
+				// This might be accessed in multiple threads.
+				std::lock_guard lock{this->_mutex};
+				this->_memory[this->RelativeAddress(absolute_address)] = data;
+				return true;
+
+				break;
 			}
 		}
 
@@ -157,6 +171,21 @@ private:
 	}
 
 private:
+	/**
+	 * Since this is accessed from the PPU, this needs to be thread safe.
+	 */
+	void MaskLCDCStatus(API::data_t mask)
+	{
+		std::lock_guard lock{this->_mutex};
+
+		this->_memory[this->RelativeAddress(LCDC_Status::LCDC_ADDRESS)] &= mask;
+	}
+
+private:
+	std::mutex _mutex;
+
+private:
+	friend class MainPixelEngine;
 	friend class PixelFIFO;
 	friend class DeviceManager;
 	friend class Timer;

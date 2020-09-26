@@ -7,6 +7,7 @@
 #define __LR35902_LCDC_STATUS_H__
 
 #include <Core/CPU/Registers/MemoryRegister.h>
+#include <API/Definitions.h>
 
 namespace Core
 {
@@ -23,6 +24,16 @@ public:
 public:
 	struct Status
 	{
+	public:
+		constexpr Status(const API::data_t data) :
+			lcd_enable       ((data & 0b00000011) >> 0),
+			coincidence_flag ((data & 0b00000100) >> 2),
+			mode_0           ((data & 0b00001000) >> 3),
+			mode_1           ((data & 0b00010000) >> 4),
+			mode_2           ((data & 0b00100000) >> 5),
+			mode_lyc         ((data & 0b01000000) >> 6) {}
+
+	public:
 		// LCD_MODE
 		// 00: During H-Blank
 		static constexpr API::data_t DURING_H_BLANK{0x00};

@@ -86,11 +86,16 @@ public:
 		return this->_fifo.GetScreen();
 	}
 
+	bool ResetLCD()
+	{
+		// Reset LY
+		LY ly{0x00};
+		return this->InterruptLCDModeChange(State::H_BLANK);
+	}
+
 private:
 	const bool OAMSearch(std::size_t& io_clocks_left)
 	{
-		RET_FALSE_IF_FAIL(this->NeedsOAMSearch(), "Running OAM search when not needed!");
-
 		// If we just initialized, interrupt an OAM search.
 		if (!this->_initialized)
 		{
@@ -248,23 +253,18 @@ private:
 		return true;
 	}
 
-	private:
-		const bool NeedsOAMSearch() const
-		{
-			return this->_fifo.GetX() == 0x00;
-		}
+private:
+	const bool NeedsVBlank() const
+	{
+		// -1 since we start counting from 0
+		return (this->_fifo.GetY() - this->_fifo.scy) >= SCREEN_HEIGHT_PIXELS - 1;
+	}
 
-		const bool NeedsVBlank() const
-		{
-			// -1 since we start counting from 0
-			return (this->_fifo.GetY() - this->_fifo.scy) >= SCREEN_HEIGHT_PIXELS - 1;
-		}
-
-		const bool NeedsHBlank() const
-		{
-			// -1 since we start counting from 0
-			return (this->_fifo.GetX() - this->_fifo.scx) >= SCREEN_WIDTH_PIXELS - 1;
-		}
+	const bool NeedsHBlank() const
+	{
+		// -1 since we start counting from 0
+		return (this->_fifo.GetX() - this->_fifo.scx) >= SCREEN_WIDTH_PIXELS - 1;
+	}
 
 public:
 	static constexpr std::size_t OAM_SEARCH_MAXIMUM_CYCLES{80};
