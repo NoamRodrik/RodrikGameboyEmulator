@@ -8,6 +8,8 @@
 
 #include <Core/GPU/Entities/PixelRowContainer.h>
 #include <Core/GPU/Registers/LCDC_Control.h>
+#include <Core/GPU/Mechanics/PixelFIFO.h>
+#include <Core/Bus/Devices/VideoRAM.h>
 #include <Core/GPU/Registers/SCY.h>
 #include <API/Definitions.h>
 #include <Tools/Tools.h>
@@ -29,7 +31,7 @@ namespace Core
 class Fetcher
 {
 public:
-	constexpr Fetcher(PixelFIFO& fifo) : _fifo{fifo} {}
+	constexpr Fetcher(PixelFIFO& fifo, IPPU& ppu) : _fifo{fifo}, _ppu{ppu} {}
 	~Fetcher() = default;
 
 private:
@@ -48,7 +50,7 @@ public:
 		this->_tile_offset = (this->_fifo.scy - (this->_fifo.scy % PixelRow::PIXEL_COUNT)) * 4;
 	}
 
-	constexpr void Clear()
+	void Clear()
 	{
 		this->_pixel_row_container.Clear();
 		this->_state = State::FETCH_TILE;
@@ -69,10 +71,9 @@ public:
 		}
 	}
 
-	constexpr bool Execute(std::size_t clocks)
+	bool Execute(std::size_t clocks)
 	{
 		this->_clocks += clocks;
-
 		switch (this->_state)
 		{
 			case (State::FETCH_TILE):
@@ -107,16 +108,22 @@ private:
 	/**
 	 * Fetch tile state -> Read data 0 state
 	 */
-	constexpr bool FetchTile()
+	bool FetchTile()
 	{
 		if (this->_clocks >= FETCH_TILE_CLOCKS)
 		{
+			// If X isn't updated with SCX, update it.
+			if (this->_fifo.GetX() < this->_fifo.scx)
+			{
+				this->_fifo.SetX(this->_fifo.scx);
+				this->_tile_offset = this->_fifo.scx % PixelRow::PIXEL_COUNT;
+			}
+
 			auto lcdc_register{LCDC_Control{}};
 			auto lcdc_control{static_cast<LCDC_Control::Control>(lcdc_register)};
 			RET_FALSE_IF_FAIL(lcdc_control.Validate(), "Failed validating lcdc control");
-			RET_FALSE_IF_FAIL(this->_fifo.GetMemory().Read(lcdc_control.GetBackgroundMapStart() + this->_tile_offset, this->_tile_index),
-							  "Failed reading memory for canvas");
-
+			static auto* vram_memory_ptr{static_cast<VideoRAM*>(this->_ppu.GetProcessor().GetMemory().GetDeviceAtAddress(VideoRAM::START_ADDRESS))->GetMemoryPointer()};
+			this->_tile_index = vram_memory_ptr[lcdc_control.GetBackgroundMapStart() + this->_tile_offset - VideoRAM::START_ADDRESS];
 			this->_tile_offset += 1;
 			this->_clocks -= FETCH_TILE_CLOCKS;
 			this->_state = State::READ_DATA_0;
@@ -128,7 +135,7 @@ private:
 	/**
 	 * Read data 0 state -> Read data 1 state
 	 */
-	constexpr bool ReadDataUpper()
+	bool ReadDataUpper()
 	{
 		if (this->_clocks >= READ_DATA_0_CLOCKS)
 		{
@@ -144,7 +151,7 @@ private:
 	/**
 	 * Read data 1 state -> Wait for FIFO state
 	 */
-	constexpr bool ReadDataLower()
+	bool ReadDataLower()
 	{
 		if (this->_clocks >= READ_DATA_1_CLOCKS)
 		{
@@ -161,7 +168,7 @@ private:
 	/**
 	 * Wait for FIFO state -> Fetch tile state
 	 */
-	constexpr bool WaitForFIFO()
+	bool WaitForFIFO()
 	{
 		if (this->_clocks >= WAIT_FOR_FIFO_CLOCKS)
 		{
@@ -194,22 +201,18 @@ private:
 	{
 		auto lcdc_register{LCDC_Control{}};
 		auto lcdc_control{static_cast<LCDC_Control::Control>(lcdc_register)};
-		SANITY(lcdc_control.Validate(), "Failed validating lcdc control");
 
 		// Fetching address of the tile.
-		constexpr API::address_t SIZE_OF_TILE{16};
 		const int TILE_INDEX_OFFSET{(lcdc_control.IsSigned() && this->_tile_index > 127) ? -1 * this->_tile_index : this->_tile_index};
 
 		// Setting pixel row's upper to the fetched tile byte.
-		API::data_t tile_byte{0x00};
-
 		// Fetching the tile according to the Y axis * 2 (2 bytes for each row, thus in jumps of 2)
-		SANITY(this->_fifo.GetMemory().Read(lcdc_control.GetTileSelectOffset() + SIZE_OF_TILE * TILE_INDEX_OFFSET +
-										    2*(this->_fifo.GetY() % PixelRow::PIXEL_COUNT) +
-											static_cast<API::data_t>(lower), tile_byte), "Failed reading tile byte!");
-
+		static auto* vram_memory_ptr{static_cast<VideoRAM*>(this->_ppu.GetProcessor().GetMemory().GetDeviceAtAddress(VideoRAM::START_ADDRESS))->GetMemoryPointer()};
+		constexpr API::address_t SIZE_OF_TILE{16};
 		Message("TODO! Make this customizable");
-		return {tile_byte, PixelSource::BGP};
+		return {vram_memory_ptr[lcdc_control.GetTileSelectOffset() + SIZE_OF_TILE * TILE_INDEX_OFFSET +
+							  2 * (this->_fifo.GetY() % PixelRow::PIXEL_COUNT) +
+							  static_cast<API::data_t>(lower) - VideoRAM::START_ADDRESS], PixelSource::BGP};
 	}
 
 private:
@@ -221,6 +224,7 @@ private:
 
 private:
 	State             _state{State::FETCH_TILE};
+	IPPU&             _ppu;
 	API::address_t    _tile_offset{0x00};
 	API::data_t       _tile_index{0x00};
 	PixelRowContainer _pixel_row_container{};

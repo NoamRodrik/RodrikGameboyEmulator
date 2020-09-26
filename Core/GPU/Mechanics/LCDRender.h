@@ -20,7 +20,8 @@ namespace Core
 class LCDRender
 {
 public:
-	constexpr LCDRender(API::IMemoryDeviceAccess& memory, IScreenDrawer& screen_drawer) : _memory{memory}, _fifo{memory, screen_drawer} {}
+	LCDRender(API::IMemoryDeviceAccess& memory, IPPU& ppu) :
+		_memory{memory}, _ppu{ppu} {}
 	~LCDRender() = default;
 
 private:
@@ -36,42 +37,56 @@ public:
 	/**
 	 * Executes next batch of instructions.
 	 */
-	constexpr bool Execute(std::size_t clocks)
+	bool Execute(std::size_t clocks)
 	{
 		this->_clocks += clocks;
 
-		switch (this->_state)
+		while (clocks != 0)
 		{
-			case (State::OAM_SEARCH):
+			switch (this->_state)
 			{
-				return this->OAMSearch();
-			}
+				case (State::OAM_SEARCH):
+				{
+					RET_FALSE_IF_FAIL(this->OAMSearch(clocks), "Failed OAM search");
+					break;
+				}
 
-			case (State::PIXEL_RENDER):
-			{
-				return this->PixelRender();
-			}
+				case (State::PIXEL_RENDER):
+				{
+					RET_FALSE_IF_FAIL(this->PixelRender(clocks), "Failed pixel render");
+					break;
+				}
 
-			case (State::H_BLANK):
-			{
-				return this->HBlank();
-			}
+				case (State::H_BLANK):
+				{
+					RET_FALSE_IF_FAIL(this->HBlank(clocks), "Failed HBlank");
+					break;
+				}
 
-			case (State::V_BLANK):
-			{
-				return this->VBlank();
-			}
+				case (State::V_BLANK):
+				{
+					RET_FALSE_IF_FAIL(this->VBlank(clocks), "Failed VBlank");
+					break;
+				}
 
-			default:
-			{
-				MAIN_LOG("Got into an impossible state in the lcd renderer!");
-				return false;
+				default:
+				{
+					MAIN_LOG("Got into an impossible state in the lcd renderer!");
+					return false;
+				}
 			}
 		}
+
+		return true;
+	}
+
+	const auto& GetScreen() const
+	{
+		return this->_fifo.GetScreen();
 	}
 
 private:
-	const bool OAMSearch()
+	const bool OAMSearch(std::size_t& io_clocks)
 	{
 		RET_FALSE_IF_FAIL(this->NeedsOAMSearch(), "Running OAM search when not needed!");
 
@@ -85,26 +100,30 @@ private:
 							  "Failed changing LCDC_Status or interrupting");
 		}
 
+		io_clocks = 0;
 		if (this->_clocks >= OAM_SEARCH_MAXIMUM_CYCLES)
 		{
 			RET_FALSE_IF_FAIL(this->InterruptLCDModeChange(LCDC_Status::Status::DURING_DATA_TRANSFER_LCD),
 							  "Failed changing LCDC_Status or interrupting");
 			this->_clocks -= OAM_SEARCH_MAXIMUM_CYCLES;
+			io_clocks = this->_clocks;
 			this->_state = State::PIXEL_RENDER;
 		}
 
 		return true;
 	}
 
-	constexpr bool HBlank()
-	{
+	const bool HBlank(std::size_t& io_clocks)
+	{		
 		// Save this to fill the executed clocks from pixel render mode.
 		this->_executed_clocks += this->_clocks;
 
 		constexpr auto HBLANK_CLOCKS{PIXEL_RENDER_MAXIMUM_CYCLES + HBLANK_CLOCK_MAXIMUM_CYCLES};
 
+		io_clocks = 0;
 		if (this->_executed_clocks >= HBLANK_CLOCKS)
 		{
+			// If we need VBlank (starts from 0 so we need -1)
 			if (this->NeedsVBlank())
 			{
 				RET_FALSE_IF_FAIL(this->InterruptLCDModeChange(LCDC_Status::Status::DURING_V_BLANK), "Failed changing LCDC_Status or interrupting");
@@ -126,21 +145,22 @@ private:
 			
 			this->_clocks = this->_executed_clocks - HBLANK_CLOCKS;
 			this->_executed_clocks = 0;
+			io_clocks = this->_clocks;
 		}
-
-		this->_clocks = 0;
 
 		return true;
 	}
 
-	constexpr bool VBlank()
+	bool VBlank(std::size_t& io_clocks)
 	{
+		io_clocks = 0;
 		constexpr auto VBLANK_CLOCKS{OAM_SEARCH_MAXIMUM_CYCLES + PIXEL_RENDER_MAXIMUM_CYCLES + HBLANK_CLOCK_MAXIMUM_CYCLES};
 		if (this->_clocks >= VBLANK_CLOCKS)
 		{
 			this->_lines += 1;
 			this->_fifo.SetY(this->_fifo.GetY() + 1);
 			this->_clocks -= VBLANK_CLOCKS;
+			io_clocks = this->_clocks;
 
 			if (this->_lines == VBLANK_LINES_LEN)
 			{
@@ -156,11 +176,12 @@ private:
 		return true;
 	}
 
-	constexpr bool PixelRender()
+	bool PixelRender(std::size_t& io_clocks)
 	{
 		// Save this to fill the executed clocks in HBlank mode.
 		this->_executed_clocks += this->_clocks;
 
+		io_clocks = 0;
 		while (this->_clocks >= FIFO_PIXEL_CLOCKS)
 		{
 			// If we need an HBlank, we've gotten to the end.
@@ -177,8 +198,6 @@ private:
 
 			RET_FALSE_IF_FAIL(this->InnerExecute(), "Failed executing fifo and fetcher");
 		}
-
-		this->_clocks = 0;
 
 		return true;
 	}
@@ -232,23 +251,23 @@ private:
 		return true;
 	}
 
-private:
-	const bool NeedsOAMSearch() const
-	{
-		return this->_fifo.GetX() == 0x00;
-	}
+	private:
+		const bool NeedsOAMSearch() const
+		{
+			return this->_fifo.GetX() == 0x00;
+		}
 
-	const bool NeedsVBlank() const
-	{
-		// -1 since we start counting from 0
-		return (this->_fifo.GetY() - this->_fifo.scy) >= SCREEN_HEIGHT_PIXELS - 1;
-	}
+		const bool NeedsVBlank() const
+		{
+			// -1 since we start counting from 0
+			return (this->_fifo.GetY() - this->_fifo.scy) >= SCREEN_HEIGHT_PIXELS - 1;
+		}
 
-	const bool NeedsHBlank() const
-	{
-		// -1 since we start counting from 0
-		return (this->_fifo.GetX() - this->_fifo.scx) >= SCREEN_WIDTH_PIXELS - 1;
-	}
+		const bool NeedsHBlank() const
+		{
+			// -1 since we start counting from 0
+			return (this->_fifo.GetX() - this->_fifo.scx) >= SCREEN_WIDTH_PIXELS - 1;
+		}
 
 public:
 	static constexpr std::size_t OAM_SEARCH_MAXIMUM_CYCLES{80};
@@ -259,7 +278,7 @@ public:
 	static constexpr std::size_t FETCHER_OPERATION_CLOCKS{8};
 
 private:
-	constexpr bool InterruptLCDModeChange(API::data_t new_mode)
+	const bool InterruptLCDModeChange(API::data_t new_mode) const
 	{
 		RET_FALSE_IF_FAIL(new_mode <= 0x03, "Invalid new mode");
 
@@ -275,8 +294,9 @@ private:
 
 public:
 	API::IMemoryDeviceAccess& _memory;
-	PixelFIFO				  _fifo;
-	Fetcher					  _fetcher{this->_fifo};
+	IPPU&                     _ppu;
+	PixelFIFO				  _fifo{_ppu};
+	Fetcher					  _fetcher{this->_fifo, _ppu};
 	State					  _state{State::OAM_SEARCH};
 	std::size_t				  _clocks{0x00};
 	std::size_t               _executed_clocks{0x00};

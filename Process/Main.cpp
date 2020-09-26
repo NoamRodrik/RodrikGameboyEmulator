@@ -18,7 +18,7 @@ int main(int argc, char** argv)
 	while (true)
 	{
 		// CPU needs to syncronize clocks.
-		for (size_t current_cycle = Processor::Clock(); current_cycle > 0; --current_cycle)
+		for (std::size_t current_cycle = Processor::Clock(); current_cycle > 0; --current_cycle)
 		{
 			Clock::SyncClock();
 		}

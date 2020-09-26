@@ -18,6 +18,7 @@ public:
 	virtual ~VideoRAM() override = default;
 
 private:
+	friend class Fetcher;
 	friend class DeviceManager;
 };
 } // Core

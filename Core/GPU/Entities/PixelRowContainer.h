@@ -51,7 +51,7 @@ public:
 	constexpr PaletteColor GetNextPixel()
 	{
 		SANITY(this->_pixel_row_index >= UNUSED_PIXEL_ROW_INDEX_COUNT && this->_pixel_row_index <= PixelRow::PIXEL_COUNT,
-			   "Got invalid values for pixel row index");
+			"Got invalid values for pixel row index");
 		this->_pixel_row_index += 1;
 		return this->_current_pixel_row.StealTopColor();
 	}

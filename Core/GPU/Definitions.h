@@ -47,6 +47,10 @@ static constexpr const char ENGINE_WINDOW_NAME[]{"RodrikGameBoyEmulator"};
 static constexpr size_t     BACKGROUND_MAP_SIZE{Tools::SlotsToBytes(10)};
 static constexpr size_t     SCREEN_WIDTH_PIXELS{160};
 static constexpr size_t     SCREEN_HEIGHT_PIXELS{144};
+static constexpr uint8_t    WHITE_PIXEL[]{255, 255, 255};
+static constexpr uint8_t    BLACK_PIXEL[]{0, 0, 0};
+static constexpr uint8_t    LIGHT_GREY_PIXEL[]{221, 180, 180};
+static constexpr uint8_t    DARK_GREY_PIXEL[]{97, 79, 76};
 
 }
 

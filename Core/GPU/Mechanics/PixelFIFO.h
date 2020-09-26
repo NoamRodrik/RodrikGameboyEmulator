@@ -6,8 +6,10 @@
 #ifndef __LR35902_PIXEL_FIFO_H__
 #define __LR35902_PIXEL_FIFO_H__
 
-#include <API/Memory/Device/IMemoryDeviceAccess.h>
+#include <Contrib/PixelGameEngine/OLCPixelGameEngine.h>
 #include <Core/GPU/Entities/PixelRowContainer.h>
+#include <Core/GPU/Entities/PaletteMap.h>
+#include <Core/Bus/Devices/IORAM.h>
 #include <Core/GPU/Registers/SCY.h>
 #include <Core/GPU/Registers/SCX.h>
 #include <Core/GPU/Registers/LY.h>
@@ -23,7 +25,7 @@ namespace Core
 class PixelFIFO
 {
 public:
-	constexpr PixelFIFO(API::IMemoryDeviceAccess& memory, IScreenDrawer& screen_drawer) : _memory{memory}, _screen_drawer{screen_drawer} {}
+	PixelFIFO(IPPU& ppu) : _ppu{ppu} {}
 	~PixelFIFO() = default;
 
 public:
@@ -37,16 +39,12 @@ public:
 
 	void ResetOffset()
 	{
-		this->scx = SCX{};
 		this->scy = SCY{};
-		this->SetX(0x00);
 		this->SetY(this->scy);
 	}
 
-	constexpr auto FetchNextPixel()
+	auto FetchNextPixel()
 	{
-		SANITY(!this->IsEmpty(), "Both pixel containers in the FIFO are empty!");
-
 		// Fetching from the first row if it isn't empty.
 		if (!this->_lower_row.IsEmpty())
 		{
@@ -67,12 +65,12 @@ public:
 		}
 	}
 
-	constexpr bool IsEmpty() const
+	bool IsEmpty() const
 	{
 		return this->_lower_row.IsEmpty() && this->_upper_row.IsEmpty();
 	}
 
-	constexpr bool NeedsFill() const
+	bool NeedsFill() const
 	{
 		return this->_upper_row.IsEmpty();
 	}
@@ -81,9 +79,7 @@ public:
 	{
 		// If we need to fill the FIFO, we can't fetch pixels yet.
 		// If we passed the screen, we don't need to draw.
-		if (this->NeedsFill() || 
-			(this->GetX() - this->scx) == SCREEN_WIDTH_PIXELS ||
-			(this->GetY() - this->scy) == SCREEN_HEIGHT_PIXELS)
+		if (this->NeedsFill())
 		{
 			return true;
 		}
@@ -95,7 +91,7 @@ public:
 			const API::data_t DRAWN_X = this->GetX() - this->scx;
 			const API::data_t DRAWN_Y = this->GetY() - this->scy;
 
-			RET_FALSE_IF_FAIL(this->_screen_drawer.DrawPalette(DRAWN_X, DRAWN_Y, PIXEL),
+			RET_FALSE_IF_FAIL(this->DrawPalette(DRAWN_X, DRAWN_Y, PIXEL),
 							  "Failed drawing palette (%u, %u) for SCX %u and SCY %u, x %u y %u!",
 			                    DRAWN_X, DRAWN_Y, this->scx, this->scy, this->GetX(), this->GetY());
 			
@@ -106,10 +102,8 @@ public:
 		return true;
 	}
 
-	constexpr void Fill(const PixelRowContainer& pixel_row_container)
+	void Fill(const PixelRowContainer& pixel_row_container)
 	{
-		SANITY(!pixel_row_container.IsEmpty(), "Got an empty pixel row container");
-
 		if (this->IsEmpty())
 		{
 			this->_lower_row = pixel_row_container;
@@ -126,41 +120,88 @@ public:
 		}
 	}
 
-	inline constexpr API::IMemoryDeviceAccess& GetMemory()
+	const auto& GetScreen() const
 	{
-		return this->_memory;
+		return this->_screen;
 	}
 
-	constexpr void SetX(const API::data_t x)
+	void SetX(const API::data_t x)
 	{
-		this->x = x;
+		this->_x = x;
 	}
 
 	void SetY(const API::data_t y)
 	{
-		this->_screen_drawer.SetYCoordinate(y);
+		this->_y = y;
+		static auto* io_ram_memory_ptr{static_cast<IORAM*>(this->_ppu.GetProcessor().GetMemory().GetDeviceAtAddress(LY::LY_ADDRESS))->GetMemoryPointer()};
+		io_ram_memory_ptr[LY::LY_ADDRESS - IORAM::START_ADDRESS] = y;
 	}
 
 	const API::data_t GetY() const
 	{
-		return LY{};
+		return this->_y;
 	}
 
-	constexpr const API::data_t GetX() const
+	const API::data_t GetX() const
 	{
-		return this->x;
+		return this->_x;
 	}
 	
+private:
+	bool DrawPalette(int32_t x, int32_t y, PaletteColor color)
+	{
+		return DrawPixel(x, y, PaletteMap::ColorOf(color));
+	}
+
+	bool DrawPixel(int32_t x, int32_t y, PixelColor color)
+	{
+		switch (color)
+		{
+			case (PixelColor::WHITE):
+			{
+				this->_screen[y][x] = olc::Pixel{WHITE_PIXEL[0], WHITE_PIXEL[1], WHITE_PIXEL[2]};
+				break;
+			}
+
+			case (PixelColor::BLACK):
+			{
+				this->_screen[y][x] = olc::Pixel{BLACK_PIXEL[0], BLACK_PIXEL[1], BLACK_PIXEL[2]};
+				break;
+			}
+
+			case (PixelColor::LIGHT_GREY):
+			{
+				this->_screen[y][x] = olc::Pixel{LIGHT_GREY_PIXEL[0], LIGHT_GREY_PIXEL[1], LIGHT_GREY_PIXEL[2]};
+				break;
+			}
+
+			case (PixelColor::DARK_GREY):
+			{
+				this->_screen[y][x] = olc::Pixel{DARK_GREY_PIXEL[0], DARK_GREY_PIXEL[1], DARK_GREY_PIXEL[2]};
+				break;
+			}
+
+			default:
+			{
+				MAIN_LOG("Got an invalid pixel color: %u", static_cast<uint32_t>(color));
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 public:
 	API::data_t scx{0x00};
 	API::data_t scy{0x00};
 
 private:
-	API::data_t x{0x00};
-	API::IMemoryDeviceAccess& _memory;
-	IScreenDrawer&            _screen_drawer;
+	API::data_t			      _x{0x00};
+	API::data_t			      _y{0x00};
+	IPPU&                     _ppu;
 	PixelRowContainer		  _lower_row{};
 	PixelRowContainer		  _upper_row{};
+	std::array<std::array<olc::Pixel, SCREEN_WIDTH_PIXELS>, SCREEN_HEIGHT_PIXELS> _screen{};
 };
 }
 

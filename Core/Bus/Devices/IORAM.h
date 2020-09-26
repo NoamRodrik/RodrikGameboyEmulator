@@ -157,7 +157,7 @@ private:
 	}
 
 private:
-	friend class MainPixelEngine;
+	friend class PixelFIFO;
 	friend class DeviceManager;
 	friend class Timer;
 };
