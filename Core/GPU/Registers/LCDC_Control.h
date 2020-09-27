@@ -69,18 +69,6 @@ public:
 		static constexpr API::data_t BACKGROUND_MAP_9C00_9FFF{0x01};
 		API::data_t background_map_select : 1;
 
-		constexpr API::address_t GetBackgroundMapStart() const
-		{
-			return background_map_select == BACKGROUND_MAP_9800_9BFF ?
-					0x9800 : 0x9C00;
-		}
-
-		constexpr API::address_t GetBackgroundMapEnd() const
-		{
-			return background_map_select == BACKGROUND_MAP_9800_9BFF ?
-				0x9BFF : 0x9FFF;
-		}
-
 		// TILE_SEL
 		// 0: $8800 - $97FF
 		static constexpr API::data_t TILE_MAP_SELECT_8800_97FF{0x00};

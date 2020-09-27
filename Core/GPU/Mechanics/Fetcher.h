@@ -46,17 +46,17 @@ private:
 	};
 
 public:
-	void ResetOffset()
+	void Reset()
+	{
+		this->_pixel_row_container.Clear();
+		this->_state = State::FETCH_TILE;
+	}
+
+	void ResetNewFrame()
 	{
 		// Reset it to the first line of the SCY
 		const API::data_t scy{SCY{}};
 		this->_tile_offset = (scy - (scy % PixelRow::PIXEL_COUNT)) * 4;
-	}
-
-	void Clear()
-	{
-		this->_pixel_row_container.Clear();
-		this->_state = State::FETCH_TILE;
 	}
 
 	const void NextRowOffset()
@@ -87,24 +87,23 @@ public:
 
 				if (lcdc_control.IsWindowEnabled())
 				{
-					WY wy{};
 					WX wx{};
 
-					if (this->_fifo.GetY() >= static_cast<API::data_t>(wy) &&
+					if (this->_fifo.GetY() >= static_cast<API::data_t>(WY{}) &&
 						this->_fifo.GetX() >= static_cast<API::data_t>(wx))
 					{
 						// If they're equal, clear fifo and restart fetcher
 						if (this->_fifo.GetX() == static_cast<API::data_t>(wx))
 						{
-							this->Clear();
-							this->ResetOffset();
 							this->_fifo.ResetNewLine();
+							this->Reset();
 						}
 
 						return this->FetchWindowTile();
 					}
 				}
-				else if (lcdc_control.IsBackgroundEnabled())
+				
+				if (lcdc_control.IsBackgroundEnabled())
 				{
 					return this->FetchBackgroundTile();
 				}
@@ -143,11 +142,8 @@ private:
 	{
 		if (this->_clocks >= FETCH_TILE_CLOCKS)
 		{
-			auto lcdc_register{LCDC_Control{}};
-			auto lcdc_control{static_cast<LCDC_Control::Control>(lcdc_register)};
-			RET_FALSE_IF_FAIL(lcdc_control.Validate(), "Failed validating lcdc control");
 			static auto* vram_memory_ptr{static_cast<VideoRAM*>(this->_ppu.GetProcessor().GetMemory().GetDeviceAtAddress(VideoRAM::START_ADDRESS))->GetMemoryPointer()};
-			this->_tile_index = vram_memory_ptr[lcdc_control.GetWindowMapStart() + this->_tile_offset - VideoRAM::START_ADDRESS];
+			this->_tile_index = vram_memory_ptr[this->GetWindowMapStart() + this->_tile_offset - VideoRAM::START_ADDRESS];
 			this->_tile_offset += 1;
 			this->_pixel_row_container.Initialize(PixelSource::WIN);
 			this->_clocks -= FETCH_TILE_CLOCKS;
@@ -164,11 +160,8 @@ private:
 	{
 		if (this->_clocks >= FETCH_TILE_CLOCKS)
 		{
-			auto lcdc_register{LCDC_Control{}};
-			auto lcdc_control{static_cast<LCDC_Control::Control>(lcdc_register)};
-			RET_FALSE_IF_FAIL(lcdc_control.Validate(), "Failed validating lcdc control");
 			static auto* vram_memory_ptr{static_cast<VideoRAM*>(this->_ppu.GetProcessor().GetMemory().GetDeviceAtAddress(VideoRAM::START_ADDRESS))->GetMemoryPointer()};
-			this->_tile_index = vram_memory_ptr[lcdc_control.GetBackgroundMapStart() + this->_tile_offset - VideoRAM::START_ADDRESS];
+			this->_tile_index = vram_memory_ptr[this->GetBackgroundMapStart() + this->_tile_offset - VideoRAM::START_ADDRESS];
 			this->_tile_offset += 1;
 			this->_pixel_row_container.Initialize(PixelSource::BGP);
 			this->_clocks -= FETCH_TILE_CLOCKS;
@@ -230,6 +223,40 @@ private:
 	}
 
 private:
+	const API::address_t GetBackgroundMapStart() const
+	{
+		auto lcdc_register{LCDC_Control{}};
+		auto lcdc_control{static_cast<LCDC_Control::Control>(lcdc_register)};
+		SANITY(lcdc_control.Validate(), "Failed validating lcdc control");
+
+		if (lcdc_control.background_map_select == lcdc_control.BACKGROUND_MAP_9C00_9FFF)
+		{
+			if (this->_fifo.GetX() < static_cast<API::data_t>(WX{}))
+			{
+				return 0x9C00;
+			}
+		}
+
+		return 0x9800;
+	}
+
+	const API::address_t GetWindowMapStart() const
+	{
+		auto lcdc_register{LCDC_Control{}};
+		auto lcdc_control{static_cast<LCDC_Control::Control>(lcdc_register)};
+		SANITY(lcdc_control.Validate(), "Failed validating lcdc control");
+
+		if (lcdc_control.window_map_select == lcdc_control.WINDOWS_MAP_9C00_9FFF)
+		{
+			if (this->_fifo.GetX() >= static_cast<API::data_t>(WX{}))
+			{
+				return 0x9C00;
+			}
+		}
+
+		return 0x9800;
+	}
+
 	API::data_t GetUpperTileByte()
 	{
 		return this->GetTileInformation(false);
@@ -266,12 +293,12 @@ private:
 	static constexpr std::size_t TILES_IN_ROW{0x20};
 
 private:
-	State             _state{State::FETCH_TILE};
 	IPPU&             _ppu;
+	PixelFIFO&        _fifo;
+	State             _state{State::FETCH_TILE};
 	API::address_t    _tile_offset{0x00};
 	API::data_t       _tile_index{0x00};
 	PixelRowContainer _pixel_row_container{};
-	PixelFIFO&        _fifo;
 	std::size_t       _clocks{0x00};
 };
 }

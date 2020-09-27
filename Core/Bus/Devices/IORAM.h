@@ -60,6 +60,7 @@ public:
 		this->_memory[this->RelativeAddress(API::NR50_ADDRESS)] = API::NR50_DEFAULT_VALUE;
 		this->_memory[this->RelativeAddress(API::NR51_ADDRESS)] = API::NR51_DEFAULT_VALUE;
 		this->_memory[this->RelativeAddress(API::NR52_ADDRESS)] = API::NR52_DEFAULT_VALUE;
+		/*
 		this->_memory[this->RelativeAddress(LCDC_Control::LCDC_ADDRESS)] = LCDC_Control::LCDC_DEFAULT_VALUE;
 		this->_memory[this->RelativeAddress(LCDC_Status::LCDC_ADDRESS)] = LCDC_Status::LCDC_DEFAULT_VALUE;
 		this->_memory[this->RelativeAddress(SCY::SCY_ADDRESS)] = SCY::SCY_DEFAULT_VALUE;
@@ -72,6 +73,7 @@ public:
 		this->_memory[this->RelativeAddress(OBP1::OBP1_ADDRESS)] = OBP1::OBP1_DEFAULT_VALUE;
 		this->_memory[this->RelativeAddress(WY::WY_ADDRESS)] = WY::WY_DEFAULT_VALUE;
 		this->_memory[this->RelativeAddress(WX::WX_ADDRESS)] = WX::WX_DEFAULT_VALUE;
+		*/
 		this->_memory[this->RelativeAddress(InterruptFlag::INTERRUPT_FLAG_ADDRESS)] = InterruptFlag::INTERRUPT_FLAG_DEFAULT_VALUE;
 	}
 

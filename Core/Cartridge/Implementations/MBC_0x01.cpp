@@ -22,7 +22,7 @@ void MemoryBankController_1::LoadMBC()
 	// $0000-$3FFF Always contains the first 16KB of the cartridge, the first memory bank. It is unable to be switched or modified.
 	// $4000-7FFFF will contain the second 16KB of the cartridge.
 	DeviceTools::Map(this->_rom_memory.GetMemoryPointer(), Tools::BytesInROMBanks(2), CartridgeRAM::START_ADDRESS);
-	this->_selected_rom_bank = 1;
+	this->_selected_rom_bank = 0;
 } 
 
 size_t MemoryBankController_1::BankSize() const
@@ -64,12 +64,9 @@ bool MemoryBankController_1::RomUpperBankNumberAction(const data_t data)
 
 bool MemoryBankController_1::RomLowerBankNumberAction(const data_t data)
 {
-	CartridgeHeader cartridge_header{this->_memory_device};
-
 	// Select the lower 5 bits of the bank number.
 	const data_t LOWER_BITS_BANK_NUMBER = data & static_cast<data_t>(0x1F);
 	this->_selected_rom_bank = (this->_selected_rom_bank & 0x60) | (LOWER_BITS_BANK_NUMBER == 0x0 ? 0x1 : LOWER_BITS_BANK_NUMBER);
-	this->_selected_rom_bank &= (static_cast<std::size_t>(cartridge_header.ROMSize()) / 16) - 1;
 	this->LoadSelectedROMBank();
 
 	return true;
@@ -83,7 +80,7 @@ void MemoryBankController_1::LoadSelectedROMBank()
 	{
 		// Mapping the new bank into the cartridge.
 		const size_t NEW_BANK_OFFSET{Tools::BytesInROMBanks(this->_selected_rom_bank)};
-		SANITY(NEW_BANK_OFFSET + API::MEMORY_ROM_BANK_SIZE < this->_rom_memory.MEMORY_SIZE, "Wrong offset");
+		SANITY(NEW_BANK_OFFSET + API::MEMORY_ROM_BANK_SIZE < this->_rom_memory.MEMORY_SIZE, "Wrong offset: %llu", NEW_BANK_OFFSET);
 		DeviceTools::Map(this->_rom_memory.GetMemoryPointer() + NEW_BANK_OFFSET, API::MEMORY_ROM_BANK_SIZE, ADDITIONAL_ROM_BANKS_OFFSET);
 	}
 }

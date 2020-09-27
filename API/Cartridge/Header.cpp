@@ -57,5 +57,7 @@ const CartridgeHeader::RAMSizeValue CartridgeHeader::RAMSize() const
 		case (RAMSizeType::_8_KB):
 			return RAMSizeValue::_8_KB;
 	}
+
+	return RAMSizeValue::NONE;
 }
 }

@@ -34,11 +34,12 @@ public:
 		this->_lower_row.Clear();
 		this->_upper_row.Clear();
 		this->SetX(0x00);
+		this->_scy = SCY{};
 	}
 
 	void ResetNewFrame()
 	{
-		this->SetY(SCY{});
+		this->SetY(this->_scy);
 	}
 
 	auto FetchNextPixel()
@@ -84,15 +85,14 @@ public:
 
 		const auto PIXEL{this->FetchNextPixel()};
 		const API::data_t scx{SCX{}};
-		const API::data_t scy{SCY{}};
 		if (scx <= this->GetX())
 		{
 			const API::data_t DRAWN_X = this->GetX() - scx;
-			const API::data_t DRAWN_Y = this->GetY() - scy;
+			const API::data_t DRAWN_Y = this->GetY() - this->_scy;
 
 			RET_FALSE_IF_FAIL(this->DrawPalette(DRAWN_X, DRAWN_Y, PIXEL),
 							  "Failed drawing palette (%u, %u) for SCX %u and SCY %u, x %u y %u!",
-			                    DRAWN_X, DRAWN_Y, scx, scy, this->GetX(), this->GetY());
+			                    DRAWN_X, DRAWN_Y, scx, this->_scy, this->GetX(), this->GetY());
 			
 		}
 
@@ -192,7 +192,8 @@ private:
 
 private:
 	API::data_t			      _x{0x00};
-	IPPU&                     _ppu;
+	API::data_t               _scy{0x00};
+	IPPU&					  _ppu;
 	PixelRowContainer		  _lower_row{};
 	PixelRowContainer		  _upper_row{};
 	std::array<std::array<olc::Pixel, SCREEN_WIDTH_PIXELS>, SCREEN_HEIGHT_PIXELS> _screen{};

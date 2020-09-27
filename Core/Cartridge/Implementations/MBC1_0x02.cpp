@@ -27,8 +27,7 @@ size_t MemoryBankController_2::BankSize() const
 
 bool MemoryBankController_2::Read(const API::address_t absolute_address, API::data_t& result) const
 {
-	// We don't need to intercept reads.
-	return false;
+	return this->_inner_mbc.Read(absolute_address, result);
 }
 
 bool MemoryBankController_2::Write(const API::address_t absolute_address, const API::data_t data)
@@ -45,12 +44,35 @@ bool MemoryBankController_2::Write(const API::address_t absolute_address, const 
 	else if (absolute_address >= MemoryBankController_2::ROM_BANK_NUMBER_START &&
 		     absolute_address <= MemoryBankController_2::ROM_BANK_NUMBER_END)
 	{
-		if (this->_mode == Mode::RAM_MODE)
+		RET_FALSE_IF_FAIL(this->_inner_mbc.RomLowerBankNumberAction(data), "Failed setting lower bank number");
+
+		CartridgeHeader header{this->_memory_device};
+
+		API::data_t mask{0x1F};
+		switch (header.ROM())
 		{
-			this->_inner_mbc._selected_rom_bank &= 0x1F;
+			case (CartridgeHeader::ROMSizeType::_64_KB):
+			{
+				mask = 0b11;
+				break;
+			}
+			
+			case (CartridgeHeader::ROMSizeType::_128_KB):
+			{
+				mask = 0b111;
+				break;
+			}
+
+			case (CartridgeHeader::ROMSizeType::_256_KB):
+			{
+				mask = 0b1111;
+				break;
+			}
 		}
 
-		return this->_inner_mbc.RomLowerBankNumberAction(data);
+		this->_inner_mbc._selected_rom_bank &= mask;
+
+		return true;
 	}
 	else if (absolute_address >= MemoryBankController_2::RAM_ROM_BANK_NUMBER_START &&
 		     absolute_address <= MemoryBankController_2::RAM_ROM_BANK_NUMBER_END)
@@ -115,5 +137,19 @@ void MemoryBankController_2::LoadSelectedRAMBank()
 	const size_t NEW_BANK_OFFSET{Tools::BytesInRAMBanks(this->_selected_ram_bank)};
 	SANITY(NEW_BANK_OFFSET + API::MEMORY_RAM_BANK_SIZE < this->_ram_memory.MEMORY_SIZE, "Wrong offset");
 	DeviceTools::Map(this->_ram_memory.GetMemoryPointer() + NEW_BANK_OFFSET, API::MEMORY_RAM_BANK_SIZE, ADDITIONAL_RAM_BANKS_OFFSET);
+
+	// https://hacktix.github.io/GBEDG/mbcs/mbc1/
+	// ... If the ROM is 1MB in size (64 banks) the Zero Bank Number is determined by the lower bit of the 2-bit RAM bank number ...
+	// ... If the ROM is 2MB in size (128 banks) the Zero Bank Number is determined by the entire 2-bit RAM bank number ...
+	CartridgeHeader header{this->_memory_device};
+	if (static_cast<size_t>(header.ROMSize()) >= static_cast<size_t>(CartridgeHeader::ROMSizeValue::_1000_KB))
+	{
+		const size_t NEW_BANK_OFFSET = static_cast<size_t>(header.ROMSize()) < static_cast<size_t>(CartridgeHeader::ROMSizeValue::_2000_KB) ?
+			Tools::BytesInROMBanks((this->_selected_ram_bank << 4) & 0b1) :
+			Tools::BytesInROMBanks((this->_selected_ram_bank << 4) & 0b11);
+
+		SANITY(NEW_BANK_OFFSET + API::MEMORY_ROM_BANK_SIZE < this->_inner_mbc._rom_memory.MEMORY_SIZE, "Wrong offset: %llu", NEW_BANK_OFFSET);
+		DeviceTools::Map(this->_inner_mbc._rom_memory.GetMemoryPointer() + NEW_BANK_OFFSET, Tools::BytesInROMBanks(2), CartridgeRAM::START_ADDRESS);
+	}
 }
 }

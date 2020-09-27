@@ -26,7 +26,7 @@ public:
 
 public:
 	static constexpr size_t BANK_SIZE = 125;
-	static constexpr size_t MBC_SIZE = Tools::MebibytesToBytes(2);
+	static constexpr size_t MBC_SIZE = Tools::MebibytesToBytes(16);
 
 private:
 	bool RomLowerBankNumberAction(const API::data_t data);

@@ -26,7 +26,7 @@ MBCController::MBCController(IMemoryDeviceAccess& memory_accessor, std::shared_p
 	this->_loader->Load(static_cast<CartridgeRAM*>(Processor::GetInstance().GetMemory().GetDeviceAtAddress(CartridgeRAM::START_ADDRESS))->GetMemoryPointer(),
 						 static_cast<long>(Tools::BytesInROMBanks(1) / 2));
 
-	SANITY(this->UpdateMBC(), "Failed updating the MBC");
+	SANITY(this->UpdateMBC(), "Failed loading MBC");
 }
 
 void MBCController::Setup()
@@ -49,7 +49,8 @@ bool MBCController::UpdateMBC()
 			return true;
 		}
 	}
-
+	
+	MAIN_LOG("MBC does not exist: %u.", loaded_header.MBC());
 	return false;
 }
 

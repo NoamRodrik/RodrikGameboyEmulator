@@ -91,7 +91,6 @@ public:
 		// Reset LY
 		LY ly{0x00};
 		//return this->InterruptLCDModeChange(State::H_BLANK);
-		this->_state = State::H_BLANK;
 		return true;
 	}
 
@@ -103,7 +102,8 @@ private:
 		{
 			this->_initialized = true;
 			this->_fifo.ResetNewFrame();
-			this->_fetcher.ResetOffset();
+			this->_fetcher.Reset();
+			this->_fetcher.ResetNewFrame();
 			RET_FALSE_IF_FAIL(this->InterruptLCDModeChange(State::OAM_SEARCH),
 							  "Failed changing LCDC_Status or interrupting");
 		}
@@ -128,7 +128,7 @@ private:
 		io_clocks_left = 0;
 		if (this->_executed_clocks >= HBLANK_CLOCKS)
 		{
-			// If we need VBlank (starts from 0 so we need -1)
+			// If we need VBlank.
 			if (this->NeedsVBlank())
 			{
 				// We need to go back to the beginning.
@@ -170,7 +170,8 @@ private:
 				// FIRST FIFO and then FETCHER!
 				this->_lines = 0;
 				this->_fifo.ResetNewFrame();
-				this->_fetcher.ResetOffset();
+				this->_fetcher.Reset();
+				this->_fetcher.ResetNewFrame();
 
 				RET_FALSE_IF_FAIL(this->InterruptLCDModeChange(State::OAM_SEARCH), "Failed changing LCDC_Status or interrupting");
 			}
@@ -191,7 +192,7 @@ private:
 			if (this->NeedsHBlank())
 			{
 				this->_fifo.ResetNewLine();
-				this->_fetcher.Clear();
+				this->_fetcher.Reset();
 
 				io_clocks_left = this->_clocks;
 
@@ -295,6 +296,19 @@ private:
 		{
 			case (State::H_BLANK):
 			{
+				lcdc_status.coincidence_flag = lcdc_status.LYC_NOT_EQUAL_LCDC;
+
+				// If the HBlank is going to turn the line into LYC
+				if ((this->_fifo.GetY() + 1) == static_cast<data_t>(LYC{}))
+				{
+					lcdc_status.coincidence_flag = lcdc_status.LYC_EQUAL_LCDC;
+
+					if (lcdc_status.mode_lyc == lcdc_status.MODE_SELECTION)
+					{
+						trigger_interrupt = true;
+					}
+				}
+
 				if (lcdc_status.mode_0 == lcdc_status.MODE_SELECTION)
 				{
 					trigger_interrupt = true;
@@ -322,26 +336,9 @@ private:
 
 				break;
 			}
-
-			case (State::PIXEL_RENDER):
-			{
-				lcdc_status.coincidence_flag = lcdc_status.LYC_NOT_EQUAL_LCDC;
-				if (this->_fifo.GetY() == static_cast<data_t>(LYC{}))
-				{
-					lcdc_status.coincidence_flag = lcdc_status.LYC_EQUAL_LCDC;
-
-					if (lcdc_status.mode_lyc == lcdc_status.MODE_SELECTION)
-					{
-						trigger_interrupt = true;
-					}
-				}
-
-				break;
-			}
 		}
 
 		lcdc_status_register = lcdc_status;
-		RET_FALSE_IF_FAIL(lcdc_status.Validate(), "Failed validating LCDC status register");
 
 		if (trigger_interrupt)
 		{
@@ -356,8 +353,8 @@ private:
 public:
 	API::IMemoryDeviceAccess& _memory;
 	IPPU&                     _ppu;
-	PixelFIFO				  _fifo{_ppu};
-	Fetcher					  _fetcher{this->_fifo, _ppu};
+	PixelFIFO				  _fifo{this->_ppu};
+	Fetcher					  _fetcher{this->_fifo, this->_ppu};
 	State					  _state{State::OAM_SEARCH};
 	std::size_t				  _clocks{0x00};
 	std::size_t               _executed_clocks{0x00};
