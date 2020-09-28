@@ -31,13 +31,6 @@ public:
 	static constexpr size_t BANK_SIZE = 125;
 
 private:
-	enum class Mode
-	{
-		ROM_MODE = 0x00,
-		RAM_MODE = 0x01
-	};
-
-private:
 	bool RamRomBankNumberAction(const API::data_t data);
 	void SaveSelectedRAMBank();
 	void LoadSelectedRAMBank();
@@ -50,14 +43,11 @@ private:
 	static constexpr API::address_t ROM_BANK_NUMBER_END = 0x3FFF;
 	static constexpr API::address_t RAM_ROM_BANK_NUMBER_START = 0x4000;
 	static constexpr API::address_t RAM_ROM_BANK_NUMBER_END = 0x5FFF;
-	static constexpr API::address_t RAM_ROM_MODE_SELECT_START = 0x6000;
-	static constexpr API::address_t RAM_ROM_MODE_SELECT_END = 0x7FFF;
 
 private:
 	MemoryBankController_1                 _inner_mbc;
 	API::Memory<Tools::BytesInRAMBanks(4)> _ram_memory;
 	API::data_t							   _selected_ram_bank{0};
-	Mode								   _mode{Mode::ROM_MODE};
 	bool								   _ram_enable{false};
 };
 }

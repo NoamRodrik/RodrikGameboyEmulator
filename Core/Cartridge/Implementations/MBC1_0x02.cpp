@@ -79,13 +79,13 @@ bool MemoryBankController_2::Write(const API::address_t absolute_address, const 
 	{
 		return this->RamRomBankNumberAction(data);
 	}
-	else if (absolute_address >= MemoryBankController_2::RAM_ROM_MODE_SELECT_START &&
-		     absolute_address <= MemoryBankController_2::RAM_ROM_MODE_SELECT_END)
+	else if (absolute_address >= MemoryBankController_1::RAM_ROM_MODE_SELECT_START &&
+		     absolute_address <= MemoryBankController_1::RAM_ROM_MODE_SELECT_END)
 	{
-		// We need to check what mode is selected, then we can intercept the request.
-		this->_mode = static_cast<Mode>(data & 0x01);
+		// TODO call write
+		RET_FALSE_IF_FAIL(this->_inner_mbc.Write(absolute_address, data), "Failed writing to inner mbc");
 
-		if (this->_mode == Mode::ROM_MODE)
+		if (this->_inner_mbc._mode == MemoryBankController_1::Mode::ROM_MODE)
 		{
 			// Only RAM Bank 00h can be used during ROM mode.
 			this->SaveSelectedRAMBank();
@@ -95,6 +95,16 @@ bool MemoryBankController_2::Write(const API::address_t absolute_address, const 
 
 		return true;
 	}
+	else if (absolute_address >= MemoryBankController_1::ROM_LOWER_BANK_NUMBER_START &&
+		absolute_address <= MemoryBankController_1::ROM_LOWER_BANK_NUMBER_END)
+	{
+		return this->_inner_mbc.RomLowerBankNumberAction(data);
+	}
+	else if (absolute_address >= MemoryBankController_1::ROM_UPPER_BANK_NUMBER_START &&
+		absolute_address <= MemoryBankController_1::ROM_UPPER_BANK_NUMBER_END)
+	{
+		return this->_inner_mbc.RomUpperBankNumberAction(data);
+	}
 
 	return false;
 }
@@ -102,11 +112,11 @@ bool MemoryBankController_2::Write(const API::address_t absolute_address, const 
 bool MemoryBankController_2::RamRomBankNumberAction(const data_t data)
 {
 	// If in ROM mode (no RAM bank switching), it will specify the upper two bits of the ROM bank number.
-	if (this->_mode == Mode::ROM_MODE)
+	if (this->_inner_mbc._mode == MemoryBankController_1::Mode::ROM_MODE)
 	{
 		this->_inner_mbc.RomUpperBankNumberAction(data);
 	}
-	else if (this->_mode == Mode::RAM_MODE && this->_ram_enable)
+	else if (this->_inner_mbc._mode == MemoryBankController_1::Mode::RAM_MODE && this->_ram_enable)
 	{	
 		this->SaveSelectedRAMBank();
 		this->_selected_ram_bank = (data & 0x03);
@@ -137,19 +147,5 @@ void MemoryBankController_2::LoadSelectedRAMBank()
 	const size_t NEW_BANK_OFFSET{Tools::BytesInRAMBanks(this->_selected_ram_bank)};
 	SANITY(NEW_BANK_OFFSET + API::MEMORY_RAM_BANK_SIZE < this->_ram_memory.MEMORY_SIZE, "Wrong offset");
 	DeviceTools::Map(this->_ram_memory.GetMemoryPointer() + NEW_BANK_OFFSET, API::MEMORY_RAM_BANK_SIZE, ADDITIONAL_RAM_BANKS_OFFSET);
-
-	// https://hacktix.github.io/GBEDG/mbcs/mbc1/
-	// ... If the ROM is 1MB in size (64 banks) the Zero Bank Number is determined by the lower bit of the 2-bit RAM bank number ...
-	// ... If the ROM is 2MB in size (128 banks) the Zero Bank Number is determined by the entire 2-bit RAM bank number ...
-	CartridgeHeader header{this->_memory_device};
-	if (static_cast<size_t>(header.ROMSize()) >= static_cast<size_t>(CartridgeHeader::ROMSizeValue::_1000_KB))
-	{
-		const size_t NEW_BANK_OFFSET = static_cast<size_t>(header.ROMSize()) < static_cast<size_t>(CartridgeHeader::ROMSizeValue::_2000_KB) ?
-			Tools::BytesInROMBanks((this->_selected_ram_bank << 4) & 0b1) :
-			Tools::BytesInROMBanks((this->_selected_ram_bank << 4) & 0b11);
-
-		SANITY(NEW_BANK_OFFSET + API::MEMORY_ROM_BANK_SIZE < this->_inner_mbc._rom_memory.MEMORY_SIZE, "Wrong offset: %llu", NEW_BANK_OFFSET);
-		DeviceTools::Map(this->_inner_mbc._rom_memory.GetMemoryPointer() + NEW_BANK_OFFSET, Tools::BytesInROMBanks(2), CartridgeRAM::START_ADDRESS);
-	}
 }
 }
