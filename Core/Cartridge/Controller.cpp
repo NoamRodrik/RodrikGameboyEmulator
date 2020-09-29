@@ -38,7 +38,7 @@ void MBCController::Setup()
 
 bool MBCController::UpdateMBC()
 {
-	CartridgeHeader loaded_header{this->_memory_device};
+	CartridgeHeader loaded_header{&this->_memory_device};
 
 	for (std::size_t current_index = 0; current_index < this->_mbcs.size(); ++current_index)
 	{

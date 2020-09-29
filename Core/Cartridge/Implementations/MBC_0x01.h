@@ -38,7 +38,6 @@ public:
 private:
 	bool RomLowerBankNumberAction(const API::data_t data);
 	bool RomUpperBankNumberAction(const API::data_t data);
-	void LoadSelectedROMBank();
 
 private:
 	static constexpr API::address_t ADDITIONAL_ROM_BANKS_OFFSET = 0x4000;
@@ -52,7 +51,8 @@ private:
 private:
 	API::Memory<MBC_SIZE> _rom_memory;
 	Mode				  _mode{Mode::ROM_MODE};
-	API::data_t			  _selected_rom_bank{0};
+	API::data_t			  _selected_rom_bank{0x01};
+	API::data_t           _selected_zero_bank{0x00};
 
 private:
 	friend class MemoryBankController_2;

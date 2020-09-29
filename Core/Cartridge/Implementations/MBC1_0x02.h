@@ -32,15 +32,11 @@ public:
 
 private:
 	bool RamRomBankNumberAction(const API::data_t data);
-	void SaveSelectedRAMBank();
-	void LoadSelectedRAMBank();
 
 private:
 	static constexpr API::address_t ADDITIONAL_RAM_BANKS_OFFSET = 0xA000;
 	static constexpr API::address_t RAM_ENABLE_START = 0x0000;
 	static constexpr API::address_t RAM_ENABLE_END = 0x1FFF;
-	static constexpr API::address_t ROM_BANK_NUMBER_START = 0x2000;
-	static constexpr API::address_t ROM_BANK_NUMBER_END = 0x3FFF;
 	static constexpr API::address_t RAM_ROM_BANK_NUMBER_START = 0x4000;
 	static constexpr API::address_t RAM_ROM_BANK_NUMBER_END = 0x5FFF;
 
