@@ -50,7 +50,7 @@ namespace Core
 {
 auto TERMINATE = []()
 {
-	STOP_RUNNING("An error has occurred!");
+	STOP_RUNNING("An error has occurred: %04X is an invalid address for a command!", static_cast<API::address_t>(PC_const));
 	return false;
 };
 

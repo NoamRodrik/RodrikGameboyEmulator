@@ -44,6 +44,17 @@ enum class PixelSource : API::data_t
 	WIN = 0x03
 };
 
+/**
+ * The state of the PPU.
+ */
+enum class PPUState
+{
+	H_BLANK = 0x00,
+	V_BLANK = 0x01,
+	OAM_SEARCH = 0x02,
+	PIXEL_RENDER = 0x03
+};
+
 static constexpr const char ENGINE_WINDOW_NAME[]{"RodrikGameBoyEmulator"};
 static constexpr size_t     BACKGROUND_MAP_SIZE{Tools::SlotsToBytes(10)};
 static constexpr size_t     SCREEN_WIDTH_PIXELS{160};

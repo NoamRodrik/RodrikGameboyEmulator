@@ -6,6 +6,7 @@
 #ifndef __CORE_IPPU_H__
 #define __CORE_IPPU_H__
 
+#include <Core/GPU/Definitions.h>
 #include <cstddef>
 
 namespace Core
@@ -19,6 +20,10 @@ public:
 	virtual bool Startup() = 0;
 	virtual void Clock(std::size_t clock) = 0;
 	virtual Processor& GetProcessor() = 0;
+	virtual bool IsLCDEnabled() const = 0;
+	virtual void DisableLCD() = 0;
+	virtual void EnableLCD() = 0;
+	virtual PPUState GetState() const = 0;
 };
 }
 

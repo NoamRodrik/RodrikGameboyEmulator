@@ -33,12 +33,19 @@ public:
 	{
 		this->_lower_row.Clear();
 		this->_upper_row.Clear();
-		this->SetX(0x00);
-		this->_scy = SCY{};
+		this->_scx = SCX{};
+		this->SetX(this->GetSCX());
+	}
+
+	void IncrementY()
+	{
+		this->SetY((this->GetY() + 1) % 0x100);
 	}
 
 	void ResetNewFrame()
 	{
+		static auto* io_ram_memory_ptr{static_cast<IORAM*>(this->_ppu.GetProcessor().GetMemory().GetDeviceAtAddress(LY::LY_ADDRESS))->GetMemoryPointer()};
+		this->_scy = SCY{};
 		this->SetY(this->_scy);
 	}
 
@@ -58,10 +65,8 @@ public:
 
 			return FETCHED_PALETTE_COLOR;
 		}
-		else
-		{
-			return this->_upper_row.GetNextPixel();
-		}
+
+		return PaletteColor::FIRST_PALETTE;
 	}
 
 	bool IsEmpty() const
@@ -78,25 +83,24 @@ public:
 	{
 		// If we need to fill the FIFO, we can't fetch pixels yet.
 		// If we passed the screen, we don't need to draw.
-		if (this->NeedsFill())
+		if (this->NeedsFill() || this->_lower_row.IsEmpty())
 		{
 			return true;
 		}
 
 		const auto PIXEL{this->FetchNextPixel()};
-		const API::data_t scx{SCX{}};
-		if (scx <= this->GetX())
+		if (!this->XPassedThreshold())
 		{
-			const API::data_t DRAWN_X = this->GetX() - scx;
-			const API::data_t DRAWN_Y = this->GetY() - this->_scy;
+			const API::data_t DRAWN_X = static_cast<API::data_t>((this->GetX() + 0x100 - this->GetSCX()) % 0x100);
+			const API::data_t DRAWN_Y{static_cast<API::data_t>(LY{})};
 
 			RET_FALSE_IF_FAIL(this->DrawPalette(DRAWN_X, DRAWN_Y, PIXEL),
 							  "Failed drawing palette (%u, %u) for SCX %u and SCY %u, x %u y %u!",
-			                    DRAWN_X, DRAWN_Y, scx, this->_scy, this->GetX(), this->GetY());
+			                    DRAWN_X, DRAWN_Y, this->GetSCX(), this->GetSCY(), this->GetX(), this->GetY());
 			
 		}
 
-		this->SetX(this->GetX() + 1);
+		this->SetX((this->GetX() + 1) % 0x100);
 
 		return true;
 	}
@@ -131,21 +135,63 @@ public:
 
 	void SetY(const API::data_t y)
 	{
+		this->_y = y;
 		static auto* io_ram_memory_ptr{static_cast<IORAM*>(this->_ppu.GetProcessor().GetMemory().GetDeviceAtAddress(LY::LY_ADDRESS))->GetMemoryPointer()};
-		io_ram_memory_ptr[LY::LY_ADDRESS - IORAM::START_ADDRESS] = y;
+		io_ram_memory_ptr[LY::LY_ADDRESS - IORAM::START_ADDRESS] = ((this->_y + 0x100) - this->_scy) % 0x100;
 	}
 
 	const API::data_t GetY() const
 	{
-		static auto* io_ram_memory_ptr{ static_cast<IORAM*>(this->_ppu.GetProcessor().GetMemory().GetDeviceAtAddress(LY::LY_ADDRESS))->GetMemoryPointer() };
-		return io_ram_memory_ptr[LY::LY_ADDRESS - IORAM::START_ADDRESS];
+		return this->_y;
 	}
 
 	const API::data_t GetX() const
 	{
 		return this->_x;
 	}
-	
+
+	void BlackScreen()
+	{
+		for (std::size_t height = 0; height < SCREEN_HEIGHT_PIXELS; ++height)
+		{
+			for (std::size_t width = 0; width < SCREEN_WIDTH_PIXELS; ++width)
+			{
+				SANITY(this->DrawPixel(width, height, PixelColor::BLACK), "Failed drawing pixels");
+			}
+		}
+	}
+
+	void WhiteScreen()
+	{
+		for (std::size_t height = 0; height < SCREEN_HEIGHT_PIXELS; ++height)
+		{
+			for (std::size_t width = 0; width < SCREEN_WIDTH_PIXELS; ++width)
+			{
+				SANITY(this->DrawPixel(width, height, PixelColor::WHITE), "Failed drawing pixels");
+			}
+		}
+	}
+
+	const bool YPassedThreshold() const
+	{
+		return ((static_cast<std::size_t>(this->GetY()) + 0x100 - this->GetSCY()) % 0x100) >= SCREEN_HEIGHT_PIXELS - 1;
+	}
+
+	const bool XPassedThreshold() const
+	{
+		return ((static_cast<std::size_t>(this->GetX()) + 0x100 - this->GetSCX()) % 0x100) >= SCREEN_WIDTH_PIXELS;
+	}
+
+	const API::data_t GetSCY() const
+	{
+		return this->_scy;
+	}
+
+	const API::data_t GetSCX() const
+	{
+		return this->_scx;
+	}
+
 private:
 	bool DrawPalette(int32_t x, int32_t y, PaletteColor color)
 	{
@@ -191,8 +237,10 @@ private:
 	}
 
 private:
-	API::data_t			      _x{0x00};
-	API::data_t               _scy{0x00};
+	std::size_t			      _x{0x00};
+	std::size_t               _y{0x00};
+	std::size_t               _scy{0x00};
+	std::size_t               _scx{0x00};
 	IPPU&					  _ppu;
 	PixelRowContainer		  _lower_row{};
 	PixelRowContainer		  _upper_row{};

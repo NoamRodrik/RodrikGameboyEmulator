@@ -55,8 +55,8 @@ public:
 	void ResetNewFrame()
 	{
 		// Reset it to the first line of the SCY
-		const API::data_t scy{SCY{}};
-		this->_tile_offset = (scy - (scy % PixelRow::PIXEL_COUNT)) * 4;
+		this->_tile_offset = (this->_fifo.GetSCY() - (this->_fifo.GetSCY() % PixelRow::PIXEL_COUNT)) * 4 +
+							((this->_fifo.GetSCX() - (this->_fifo.GetSCX() % PixelRow::PIXEL_COUNT)) / PixelRow::PIXEL_COUNT);
 	}
 
 	const void NextRowOffset()
@@ -72,6 +72,8 @@ public:
 			// Go back.
 			this->_tile_offset -= (this->_tile_offset % TILES_IN_ROW);
 		}
+
+		this->_tile_offset += ((this->_fifo.GetSCX() - (this->_fifo.GetSCX() % PixelRow::PIXEL_COUNT)) / PixelRow::PIXEL_COUNT);
 	}
 
 	bool Execute(std::size_t clocks)
@@ -81,34 +83,7 @@ public:
 		{
 			case (State::FETCH_TILE):
 			{
-				auto lcdc_control_register{LCDC_Control{}};
-				auto lcdc_control{static_cast<LCDC_Control::Control>(lcdc_control_register)};
-				RET_FALSE_IF_FAIL(lcdc_control.Validate(), "Invalid lcdc control");
-
-				if (lcdc_control.IsWindowEnabled())
-				{
-					WX wx{};
-
-					if (this->_fifo.GetY() >= static_cast<API::data_t>(WY{}) &&
-						this->_fifo.GetX() >= static_cast<API::data_t>(wx))
-					{
-						// If they're equal, clear fifo and restart fetcher
-						if (this->_fifo.GetX() == static_cast<API::data_t>(wx))
-						{
-							this->_fifo.ResetNewLine();
-							this->Reset();
-						}
-
-						return this->FetchWindowTile();
-					}
-				}
-				
-				if (lcdc_control.IsBackgroundEnabled())
-				{
-					return this->FetchBackgroundTile();
-				}
-
-				return true;
+				return this->FetchTile();
 			}
 
 			case (State::READ_DATA_0):
@@ -128,7 +103,7 @@ public:
 
 			default:
 			{
-				MAIN_LOG("Got into an impossible state in the fetcher!");
+				MAIN_LOG("Got into an impossible state in the fetcher: %02X!", this->_state);
 				return false;
 			}
 		}
@@ -138,34 +113,43 @@ private:
 	/**
 	 * Fetch tile state -> Read data 0 state
 	 */
-	bool FetchWindowTile()
+	const bool FetchTile()
 	{
+		static auto* vram_memory_ptr{static_cast<VideoRAM*>(this->_ppu.GetProcessor().GetMemory().GetDeviceAtAddress(VideoRAM::START_ADDRESS))->GetMemoryPointer()};
+
 		if (this->_clocks >= FETCH_TILE_CLOCKS)
 		{
-			static auto* vram_memory_ptr{static_cast<VideoRAM*>(this->_ppu.GetProcessor().GetMemory().GetDeviceAtAddress(VideoRAM::START_ADDRESS))->GetMemoryPointer()};
-			this->_tile_index = vram_memory_ptr[this->GetWindowMapStart() + this->_tile_offset - VideoRAM::START_ADDRESS];
-			this->_tile_offset += 1;
-			this->_pixel_row_container.Initialize(PixelSource::WIN);
-			this->_clocks -= FETCH_TILE_CLOCKS;
-			this->_state = State::READ_DATA_0;
-		}
+			auto lcdc_control_register{LCDC_Control{}};
+			auto lcdc_control{static_cast<LCDC_Control::Control>(lcdc_control_register)};
+			RET_FALSE_IF_FAIL(lcdc_control.Validate(), "Invalid lcdc control");
+			
+			if (lcdc_control.IsWindowEnabled() &&
+				this->_fifo.GetY() >= static_cast<API::data_t>(WY{}) &&
+				this->_fifo.GetX() >= static_cast<API::data_t>(WX{}))
+			{
+				// If they're equal, clear fifo and restart fetcher
+				if (this->_fifo.GetX() == static_cast<API::data_t>(WX{}))
+				{
+					this->_fifo.ResetNewLine();
+					this->Reset();
+				}
 
-		return true;
-	}
-
-	/**
-	 * Fetch tile state -> Read data 0 state
-	 */
-	bool FetchBackgroundTile()
-	{
-		if (this->_clocks >= FETCH_TILE_CLOCKS)
-		{
-			static auto* vram_memory_ptr{static_cast<VideoRAM*>(this->_ppu.GetProcessor().GetMemory().GetDeviceAtAddress(VideoRAM::START_ADDRESS))->GetMemoryPointer()};
-			this->_tile_index = vram_memory_ptr[this->GetBackgroundMapStart() + this->_tile_offset - VideoRAM::START_ADDRESS];
-			this->_tile_offset += 1;
-			this->_pixel_row_container.Initialize(PixelSource::BGP);
-			this->_clocks -= FETCH_TILE_CLOCKS;
-			this->_state = State::READ_DATA_0;
+				this->_tile_index = vram_memory_ptr[this->GetWindowMapStart() + this->_tile_offset - VideoRAM::START_ADDRESS];
+				this->_tile_offset += 1;
+				this->_pixel_row_container.Initialize(PixelSource::WIN);
+				this->_clocks -= FETCH_TILE_CLOCKS;
+				this->_state = State::READ_DATA_0;
+			}
+			
+			// If the window didn't succeed.
+			if (lcdc_control.IsBackgroundEnabled() && this->_state == State::FETCH_TILE)
+			{
+				this->_tile_index = vram_memory_ptr[this->GetBackgroundMapStart() + this->_tile_offset - VideoRAM::START_ADDRESS];
+				this->_tile_offset += 1;
+				this->_pixel_row_container.Initialize(PixelSource::BGP);
+				this->_clocks -= FETCH_TILE_CLOCKS;
+				this->_state = State::READ_DATA_0;
+			}
 		}
 
 		return true;
@@ -229,15 +213,7 @@ private:
 		auto lcdc_control{static_cast<LCDC_Control::Control>(lcdc_register)};
 		SANITY(lcdc_control.Validate(), "Failed validating lcdc control");
 
-		if (lcdc_control.background_map_select == lcdc_control.BACKGROUND_MAP_9C00_9FFF)
-		{
-			if (this->_fifo.GetX() < static_cast<API::data_t>(WX{}))
-			{
-				return 0x9C00;
-			}
-		}
-
-		return 0x9800;
+		return (lcdc_control.background_map_select == lcdc_control.BACKGROUND_MAP_9C00_9FFF) ? 0x9C00 : 0x9800;
 	}
 
 	const API::address_t GetWindowMapStart() const
@@ -246,15 +222,7 @@ private:
 		auto lcdc_control{static_cast<LCDC_Control::Control>(lcdc_register)};
 		SANITY(lcdc_control.Validate(), "Failed validating lcdc control");
 
-		if (lcdc_control.window_map_select == lcdc_control.WINDOWS_MAP_9C00_9FFF)
-		{
-			if (this->_fifo.GetX() >= static_cast<API::data_t>(WX{}))
-			{
-				return 0x9C00;
-			}
-		}
-
-		return 0x9800;
+		return (lcdc_control.window_map_select == lcdc_control.WINDOWS_MAP_9C00_9FFF) ? 0x9C00 : 0x9800;
 	}
 
 	API::data_t GetUpperTileByte()
@@ -273,7 +241,7 @@ private:
 		auto lcdc_control{static_cast<LCDC_Control::Control>(lcdc_register)};
 
 		// Fetching address of the tile.
-		const int TILE_INDEX_OFFSET{(lcdc_control.IsSigned() && this->_tile_index > 127) ? -1 * this->_tile_index : this->_tile_index};
+		const int TILE_INDEX_OFFSET{lcdc_control.IsSigned() ? static_cast<r8_t>(this->_tile_index) : this->_tile_index};
 
 		// Setting pixel row's upper to the fetched tile byte.
 		// Fetching the tile according to the Y axis * 2 (2 bytes for each row, thus in jumps of 2)

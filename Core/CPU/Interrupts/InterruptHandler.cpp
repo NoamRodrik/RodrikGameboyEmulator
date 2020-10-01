@@ -94,7 +94,7 @@ const Interrupt* const InterruptHandler::GetPrioritizedInterrupt()
 	const InterruptEnable interrupt_enable{};
 	const InterruptFlag interrupt_requests{};
 
-	data_t interrupts_pending = interrupt_enable & interrupt_requests;
+	data_t interrupts_pending = (interrupt_enable & interrupt_requests) & 0b00011111;
 
 	// If there are no interrupts, return nullptr.
 	if (interrupts_pending == 0)
