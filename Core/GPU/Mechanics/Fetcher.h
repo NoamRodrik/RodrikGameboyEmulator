@@ -52,28 +52,31 @@ public:
 		this->_state = State::FETCH_TILE;
 	}
 
+	void ResetNewLine()
+	{
+		if (this->_fifo.GetY() != 0)
+		{
+			// If we completed a row, we jump to the next row offset, otherwise we go back.
+			if (this->_fifo.GetY() % 8 == 0)
+			{
+				// Complete the tile offset until the end of the row.
+				this->_tile_offset += TILES_IN_ROW - (this->_tile_offset % TILES_IN_ROW);
+			}
+			else
+			{
+				// Go back.
+				this->_tile_offset -= (this->_tile_offset % TILES_IN_ROW);
+			}
+
+			this->_tile_offset += ((this->_fifo.GetSCX() - (this->_fifo.GetSCX() % PixelRow::PIXEL_COUNT)) / PixelRow::PIXEL_COUNT);
+		}
+	}
+
 	void ResetNewFrame()
 	{
 		// Reset it to the first line of the SCY
 		this->_tile_offset = (this->_fifo.GetSCY() - (this->_fifo.GetSCY() % PixelRow::PIXEL_COUNT)) * 4 +
 							((this->_fifo.GetSCX() - (this->_fifo.GetSCX() % PixelRow::PIXEL_COUNT)) / PixelRow::PIXEL_COUNT);
-	}
-
-	const void NextRowOffset()
-	{
-		// If we completed a row, we jump to the next row offset, otherwise we go back.
-		if (this->_fifo.GetY() % 8 == 0 && this->_fifo.GetY() != 0)
-		{
-			// Complete the tile offset until the end of the row.
-			this->_tile_offset += TILES_IN_ROW - (this->_tile_offset % TILES_IN_ROW);
-		}
-		else
-		{
-			// Go back.
-			this->_tile_offset -= (this->_tile_offset % TILES_IN_ROW);
-		}
-
-		this->_tile_offset += ((this->_fifo.GetSCX() - (this->_fifo.GetSCX() % PixelRow::PIXEL_COUNT)) / PixelRow::PIXEL_COUNT);
 	}
 
 	bool Execute(std::size_t clocks)
@@ -118,12 +121,8 @@ private:
 		static auto* vram_memory_ptr{static_cast<VideoRAM*>(this->_ppu.GetProcessor().GetMemory().GetDeviceAtAddress(VideoRAM::START_ADDRESS))->GetMemoryPointer()};
 
 		if (this->_clocks >= FETCH_TILE_CLOCKS)
-		{
-			auto lcdc_control_register{LCDC_Control{}};
-			auto lcdc_control{static_cast<LCDC_Control::Control>(lcdc_control_register)};
-			RET_FALSE_IF_FAIL(lcdc_control.Validate(), "Invalid lcdc control");
-			
-			if (lcdc_control.IsWindowEnabled() &&
+		{	
+			if (static_cast<LCDC_Control::Control>(LCDC_Control{}).IsWindowEnabled() &&
 				this->_fifo.GetY() >= static_cast<API::data_t>(WY{}) &&
 				this->_fifo.GetX() >= static_cast<API::data_t>(WX{}))
 			{
@@ -140,9 +139,8 @@ private:
 				this->_clocks -= FETCH_TILE_CLOCKS;
 				this->_state = State::READ_DATA_0;
 			}
-			
 			// If the window didn't succeed.
-			if (lcdc_control.IsBackgroundEnabled() && this->_state == State::FETCH_TILE)
+			else
 			{
 				this->_tile_index = vram_memory_ptr[this->GetBackgroundMapStart() + this->_tile_offset - VideoRAM::START_ADDRESS];
 				this->_tile_offset += 1;
@@ -209,48 +207,39 @@ private:
 private:
 	const API::address_t GetBackgroundMapStart() const
 	{
-		auto lcdc_register{LCDC_Control{}};
-		auto lcdc_control{static_cast<LCDC_Control::Control>(lcdc_register)};
-		SANITY(lcdc_control.Validate(), "Failed validating lcdc control");
-
-		return (lcdc_control.background_map_select == lcdc_control.BACKGROUND_MAP_9C00_9FFF) ? 0x9C00 : 0x9800;
+		return static_cast<LCDC_Control::Control>(LCDC_Control{}).GetBackgroundMapStart();
 	}
 
 	const API::address_t GetWindowMapStart() const
 	{
-		auto lcdc_register{LCDC_Control{}};
-		auto lcdc_control{static_cast<LCDC_Control::Control>(lcdc_register)};
-		SANITY(lcdc_control.Validate(), "Failed validating lcdc control");
-
-		return (lcdc_control.window_map_select == lcdc_control.WINDOWS_MAP_9C00_9FFF) ? 0x9C00 : 0x9800;
+		return static_cast<LCDC_Control::Control>(LCDC_Control{}).GetWindowMapStart();
 	}
 
-	API::data_t GetUpperTileByte()
+	const API::data_t GetUpperTileByte() const
 	{
 		return this->GetTileInformation(false);
 	}
 
-	API::data_t GetLowerTileByte()
+	const API::data_t GetLowerTileByte() const
 	{
 		return this->GetTileInformation(true);
 	}
 
-	API::data_t GetTileInformation(bool lower = false)
+	const API::data_t GetTileInformation(bool lower = false) const
 	{
-		auto lcdc_register{LCDC_Control{}};
-		auto lcdc_control{static_cast<LCDC_Control::Control>(lcdc_register)};
+		auto lcdc_control{static_cast<LCDC_Control::Control>(LCDC_Control{})};
 
 		// Fetching address of the tile.
-		const int TILE_INDEX_OFFSET{lcdc_control.IsSigned() ? static_cast<r8_t>(this->_tile_index) : this->_tile_index};
+		static constexpr API::address_t SIZE_OF_TILE{16};
+		const int32_t TILE_INDEX_OFFSET = SIZE_OF_TILE * ((lcdc_control.IsSigned() && (this->_tile_index > 127)) ? (static_cast<int32_t>(this->_tile_index) - 0x100) : this->_tile_index);
 
 		// Setting pixel row's upper to the fetched tile byte.
 		// Fetching the tile according to the Y axis * 2 (2 bytes for each row, thus in jumps of 2)
 		static auto* vram_memory_ptr{static_cast<VideoRAM*>(this->_ppu.GetProcessor().GetMemory().GetDeviceAtAddress(VideoRAM::START_ADDRESS))->GetMemoryPointer()};
-		constexpr API::address_t SIZE_OF_TILE{16};
 
-		return vram_memory_ptr[lcdc_control.GetTileSelectOffset() + SIZE_OF_TILE * TILE_INDEX_OFFSET +
-							  2 * (this->_fifo.GetY() % PixelRow::PIXEL_COUNT) +
-							  static_cast<API::data_t>(lower) - VideoRAM::START_ADDRESS];
+		return vram_memory_ptr[lcdc_control.GetTileSelectOffset() + TILE_INDEX_OFFSET +
+						       2 * (this->_fifo.GetY() % PixelRow::PIXEL_COUNT) +
+							   static_cast<API::data_t>(lower) - VideoRAM::START_ADDRESS];
 	}
 
 private:

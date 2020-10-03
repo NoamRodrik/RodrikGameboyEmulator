@@ -158,18 +158,25 @@ private:
 
 			case (LCDC_Control::LCDC_ADDRESS):
 			{
-				if (static_cast<LCDC_Control::Control>(data).IsLCDEnabled())
+				this->_memory[this->RelativeAddress(LCDC_Control::LCDC_ADDRESS)] = data;
+
+				Message("Uncomment this if needed.");
+				/*
+				Message("Not sure this is O.K.");
+				if (static_cast<LCDC_Control::Control>(data).IsLCDEnabled() &&
+					!Processor::GetInstance().GetPPU()->IsLCDEnabled())
 				{
-					if (!Processor::GetInstance().GetPPU()->IsLCDEnabled())
-					{
-						Processor::GetInstance().GetPPU()->EnableLCD();
-					}
+					Processor::GetInstance().GetPPU()->EnableLCD();
 				}
 				// If the status has changed.
-				else if (Processor::GetInstance().GetPPU()->IsLCDEnabled())
+				else if (!static_cast<LCDC_Control::Control>(data).IsLCDEnabled() &&
+					     Processor::GetInstance().GetPPU()->IsLCDEnabled() &&
+					     Processor::GetInstance().GetPPU()->GetState() == PPUState::V_BLANK)
 				{
 					Processor::GetInstance().GetPPU()->DisableLCD();
-				}
+				}*/
+
+				return true;
 
 				break;
 			}
@@ -181,11 +188,9 @@ private:
 
 				if (Processor::GetInstance().GetPPU()->IsLCDEnabled())
 				{
-					PPUState state{Processor::GetInstance().GetPPU()->GetState()};
-
 					bool interrupt_state{false};
 
-					switch (state)
+					switch (Processor::GetInstance().GetPPU()->GetState())
 					{
 						case PPUState::H_BLANK:
 						{
@@ -206,12 +211,10 @@ private:
 						}
 					}
 
-					if (static_cast<LCDC_Status::Status>(filtered_data).mode_lyc == LCDC_Status::Status::MODE_SELECTION || interrupt_state)
+					if (interrupt_state)
 					{
 						InterruptHandler::IRQ(EInterrupts::LCDC);
 					}
-
-					filtered_data &= 0xFD;
 				}
 
 				this->_memory[this->RelativeAddress(LCDC_Status::LCDC_ADDRESS)] = filtered_data;

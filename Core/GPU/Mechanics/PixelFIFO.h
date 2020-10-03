@@ -49,7 +49,7 @@ public:
 		this->SetY(this->_scy);
 	}
 
-	auto FetchNextPixel()
+	std::pair<PixelSource, PaletteColor> FetchNextPixel()
 	{
 		// Fetching from the first row if it isn't empty.
 		if (!this->_lower_row.IsEmpty())
@@ -63,10 +63,10 @@ public:
 				this->_lower_row.SetLastPixel(this->_upper_row.GetNextPixel());
 			}
 
-			return FETCHED_PALETTE_COLOR;
+			return {this->_lower_row.GetSource(), FETCHED_PALETTE_COLOR};
 		}
 
-		return PaletteColor::FIRST_PALETTE;
+		return {PixelSource::BGP, PaletteColor::FIRST_PALETTE};
 	}
 
 	bool IsEmpty() const
@@ -93,11 +93,23 @@ public:
 		{
 			const API::data_t DRAWN_X = static_cast<API::data_t>((this->GetX() + 0x100 - this->GetSCX()) % 0x100);
 			const API::data_t DRAWN_Y{static_cast<API::data_t>(LY{})};
+			const LCDC_Control::Control lcdc_control{LCDC_Control{}};
 
-			RET_FALSE_IF_FAIL(this->DrawPalette(DRAWN_X, DRAWN_Y, PIXEL),
-							  "Failed drawing palette (%u, %u) for SCX %u and SCY %u, x %u y %u!",
-			                    DRAWN_X, DRAWN_Y, this->GetSCX(), this->GetSCY(), this->GetX(), this->GetY());
-			
+			Message("Uncomment this when fixed.");
+			/*if (lcdc_control.background_enable == LCDC_Control::Control::BACKGROUND_ON && PIXEL.first == PixelSource::BGP ||
+				lcdc_control.window_enable == LCDC_Control::Control::WINDOW_ON && PIXEL.first == PixelSource::WIN)
+			{*/
+				RET_FALSE_IF_FAIL(this->DrawPalette(DRAWN_X, DRAWN_Y, PIXEL.second),
+					"Failed drawing palette (%u, %u) for SCX %u and SCY %u, x %u y %u!",
+					DRAWN_X, DRAWN_Y, this->GetSCX(), this->GetSCY(), this->GetX(), this->GetY());
+			/*}
+			else
+			{
+				// If both bg and window are disbaled, we draw the 0x00 palette.
+				RET_FALSE_IF_FAIL(this->DrawPalette(DRAWN_X, DRAWN_Y, PaletteColor::FIRST_PALETTE),
+					"Failed drawing palette (%u, %u) for SCX %u and SCY %u, x %u y %u!",
+					DRAWN_X, DRAWN_Y, this->GetSCX(), this->GetSCY(), this->GetX(), this->GetY());
+			}*/
 		}
 
 		this->SetX((this->GetX() + 1) % 0x100);
@@ -148,17 +160,6 @@ public:
 	const API::data_t GetX() const
 	{
 		return this->_x;
-	}
-
-	void BlackScreen()
-	{
-		for (std::size_t height = 0; height < SCREEN_HEIGHT_PIXELS; ++height)
-		{
-			for (std::size_t width = 0; width < SCREEN_WIDTH_PIXELS; ++width)
-			{
-				SANITY(this->DrawPixel(width, height, PixelColor::BLACK), "Failed drawing pixels");
-			}
-		}
 	}
 
 	void WhiteScreen()

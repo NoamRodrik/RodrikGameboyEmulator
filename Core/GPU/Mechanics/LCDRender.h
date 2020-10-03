@@ -94,12 +94,17 @@ public:
 
 	void ResetLCD()
 	{
-		this->_fifo.BlackScreen();
+		this->_fifo.WhiteScreen();
 
 		this->_fifo.ResetNewLine();
 		this->_fifo.ResetNewFrame();
 		this->_fetcher.Reset();
 		this->_fetcher.ResetNewFrame();
+
+		if (static_cast<LCDC_Status::Status>(LCDC_Status{}).mode_0 == LCDC_Status::Status::MODE_SELECTION)
+		{
+			InterruptHandler::IRQ(EInterrupts::LCDC);
+		}
 
 		this->ChangeState(PPUState::H_BLANK);
 	}
@@ -118,16 +123,14 @@ private:
 		{
 			initialized = true;
 			this->_fifo.ResetNewFrame();
+			this->_fifo.ResetNewLine();
 			this->_fetcher.ResetNewFrame();
+			this->_fetcher.Reset();
 		}
 
 		if (this->_clocks >= OAM_SEARCH_MAXIMUM_CYCLES)
 		{
 			this->_clocks -= OAM_SEARCH_MAXIMUM_CYCLES;
-
-			this->_fifo.ResetNewLine();
-			this->_fetcher.Reset();
-
 			this->ChangeState(PPUState::PIXEL_RENDER);
 
 			return true;
@@ -144,24 +147,32 @@ private:
 		if (this->_executed_clocks >= HBLANK_CLOCKS)
 		{
 			this->_fifo.ResetNewLine();
-
+			this->CompareLYC();
+			
 			// If we need VBlank.
 			if (this->NeedsVBlank())
 			{
+				InterruptHandler::IRQ(EInterrupts::VBLANK);
+
+				if (static_cast<LCDC_Status::Status>(LCDC_Status{}).mode_1 == LCDC_Status::Status::MODE_SELECTION)
+				{
+					InterruptHandler::IRQ(EInterrupts::LCDC);
+				}
+
 				// We need to go back to the beginning.
 				this->ChangeState(PPUState::V_BLANK);
 			}
 			else
 			{
-				static IORAM* io_ram_memory_ptr{static_cast<IORAM*>(this->_ppu.GetProcessor().GetMemory().GetDeviceAtAddress(LCDC_Status::LCDC_ADDRESS))};
-				Tools::MutateBitByCondition((LY{} + 1) == static_cast<data_t>(LYC{}),
-										    io_ram_memory_ptr->GetMemoryPointer()[LCDC_Status::LCDC_ADDRESS - IORAM::START_ADDRESS],
-											2);
-
 				// Set if not in vblank
 				// Fetcher must be after fifo.
 				this->_fifo.IncrementY();
-				this->_fetcher.NextRowOffset();
+				this->_fetcher.ResetNewLine();
+
+				if (static_cast<LCDC_Status::Status>(LCDC_Status{}).mode_2 == LCDC_Status::Status::MODE_SELECTION)
+				{
+					InterruptHandler::IRQ(EInterrupts::LCDC);
+				}
 
 				// We need to return to OAM search.
 				this->ChangeState(PPUState::OAM_SEARCH);
@@ -183,6 +194,7 @@ private:
 		{
 			this->_lines += 1;
 			this->_fifo.ResetNewLine();
+			this->CompareLYC();
 			this->_fifo.IncrementY();
 			this->_clocks -= VBLANK_CLOCKS;
 
@@ -191,9 +203,13 @@ private:
 				// Going back to the beginning.
 				// FIRST FIFO and then FETCHER!
 				this->_lines = 0;
-
 				this->_fifo.ResetNewFrame();
 				this->_fetcher.ResetNewFrame();
+				
+				if (static_cast<LCDC_Status::Status>(LCDC_Status{}).mode_2 == LCDC_Status::Status::MODE_SELECTION)
+				{
+					InterruptHandler::IRQ(EInterrupts::LCDC);
+				}
 
 				this->ChangeState(PPUState::OAM_SEARCH);
 			}
@@ -213,7 +229,12 @@ private:
 		{
 			// If we need an HBlank, we've gotten to the end.
 			if (this->NeedsHBlank())
-			{
+			{	
+				if (static_cast<LCDC_Status::Status>(LCDC_Status{}).mode_0 == LCDC_Status::Status::MODE_SELECTION)
+				{
+					InterruptHandler::IRQ(EInterrupts::LCDC);
+				}
+
 				this->ChangeState(PPUState::H_BLANK);
 				return true;
 			}
@@ -295,7 +316,7 @@ public:
 	static constexpr std::size_t VBLANK_CLOCKS{OAM_SEARCH_MAXIMUM_CYCLES + PIXEL_RENDER_MAXIMUM_CYCLES + HBLANK_CLOCK_MAXIMUM_CYCLES};
 
 private:
-	const void ChangeState(PPUState new_state)
+	void ChangeState(PPUState new_state)
 	{
 		SANITY(static_cast<API::data_t>(new_state) <= 0x03, "Invalid new state");
 
@@ -304,6 +325,20 @@ private:
 		io_ram_memory_ptr->GetMemoryPointer()[LCDC_Status::LCDC_ADDRESS - IORAM::START_ADDRESS] |= static_cast<API::data_t>(new_state);
 
 		this->_state = new_state;
+	}
+
+	void CompareLYC() const
+	{
+		static IORAM* io_ram_memory_ptr{static_cast<IORAM*>(this->_ppu.GetProcessor().GetMemory().GetDeviceAtAddress(LCDC_Status::LCDC_ADDRESS))};
+		Tools::MutateBitByCondition((LY{} + 1) == static_cast<data_t>(LYC{}),
+								    io_ram_memory_ptr->GetMemoryPointer()[LCDC_Status::LCDC_ADDRESS - IORAM::START_ADDRESS], 2);
+
+		LCDC_Status::Status lcdc_status{LCDC_Status{}};
+		if (lcdc_status.mode_lyc == LCDC_Status::Status::MODE_SELECTION &&
+			lcdc_status.coincidence_flag == LCDC_Status::Status::LYC_EQUAL_LCDC)
+		{
+			InterruptHandler::IRQ(EInterrupts::LCDC);
+		}
 	}
 
 public:
