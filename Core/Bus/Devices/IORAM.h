@@ -160,9 +160,6 @@ private:
 			{
 				this->_memory[this->RelativeAddress(LCDC_Control::LCDC_ADDRESS)] = data;
 
-				Message("Uncomment this if needed.");
-				/*
-				Message("Not sure this is O.K.");
 				if (static_cast<LCDC_Control::Control>(data).IsLCDEnabled() &&
 					!Processor::GetInstance().GetPPU()->IsLCDEnabled())
 				{
@@ -174,7 +171,7 @@ private:
 					     Processor::GetInstance().GetPPU()->GetState() == PPUState::V_BLANK)
 				{
 					Processor::GetInstance().GetPPU()->DisableLCD();
-				}*/
+				}
 
 				return true;
 

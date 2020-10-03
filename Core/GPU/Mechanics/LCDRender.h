@@ -106,6 +106,7 @@ public:
 			InterruptHandler::IRQ(EInterrupts::LCDC);
 		}
 
+		this->_fifo.SetY(this->_fifo.GetSCY());
 		this->ChangeState(PPUState::H_BLANK);
 	}
 
@@ -117,17 +118,6 @@ public:
 private:
 	const bool OAMSearch()
 	{
-		static bool initialized{false};
-
-		if (!initialized)
-		{
-			initialized = true;
-			this->_fifo.ResetNewFrame();
-			this->_fifo.ResetNewLine();
-			this->_fetcher.ResetNewFrame();
-			this->_fetcher.Reset();
-		}
-
 		if (this->_clocks >= OAM_SEARCH_MAXIMUM_CYCLES)
 		{
 			this->_clocks -= OAM_SEARCH_MAXIMUM_CYCLES;
@@ -141,16 +131,10 @@ private:
 
 	const bool HBlank()
 	{		
-		// Save this to fill the executed clocks from pixel render mode.
-		this->_executed_clocks += this->_clocks;
-
-		if (this->_executed_clocks >= HBLANK_CLOCKS)
+		if (this->_clocks >= HBLANK_CLOCK_MAXIMUM_CYCLES)
 		{
-			this->_fifo.ResetNewLine();
-			this->CompareLYC();
-			
 			// If we need VBlank.
-			if (this->NeedsVBlank())
+			if (this->_fifo.YPassedThreshold())
 			{
 				InterruptHandler::IRQ(EInterrupts::VBLANK);
 
@@ -164,11 +148,6 @@ private:
 			}
 			else
 			{
-				// Set if not in vblank
-				// Fetcher must be after fifo.
-				this->_fifo.IncrementY();
-				this->_fetcher.ResetNewLine();
-
 				if (static_cast<LCDC_Status::Status>(LCDC_Status{}).mode_2 == LCDC_Status::Status::MODE_SELECTION)
 				{
 					InterruptHandler::IRQ(EInterrupts::LCDC);
@@ -176,11 +155,18 @@ private:
 
 				// We need to return to OAM search.
 				this->ChangeState(PPUState::OAM_SEARCH);
+
+				// Check LYC
+				this->CompareLYC();
+
+				// Fetcher must be after fifo.
+				this->_fifo.ResetNewLine();
+				this->_fifo.IncrementY();
+				this->_fetcher.ResetNewLine();
+				this->_fetcher.Reset();
 			}
 
-			this->_fetcher.Reset();
-			this->_clocks = this->_executed_clocks - HBLANK_CLOCKS;
-			this->_executed_clocks = 0;
+			this->_clocks -= HBLANK_CLOCK_MAXIMUM_CYCLES;
 
 			return true;
 		}
@@ -192,18 +178,17 @@ private:
 	{
 		if (this->_clocks >= VBLANK_CLOCKS)
 		{
-			this->_lines += 1;
-			this->_fifo.ResetNewLine();
 			this->CompareLYC();
 			this->_fifo.IncrementY();
 			this->_clocks -= VBLANK_CLOCKS;
 
-			if (this->_lines == VBLANK_LINES_LEN)
+			if (static_cast<API::data_t>(LY{}) == VBLANK_LY_END)
 			{
 				// Going back to the beginning.
 				// FIRST FIFO and then FETCHER!
-				this->_lines = 0;
+				this->_fifo.ResetNewLine();
 				this->_fifo.ResetNewFrame();
+				this->_fetcher.Reset();
 				this->_fetcher.ResetNewFrame();
 				
 				if (static_cast<LCDC_Status::Status>(LCDC_Status{}).mode_2 == LCDC_Status::Status::MODE_SELECTION)
@@ -222,24 +207,23 @@ private:
 
 	bool PixelRender()
 	{
-		// Save this to fill the executed clocks in HBlank mode.
-		this->_executed_clocks += this->_clocks;
-
-		while (this->_clocks >= FIFO_PIXEL_CLOCKS)
+		if (this->_clocks >= PIXEL_RENDER_MAXIMUM_CYCLES)
 		{
-			// If we need an HBlank, we've gotten to the end.
-			if (this->NeedsHBlank())
-			{	
-				if (static_cast<LCDC_Status::Status>(LCDC_Status{}).mode_0 == LCDC_Status::Status::MODE_SELECTION)
-				{
-					InterruptHandler::IRQ(EInterrupts::LCDC);
-				}
+			std::size_t clocks{PIXEL_RENDER_MAXIMUM_CYCLES};
 
-				this->ChangeState(PPUState::H_BLANK);
-				return true;
+			while (!this->_fifo.XPassedThreshold())
+			{
+				SANITY(this->InnerExecute(clocks), "Failed executing fifo and fetcher");
 			}
 
-			SANITY(this->InnerExecute(), "Failed executing fifo and fetcher");
+			if (static_cast<LCDC_Status::Status>(LCDC_Status{}).mode_0 == LCDC_Status::Status::MODE_SELECTION)
+			{
+				InterruptHandler::IRQ(EInterrupts::LCDC);
+			}
+
+			this->_clocks -= PIXEL_RENDER_MAXIMUM_CYCLES;
+			this->ChangeState(PPUState::H_BLANK);
+			return true;
 		}
 
 		return false;
@@ -248,9 +232,9 @@ private:
 	/**
 	 * All combinations of possibilities of running the fetcher and fifo.
 	 */
-	constexpr bool InnerExecute()
+	constexpr bool InnerExecute(std::size_t& io_clocks)
 	{
-		if (this->_clocks == FIFO_PIXEL_CLOCKS)
+		if (io_clocks == FIFO_PIXEL_CLOCKS)
 		{
 			if (this->_fifo.NeedsFill())
 			{
@@ -262,8 +246,6 @@ private:
 				RET_FALSE_IF_FAIL(this->_fifo.Execute(), "Failed executing the FIFO!");
 				RET_FALSE_IF_FAIL(this->_fetcher.Execute(FIFO_PIXEL_CLOCKS), "Failed executing the fetcher!");
 			}
-
-			this->_clocks = 0;
 		}
 		else if (this->_fifo.NeedsFill())
 		{
@@ -271,7 +253,7 @@ private:
 			RET_FALSE_IF_FAIL(this->_fifo.Execute(), "Failed executing the FIFO #1!");
 			RET_FALSE_IF_FAIL(this->_fifo.Execute(), "Failed executing the FIFO #2!");
 
-			this->_clocks -= FETCHER_OPERATION_CLOCKS;
+			io_clocks -= FETCHER_OPERATION_CLOCKS;
 		}
 		else
 		{
@@ -288,35 +270,14 @@ private:
 				RET_FALSE_IF_FAIL(this->_fetcher.Execute(FETCHER_OPERATION_CLOCKS), "Failed executing the fetcher!");
 			}
 
-			this->_clocks -= FETCHER_OPERATION_CLOCKS;
+			io_clocks -= FETCHER_OPERATION_CLOCKS;
 		}
 
 		return true;
 	}
 
 private:
-	const bool NeedsVBlank() const
-	{
-		return this->_fifo.YPassedThreshold();
-	}
-
-	const bool NeedsHBlank() const
-	{
-		return this->_fifo.XPassedThreshold();
-	}
-
-public:
-	static constexpr std::size_t OAM_SEARCH_MAXIMUM_CYCLES{80};
-	static constexpr std::size_t PIXEL_RENDER_MAXIMUM_CYCLES{172};
-	static constexpr std::size_t HBLANK_CLOCK_MAXIMUM_CYCLES{204};
-	static constexpr std::size_t VBLANK_LINES_LEN{10};
-	static constexpr std::size_t FIFO_PIXEL_CLOCKS{4};
-	static constexpr std::size_t FETCHER_OPERATION_CLOCKS{8};
-	static constexpr std::size_t HBLANK_CLOCKS{PIXEL_RENDER_MAXIMUM_CYCLES + HBLANK_CLOCK_MAXIMUM_CYCLES};
-	static constexpr std::size_t VBLANK_CLOCKS{OAM_SEARCH_MAXIMUM_CYCLES + PIXEL_RENDER_MAXIMUM_CYCLES + HBLANK_CLOCK_MAXIMUM_CYCLES};
-
-private:
-	void ChangeState(PPUState new_state)
+	void ChangeState(const PPUState new_state)
 	{
 		SANITY(static_cast<API::data_t>(new_state) <= 0x03, "Invalid new state");
 
@@ -330,7 +291,8 @@ private:
 	void CompareLYC() const
 	{
 		static IORAM* io_ram_memory_ptr{static_cast<IORAM*>(this->_ppu.GetProcessor().GetMemory().GetDeviceAtAddress(LCDC_Status::LCDC_ADDRESS))};
-		Tools::MutateBitByCondition((LY{} + 1) == static_cast<data_t>(LYC{}),
+		Message("Not sure if + 1 or without!?");
+		Tools::MutateBitByCondition(static_cast<data_t>(LY{}) == static_cast<data_t>(LYC{}),
 								    io_ram_memory_ptr->GetMemoryPointer()[LCDC_Status::LCDC_ADDRESS - IORAM::START_ADDRESS], 2);
 
 		LCDC_Status::Status lcdc_status{LCDC_Status{}};
@@ -342,14 +304,22 @@ private:
 	}
 
 public:
+	static constexpr std::size_t OAM_SEARCH_MAXIMUM_CYCLES{80};
+	static constexpr std::size_t PIXEL_RENDER_MAXIMUM_CYCLES{289};
+	static constexpr std::size_t HBLANK_CLOCK_MAXIMUM_CYCLES{87};
+	static constexpr std::size_t VBLANK_LY_END{154};
+	static constexpr std::size_t FIFO_PIXEL_CLOCKS{4};
+	static constexpr std::size_t FETCHER_OPERATION_CLOCKS{8};
+	static constexpr std::size_t HBLANK_CLOCKS{PIXEL_RENDER_MAXIMUM_CYCLES + HBLANK_CLOCK_MAXIMUM_CYCLES};
+	static constexpr std::size_t VBLANK_CLOCKS{OAM_SEARCH_MAXIMUM_CYCLES + PIXEL_RENDER_MAXIMUM_CYCLES + HBLANK_CLOCK_MAXIMUM_CYCLES};
+
+public:
 	API::IMemoryDeviceAccess& _memory;
 	IPPU&                     _ppu;
 	PixelFIFO				  _fifo{this->_ppu};
 	Fetcher					  _fetcher{this->_fifo, this->_ppu};
 	PPUState				  _state{PPUState::OAM_SEARCH};
 	std::size_t				  _clocks{0x00};
-	std::size_t               _executed_clocks{0x00};
-	std::size_t               _lines{0x00};
 };
 }
 

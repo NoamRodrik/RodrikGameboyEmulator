@@ -96,20 +96,20 @@ public:
 			const LCDC_Control::Control lcdc_control{LCDC_Control{}};
 
 			Message("Uncomment this when fixed.");
-			/*if (lcdc_control.background_enable == LCDC_Control::Control::BACKGROUND_ON && PIXEL.first == PixelSource::BGP ||
+			if (lcdc_control.background_enable == LCDC_Control::Control::BACKGROUND_ON && PIXEL.first == PixelSource::BGP ||
 				lcdc_control.window_enable == LCDC_Control::Control::WINDOW_ON && PIXEL.first == PixelSource::WIN)
-			{*/
+			{
 				RET_FALSE_IF_FAIL(this->DrawPalette(DRAWN_X, DRAWN_Y, PIXEL.second),
 					"Failed drawing palette (%u, %u) for SCX %u and SCY %u, x %u y %u!",
 					DRAWN_X, DRAWN_Y, this->GetSCX(), this->GetSCY(), this->GetX(), this->GetY());
-			/*}
+			}
 			else
 			{
-				// If both bg and window are disbaled, we draw the 0x00 palette.
+				// If both bg and window are disabled, we draw the 0x00 palette.
 				RET_FALSE_IF_FAIL(this->DrawPalette(DRAWN_X, DRAWN_Y, PaletteColor::FIRST_PALETTE),
 					"Failed drawing palette (%u, %u) for SCX %u and SCY %u, x %u y %u!",
 					DRAWN_X, DRAWN_Y, this->GetSCX(), this->GetSCY(), this->GetX(), this->GetY());
-			}*/
+			}
 		}
 
 		this->SetX((this->GetX() + 1) % 0x100);
@@ -180,7 +180,7 @@ public:
 
 	const bool XPassedThreshold() const
 	{
-		return ((static_cast<std::size_t>(this->GetX()) + 0x100 - this->GetSCX()) % 0x100) >= SCREEN_WIDTH_PIXELS;
+		return ((static_cast<std::size_t>(this->GetX()) + 0x100 - this->GetSCX()) % 0x100) >= SCREEN_WIDTH_PIXELS - 1;
 	}
 
 	const API::data_t GetSCY() const

@@ -93,6 +93,7 @@ private:
 		std::this_thread::sleep_for(SLEEP_LEFT_BETWEEN_FRAMES);
 
 		this->_previous = CURRENT;
+
 		return this->Render();
 	}
 
