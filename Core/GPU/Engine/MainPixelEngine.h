@@ -16,6 +16,7 @@
 #include <Core/GPU/Entities/PaletteMap.h>
 #include <Core/Bus/Devices/IORAM.h>
 #include <Core/GPU/Definitions.h>
+#include <Core/Joypad/Joypad.h>
 #include <API/Definitions.h>
 #include <Core/GPU/IPPU.h>
 #include <Tools/Tools.h>
@@ -94,6 +95,7 @@ private:
 
 		this->_previous = CURRENT;
 
+		this->HandleButtonPress();
 		return this->Render();
 	}
 
@@ -115,6 +117,82 @@ private:
 	virtual Processor& GetProcessor() override
 	{
 		return this->_processor;
+	}
+
+	void HandleButtonPress() const
+	{
+		API::data_t direction_status{0x00};
+		API::data_t button_status{0x00};
+
+		if (this->GetKey(olc::Key::ESCAPE).bPressed ||
+			this->GetKey(olc::Key::ESCAPE).bHeld ||
+			this->GetKey(olc::Key::ESCAPE).bReleased)
+		{
+			Tools::SetBit(button_status, static_cast<std::size_t>(Joypad::Control::START));
+		}
+
+		if (this->GetKey(olc::Key::ENTER).bPressed ||
+			this->GetKey(olc::Key::ENTER).bHeld ||
+			this->GetKey(olc::Key::ENTER).bReleased)
+		{
+			Tools::SetBit(button_status, static_cast<std::size_t>(Joypad::Control::SELECT));
+		}
+
+		if (this->GetKey(olc::Key::W).bPressed ||
+			this->GetKey(olc::Key::UP).bPressed ||
+			this->GetKey(olc::Key::W).bHeld ||
+			this->GetKey(olc::Key::UP).bHeld ||
+			this->GetKey(olc::Key::W).bReleased ||
+			this->GetKey(olc::Key::UP).bReleased)
+		{
+			Tools::SetBit(direction_status, static_cast<std::size_t>(Joypad::Control::UP));
+		}
+
+		if (this->GetKey(olc::Key::S).bPressed ||
+			this->GetKey(olc::Key::DOWN).bPressed ||
+			this->GetKey(olc::Key::S).bHeld ||
+			this->GetKey(olc::Key::DOWN).bHeld ||
+			this->GetKey(olc::Key::S).bReleased ||
+			this->GetKey(olc::Key::DOWN).bReleased)
+		{
+			Tools::SetBit(direction_status, static_cast<std::size_t>(Joypad::Control::DOWN));
+		}
+
+		if (this->GetKey(olc::Key::A).bPressed ||
+			this->GetKey(olc::Key::LEFT).bPressed ||
+			this->GetKey(olc::Key::A).bHeld ||
+			this->GetKey(olc::Key::LEFT).bHeld ||
+			this->GetKey(olc::Key::A).bReleased ||
+			this->GetKey(olc::Key::LEFT).bReleased)
+		{
+			Tools::SetBit(direction_status, static_cast<std::size_t>(Joypad::Control::LEFT));
+		}
+
+		if (this->GetKey(olc::Key::D).bPressed ||
+			this->GetKey(olc::Key::RIGHT).bPressed ||
+			this->GetKey(olc::Key::D).bHeld ||
+			this->GetKey(olc::Key::RIGHT).bHeld ||
+			this->GetKey(olc::Key::D).bReleased ||
+			this->GetKey(olc::Key::RIGHT).bReleased)
+		{
+			Tools::SetBit(direction_status, static_cast<std::size_t>(Joypad::Control::RIGHT));
+		}
+
+		if (this->GetKey(olc::Key::J).bPressed ||
+			this->GetKey(olc::Key::J).bHeld ||
+			this->GetKey(olc::Key::J).bReleased)
+		{
+			Tools::SetBit(button_status, static_cast<std::size_t>(Joypad::Control::B));
+		}
+
+		if (this->GetKey(olc::Key::K).bPressed ||
+			this->GetKey(olc::Key::K).bHeld ||
+			this->GetKey(olc::Key::K).bReleased)
+		{
+			Tools::SetBit(button_status, static_cast<std::size_t>(Joypad::Control::A));
+		}
+
+		Joypad::ChangeStatus(direction_status, button_status);
 	}
 
 private:

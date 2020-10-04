@@ -12,6 +12,7 @@ namespace Core
 {
 inline const auto HIGH_LOW_PIN_NUMBER_INTERRUPT = []()
 {
+	Processor::ClearStop();
 	return true;
 };
 } // Core

@@ -14,20 +14,34 @@ namespace Core
 class Joypad : public API::StaticInstance<Joypad>
 {
 public:
-	enum EButton : API::data_t
+	enum class Control : API::data_t
 	{
-		RIGHT,
-		LEFT,
-		UP,
-		DOWN,
-		A,
-		B,
-		SELECT,
-		START
+		RIGHT = 0, 
+		LEFT = 1,
+		UP = 2,
+		DOWN = 3,
+		A = 0, 
+		B = 1,
+		SELECT = 2,
+		START = 3
+	};
+
+	enum class Mode : API::data_t
+	{
+		SELECT_DIRECTION = 4,
+		SELECT_BUTTONS = 5
 	};
 
 public:
-	static void PressButton(const EButton button);
+	static void ChangeStatus(const API::data_t direction_status, const API::data_t button_status);
+
+public:
+	static const API::data_t GetButtonStatus();
+	static const API::data_t GetDirectionStatus();
+
+private:
+	API::data_t _direction_status{0x00};
+	API::data_t _button_status{0x00};
 };
 }
 

@@ -12,6 +12,7 @@
 #include <Core/CPU/Timers/Registers/TimerCounter.h>
 #include <Core/CPU/Timers/Registers/TimerControl.h>
 #include <Core/CPU/Timers/Registers/TimerModulo.h>
+#include <Core/Joypad/Registers/JoypadRegister.h>
 #include <Core/CPU/Interrupts/InterruptHandler.h>
 #include <Core/GPU/Registers/LCDC_Control.h>
 #include <Core/GPU/Registers/LCDC_Status.h>
@@ -27,6 +28,7 @@
 #include <Core/GPU/Registers/WY.h>
 #include <Core/GPU/Registers/WX.h>
 #include <Core/CPU/Timers/Timer.h>
+#include <Core/Joypad/Joypad.h>
 #include <Core/Bus/RAMDevice.h>
 #include <API/Definitions.h>
 
@@ -186,6 +188,17 @@ private:
 				return true;
 				break;
 			}
+
+			case (JoypadRegister::JOYPAD_REGISTER_ADDRESS):
+			{
+				Message("Is this needed?");
+				this->_memory[this->RelativeAddress(JoypadRegister::JOYPAD_REGISTER_ADDRESS)] = /*(data & 0x30)*/ 0xF0 |
+					(Tools::IsBitSet(data, static_cast<std::size_t>(Joypad::Mode::SELECT_DIRECTION)) ?
+					 Joypad::GetDirectionStatus() : Joypad::GetButtonStatus());
+
+				return true;
+				break;
+			}
 		}
 
 		return false;
@@ -202,6 +215,7 @@ private:
 	friend class PixelFIFO;
 	friend class DeviceManager;
 	friend class Timer;
+	friend class Joypad;
 };
 } // Core
 

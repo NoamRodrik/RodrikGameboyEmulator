@@ -86,12 +86,7 @@ const size_t Processor::Clock()
 	// Clock adjust
 	clock_cycle *= 4;
 
-	if (Processor::IsStopped())
-	{
-		MAIN_LOG_NO_ENTER(" Stopped ");
-		Processor::ClearStop();
-	}
-	else
+	if (!Processor::IsStopped())
 	{
 		// If it's not stopped, update devices.
 		Processor::GetInstance().GetPPU()->Clock(clock_cycle);
