@@ -96,22 +96,19 @@ private:
 
 		if (this->_clocks >= FETCH_TILE_CLOCKS)
 		{	
-			const uint32_t TILE_OFFSET = (this->_fifo.GetY() / 8) * 32 + (this->_tile_offset_x / 8);
-			this->_tile_offset_x = (this->_tile_offset_x + 8) % 0x100;
-			Message("Undo this");
-			/*if (static_cast<LCDC_Control::Control>(LCDC_Control{}).IsWindowEnabled() &&
-				this->_fifo.GetY() >= static_cast<API::data_t>(WY{}) &&
-				this->_fifo.GetX() >= static_cast<API::data_t>(WX{}))
+			const API::data_t WINDOW_X{WX{}};
+			const API::data_t WINDOW_Y{WY{}};
+
+			if (static_cast<LCDC_Control::Control>(LCDC_Control{}).IsWindowEnabled() &&
+				this->_fifo.GetY() >= WINDOW_Y && this->_fifo.GetX() >= WINDOW_X)
 			{
-				Message("TODO! Make this better.");
-				Message("Here we need to recalibrate the tile index with the X and Y offset of the window.");
-				// If they're equal, clear fifo and restart fetcher
-				if (this->_fifo.GetX() == static_cast<API::data_t>(WX{}))
+				// If they're equal, clear fifo
+				if (this->_tile_offset_x == static_cast<API::data_t>(WX{}))
 				{
-					this->_fifo.ResetNewLine();
-					this->_fifo.SetX(WX{});
+					this->_fifo.Reset();
 				}
 
+				const uint32_t TILE_OFFSET = ((this->_fifo.GetY() - WINDOW_Y) / 8) * 32 + ((this->_tile_offset_x - WINDOW_X) / 8);
 				this->_tile_index = vram_memory_ptr[this->GetWindowMapStart() + TILE_OFFSET - VideoRAM::START_ADDRESS];
 				this->_pixel_row_container.Initialize(PixelSource::WIN);
 				this->_clocks -= FETCH_TILE_CLOCKS;
@@ -119,12 +116,15 @@ private:
 			}
 			// If the window didn't succeed.
 			else
-			{*/
+			{
+				const uint32_t TILE_OFFSET = (this->_fifo.GetY() / 8) * 32 + (this->_tile_offset_x / 8);
 				this->_tile_index = vram_memory_ptr[this->GetBackgroundMapStart() + TILE_OFFSET - VideoRAM::START_ADDRESS];
 				this->_pixel_row_container.Initialize(PixelSource::BGP);
 				this->_clocks -= FETCH_TILE_CLOCKS;
 				this->_state = State::READ_DATA_0;
-			//}
+			}
+
+			this->_tile_offset_x = (this->_tile_offset_x + 8) % 0x100;
 		}
 
 		return true;

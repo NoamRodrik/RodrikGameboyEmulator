@@ -88,7 +88,6 @@ public:
 			const API::data_t DRAWN_Y{static_cast<API::data_t>(LY{})};
 			const LCDC_Control::Control lcdc_control{LCDC_Control{}};
 
-			
 			if (lcdc_control.background_enable == LCDC_Control::Control::BACKGROUND_ON && PIXEL.first == PixelSource::BGP ||
 				lcdc_control.window_enable == LCDC_Control::Control::WINDOW_ON && PIXEL.first == PixelSource::WIN)
 			{
