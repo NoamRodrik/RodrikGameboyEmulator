@@ -84,7 +84,7 @@ public:
 		const auto PIXEL{this->FetchNextPixel()};
 		if (!this->XPassedThreshold())
 		{
-			const API::data_t DRAWN_X = static_cast<API::data_t>((this->GetX() + 0x100 - this->GetSCX()) % 0x100);
+			const API::data_t DRAWN_X{static_cast<API::data_t>(GetWrappedAroundDistance(this->GetX(), this->GetSCX()))};
 			const API::data_t DRAWN_Y{static_cast<API::data_t>(LY{})};
 			const LCDC_Control::Control lcdc_control{LCDC_Control{}};
 
@@ -137,7 +137,7 @@ public:
 	{
 		this->_y = y;
 		static auto* io_ram_memory_ptr{static_cast<IORAM*>(this->_ppu.GetProcessor().GetMemory().GetDeviceAtAddress(LY::LY_ADDRESS))->GetMemoryPointer()};
-		io_ram_memory_ptr[LY::LY_ADDRESS - IORAM::START_ADDRESS] = (((this->_y + 0x100) - this->_scy) % 0x100) % 0x9A;
+		io_ram_memory_ptr[LY::LY_ADDRESS - IORAM::START_ADDRESS] = GetWrappedAroundDistance(this->_y, this->_scy) % 0x9A;
 
 		if (LY{} == 0)
 		{
@@ -170,12 +170,12 @@ public:
 
 	const bool YPassedThreshold() const
 	{
-		return ((static_cast<std::size_t>(this->GetY()) + 0x100 - this->GetSCY()) % 0x100) >= SCREEN_HEIGHT_PIXELS - 1;
+		return GetWrappedAroundDistance(this->GetY(), this->GetSCY()) >= SCREEN_HEIGHT_PIXELS - 1;
 	}
 
 	const bool XPassedThreshold() const
 	{
-		return ((static_cast<std::size_t>(this->GetX()) + 0x100 - this->GetSCX()) % 0x100) >= SCREEN_WIDTH_PIXELS;
+		return GetWrappedAroundDistance(this->GetX(), this->GetSCX()) >= SCREEN_WIDTH_PIXELS;
 	}
 
 	const API::data_t GetSCY() const

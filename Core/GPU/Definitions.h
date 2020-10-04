@@ -11,6 +11,11 @@
 
 namespace Core
 {
+static constexpr API::address_t GetWrappedAroundDistance(const API::address_t from, const API::address_t to)
+{
+	return (from + 0x100 - to) % 0x100;
+}
+
 /**
  * The original colors to choose from.
  */

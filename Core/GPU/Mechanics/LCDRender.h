@@ -94,11 +94,9 @@ public:
 
 	void ResetLCD()
 	{
-		Message("Is this needed?");
 		this->_fifo.WhiteScreen();
 
-		this->_fifo.Reset();
-		this->_fetcher.Reset();
+		this->Reset();
 
 		this->_fifo.SetY(this->_fifo.GetSCY());
 
@@ -107,7 +105,6 @@ public:
 
 	void Start()
 	{
-		Message("Is this needed?");
 		this->_fifo.WhiteScreen();
 	}
 
@@ -142,15 +139,12 @@ private:
 				// We need to return to OAM search.
 				this->ChangeState(PPUState::OAM_SEARCH);
 
+				// Increment Y value for FIFO
+				this->Reset();
+				this->_fifo.IncrementY();
+
 				// Check LYC
 				this->CompareLYC();
-
-				// Fetcher must be after fifo.
-				this->_fifo.Reset();
-				this->_fetcher.Reset();
-
-				// Increment Y value for FIFO
-				this->_fifo.IncrementY();
 			}
 
 			this->_clocks -= HBLANK_CLOCK_MINIMUM_CYCLES;
@@ -165,17 +159,14 @@ private:
 	{
 		if (this->_clocks >= VBLANK_CLOCKS)
 		{
-			this->CompareLYC();
 			this->_fifo.IncrementY();
+			this->CompareLYC();
 			this->_clocks -= VBLANK_CLOCKS;
 
 			if (static_cast<API::data_t>(LY{}) == VBLANK_LY_END)
 			{
 				// Going back to the beginning.
-				// FIRST FIFO and then FETCHER!
-				this->_fifo.Reset();
-				this->_fetcher.Reset();
-
+				this->Reset();
 				this->ChangeState(PPUState::OAM_SEARCH);
 			}
 
@@ -304,6 +295,13 @@ private:
 		{
 			InterruptHandler::IRQ(EInterrupts::LCDC);
 		}
+	}
+
+	void Reset()
+	{
+		// First FIFO and then FETCHER
+		this->_fifo.Reset();
+		this->_fetcher.Reset();
 	}
 
 public:
