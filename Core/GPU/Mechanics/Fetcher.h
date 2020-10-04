@@ -50,33 +50,7 @@ public:
 	{
 		this->_pixel_row_container.Clear();
 		this->_state = State::FETCH_TILE;
-	}
-
-	void ResetNewLine()
-	{
-		if (this->_fifo.GetY() != 0)
-		{
-			// If we completed a row, we jump to the next row offset, otherwise we go back.
-			if (this->_fifo.GetY() % 8 == 0)
-			{
-				// Complete the tile offset until the end of the row.
-				this->_tile_offset += TILES_IN_ROW - (this->_tile_offset % TILES_IN_ROW);
-			}
-			else
-			{
-				// Go back.
-				this->_tile_offset -= (this->_tile_offset % TILES_IN_ROW);
-			}
-
-			this->_tile_offset += ((this->_fifo.GetSCX() - (this->_fifo.GetSCX() % PixelRow::PIXEL_COUNT)) / PixelRow::PIXEL_COUNT);
-		}
-	}
-
-	void ResetNewFrame()
-	{
-		// Reset it to the first line of the SCY
-		this->_tile_offset = (this->_fifo.GetSCY() - (this->_fifo.GetSCY() % PixelRow::PIXEL_COUNT)) * 4 +
-							((this->_fifo.GetSCX() - (this->_fifo.GetSCX() % PixelRow::PIXEL_COUNT)) / PixelRow::PIXEL_COUNT);
+		this->_tile_offset_x = this->_fifo.GetSCX();
 	}
 
 	bool Execute(std::size_t clocks)
@@ -122,32 +96,35 @@ private:
 
 		if (this->_clocks >= FETCH_TILE_CLOCKS)
 		{	
-			if (static_cast<LCDC_Control::Control>(LCDC_Control{}).IsWindowEnabled() &&
+			const uint32_t TILE_OFFSET = (this->_fifo.GetY() / 8) * 32 + (this->_tile_offset_x / 8);
+			this->_tile_offset_x = (this->_tile_offset_x + 8) % 0x100;
+			Message("Undo this");
+			/*if (static_cast<LCDC_Control::Control>(LCDC_Control{}).IsWindowEnabled() &&
 				this->_fifo.GetY() >= static_cast<API::data_t>(WY{}) &&
 				this->_fifo.GetX() >= static_cast<API::data_t>(WX{}))
 			{
+				Message("TODO! Make this better.");
+				Message("Here we need to recalibrate the tile index with the X and Y offset of the window.");
 				// If they're equal, clear fifo and restart fetcher
 				if (this->_fifo.GetX() == static_cast<API::data_t>(WX{}))
 				{
 					this->_fifo.ResetNewLine();
-					this->Reset();
+					this->_fifo.SetX(WX{});
 				}
 
-				this->_tile_index = vram_memory_ptr[this->GetWindowMapStart() + this->_tile_offset - VideoRAM::START_ADDRESS];
-				this->_tile_offset += 1;
+				this->_tile_index = vram_memory_ptr[this->GetWindowMapStart() + TILE_OFFSET - VideoRAM::START_ADDRESS];
 				this->_pixel_row_container.Initialize(PixelSource::WIN);
 				this->_clocks -= FETCH_TILE_CLOCKS;
 				this->_state = State::READ_DATA_0;
 			}
 			// If the window didn't succeed.
 			else
-			{
-				this->_tile_index = vram_memory_ptr[this->GetBackgroundMapStart() + this->_tile_offset - VideoRAM::START_ADDRESS];
-				this->_tile_offset += 1;
+			{*/
+				this->_tile_index = vram_memory_ptr[this->GetBackgroundMapStart() + TILE_OFFSET - VideoRAM::START_ADDRESS];
 				this->_pixel_row_container.Initialize(PixelSource::BGP);
 				this->_clocks -= FETCH_TILE_CLOCKS;
 				this->_state = State::READ_DATA_0;
-			}
+			//}
 		}
 
 		return true;
@@ -229,17 +206,28 @@ private:
 	{
 		auto lcdc_control{static_cast<LCDC_Control::Control>(LCDC_Control{})};
 
-		// Fetching address of the tile.
+		// Tiles are ordered in the tile map in 16 bytes, so 
+		// in order for us to fetch the correct tile we need to
+		// understand what kind of addressing this tile needs.
+		// If the addressing is 0x8000, then the tile index offset
+		// is simply 16*tile_index since 0x8010 is tile 1, 0x8020 is tile 2
+		// and onwards.
+		// If the addressing is 0x8800, then the base offset is 0x9000 and
+		// the tile index can be a negative number, between [-128, 127] where
+		// [-128, -1] are ordered ascending in memory and [0, 127] are ordered ascending.
+		// -FF is -1, -FE is -2... For example -FF on addressing mode 0x8800 is:
+		// 0x9000 + 16 * (-1) = 0x8FF0 which is the tile index.
 		static constexpr API::address_t SIZE_OF_TILE{16};
-		const int32_t TILE_INDEX_OFFSET = SIZE_OF_TILE * ((lcdc_control.IsSigned() && (this->_tile_index > 127)) ? (static_cast<int32_t>(this->_tile_index) - 0x100) : this->_tile_index);
+		const int32_t TILE_INDEX_OFFSET = lcdc_control.GetTileSelectOffset() +
+			SIZE_OF_TILE * ((lcdc_control.IsSigned() && (this->_tile_index > 127)) ? (static_cast<int32_t>(this->_tile_index) - 0x100) : this->_tile_index);
+
+		// Once we know where the tile index is, we need to get the relevant row in the tile.
+		// Fetching the tile according to the Y axis * 2 (2 bytes for each row, thus in jumps of 2)
+		const API::data_t ROW_INDEX_OFFSET = 2 * (this->_fifo.GetY() % PixelRow::PIXEL_COUNT);
 
 		// Setting pixel row's upper to the fetched tile byte.
-		// Fetching the tile according to the Y axis * 2 (2 bytes for each row, thus in jumps of 2)
 		static auto* vram_memory_ptr{static_cast<VideoRAM*>(this->_ppu.GetProcessor().GetMemory().GetDeviceAtAddress(VideoRAM::START_ADDRESS))->GetMemoryPointer()};
-
-		return vram_memory_ptr[lcdc_control.GetTileSelectOffset() + TILE_INDEX_OFFSET +
-						       2 * (this->_fifo.GetY() % PixelRow::PIXEL_COUNT) +
-							   static_cast<API::data_t>(lower) - VideoRAM::START_ADDRESS];
+		return vram_memory_ptr[(TILE_INDEX_OFFSET + ROW_INDEX_OFFSET + static_cast<API::data_t>(lower)) - VideoRAM::START_ADDRESS];
 	}
 
 private:
@@ -253,7 +241,7 @@ private:
 	IPPU&             _ppu;
 	PixelFIFO&        _fifo;
 	State             _state{State::FETCH_TILE};
-	API::address_t    _tile_offset{0x00};
+	API::address_t    _tile_offset_x{0x00};
 	API::data_t       _tile_index{0x00};
 	PixelRowContainer _pixel_row_container{};
 	std::size_t       _clocks{0x00};

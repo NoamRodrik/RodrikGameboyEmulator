@@ -29,7 +29,7 @@ public:
 	~PixelFIFO() = default;
 
 public:
-	void ResetNewLine()
+	void Reset()
 	{
 		this->_lower_row.Clear();
 		this->_upper_row.Clear();
@@ -39,14 +39,7 @@ public:
 
 	void IncrementY()
 	{
-		this->SetY((this->GetY() + 1) % 0x100);
-	}
-
-	void ResetNewFrame()
-	{
-		static auto* io_ram_memory_ptr{static_cast<IORAM*>(this->_ppu.GetProcessor().GetMemory().GetDeviceAtAddress(LY::LY_ADDRESS))->GetMemoryPointer()};
-		this->_scy = SCY{};
-		this->SetY(this->_scy);
+		this->SetY(this->GetY() + 1);
 	}
 
 	std::pair<PixelSource, PaletteColor> FetchNextPixel()
@@ -83,7 +76,7 @@ public:
 	{
 		// If we need to fill the FIFO, we can't fetch pixels yet.
 		// If we passed the screen, we don't need to draw.
-		if (this->NeedsFill() || this->_lower_row.IsEmpty())
+		if (this->NeedsFill())
 		{
 			return true;
 		}
@@ -95,7 +88,7 @@ public:
 			const API::data_t DRAWN_Y{static_cast<API::data_t>(LY{})};
 			const LCDC_Control::Control lcdc_control{LCDC_Control{}};
 
-			Message("Uncomment this when fixed.");
+			
 			if (lcdc_control.background_enable == LCDC_Control::Control::BACKGROUND_ON && PIXEL.first == PixelSource::BGP ||
 				lcdc_control.window_enable == LCDC_Control::Control::WINDOW_ON && PIXEL.first == PixelSource::WIN)
 			{
@@ -128,11 +121,7 @@ public:
 			this->_upper_row = pixel_row_container;
 		}
 
-		// Pass pixels if necessary.
-		for (std::size_t current_bit = 0; current_bit < this->_lower_row.EmptyBitsAmount(); ++current_bit)
-		{
-			this->_lower_row.SetLastPixel(this->_upper_row.GetNextPixel());
-		}
+		SANITY(this->_lower_row.EmptyBitsAmount() == 0, "Serious bug occurred");
 	}
 
 	const auto& GetScreen() const
@@ -149,7 +138,14 @@ public:
 	{
 		this->_y = y;
 		static auto* io_ram_memory_ptr{static_cast<IORAM*>(this->_ppu.GetProcessor().GetMemory().GetDeviceAtAddress(LY::LY_ADDRESS))->GetMemoryPointer()};
-		io_ram_memory_ptr[LY::LY_ADDRESS - IORAM::START_ADDRESS] = ((this->_y + 0x100) - this->_scy) % 0x100;
+		io_ram_memory_ptr[LY::LY_ADDRESS - IORAM::START_ADDRESS] = (((this->_y + 0x100) - this->_scy) % 0x100) % 0x9A;
+
+		if (LY{} == 0)
+		{
+			// Reset Y back to SCY
+			this->_scy = SCY{};
+			this->_y = this->GetSCY();
+		}
 	}
 
 	const API::data_t GetY() const
@@ -180,7 +176,7 @@ public:
 
 	const bool XPassedThreshold() const
 	{
-		return ((static_cast<std::size_t>(this->GetX()) + 0x100 - this->GetSCX()) % 0x100) >= SCREEN_WIDTH_PIXELS - 1;
+		return ((static_cast<std::size_t>(this->GetX()) + 0x100 - this->GetSCX()) % 0x100) >= SCREEN_WIDTH_PIXELS;
 	}
 
 	const API::data_t GetSCY() const

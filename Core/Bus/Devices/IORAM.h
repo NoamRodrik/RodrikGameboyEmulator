@@ -181,40 +181,7 @@ private:
 			case (LCDC_Status::LCDC_ADDRESS) :
 			{
 				// Don't allow the override of values in bits [0,2]
-				API::data_t filtered_data = (data & 0x78) | (this->_memory[this->RelativeAddress(LCDC_Status::LCDC_ADDRESS)] & 0x07);
-
-				if (Processor::GetInstance().GetPPU()->IsLCDEnabled())
-				{
-					bool interrupt_state{false};
-
-					switch (Processor::GetInstance().GetPPU()->GetState())
-					{
-						case PPUState::H_BLANK:
-						{
-							interrupt_state = (static_cast<LCDC_Status::Status>(filtered_data).mode_0 == LCDC_Status::Status::MODE_SELECTION);
-							break;
-						}
-
-						case PPUState::V_BLANK:
-						{
-							interrupt_state = (static_cast<LCDC_Status::Status>(filtered_data).mode_1 == LCDC_Status::Status::MODE_SELECTION);
-							break;
-						}
-
-						case PPUState::OAM_SEARCH:
-						{
-							interrupt_state = (static_cast<LCDC_Status::Status>(filtered_data).mode_2 == LCDC_Status::Status::MODE_SELECTION);
-							break;
-						}
-					}
-
-					if (interrupt_state)
-					{
-						InterruptHandler::IRQ(EInterrupts::LCDC);
-					}
-				}
-
-				this->_memory[this->RelativeAddress(LCDC_Status::LCDC_ADDRESS)] = filtered_data;
+				this->_memory[this->RelativeAddress(LCDC_Status::LCDC_ADDRESS)] = (data & 0x78) | (this->_memory[this->RelativeAddress(LCDC_Status::LCDC_ADDRESS)] & 0x07);
 
 				return true;
 				break;
