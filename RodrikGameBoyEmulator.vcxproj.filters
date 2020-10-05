@@ -62,9 +62,6 @@
     <ClInclude Include="Contrib\PixelGameEngine\OLCPixelGameEngine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Core\GPU\Engine\MainPixelEngine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Core\CPU\Interrupts\Registers\InterruptEnable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -441,6 +438,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Core\Bus\Devices\VideoRAM.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Contrib\PixelGameEngine\OLCPGEXSound.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Engine\MainPixelEngine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

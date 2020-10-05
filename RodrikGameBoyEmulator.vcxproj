@@ -190,6 +190,7 @@
     <ClInclude Include="API\Cartridge\ILoader.h" />
     <ClInclude Include="API\Cartridge\IMemoryBankController.h" />
     <ClInclude Include="API\Cartridge\Header.h" />
+    <ClInclude Include="Contrib\PixelGameEngine\OLCPGEXSound.h" />
     <ClInclude Include="Contrib\PixelGameEngine\OLCPixelGameEngine.h" />
     <ClInclude Include="API\Registers\RegisterPair.h" />
     <ClInclude Include="Core\Bus\Bus.h" />
@@ -223,7 +224,7 @@
     <ClInclude Include="Core\Cartridge\Controller.h" />
     <ClInclude Include="Core\Cartridge\Implementations\MBC_0x01.h" />
     <ClInclude Include="Core\Cartridge\Implementations\ROM_0x00.h" />
-    <ClInclude Include="Core\GPU\Engine\MainPixelEngine.h" />
+    <ClInclude Include="Core\Engine\MainPixelEngine.h" />
     <ClInclude Include="Core\CPU\Interrupts\SpecialRegisters\IME.h" />
     <ClInclude Include="Core\CPU\Interrupts\Interrupt.h" />
     <ClInclude Include="Core\CPU\Interrupts\InterruptHandler.h" />

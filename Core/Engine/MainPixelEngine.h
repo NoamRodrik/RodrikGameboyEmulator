@@ -7,10 +7,11 @@
 #define __GPU_ENGINE_MAIN_PIXEL_ENGINE_H__
 
 #define OLC_PGE_APPLICATION
+#define OLC_PGEX_SOUND
 
-#pragma warning( push, 0 )
 #include <Contrib/PixelGameEngine/OLCPixelGameEngine.h>
 #include <API/Memory/Device/IMemoryDeviceAccess.h>
+#include <Contrib/PixelGameEngine/OLCPGEXSound.h>
 #include <Core/GPU/Registers/LCDC_Control.h>
 #include <Core/GPU/Mechanics/LCDRender.h>
 #include <Core/GPU/Entities/PaletteMap.h>
@@ -21,7 +22,6 @@
 #include <Core/GPU/IPPU.h>
 #include <Tools/Tools.h>
 #include <array>
-#pragma warning ( pop )
 
 namespace Core
 {
@@ -76,9 +76,15 @@ public:
 	}
 
 private:
+	virtual bool OnUserDestroy() override
+	{
+		return olc::SOUND::DestroyAudio();
+	}
+
 	virtual bool OnUserCreate() override
 	{
 		// Called once at startup, drawing white pixels.
+		RET_FALSE_IF_FAIL(olc::SOUND::InitialiseAudio(44100, 1, 8, 512), "Failed initializing audio");
 		this->SetPixelMode(olc::Pixel::Mode::NORMAL);
 		this->EnableLCD();
 		return true;
