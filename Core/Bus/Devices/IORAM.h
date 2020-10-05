@@ -17,6 +17,27 @@
 #include <Core/GPU/Registers/LCDC_Control.h>
 #include <Core/GPU/Registers/LCDC_Status.h>
 #include <Core/Bus/Devices/CartridgeRAM.h>
+#include <Core/APU/Registers/NR10.h>
+#include <Core/APU/Registers/NR11.h>
+#include <Core/APU/Registers/NR12.h>
+#include <Core/APU/Registers/NR13.h>
+#include <Core/APU/Registers/NR14.h>
+#include <Core/APU/Registers/NR21.h>
+#include <Core/APU/Registers/NR22.h>
+#include <Core/APU/Registers/NR23.h>
+#include <Core/APU/Registers/NR24.h>
+#include <Core/APU/Registers/NR30.h>
+#include <Core/APU/Registers/NR31.h>
+#include <Core/APU/Registers/NR32.h>
+#include <Core/APU/Registers/NR33.h>
+#include <Core/APU/Registers/NR34.h>
+#include <Core/APU/Registers/NR41.h>
+#include <Core/APU/Registers/NR42.h>
+#include <Core/APU/Registers/NR43.h>
+#include <Core/APU/Registers/NR44.h>
+#include <Core/APU/Registers/NR50.h>
+#include <Core/APU/Registers/NR51.h>
+#include <Core/APU/Registers/NR52.h>
 #include <Core/GPU/Registers/OBP1.h>
 #include <Core/GPU/Registers/OBP0.h>
 #include <Core/GPU/Registers/BGP.h>
@@ -44,24 +65,27 @@ public:
 		this->_memory[this->RelativeAddress(TimerCounter::TIMER_COUNTER_ADDRESS)] = TimerCounter::TIMER_COUNTER_DEFAULT_VALUE;
 		this->_memory[this->RelativeAddress(TimerModulo::TIMER_MODULO_ADDRESS)] = TimerModulo::TIMER_MODULO_DEFAULT_VALUE;
 		this->_memory[this->RelativeAddress(TimerControl::TIMER_CONTROL_ADDRESS)] = TimerControl::TIMER_CONTROL_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(API::NR10_ADDRESS)] = API::NR10_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(API::NR11_ADDRESS)] = API::NR11_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(API::NR12_ADDRESS)] = API::NR12_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(API::NR14_ADDRESS)] = API::NR14_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(API::NR21_ADDRESS)] = API::NR21_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(API::NR22_ADDRESS)] = API::NR22_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(API::NR24_ADDRESS)] = API::NR24_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(API::NR30_ADDRESS)] = API::NR30_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(API::NR31_ADDRESS)] = API::NR31_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(API::NR32_ADDRESS)] = API::NR32_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(API::NR33_ADDRESS)] = API::NR33_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(API::NR41_ADDRESS)] = API::NR41_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(API::NR42_ADDRESS)] = API::NR42_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(API::NR43_ADDRESS)] = API::NR43_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(API::NR44_ADDRESS)] = API::NR44_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(API::NR50_ADDRESS)] = API::NR50_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(API::NR51_ADDRESS)] = API::NR51_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(API::NR52_ADDRESS)] = API::NR52_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(NR10::NR10_ADDRESS)] = NR10::NR10_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(NR11::NR11_ADDRESS)] = NR11::NR11_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(NR12::NR12_ADDRESS)] = NR12::NR12_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(NR13::NR13_ADDRESS)] = NR13::NR13_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(NR14::NR14_ADDRESS)] = NR14::NR14_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(NR21::NR21_ADDRESS)] = NR21::NR21_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(NR22::NR22_ADDRESS)] = NR22::NR22_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(NR23::NR23_ADDRESS)] = NR23::NR23_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(NR24::NR24_ADDRESS)] = NR24::NR24_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(NR30::NR30_ADDRESS)] = NR30::NR30_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(NR31::NR31_ADDRESS)] = NR31::NR31_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(NR32::NR32_ADDRESS)] = NR32::NR32_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(NR33::NR33_ADDRESS)] = NR33::NR33_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(NR34::NR34_ADDRESS)] = NR34::NR34_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(NR41::NR41_ADDRESS)] = NR41::NR41_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(NR42::NR42_ADDRESS)] = NR42::NR42_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(NR43::NR43_ADDRESS)] = NR43::NR43_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(NR44::NR44_ADDRESS)] = NR44::NR44_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(NR50::NR50_ADDRESS)] = NR50::NR50_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(NR51::NR51_ADDRESS)] = NR51::NR51_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(NR52::NR52_ADDRESS)] = NR52::NR52_DEFAULT_VALUE;
 		this->_memory[this->RelativeAddress(LCDC_Control::LCDC_ADDRESS)] = LCDC_Control::LCDC_DEFAULT_VALUE;
 		this->_memory[this->RelativeAddress(LCDC_Status::LCDC_ADDRESS)] = LCDC_Status::LCDC_DEFAULT_VALUE;
 		this->_memory[this->RelativeAddress(SCY::SCY_ADDRESS)] = SCY::SCY_DEFAULT_VALUE;
