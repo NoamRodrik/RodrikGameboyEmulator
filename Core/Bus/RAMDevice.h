@@ -28,7 +28,11 @@ public:
 	 */
 	virtual bool Read(const API::address_t absolute_address, API::data_t& result) const override
 	{
-		result = this->_memory[this->RelativeAddress(absolute_address)];
+		if (!this->InterceptRead(absolute_address, result))
+		{
+			result = this->_memory[this->RelativeAddress(absolute_address)];
+		}
+
 		return true;
 	}
 
@@ -37,16 +41,33 @@ public:
 	 */
 	virtual bool Write(const API::address_t absolute_address, const API::data_t data) override
 	{
-		if (!this->Intercept(absolute_address, data))
+		if (!this->InterceptWrite(absolute_address, data))
 		{
+#ifdef TETRIS_PATCH
+			if (absolute_address != 0xFF80)
+#endif
 			this->_memory[this->RelativeAddress(absolute_address)] = data;
 		}
 
 		return true;
 	}
 
+	/**
+	 * Default implementation.
+	 */
+	virtual bool WriteDirectly(const API::address_t absolute_address, const API::data_t data) override
+	{
+		this->_memory[this->RelativeAddress(absolute_address)] = data;
+		return true;
+	}
+
 protected:
-	virtual bool Intercept(const API::address_t absolute_address, const API::data_t data) override
+	virtual bool InterceptWrite(const API::address_t absolute_address, const API::data_t data) override
+	{
+		return false;
+	}
+
+	virtual bool InterceptRead(const API::address_t absolute_address, API::data_t& result) const override
 	{
 		return false;
 	}

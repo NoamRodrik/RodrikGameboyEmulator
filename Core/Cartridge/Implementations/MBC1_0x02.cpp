@@ -7,6 +7,7 @@
 #include "MBC1_0x02.h"
 
 #include <Core/Bus/Devices/CartridgeRAM.h>
+#include <Core/Bus/Devices/ExternalRAM.h>
 #include <Core/Bus/DeviceTools.h>
 #include <Core/CPU/Processor.h>
 #include <Tools/Tools.h>
@@ -27,51 +28,90 @@ size_t MemoryBankController_2::BankSize() const
 
 bool MemoryBankController_2::Read(const API::address_t absolute_address, API::data_t& result) const
 {
-	// We don't need to intercept reads.
+	if (absolute_address >= CartridgeRAM::START_ADDRESS &&
+		absolute_address <= CartridgeRAM::END_ADDRESS)
+	{
+		return this->_inner_mbc.Read(absolute_address, result);
+	}
+	else if (absolute_address >= ExternalRAM::START_ADDRESS &&
+			 absolute_address <= ExternalRAM::END_ADDRESS)
+	{
+		// If RAM isn't enabled, 0xFF is read.
+		if (!this->_ram_enable)
+		{
+			result = 0xFF;
+			return true;
+		}
+
+		if (this->_inner_mbc._mode == MemoryBankController_1::Mode::ROM_MODE)
+		{
+			SANITY(absolute_address - ExternalRAM::START_ADDRESS < this->_ram_memory.MEMORY_SIZE,
+				"Accessed invalid RAM memory");
+			result = this->_ram_memory[absolute_address - ExternalRAM::START_ADDRESS];
+			return true;
+		}
+		else
+		{
+			const size_t BASE_BANK_OFFSET{Tools::BytesInRAMBanks(this->_selected_ram_bank)};
+			SANITY(BASE_BANK_OFFSET + (absolute_address - ExternalRAM::START_ADDRESS) < this->_ram_memory.MEMORY_SIZE, 
+				   "Accessed invalid RAM memory");
+			result = this->_ram_memory[BASE_BANK_OFFSET + (absolute_address - ExternalRAM::START_ADDRESS)];
+			return true;
+		}
+	}
+
 	return false;
+}
+
+bool MemoryBankController_2::WriteDirectly(const API::address_t absolute_address, const API::data_t data)
+{
+	// For MBC, write directly is just write....
+	return this->Write(absolute_address, data);
 }
 
 bool MemoryBankController_2::Write(const API::address_t absolute_address, const API::data_t data)
 {
-	if (absolute_address >= MemoryBankController_2::RAM_ENABLE_START &&
-		absolute_address <= MemoryBankController_2::RAM_ENABLE_END)
+	// If the inner didnt' handle, let's try.
+	if (!this->_inner_mbc.Write(absolute_address, data))
 	{
-		// To enable RAM, write a value with the lower 4 bits being $0A somewhere in this address space.
-		// To disable RAM, any number except $0A can be written.
-		// It does not matter where it is written, just as long as it within the address range.
-		this->_ram_enable = ((data & 0x0F) == 0x0A);
-		return true;
-	}
-	else if (absolute_address >= MemoryBankController_2::ROM_BANK_NUMBER_START &&
-		     absolute_address <= MemoryBankController_2::ROM_BANK_NUMBER_END)
-	{
-		if (this->_mode == Mode::RAM_MODE)
+		if (absolute_address >= MemoryBankController_2::RAM_ENABLE_START &&
+			absolute_address <= MemoryBankController_2::RAM_ENABLE_END)
 		{
-			this->_inner_mbc._selected_rom_bank &= 0x1F;
+			// To enable RAM, write a value with the lower 4 bits being $0A somewhere in this address space.
+			// To disable RAM, any number except $0A can be written.
+			// It does not matter where it is written, just as long as it within the address range.
+			this->_ram_enable = ((data & 0x0F) == 0x0A);
+			return true;
 		}
-
-		return this->_inner_mbc.RomLowerBankNumberAction(data);
 	}
 	else if (absolute_address >= MemoryBankController_2::RAM_ROM_BANK_NUMBER_START &&
-		     absolute_address <= MemoryBankController_2::RAM_ROM_BANK_NUMBER_END)
+			 absolute_address <= MemoryBankController_2::RAM_ROM_BANK_NUMBER_END)
 	{
-		return this->RamRomBankNumberAction(data);
+		SANITY(this->RamRomBankNumberAction(data), "Failed setting bank");
+		return true;
 	}
-	else if (absolute_address >= MemoryBankController_2::RAM_ROM_MODE_SELECT_START &&
-		     absolute_address <= MemoryBankController_2::RAM_ROM_MODE_SELECT_END)
+	else if (absolute_address <= ExternalRAM::START_ADDRESS &&
+		     absolute_address >= ExternalRAM::END_ADDRESS)
 	{
-		// We need to check what mode is selected, then we can intercept the request.
-		this->_mode = static_cast<Mode>(data & 0x01);
-
-		if (this->_mode == Mode::ROM_MODE)
+		// If RAM isn't enabled, write is ignored.
+		if (!this->_ram_enable)
 		{
-			// Only RAM Bank 00h can be used during ROM mode.
-			this->SaveSelectedRAMBank();
-			this->_selected_ram_bank = 0;
-			this->LoadSelectedRAMBank();
+			return true;
 		}
 
-		return true;
+		if (this->_inner_mbc._mode == MemoryBankController_1::Mode::ROM_MODE)
+		{
+			this->_ram_memory[absolute_address - ExternalRAM::START_ADDRESS];
+			return true;
+		}
+		else
+		{
+			const size_t BASE_BANK_OFFSET{Tools::BytesInRAMBanks(this->_selected_ram_bank)};
+			SANITY(BASE_BANK_OFFSET + (absolute_address - ExternalRAM::START_ADDRESS) < this->_ram_memory.MEMORY_SIZE, 
+				   "Accessed invalid RAM memory");
+			this->_ram_memory[BASE_BANK_OFFSET + (absolute_address - ExternalRAM::START_ADDRESS)] = data;
+			return true;
+		}
 	}
 
 	return false;
@@ -79,41 +119,13 @@ bool MemoryBankController_2::Write(const API::address_t absolute_address, const 
 
 bool MemoryBankController_2::RamRomBankNumberAction(const data_t data)
 {
-	// If in ROM mode (no RAM bank switching), it will specify the upper two bits of the ROM bank number.
-	if (this->_mode == Mode::ROM_MODE)
+	SANITY(this->_inner_mbc.RomUpperBankNumberAction(data), "Failed setting upper bank");
+
+	if (this->_ram_enable)
 	{
-		this->_inner_mbc.RomUpperBankNumberAction(data);
-	}
-	else if (this->_mode == Mode::RAM_MODE && this->_ram_enable)
-	{	
-		this->SaveSelectedRAMBank();
 		this->_selected_ram_bank = (data & 0x03);
-		this->LoadSelectedRAMBank();
-	}
-	else
-	{
-		STOP_RUNNING("Not supposed to be here.");
 	}
 
 	return true;
-}
-
-void MemoryBankController_2::SaveSelectedRAMBank()
-{
-	const size_t OLDER_BANK_OFFSET{Tools::BytesInRAMBanks(this->_selected_ram_bank)};
-	SANITY(OLDER_BANK_OFFSET + API::MEMORY_RAM_BANK_SIZE < this->_ram_memory.MEMORY_SIZE, "Wrong offset");
-	
-	// Unmap the older bank.
-	DeviceTools::Unmap(this->_ram_memory.GetMemoryPointer() + OLDER_BANK_OFFSET, API::MEMORY_RAM_BANK_SIZE, ADDITIONAL_RAM_BANKS_OFFSET);
-}
-
-void MemoryBankController_2::LoadSelectedRAMBank()
-{
-	DeviceTools::Clear(ADDITIONAL_RAM_BANKS_OFFSET, API::MEMORY_RAM_BANK_SIZE);
-
-	// Mapping the new bank into the cartridge.
-	const size_t NEW_BANK_OFFSET{Tools::BytesInRAMBanks(this->_selected_ram_bank)};
-	SANITY(NEW_BANK_OFFSET + API::MEMORY_RAM_BANK_SIZE < this->_ram_memory.MEMORY_SIZE, "Wrong offset");
-	DeviceTools::Map(this->_ram_memory.GetMemoryPointer() + NEW_BANK_OFFSET, API::MEMORY_RAM_BANK_SIZE, ADDITIONAL_RAM_BANKS_OFFSET);
 }
 }

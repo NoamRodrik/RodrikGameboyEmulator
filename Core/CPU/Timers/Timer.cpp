@@ -39,16 +39,16 @@ void Timer::Clock(size_t cycles)
 
 void Timer::Tick()
 {
-	DividerRegister divider_register{};
 	TimerCounter timer_counter{};
 
 	Timer::Counter().Increase(1);
 	Timer::Divider().Increase(1);
 
-	if (Timer::DividerPassedThreshold())
+	while (Timer::DividerPassedThreshold())
 	{
 		Timer::Divider().Lower(Timer::TIMER_THRESHOLD);
-		divider_register = divider_register + 1;
+		SANITY(Processor::GetInstance().GetMemory().WriteDirectly(DividerRegister::DIVIDER_REGISTER_ADDRESS, DividerRegister{} + 1),
+			   "Failed writing the div register value directly");
 	}
 
 	if (Timer::IsTimerEnabled())
@@ -118,7 +118,7 @@ size_t Timer::TimerControlThreshold()
 	TimerControl timer_control{};
 
 	// Timer clock select
-	switch(timer_control & 0x03)
+	switch (timer_control & 0x03)
 	{
 	    case (0): /* 4.096 KHz (1024 cycles) */
 		{

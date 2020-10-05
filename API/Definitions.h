@@ -99,7 +99,6 @@ namespace API
 #undef SKIP_BOOT
 #endif
 
-	Message("Cancel this if you don't want to skip the Boot");
 	//#define SKIP_BOOT 1
 	#define SKIP_BOOT 0
 

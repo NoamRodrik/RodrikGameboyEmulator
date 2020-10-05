@@ -23,7 +23,7 @@ public:
 	virtual bool Read(const API::address_t absolute_address, API::data_t& result) const override
 	{
 		// While 0xFF50 isn't 0x1, we still return the system_boot code.
-		if (!this->_covered_system_boot && this->RelativeAddress(absolute_address) <= 0xFF)
+		if (!this->_covered_system_boot && this->RelativeAddress(absolute_address) < BOOT_END_ADDRESS)
 		{
 			result = API::SYSTEM_BOOT_CODE[this->RelativeAddress(absolute_address)];
 		}
@@ -40,10 +40,14 @@ public:
 	 * Will be called when the system boot code will be swapped with the cartridge code.
 	 */
 	inline void CoverSystemBoot() { this->_covered_system_boot = true; }
+	const bool IsBootCovered() const { return this->_covered_system_boot; }
 
 public:
 	// Public for all the MBCS
 	virtual uint8_t* GetMemoryPointer() override { return RAMDevice::GetMemoryPointer(); }
+
+public:
+	static constexpr API::address_t BOOT_END_ADDRESS{0x0100};
 
 private:
 	bool _covered_system_boot{SKIP_BOOT ? true : false};

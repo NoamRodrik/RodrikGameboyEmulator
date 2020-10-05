@@ -31,54 +31,10 @@ gsl::not_null<IPPU*> Processor::GetPPU()
 
 	return this->_ppu.get();
 }
-
-#if _DEBUG
-void Processor::PrintInstruction(const Instruction& instruction_to_print)
-{
-#ifdef PRINT_ONLY_PC
-	LOG_NO_ENTER("%04X ", static_cast<const address_t>(PC_const));
-#else
-	LOG("%04X %02X %s %02X%02X", static_cast<const address_t>(PC_const), READ_DATA_AT(PC_const), instruction_to_print.operation_string.c_str(), READ_DATA_AT(PC_const + 1), READ_DATA_AT(PC_const + 2));
-#endif
-}
-
-void Processor::PrintRegisters()
-{
-	LOG_NO_ENTER("A:%02X B:%02X C:%02X D:%02X E:%02X F:%02X H:%02X L:%02X SP:%04X\n",
-		static_cast<const data_t>(A_const),	 static_cast<const data_t>(B_const),
-		static_cast<const data_t>(C_const),	 static_cast<const data_t>(D_const),
-		static_cast<const data_t>(E_const),	 static_cast<const data_t>(F_const),
-		static_cast<const data_t>(H_const),	 static_cast<const data_t>(L_const),
-		static_cast<const address_t>(SP_const));
-}
-
-void Processor::PrintFlags()
-{
-	static constexpr char ON[] = "1";
-	static constexpr char OFF[] = "0";
-	LOG_NO_ENTER("Z:");
-	LOG_NO_ENTER(F.IsSet(Flag::ZERO) ? ON: OFF);
-	LOG_NO_ENTER(" N:");
-	LOG_NO_ENTER(F.IsSet(Flag::SUB) ? ON : OFF);
-	LOG_NO_ENTER(" H:");
-	LOG_NO_ENTER(F.IsSet(Flag::HALF_CARRY) ? ON : OFF);
-	LOG_NO_ENTER(" C:");
-	LOG("%s", F.IsSet(Flag::CARRY) ? ON : OFF);
-}
-
-void Processor::PrintInterruptRegisters()
-{
-	LOG_NO_ENTER("IF:");
-	LOG_NO_ENTER("%02hhX", static_cast<data_t>(InterruptFlag{}));
-	LOG_NO_ENTER(" IE:");
-	LOG("%02hhX", static_cast<data_t>(InterruptEnable{}));
-}
-#endif
 	
 const size_t Processor::Clock()
 {
 	size_t clock_cycle{0};
-
 	if (!Processor::IsHalted())
 	{
 		do
@@ -87,12 +43,6 @@ const size_t Processor::Clock()
 			const auto command_to_execute = Processor::IsPrefix() ?
 							PREFIX_LOOKUP_TABLE[READ_DATA_AT(PC_const)] :
 							GENERAL_LOOKUP_TABLE[READ_DATA_AT(PC_const)];
-
-#if _DEBUG
-#ifndef NO_PRINT_COMMANDS
-		Processor::PrintInstruction(command_to_execute);
-#endif
-#endif
 
 			// If prefix is enabled, we need to disable it.
 			Processor::ClearPrefixCommand();
@@ -128,43 +78,18 @@ const size_t Processor::Clock()
 		clock_cycle += 1;
 	}
 
-	Message("Need to check powermode here");
-
 	// Interrupts check + Adjust (Takes 5 cycles for a process to dispatch)
 	clock_cycle += static_cast<size_t>(InterruptHandler::ProcessInterrupts()) * 5;
 
 	// Clock adjust
 	clock_cycle *= 4;
 
-	if (Processor::IsStopped())
-	{
-		MAIN_LOG_NO_ENTER(" Stopped ");
-		Processor::ClearStop();
-	}
-	else
+	if (!Processor::IsStopped())
 	{
 		// If it's not stopped, update devices.
 		Processor::GetInstance().GetPPU()->Clock(clock_cycle);
 		Timer::Clock(clock_cycle);
 	}
-
-#if _DEBUG
-#ifndef NO_PRINT_FLAGS
-	Processor::PrintFlags();
-#endif
-
-#ifndef NO_PRINT_IF_AND_IE
-	Processor::PrintInterruptRegisters();
-#endif
-
-#ifndef NO_PRINT_REGISTERS
-	Processor::PrintRegisters();
-#endif
-
-#ifndef NO_PRINT_COMMANDS
-	//LOG("");
-#endif
-#endif
 
 	return clock_cycle;
 }

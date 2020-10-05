@@ -13,15 +13,11 @@
 #define MacroStr2(x)  MacroStr(x)
 #define Message(desc) __pragma(message(__FILE__ "(" MacroStr2(__LINE__) ") : " desc))
 
+Message("To remove!");
 #define SERIAL_TRANSFER_PRINT_DEBUG
+#define TETRIS_PATCH
 
-Message("If you want to print, comment this here, otherwise uncomment.");
 #define NO_PRINT
-#define NO_PRINT_FLAGS
-#define NO_PRINT_REGISTERS
-#define NO_PRINT_IF_AND_IE
-//#define NO_PRINT_COMMANDS
-//#define PRINT_ONLY_PC
 
 #ifndef NO_PRINT
 #define LOG_NO_ENTER(fmt, ...)				\

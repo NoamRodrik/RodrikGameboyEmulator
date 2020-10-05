@@ -46,14 +46,6 @@ private:
 	Processor() = default;
 	~Processor() = default;
 
-#if _DEBUG
-private:
-	static void PrintInstruction(const Instruction& instruction_to_print);
-	static void PrintRegisters();
-	static void PrintFlags();
-	static void PrintInterruptRegisters();
-#endif
-
 private:
 	std::unique_ptr<IPPU> _ppu{nullptr};
 	Bus					  _bus{};

@@ -16,6 +16,7 @@
 #include <Core/GPU/Entities/PaletteMap.h>
 #include <Core/Bus/Devices/IORAM.h>
 #include <Core/GPU/Definitions.h>
+#include <Core/Joypad/Joypad.h>
 #include <API/Definitions.h>
 #include <Core/GPU/IPPU.h>
 #include <Tools/Tools.h>
@@ -46,7 +47,32 @@ public:
 
 	virtual void Clock(std::size_t clock) override
 	{
-		SANITY(this->_render.Execute(clock), "Failed executing");
+		if (this->IsLCDEnabled())
+		{
+			SANITY(this->_render.Execute(clock), "Failed executing");
+		}
+	}
+
+	virtual bool IsLCDEnabled() const override
+	{
+		return this->_enabled;
+	}
+
+	virtual void DisableLCD() override
+	{
+		this->_enabled = false;
+		this->_render.ResetLCD();
+	}
+
+	virtual void EnableLCD() override
+	{
+		this->_enabled = true;
+		this->_render.Start();
+	}
+
+	virtual PPUState GetState() const override
+	{
+		return this->_render._state;
 	}
 
 private:
@@ -54,8 +80,8 @@ private:
 	{
 		// Called once at startup, drawing white pixels.
 		this->SetPixelMode(olc::Pixel::Mode::NORMAL);
-
-		return this->FillPixels({WHITE_PIXEL[0], WHITE_PIXEL[1], WHITE_PIXEL[2]});
+		this->EnableLCD();
+		return true;
 	}
 
 	virtual bool OnUserUpdate(float) override
@@ -69,22 +95,7 @@ private:
 
 		this->_previous = CURRENT;
 
-		auto lcdc_control_register{LCDC_Control{}};
-		auto lcdc_control{static_cast<LCDC_Control::Control>(lcdc_control_register)};
-		RET_FALSE_IF_FAIL(lcdc_control.Validate(), "Invalid lcdc control");
-		
-		if (!lcdc_control.IsLCDEnabled())
-		{
-			// Disable LCD.
-			static IORAM* io_ram_memory_ptr{static_cast<IORAM*>(this->_processor.GetMemory().GetDeviceAtAddress(LCDC_Status::LCDC_ADDRESS))};
-			io_ram_memory_ptr->MaskLCDCStatus(0xFC);
-
-			// Draw all black.
-			RET_FALSE_IF_FAIL(this->FillPixels({BLACK_PIXEL[0], BLACK_PIXEL[1], BLACK_PIXEL[2]}), "Failed drawing black onto screen");
-			RET_FALSE_IF_FAIL(this->_render.ResetLCD(), "Failed resetting LCD");
-			return true;
-		}
-
+		this->HandleButtonPress();
 		return this->Render();
 	}
 
@@ -108,18 +119,80 @@ private:
 		return this->_processor;
 	}
 
-private:
-	bool FillPixels(olc::Pixel color)
+	void HandleButtonPress() const
 	{
-		for (int32_t x = 0; x < ScreenWidth(); ++x)
+		API::data_t direction_status{0x00};
+		API::data_t button_status{0x00};
+
+		if (this->GetKey(olc::Key::ESCAPE).bPressed ||
+			this->GetKey(olc::Key::ESCAPE).bHeld ||
+			this->GetKey(olc::Key::ESCAPE).bReleased)
 		{
-			for (int32_t y = 0; y < ScreenHeight(); ++y)
-			{
-				RET_FALSE_IF_FAIL(Draw(x, y, color), "Failed to draw pixel");
-			}
+			Tools::SetBit(button_status, static_cast<std::size_t>(Joypad::Control::START));
 		}
 
-		return true;
+		if (this->GetKey(olc::Key::ENTER).bPressed ||
+			this->GetKey(olc::Key::ENTER).bHeld ||
+			this->GetKey(olc::Key::ENTER).bReleased)
+		{
+			Tools::SetBit(button_status, static_cast<std::size_t>(Joypad::Control::SELECT));
+		}
+
+		if (this->GetKey(olc::Key::W).bPressed ||
+			this->GetKey(olc::Key::UP).bPressed ||
+			this->GetKey(olc::Key::W).bHeld ||
+			this->GetKey(olc::Key::UP).bHeld ||
+			this->GetKey(olc::Key::W).bReleased ||
+			this->GetKey(olc::Key::UP).bReleased)
+		{
+			Tools::SetBit(direction_status, static_cast<std::size_t>(Joypad::Control::UP));
+		}
+
+		if (this->GetKey(olc::Key::S).bPressed ||
+			this->GetKey(olc::Key::DOWN).bPressed ||
+			this->GetKey(olc::Key::S).bHeld ||
+			this->GetKey(olc::Key::DOWN).bHeld ||
+			this->GetKey(olc::Key::S).bReleased ||
+			this->GetKey(olc::Key::DOWN).bReleased)
+		{
+			Tools::SetBit(direction_status, static_cast<std::size_t>(Joypad::Control::DOWN));
+		}
+
+		if (this->GetKey(olc::Key::A).bPressed ||
+			this->GetKey(olc::Key::LEFT).bPressed ||
+			this->GetKey(olc::Key::A).bHeld ||
+			this->GetKey(olc::Key::LEFT).bHeld ||
+			this->GetKey(olc::Key::A).bReleased ||
+			this->GetKey(olc::Key::LEFT).bReleased)
+		{
+			Tools::SetBit(direction_status, static_cast<std::size_t>(Joypad::Control::LEFT));
+		}
+
+		if (this->GetKey(olc::Key::D).bPressed ||
+			this->GetKey(olc::Key::RIGHT).bPressed ||
+			this->GetKey(olc::Key::D).bHeld ||
+			this->GetKey(olc::Key::RIGHT).bHeld ||
+			this->GetKey(olc::Key::D).bReleased ||
+			this->GetKey(olc::Key::RIGHT).bReleased)
+		{
+			Tools::SetBit(direction_status, static_cast<std::size_t>(Joypad::Control::RIGHT));
+		}
+
+		if (this->GetKey(olc::Key::J).bPressed ||
+			this->GetKey(olc::Key::J).bHeld ||
+			this->GetKey(olc::Key::J).bReleased)
+		{
+			Tools::SetBit(button_status, static_cast<std::size_t>(Joypad::Control::B));
+		}
+
+		if (this->GetKey(olc::Key::K).bPressed ||
+			this->GetKey(olc::Key::K).bHeld ||
+			this->GetKey(olc::Key::K).bReleased)
+		{
+			Tools::SetBit(button_status, static_cast<std::size_t>(Joypad::Control::A));
+		}
+
+		Joypad::ChangeStatus(direction_status, button_status);
 	}
 
 private:
@@ -127,7 +200,7 @@ private:
 	using time_duration_t = std::chrono::duration<float, std::milli>;
 
 public:
-	static constexpr float FRAMES_PER_SECOND{57.3f};
+	static constexpr float FRAMES_PER_SECOND{59.7f};
 	static constexpr float DELAYED_TIME{1000.0f / FRAMES_PER_SECOND};
 
 private:
@@ -135,6 +208,7 @@ private:
 	Processor&					 _processor;
 	std::unique_ptr<std::thread> _gpu_thread{nullptr};
 	LCDRender					 _render{this->_processor.GetMemory(), *this};
+	std::atomic<bool>            _enabled{true};
 };
 }
 

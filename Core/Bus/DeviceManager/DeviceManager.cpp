@@ -62,6 +62,29 @@ void DeviceManager::StartDevices()
 	}
 }
 
+
+bool DeviceManager::WriteDirectly(const API::address_t absolute_address, const API::data_t data)
+{
+	// If the MBC Controller decides to intercept, no need to call devices.
+	if (this->_mbc_controller != nullptr &&
+		this->_mbc_controller->WriteDirectly(absolute_address, data))
+	{
+		// Intercepted.
+		return true;
+	}
+
+	for (auto&& device : this->_devices)
+	{
+		if (AddressInRange(absolute_address, device.get()))
+		{
+			return device->WriteDirectly(absolute_address, data);
+		}
+	}
+
+	LOG("Didn't write anything to the devices.");
+	return false;
+}
+
 bool DeviceManager::Write(const address_t absolute_address, const API::data_t data)
 {
 	// If the MBC Controller decides to intercept, no need to call devices.

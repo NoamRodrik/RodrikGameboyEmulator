@@ -35,7 +35,7 @@ public:
 private:
 	Bus&		   _memory;
 	LogicRegisters _logic_registers{};
-	SP_Register	   _stack_pointer{0xFFFE, this->_memory};		   // 3.2.4. Stack Pointer
+	SP_Register	   _stack_pointer{0xFFFE, this->_memory}; // 3.2.4. Stack Pointer
 	PC_Register	   _program_counter{SKIP_BOOT ? API::ROM_BEGIN_ADDRESS : 0x0000}; // 3.2.3.Program Counter
 
 private:

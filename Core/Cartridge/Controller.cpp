@@ -26,7 +26,7 @@ MBCController::MBCController(IMemoryDeviceAccess& memory_accessor, std::shared_p
 	this->_loader->Load(static_cast<CartridgeRAM*>(Processor::GetInstance().GetMemory().GetDeviceAtAddress(CartridgeRAM::START_ADDRESS))->GetMemoryPointer(),
 						 static_cast<long>(Tools::BytesInROMBanks(1) / 2));
 
-	SANITY(this->UpdateMBC(), "Failed updating the MBC");
+	SANITY(this->UpdateMBC(), "Failed loading MBC");
 }
 
 void MBCController::Setup()
@@ -38,7 +38,7 @@ void MBCController::Setup()
 
 bool MBCController::UpdateMBC()
 {
-	CartridgeHeader loaded_header{this->_memory_device};
+	CartridgeHeader loaded_header{&this->_memory_device};
 
 	for (std::size_t current_index = 0; current_index < this->_mbcs.size(); ++current_index)
 	{
@@ -49,7 +49,8 @@ bool MBCController::UpdateMBC()
 			return true;
 		}
 	}
-
+	
+	MAIN_LOG("MBC does not exist: %u.", loaded_header.MBC());
 	return false;
 }
 
@@ -81,5 +82,11 @@ bool MBCController::Write(const API::address_t absolute_address, const API::data
 {
 	SANITY(this->_mbcs[this->_chosen_mbc].get() != nullptr, "Failed fetching MBC");
 	return this->_mbcs[this->_chosen_mbc]->Write(absolute_address, data);
+}
+
+bool MBCController::WriteDirectly(const API::address_t absolute_address, const API::data_t data)
+{
+	SANITY(this->_mbcs[this->_chosen_mbc].get() != nullptr, "Failed fetching MBC");
+	return this->_mbcs[this->_chosen_mbc]->WriteDirectly(absolute_address, data);
 }
 }

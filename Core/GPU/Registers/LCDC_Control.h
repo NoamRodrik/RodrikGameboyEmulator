@@ -43,7 +43,7 @@ public:
 		static constexpr API::data_t BACKGROUND_ON{0x01};
 		API::data_t background_enable : 1;
 
-		constexpr bool IsBackgroundEnabled()
+		constexpr bool IsBackgroundEnabled() const
 		{
 			return background_enable == BACKGROUND_ON;
 		}
@@ -69,13 +69,13 @@ public:
 		static constexpr API::data_t BACKGROUND_MAP_9C00_9FFF{0x01};
 		API::data_t background_map_select : 1;
 
-		constexpr API::address_t GetBackgroundMapStart()
+		constexpr API::address_t GetBackgroundMapStart() const
 		{
 			return background_map_select == BACKGROUND_MAP_9800_9BFF ?
-					0x9800 : 0x9C00;
+				0x9800 : 0x9C00;
 		}
 
-		constexpr API::address_t GetBackgroundMapEnd()
+		constexpr API::address_t GetBackgroundMapEnd() const
 		{
 			return background_map_select == BACKGROUND_MAP_9800_9BFF ?
 				0x9BFF : 0x9FFF;
@@ -88,7 +88,7 @@ public:
 		static constexpr API::data_t TILE_MAP_SELECT_8000_8FFF{0x01};
 		API::data_t tile_select : 1;
 
-		constexpr API::address_t GetTileSelectOffset()
+		constexpr API::address_t GetTileSelectOffset() const
 		{
 			return tile_select == TILE_MAP_SELECT_8000_8FFF ?
 				API::TILE_SET_BANK_0_OFFSET : API::TILE_SET_BANK_1_OFFSET;
@@ -106,12 +106,29 @@ public:
 		static constexpr API::data_t WINDOW_ON{0x01};
 		API::data_t window_enable : 1;
 
+		constexpr bool IsWindowEnabled() const
+		{
+			return window_enable == WINDOW_ON;
+		}
+
 		// WIN_MAP
 		// 0: $9800 - $9BFF
 		static constexpr API::data_t WINDOWS_MAP_9800_9BFF{0x00};
 		// 1: $9C00 - $9FFF
 		static constexpr API::data_t WINDOWS_MAP_9C00_9FFF{0x01};
 		API::data_t window_map_select : 1;
+
+		constexpr API::address_t GetWindowMapStart() const
+		{
+			return window_map_select == WINDOWS_MAP_9800_9BFF ?
+					0x9800 : 0x9C00;
+		}
+
+		constexpr API::address_t GetWindowMapEnd() const
+		{
+			return window_map_select == WINDOWS_MAP_9800_9BFF ?
+					0x9BFF : 0x9FFF;
+		}
 
 		// LCD_EN
 		// 0: Stop completely (no picture on screen)

@@ -32,6 +32,12 @@ bool MemoryBankController_ROM::Write(const API::address_t, const API::data_t)
 	return false;
 }
 
+bool MemoryBankController_ROM::WriteDirectly(const API::address_t absolute_address, const API::data_t data)
+{
+	// For MBC, write directly is just write....
+	return this->Write(absolute_address, data);
+}
+
 size_t MemoryBankController_ROM::BankSize() const
 {
 	return MemoryBankController_ROM::BANK_SIZE;

@@ -7,11 +7,12 @@
 #define __API_CARTRIDGE_HEADER_H__
 
 #include <API/Memory/Device/IMemoryDeviceAccess.h>
+#include <Contrib/GSL/not_null.h>
 #include <cstdint>
 
 namespace API
 {
-class CartridgeHeader
+class CartridgeHeader : public API::IMemoryDeviceAccess
 {
 public:
 	enum class CartridgeType : std::uint8_t
@@ -69,13 +70,13 @@ public:
 		_128_KB = 128,
 		_256_KB = 256,
 		_512_KB = 512,
-		_1000_KB = 1000,
-		_2000_KB = 2000,
-		_4000_KB = 4000,
-		_8000_KB = 8000,
-		_1100_KB = 1100,
-		_1200_KB = 1200,
-		_1500_KB = 1500
+		_1000_KB = 1024,
+		_2000_KB = 2048,
+		_4000_KB = 4096,
+		_8000_KB = 8192,
+		_1100_KB = 1152,
+		_1200_KB = 1280,
+		_1500_KB = 1536
 	};
 
 	enum class RAMSizeType : std::uint8_t
@@ -99,7 +100,8 @@ public:
 	};
 
 public:
-	CartridgeHeader(IMemoryDeviceAccess& device_access) : _device_access(device_access) {}
+	CartridgeHeader(gsl::not_null<IMemoryDeviceAccess*> device_access) : _device_access{device_access} {}
+	CartridgeHeader(gsl::not_null<API::data_t*> data) : _data{data} {}
 	~CartridgeHeader() = default;
 
 public:
@@ -118,17 +120,42 @@ public:
 		return static_cast<RAMSizeType>(CartridgeHeader::Fetch<RAM_SIZE_OFFSET>());
 	}
 
-	inline const CartridgeHeader::ROMSizeValue CartridgeHeader::ROMSize() const;
-	inline const CartridgeHeader::RAMSizeValue CartridgeHeader::RAMSize() const;
+	const ROMSizeValue ROMSize() const;
+	const RAMSizeValue RAMSize() const;
 
 private:
 	template <std::size_t OFFSET>
 	inline const data_t Fetch() const
 	{
 		data_t data{0};
-		SANITY(this->_device_access.Read(OFFSET, data),
+		SANITY(this->Read(OFFSET, data),
 			   "Failed to read from device access");
 		return data;
+	}
+
+	virtual bool Read(const API::address_t absolute_address, API::data_t& result) const override
+	{
+		if (this->_device_access != nullptr)
+		{
+			return this->_device_access->Read(absolute_address, result);
+		}
+
+		// Can't be null.
+		RET_FALSE_IF_FAIL(this->_data != nullptr, "Both device access and data are null in cartridge header.");
+		result = this->_data[absolute_address];
+		return true;
+	}
+
+	virtual bool Write(const API::address_t absolute_address, const API::data_t data) override
+	{
+		STOP_RUNNING("Can't write to cartridge header");
+		return false;
+	}
+
+	virtual bool WriteDirectly(const API::address_t absolute_address, const API::data_t data) override
+	{
+		STOP_RUNNING("Can't write to cartridge header");
+		return false;
 	}
 
 private:
@@ -137,7 +164,8 @@ private:
 	static constexpr std::size_t RAM_SIZE_OFFSET{0x0149};
 
 private:
-	IMemoryDeviceAccess& _device_access;
+	IMemoryDeviceAccess* _device_access{nullptr};
+	API::data_t*         _data{nullptr};
 };
 }
 

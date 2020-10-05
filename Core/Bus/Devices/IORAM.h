@@ -12,6 +12,8 @@
 #include <Core/CPU/Timers/Registers/TimerCounter.h>
 #include <Core/CPU/Timers/Registers/TimerControl.h>
 #include <Core/CPU/Timers/Registers/TimerModulo.h>
+#include <Core/Joypad/Registers/JoypadRegister.h>
+#include <Core/CPU/Interrupts/InterruptHandler.h>
 #include <Core/GPU/Registers/LCDC_Control.h>
 #include <Core/GPU/Registers/LCDC_Status.h>
 #include <Core/Bus/Devices/CartridgeRAM.h>
@@ -26,9 +28,9 @@
 #include <Core/GPU/Registers/WY.h>
 #include <Core/GPU/Registers/WX.h>
 #include <Core/CPU/Timers/Timer.h>
+#include <Core/Joypad/Joypad.h>
 #include <Core/Bus/RAMDevice.h>
 #include <API/Definitions.h>
-#include <mutex>
 
 namespace Core
 {
@@ -72,11 +74,46 @@ public:
 		this->_memory[this->RelativeAddress(OBP1::OBP1_ADDRESS)] = OBP1::OBP1_DEFAULT_VALUE;
 		this->_memory[this->RelativeAddress(WY::WY_ADDRESS)] = WY::WY_DEFAULT_VALUE;
 		this->_memory[this->RelativeAddress(WX::WX_ADDRESS)] = WX::WX_DEFAULT_VALUE;
+
 		this->_memory[this->RelativeAddress(InterruptFlag::INTERRUPT_FLAG_ADDRESS)] = InterruptFlag::INTERRUPT_FLAG_DEFAULT_VALUE;
 	}
 
 private:
-	virtual bool Intercept(const API::address_t absolute_address, const API::data_t data) override
+	virtual bool InterceptRead(const API::address_t absolute_address, API::data_t& data) const override
+	{
+		switch (absolute_address)
+		{
+			case (JoypadRegister::JOYPAD_REGISTER_ADDRESS):
+			{
+				const API::data_t FILTERED_DATA = this->_memory[this->RelativeAddress(JoypadRegister::JOYPAD_REGISTER_ADDRESS)] & 0x30;
+
+				API::data_t status{0x00};
+				switch (FILTERED_DATA & 0x30)
+				{
+					case (1 << static_cast<std::size_t>(Joypad::Mode::SELECT_DIRECTIONS)):
+					{
+						status = Joypad::GetDirectionStatus();
+						break;
+					}
+
+					case (1 << static_cast<std::size_t>(Joypad::Mode::SELECT_BUTTONS)):
+					{
+						status = Joypad::GetButtonStatus();
+						break;
+					}
+				}
+
+				data = FILTERED_DATA | status;
+
+				return true;
+				break;
+			}
+		}
+
+		return false;
+	}
+
+	virtual bool InterceptWrite(const API::address_t absolute_address, const API::data_t data) override
 	{
 		switch (absolute_address)
 		{
@@ -149,20 +186,64 @@ private:
 			case (LY::LY_ADDRESS):
 			{
 				// Writing will reset the counter.
-				std::lock_guard lock{this->_mutex};
 				this->_memory[this->RelativeAddress(absolute_address)] = 0;
 				return true;
 			
 				break;
 			}
 
-			case (LCDC_Status::LCDC_ADDRESS):
+			case (LCDC_Control::LCDC_ADDRESS):
 			{
-				// This might be accessed in multiple threads.
-				std::lock_guard lock{this->_mutex};
-				this->_memory[this->RelativeAddress(absolute_address)] = data;
+				this->_memory[this->RelativeAddress(LCDC_Control::LCDC_ADDRESS)] = data;
+
+				if (static_cast<LCDC_Control::Control>(data).IsLCDEnabled() &&
+					!Processor::GetInstance().GetPPU()->IsLCDEnabled())
+				{
+					Processor::GetInstance().GetPPU()->EnableLCD();
+				}
+				// If the status has changed.
+				else if (!static_cast<LCDC_Control::Control>(data).IsLCDEnabled() &&
+					     Processor::GetInstance().GetPPU()->IsLCDEnabled() &&
+					     Processor::GetInstance().GetPPU()->GetState() == PPUState::V_BLANK)
+				{
+					Processor::GetInstance().GetPPU()->DisableLCD();
+				}
+
 				return true;
 
+				break;
+			}
+
+			case (LCDC_Status::LCDC_ADDRESS) :
+			{
+				// Don't allow the override of values in bits [0,2]
+				this->_memory[this->RelativeAddress(LCDC_Status::LCDC_ADDRESS)] = (data & 0x78) | (this->_memory[this->RelativeAddress(LCDC_Status::LCDC_ADDRESS)] & 0x07);
+
+				return true;
+				break;
+			}
+
+			case (JoypadRegister::JOYPAD_REGISTER_ADDRESS):
+			{
+				API::data_t status{0x00};
+				switch (data & 0x30)
+				{
+					case (1 << static_cast<std::size_t>(Joypad::Mode::SELECT_DIRECTIONS)):
+					{
+						status = Joypad::GetDirectionStatus();
+						break;
+					}
+
+					case (1 << static_cast<std::size_t>(Joypad::Mode::SELECT_BUTTONS)):
+					{
+						status = Joypad::GetButtonStatus();
+						break;
+					}
+				}
+
+				this->_memory[this->RelativeAddress(JoypadRegister::JOYPAD_REGISTER_ADDRESS)] = (data & 0x30) | status;
+
+				return true;
 				break;
 			}
 		}
@@ -170,25 +251,18 @@ private:
 		return false;
 	}
 
-private:
-	/**
-	 * Since this is accessed from the PPU, this needs to be thread safe.
-	 */
+protected:
 	void MaskLCDCStatus(API::data_t mask)
 	{
-		std::lock_guard lock{this->_mutex};
-
 		this->_memory[this->RelativeAddress(LCDC_Status::LCDC_ADDRESS)] &= mask;
 	}
 
 private:
-	std::mutex _mutex;
-
-private:
-	friend class MainPixelEngine;
+	friend class LCDRender;
 	friend class PixelFIFO;
 	friend class DeviceManager;
 	friend class Timer;
+	friend class Joypad;
 };
 } // Core
 

@@ -29,21 +29,20 @@ public:
 	~PixelFIFO() = default;
 
 public:
-	void ResetNewLine()
+	void Reset()
 	{
 		this->_lower_row.Clear();
 		this->_upper_row.Clear();
-		this->scx = SCX{};
-		this->SetX(0x00);
+		this->_scx = SCX{};
+		this->SetX(this->GetSCX());
 	}
 
-	void ResetNewFrame()
+	void IncrementY()
 	{
-		this->scy = SCY{};
-		this->SetY(this->scy);
+		this->SetY(this->GetY() + 1);
 	}
 
-	auto FetchNextPixel()
+	std::pair<PixelSource, PaletteColor> FetchNextPixel()
 	{
 		// Fetching from the first row if it isn't empty.
 		if (!this->_lower_row.IsEmpty())
@@ -57,12 +56,10 @@ public:
 				this->_lower_row.SetLastPixel(this->_upper_row.GetNextPixel());
 			}
 
-			return FETCHED_PALETTE_COLOR;
+			return {this->_lower_row.GetSource(), FETCHED_PALETTE_COLOR};
 		}
-		else
-		{
-			return this->_upper_row.GetNextPixel();
-		}
+
+		return {PixelSource::BGP, PaletteColor::FIRST_PALETTE};
 	}
 
 	bool IsEmpty() const
@@ -85,19 +82,37 @@ public:
 		}
 
 		const auto PIXEL{this->FetchNextPixel()};
-
-		if (this->scx <= this->GetX())
+		if (!this->XPassedThreshold())
 		{
-			const API::data_t DRAWN_X = this->GetX() - this->scx;
-			const API::data_t DRAWN_Y = this->GetY() - this->scy;
+			const API::data_t DRAWN_X{static_cast<API::data_t>(GetWrappedAroundDistance(this->GetX(), this->GetSCX()))};
+			const API::data_t DRAWN_Y{static_cast<API::data_t>(LY{})};
+			const LCDC_Control::Control lcdc_control{LCDC_Control{}};
 
-			RET_FALSE_IF_FAIL(this->DrawPalette(DRAWN_X, DRAWN_Y, PIXEL),
-							  "Failed drawing palette (%u, %u) for SCX %u and SCY %u, x %u y %u!",
-			                    DRAWN_X, DRAWN_Y, this->scx, this->scy, this->GetX(), this->GetY());
-			
+			if (lcdc_control.background_enable == LCDC_Control::Control::BACKGROUND_ON && PIXEL.first == PixelSource::BGP)
+			{
+				RET_FALSE_IF_FAIL(this->DrawPalette(DRAWN_X, DRAWN_Y, PIXEL.second),
+					"Failed drawing palette (%u, %u) for SCX %u and SCY %u, x %u y %u!",
+					DRAWN_X, DRAWN_Y, this->GetSCX(), this->GetSCY(), this->GetX(), this->GetY());
+			}
+			else if (lcdc_control.window_enable == LCDC_Control::Control::WINDOW_ON && PIXEL.first == PixelSource::WIN)
+			{
+				// WindowX (0xFF4B): The X Positions -7 of the VIEWING AREA to start drawing the window from
+				// The minus 7 of the windowX pos is necessary. So if you wanted to start drawing the window
+				// in the upper left hand corner (coordinates 0,0) of the viewing area you'd set WindowY to 0 and WindowX to 7.
+				RET_FALSE_IF_FAIL(this->DrawPalette(DRAWN_X - 7, DRAWN_Y, PIXEL.second),
+					"Failed drawing palette (%u, %u) for SCX %u and SCY %u, x %u y %u!",
+					DRAWN_X - 7, DRAWN_Y, this->GetSCX(), this->GetSCY(), this->GetX(), this->GetY());
+			}
+			else
+			{
+				// If both bg and window are disabled, we draw the 0x00 palette.
+				RET_FALSE_IF_FAIL(this->DrawPalette(DRAWN_X, DRAWN_Y, PaletteColor::FIRST_PALETTE),
+					"Failed drawing palette (%u, %u) for SCX %u and SCY %u, x %u y %u!",
+					DRAWN_X, DRAWN_Y, this->GetSCX(), this->GetSCY(), this->GetX(), this->GetY());
+			}
 		}
 
-		this->SetX(this->GetX() + 1);
+		this->SetX((this->GetX() + 1) % 0x100);
 
 		return true;
 	}
@@ -113,11 +128,7 @@ public:
 			this->_upper_row = pixel_row_container;
 		}
 
-		// Pass pixels if necessary.
-		for (std::size_t current_bit = 0; current_bit < this->_lower_row.EmptyBitsAmount(); ++current_bit)
-		{
-			this->_lower_row.SetLastPixel(this->_upper_row.GetNextPixel());
-		}
+		SANITY(this->_lower_row.EmptyBitsAmount() == 0, "Serious bug occurred");
 	}
 
 	const auto& GetScreen() const
@@ -132,21 +143,59 @@ public:
 
 	void SetY(const API::data_t y)
 	{
-		static auto* io_ram_memory_ptr{static_cast<IORAM*>(this->_ppu.GetProcessor().GetMemory().GetDeviceAtAddress(LY::LY_ADDRESS))->GetMemoryPointer()};
-		io_ram_memory_ptr[LY::LY_ADDRESS - IORAM::START_ADDRESS] = y;
+		this->_y = y;
+		const API::data_t NEW_LY = GetWrappedAroundDistance(this->_y, this->_scy) % 0x9A;
+		SANITY(this->_ppu.GetProcessor().GetMemory().WriteDirectly(LY::LY_ADDRESS, NEW_LY), "Failed changing LY directly");
+
+		if (LY{} == 0)
+		{
+			// Reset Y back to SCY
+			this->_scy = SCY{};
+			this->_y = this->GetSCY();
+		}
 	}
 
 	const API::data_t GetY() const
 	{
-		static auto* io_ram_memory_ptr{ static_cast<IORAM*>(this->_ppu.GetProcessor().GetMemory().GetDeviceAtAddress(LY::LY_ADDRESS))->GetMemoryPointer() };
-		return io_ram_memory_ptr[LY::LY_ADDRESS - IORAM::START_ADDRESS];
+		return this->_y;
 	}
 
 	const API::data_t GetX() const
 	{
 		return this->_x;
 	}
-	
+
+	void WhiteScreen()
+	{
+		for (std::size_t height = 0; height < SCREEN_HEIGHT_PIXELS; ++height)
+		{
+			for (std::size_t width = 0; width < SCREEN_WIDTH_PIXELS; ++width)
+			{
+				SANITY(this->DrawPixel(width, height, PixelColor::WHITE), "Failed drawing pixels");
+			}
+		}
+	}
+
+	const bool YPassedThreshold() const
+	{
+		return GetWrappedAroundDistance(this->GetY(), this->GetSCY()) >= SCREEN_HEIGHT_PIXELS - 1;
+	}
+
+	const bool XPassedThreshold() const
+	{
+		return GetWrappedAroundDistance(this->GetX(), this->GetSCX()) >= SCREEN_WIDTH_PIXELS;
+	}
+
+	const API::data_t GetSCY() const
+	{
+		return this->_scy;
+	}
+
+	const API::data_t GetSCX() const
+	{
+		return this->_scx;
+	}
+
 private:
 	bool DrawPalette(int32_t x, int32_t y, PaletteColor color)
 	{
@@ -191,13 +240,12 @@ private:
 		return true;
 	}
 
-public:
-	API::data_t scx{0x00};
-	API::data_t scy{0x00};
-
 private:
-	API::data_t			      _x{0x00};
-	IPPU&                     _ppu;
+	std::size_t			      _x{0x00};
+	std::size_t               _y{0x00};
+	std::size_t               _scy{0x00};
+	std::size_t               _scx{0x00};
+	IPPU&					  _ppu;
 	PixelRowContainer		  _lower_row{};
 	PixelRowContainer		  _upper_row{};
 	std::array<std::array<olc::Pixel, SCREEN_WIDTH_PIXELS>, SCREEN_HEIGHT_PIXELS> _screen{};
