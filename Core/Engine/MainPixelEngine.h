@@ -18,6 +18,7 @@
 #include <Core/Bus/Devices/IORAM.h>
 #include <Core/GPU/Definitions.h>
 #include <Core/Joypad/Joypad.h>
+#include <Core/Clock/Clock.h>
 #include <API/Definitions.h>
 #include <Core/GPU/IPPU.h>
 #include <Tools/Tools.h>
@@ -92,15 +93,7 @@ private:
 
 	virtual bool OnUserUpdate(float) override
 	{
-		const time_point_t CURRENT{std::chrono::high_resolution_clock::now()};
-
-		const time_duration_t SLEEP_LEFT_BETWEEN_FRAMES{
-			std::max<float>(DELAYED_TIME - std::chrono::duration_cast<time_duration_t>(CURRENT - this->_previous).count(), 0)};
-
-		std::this_thread::sleep_for(SLEEP_LEFT_BETWEEN_FRAMES);
-
-		this->_previous = CURRENT;
-
+		Clock::SyncGPUFrame();
 		this->HandleButtonPress();
 		return this->Render();
 	}
@@ -198,15 +191,6 @@ private:
 	}
 
 private:
-	using time_point_t = std::chrono::time_point<std::chrono::high_resolution_clock>;
-	using time_duration_t = std::chrono::duration<float, std::milli>;
-
-public:
-	static constexpr float FRAMES_PER_SECOND{59.7f};
-	static constexpr float DELAYED_TIME{1000.0f / FRAMES_PER_SECOND};
-
-private:
-	time_point_t			     _previous{std::chrono::high_resolution_clock::now()};
 	Processor&					 _processor;
 	std::unique_ptr<std::thread> _gpu_thread{nullptr};
 	LCDRender					 _render{this->_processor.GetMemory(), *this};
