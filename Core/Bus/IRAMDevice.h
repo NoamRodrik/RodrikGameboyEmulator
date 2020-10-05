@@ -17,10 +17,8 @@ public:
 	virtual ~IRAMDevice() = default;
 
 protected:
-	/**
-	 * If intercepted, the write will not occur.
-	 */
-	virtual bool Intercept(const API::address_t absolute_address, const API::data_t data) = 0;
+	virtual bool InterceptWrite(const API::address_t absolute_address, const API::data_t data) = 0;
+	virtual bool InterceptRead(const API::address_t absolute_address, API::data_t& result) const = 0;
 
 private:
 	friend class DeviceManager;

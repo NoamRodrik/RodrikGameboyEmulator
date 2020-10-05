@@ -78,8 +78,6 @@ const size_t Processor::Clock()
 		clock_cycle += 1;
 	}
 
-	Message("Need to check powermode here");
-
 	// Interrupts check + Adjust (Takes 5 cycles for a process to dispatch)
 	clock_cycle += static_cast<size_t>(InterruptHandler::ProcessInterrupts()) * 5;
 

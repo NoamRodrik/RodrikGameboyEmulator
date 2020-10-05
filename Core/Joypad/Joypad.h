@@ -26,10 +26,11 @@ public:
 		START = 3
 	};
 
+	Message("Check order");
 	enum class Mode : API::data_t
 	{
-		SELECT_DIRECTION = 4,
-		SELECT_BUTTONS = 5
+		SELECT_BUTTONS = 4,
+		SELECT_DIRECTIONS = 5
 	};
 
 public:

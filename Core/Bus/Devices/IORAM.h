@@ -79,7 +79,41 @@ public:
 	}
 
 private:
-	virtual bool Intercept(const API::address_t absolute_address, const API::data_t data) override
+	virtual bool InterceptRead(const API::address_t absolute_address, API::data_t& data) const override
+	{
+		switch (absolute_address)
+		{
+			case (JoypadRegister::JOYPAD_REGISTER_ADDRESS):
+			{
+				const API::data_t FILTERED_DATA = this->_memory[this->RelativeAddress(JoypadRegister::JOYPAD_REGISTER_ADDRESS)] & 0x30;
+
+				API::data_t status{0x00};
+				switch (FILTERED_DATA & 0x30)
+				{
+					case (1 << static_cast<std::size_t>(Joypad::Mode::SELECT_DIRECTIONS)):
+					{
+						status = Joypad::GetDirectionStatus();
+						break;
+					}
+
+					case (1 << static_cast<std::size_t>(Joypad::Mode::SELECT_BUTTONS)):
+					{
+						status = Joypad::GetButtonStatus();
+						break;
+					}
+				}
+
+				data = FILTERED_DATA | status;
+
+				return true;
+				break;
+			}
+		}
+
+		return false;
+	}
+
+	virtual bool InterceptWrite(const API::address_t absolute_address, const API::data_t data) override
 	{
 		switch (absolute_address)
 		{
@@ -191,10 +225,23 @@ private:
 
 			case (JoypadRegister::JOYPAD_REGISTER_ADDRESS):
 			{
-				Message("Is this needed?");
-				this->_memory[this->RelativeAddress(JoypadRegister::JOYPAD_REGISTER_ADDRESS)] = /*(data & 0x30)*/ 0xF0 |
-					(Tools::IsBitSet(data, static_cast<std::size_t>(Joypad::Mode::SELECT_DIRECTION)) ?
-					 Joypad::GetDirectionStatus() : Joypad::GetButtonStatus());
+				API::data_t status{0x00};
+				switch (data & 0x30)
+				{
+					case (1 << static_cast<std::size_t>(Joypad::Mode::SELECT_DIRECTIONS)):
+					{
+						status = Joypad::GetDirectionStatus();
+						break;
+					}
+
+					case (1 << static_cast<std::size_t>(Joypad::Mode::SELECT_BUTTONS)):
+					{
+						status = Joypad::GetButtonStatus();
+						break;
+					}
+				}
+
+				this->_memory[this->RelativeAddress(JoypadRegister::JOYPAD_REGISTER_ADDRESS)] = (data & 0x30) | status;
 
 				return true;
 				break;

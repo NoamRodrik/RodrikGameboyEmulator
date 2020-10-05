@@ -13,7 +13,9 @@
 #define MacroStr2(x)  MacroStr(x)
 #define Message(desc) __pragma(message(__FILE__ "(" MacroStr2(__LINE__) ") : " desc))
 
+Message("To remove!");
 #define SERIAL_TRANSFER_PRINT_DEBUG
+#define TETRIS_PATCH
 
 #define NO_PRINT
 
