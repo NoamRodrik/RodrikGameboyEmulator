@@ -13,6 +13,6 @@ public:
 public:
 	virtual void Load(API::data_t* const destination, const long size, const long offset = 0) = 0;
 };
-}
+} // API
 
 #endif // __API_ILOADER_H__

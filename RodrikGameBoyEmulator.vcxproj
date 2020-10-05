@@ -360,6 +360,7 @@
     <None Include="BootROM\02interrupts.gb" />
     <None Include="BootROM\cpu_instrs.gb" />
     <None Include="BootROM\tetris.gb" />
+    <None Include="LICENSE" />
     <None Include="README.md" />
     <None Include="RodrikGameBoyEmulator.aps" />
     <None Include="TestROM\01-special.gb" />

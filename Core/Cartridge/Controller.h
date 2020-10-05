@@ -48,6 +48,6 @@ private:
 	std::array<std::unique_ptr<API::IMemoryBankController>, API::MEMORY_BANK_CONTROLLERS_AMOUNT> _mbcs{};
 	std::size_t _chosen_mbc{0};
 };
-}
+} // Core
 
 #endif // __MBC_CONTROLLER_H__

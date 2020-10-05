@@ -24,6 +24,6 @@ public:
 	static constexpr API::address_t OBP0_ADDRESS{0xFF48};
 	static constexpr API::address_t OBP0_DEFAULT_VALUE{0xFF};
 };
-}
+} // Core
 
 #endif // __LR35902_OBP0_H__

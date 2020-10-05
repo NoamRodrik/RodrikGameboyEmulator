@@ -25,19 +25,21 @@ public:
 
 	constexpr RegisterPair& operator=(const RegisterPair& other)
 	{
-		_msb = other._msb;
-		_lsb = other._lsb;
+		this->_msb = other._msb;
+		this->_lsb = other._lsb;
 		return *this;
 	}
+
 	constexpr RegisterPair& operator=(const address_t other)
 	{
 		_msb = get_msb(other);
 		_lsb = get_lsb(other);
 		return *this;
 	}
+
 	constexpr operator address_t() const
 	{
-		return ((address_t{_msb} << std::numeric_limits<data_t>::digits) & 0xFF00) | (_lsb & 0x00FF);
+		return ((address_t{this->_msb} << std::numeric_limits<data_t>::digits) & 0xFF00) | (this->_lsb & 0x00FF);
 	}
 
 private:

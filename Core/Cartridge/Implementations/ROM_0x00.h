@@ -27,6 +27,6 @@ public:
 public:
 	static constexpr size_t BANK_SIZE = 2;
 };
-}
+} // Core
 
 #endif // __MBC_ROM_H__

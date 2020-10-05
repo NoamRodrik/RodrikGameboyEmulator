@@ -44,6 +44,6 @@ private:
 	API::data_t _direction_status{0x00};
 	API::data_t _button_status{0x00};
 };
-}
+} // Core
 
 #endif // __JOYPAD_H__

@@ -326,6 +326,6 @@ public:
 	PPUState				  _state{PPUState::OAM_SEARCH};
 	std::size_t				  _clocks{0x00};
 };
-}
+} // Core
 
 #endif // __LR35902_LCD_RENDER_H__

@@ -119,6 +119,6 @@ public:
 	static constexpr API::address_t LCDC_ADDRESS{0xFF41};
 	static constexpr API::address_t LCDC_DEFAULT_VALUE{0x00};
 };
-}
+} // Core
 
 #endif // __LR35902_LCDC_STATUS_H__

@@ -24,6 +24,6 @@ public:
 	static constexpr API::address_t SCX_ADDRESS{0xFF43};
 	static constexpr API::address_t SCX_DEFAULT_VALUE{0x00};
 };
-}
+} // Core
 
 #endif // __LR35902_SCX_H__

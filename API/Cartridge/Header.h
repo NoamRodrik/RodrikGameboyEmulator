@@ -100,8 +100,8 @@ public:
 	};
 
 public:
-	CartridgeHeader(gsl::not_null<IMemoryDeviceAccess*> device_access) : _device_access{device_access} {}
-	CartridgeHeader(gsl::not_null<API::data_t*> data) : _data{data} {}
+	explicit CartridgeHeader(gsl::not_null<IMemoryDeviceAccess*> device_access) : _device_access{device_access} {}
+	explicit CartridgeHeader(gsl::not_null<API::data_t*> data) : _data{data} {}
 	~CartridgeHeader() = default;
 
 public:
@@ -167,6 +167,6 @@ private:
 	IMemoryDeviceAccess* _device_access{nullptr};
 	API::data_t*         _data{nullptr};
 };
-}
+} // API
 
 #endif // __API_CARTRIDGE_HEADER_H__

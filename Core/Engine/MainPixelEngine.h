@@ -216,6 +216,6 @@ private:
 	LCDRender					 _render{this->_processor.GetMemory(), *this};
 	std::atomic<bool>            _enabled{true};
 };
-}
+} // Core
 
 #endif // __GPU_ENGINE_MAIN_PIXEL_ENGINE_H__

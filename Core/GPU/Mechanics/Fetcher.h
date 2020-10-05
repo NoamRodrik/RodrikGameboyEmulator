@@ -245,6 +245,6 @@ private:
 	PixelRowContainer _pixel_row_container{};
 	std::size_t       _clocks{0x00};
 };
-}
+} // Core
 
 #endif // __LR35902_FETCHER_H__

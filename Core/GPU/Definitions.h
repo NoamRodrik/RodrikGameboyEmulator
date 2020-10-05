@@ -78,6 +78,6 @@ static constexpr uint8_t    LIGHT_GREY_PIXEL[]{221, 180, 180};
 static constexpr uint8_t    DARK_GREY_PIXEL[]{97, 79, 76};
 #endif
 
-}
+} // Core
 
 #endif // __LR35902_DEFINITIONS_H__

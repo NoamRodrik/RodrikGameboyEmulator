@@ -47,6 +47,6 @@ private:
 	API::data_t							   _selected_ram_bank{0};
 	bool								   _ram_enable{false};
 };
-}
+} // Core
 
 #endif // __MBC_ROM_1_RAM_H__

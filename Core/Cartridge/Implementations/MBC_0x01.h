@@ -58,6 +58,6 @@ private:
 private:
 	friend class MemoryBankController_2;
 };
-}
+} // Core
 
 #endif // __MBC_ROM_1_H__

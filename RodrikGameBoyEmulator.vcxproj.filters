@@ -535,5 +535,6 @@
     <None Include="TestROM\09-op r,r.gb" />
     <None Include="TestROM\10-bit ops.gb" />
     <None Include="TestROM\11-op a,(hl).gb" />
+    <None Include="LICENSE" />
   </ItemGroup>
 </Project>

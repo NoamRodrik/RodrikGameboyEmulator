@@ -23,7 +23,7 @@ public:
 	static_assert(std::is_integral<T>::value, "Got a non-integral register-base data type.");
 
 public:
-	constexpr RegisterBase(T&& data) : _data{data} {};
+	constexpr explicit RegisterBase(T&& data) : _data{data} {};
 
 	operator T&()
 	{

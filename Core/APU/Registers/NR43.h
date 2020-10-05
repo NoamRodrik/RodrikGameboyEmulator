@@ -24,6 +24,6 @@ public:
 	static constexpr API::address_t NR43_ADDRESS{0xFF22};
 	static constexpr API::address_t NR43_DEFAULT_VALUE{0x00};
 };
-}
+} // Core
 
 #endif // __LR35902_NR43_H__

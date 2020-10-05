@@ -128,4 +128,4 @@ bool MemoryBankController_2::RamRomBankNumberAction(const data_t data)
 
 	return true;
 }
-}
+} // Core

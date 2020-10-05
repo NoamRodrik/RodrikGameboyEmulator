@@ -25,6 +25,6 @@ public:
 	virtual void EnableLCD() = 0;
 	virtual PPUState GetState() const = 0;
 };
-}
+} // Core
 
 #endif // __CORE_IPPU_H__

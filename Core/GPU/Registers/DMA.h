@@ -25,6 +25,6 @@ public:
 	static constexpr API::address_t DMA_ADDRESS{0xFF46};
 	static constexpr API::address_t DMA_DEFAULT_VALUE{0x00};
 };
-}
+} // Core
 
 #endif // __LR35902_DMA_H__

@@ -25,6 +25,6 @@ public:
 	static constexpr API::address_t LY_ADDRESS{0xFF44};
 	static constexpr API::address_t LY_DEFAULT_VALUE{0x00};
 };
-}
+} // Core
 
 #endif // __LR35902_LY_H__

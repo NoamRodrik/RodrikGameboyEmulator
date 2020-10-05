@@ -60,4 +60,4 @@ const CartridgeHeader::RAMSizeValue CartridgeHeader::RAMSize() const
 
 	return RAMSizeValue::NONE;
 }
-}
+} // API

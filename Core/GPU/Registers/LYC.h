@@ -24,6 +24,6 @@ public:
 	static constexpr API::address_t LYC_ADDRESS{0xFF45};
 	static constexpr API::address_t LYC_DEFAULT_VALUE{0x00};
 };
-}
+} // Core
 
 #endif // __LR35902_LYC_H__

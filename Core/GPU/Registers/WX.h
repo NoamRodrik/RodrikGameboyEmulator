@@ -24,6 +24,6 @@ public:
 	static constexpr API::address_t WX_ADDRESS{0xFF4B};
 	static constexpr API::address_t WX_DEFAULT_VALUE{0x00};
 };
-}
+} // Core
 
 #endif // __LR35902_WX_H__

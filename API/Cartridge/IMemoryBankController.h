@@ -37,6 +37,6 @@ protected:
 	IMemoryDeviceAccess& _memory_device;
 	std::shared_ptr<ILoader> _loader;
 };
-}
+} // API
 
 #endif // __API_IMEMORY_BANK_CONTROLLER_H__

@@ -25,7 +25,7 @@ namespace Core
 class PixelFIFO
 {
 public:
-	PixelFIFO(IPPU& ppu) : _ppu{ppu} {}
+	explicit PixelFIFO(IPPU& ppu) : _ppu{ppu} {}
 	~PixelFIFO() = default;
 
 public:
@@ -250,6 +250,6 @@ private:
 	PixelRowContainer		  _upper_row{};
 	std::array<std::array<olc::Pixel, SCREEN_WIDTH_PIXELS>, SCREEN_HEIGHT_PIXELS> _screen{};
 };
-}
+} // Core
 
 #endif // __LR35902_PIXEL_FIFO_H__

@@ -67,6 +67,6 @@ private:
 	API::data_t _upper{0};
 	API::data_t _lower{0};
 };
-}
+} // Core
 
 #endif // __LR35902_PIXEL_ROW_H__

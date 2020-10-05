@@ -24,6 +24,6 @@ public:
 	static constexpr API::address_t BGP_ADDRESS{0xFF47};
 	static constexpr API::address_t BGP_DEFAULT_VALUE{0xFC};
 };
-}
+} // Core
 
 #endif // __LR35902_BGP_H__

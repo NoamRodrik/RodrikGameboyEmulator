@@ -7,6 +7,7 @@
 #include <Core/CPU/Processor.h>
 #include <Core/Clock/Clock.h>
 
+using namespace API;
 using namespace Core;
 
 int main(int argc, char** argv)

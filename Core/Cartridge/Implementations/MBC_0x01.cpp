@@ -154,4 +154,4 @@ bool MemoryBankController_1::RomLowerBankNumberAction(const data_t data)
 
 	return true;
 }
-}
+} // Core

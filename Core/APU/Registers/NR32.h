@@ -24,6 +24,6 @@ public:
 	static constexpr API::address_t NR32_ADDRESS{0xFF1C};
 	static constexpr API::address_t NR32_DEFAULT_VALUE{0x9F};
 };
-}
+} // Core
 
 #endif // __LR35902_NR32_H__

@@ -20,6 +20,6 @@ public:
 		return static_cast<PixelColor>(((BGP{} & (0b11 << (static_cast<API::data_t>(color) * 2))) >> (static_cast<API::data_t>(color) * 2)) & 0x03);
 	}
 };
-}
+} // Core
 
 #endif // __LR35902_PALETTE_MAP_H__
