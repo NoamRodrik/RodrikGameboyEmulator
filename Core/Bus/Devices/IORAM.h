@@ -109,25 +109,23 @@ private:
 		{
 			case (JoypadRegister::JOYPAD_REGISTER_ADDRESS):
 			{
-				const API::data_t FILTERED_DATA = this->_memory[this->RelativeAddress(JoypadRegister::JOYPAD_REGISTER_ADDRESS)] & 0x30;
-
-				API::data_t status{0x00};
-				switch (FILTERED_DATA & 0x30)
+				API::data_t status = 0xC0 | (this->_memory[this->RelativeAddress(JoypadRegister::JOYPAD_REGISTER_ADDRESS)] & 0x30);
+				switch (status & 0x30)
 				{
 					case (1 << static_cast<std::size_t>(Joypad::Mode::SELECT_DIRECTIONS)):
 					{
-						status = Joypad::GetDirectionStatus();
+						status |= Joypad::GetDirectionStatus();
 						break;
 					}
 
 					case (1 << static_cast<std::size_t>(Joypad::Mode::SELECT_BUTTONS)):
 					{
-						status = Joypad::GetButtonStatus();
+						status |= Joypad::GetButtonStatus();
 						break;
 					}
 				}
 
-				data = FILTERED_DATA | status;
+				data = status;
 
 				return true;
 				break;
@@ -249,23 +247,7 @@ private:
 
 			case (JoypadRegister::JOYPAD_REGISTER_ADDRESS):
 			{
-				API::data_t status{0x00};
-				switch (data & 0x30)
-				{
-					case (1 << static_cast<std::size_t>(Joypad::Mode::SELECT_DIRECTIONS)):
-					{
-						status = Joypad::GetDirectionStatus();
-						break;
-					}
-
-					case (1 << static_cast<std::size_t>(Joypad::Mode::SELECT_BUTTONS)):
-					{
-						status = Joypad::GetButtonStatus();
-						break;
-					}
-				}
-
-				this->_memory[this->RelativeAddress(JoypadRegister::JOYPAD_REGISTER_ADDRESS)] = (data & 0x30) | status;
+				this->_memory[this->RelativeAddress(JoypadRegister::JOYPAD_REGISTER_ADDRESS)] = 0xCF | (data & 0x30);
 
 				return true;
 				break;

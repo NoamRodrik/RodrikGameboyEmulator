@@ -130,16 +130,12 @@ private:
 		API::data_t direction_status{0x00};
 		API::data_t button_status{0x00};
 
-		if (this->GetKey(olc::Key::ESCAPE).bPressed ||
-			this->GetKey(olc::Key::ESCAPE).bHeld ||
-			this->GetKey(olc::Key::ESCAPE).bReleased)
+		if (this->GetKey(olc::Key::ESCAPE).bPressed)
 		{
 			Tools::SetBit(button_status, static_cast<std::size_t>(Joypad::Control::START));
 		}
 
-		if (this->GetKey(olc::Key::ENTER).bPressed ||
-			this->GetKey(olc::Key::ENTER).bHeld ||
-			this->GetKey(olc::Key::ENTER).bReleased)
+		if (this->GetKey(olc::Key::ENTER).bPressed)
 		{
 			Tools::SetBit(button_status, static_cast<std::size_t>(Joypad::Control::SELECT));
 		}
