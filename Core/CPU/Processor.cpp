@@ -10,8 +10,8 @@
 #include <Core/CPU/Interrupts/InterruptHandler.h>
 #include <Core/CPU/Instructions/Shortcuts.h>
 #include <Core/Engine/MainPixelEngine.h>
-#include <Core/CPU/Timers/Timer.h>
 #include <Core/CPU/Processor.h>
+#include <Core/Timers/Timer.h>
 #include <Core/Clock/Clock.h>
 #include <Tools/Loader.h>
 #include <filesystem>

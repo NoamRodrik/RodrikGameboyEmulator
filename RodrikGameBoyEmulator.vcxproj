@@ -323,11 +323,11 @@
     <ClInclude Include="Core\Joypad\Joypad.h" />
     <ClInclude Include="Core\Joypad\Registers\JoypadRegister.h" />
     <ClInclude Include="Core\CPU\Processor.h" />
-    <ClInclude Include="Core\CPU\Timers\Registers\DividerRegister.h" />
-    <ClInclude Include="Core\CPU\Timers\Registers\TimerControl.h" />
-    <ClInclude Include="Core\CPU\Timers\Registers\TimerCounter.h" />
-    <ClInclude Include="Core\CPU\Timers\Registers\TimerModulo.h" />
-    <ClInclude Include="Core\CPU\Timers\Timer.h" />
+    <ClInclude Include="Core\Timers\Registers\DividerRegister.h" />
+    <ClInclude Include="Core\Timers\Registers\TimerControl.h" />
+    <ClInclude Include="Core\Timers\Registers\TimerCounter.h" />
+    <ClInclude Include="Core\Timers\Registers\TimerModulo.h" />
+    <ClInclude Include="Core\Timers\Timer.h" />
     <ClInclude Include="Core\CPU\Registers\MemoryRegister.h" />
     <ClInclude Include="Core\CPU\Registers\Types\LogicRegisters.h" />
     <ClInclude Include="Core\CPU\Registers\RegisterEngine.h" />
@@ -351,7 +351,7 @@
     <ClCompile Include="Core\Clock\Clock.cpp" />
     <ClCompile Include="Core\Joypad\Joypad.cpp" />
     <ClCompile Include="Core\CPU\Processor.cpp" />
-    <ClCompile Include="Core\CPU\Timers\Timer.cpp" />
+    <ClCompile Include="Core\Timers\Timer.cpp" />
     <ClCompile Include="Process\Main.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -11,7 +11,7 @@
 
 namespace Core
 {
-static constexpr API::address_t GetWrappedAroundDistance(const API::address_t from, const API::address_t to)
+static constexpr API::address_t GetWrappedAroundDistance(const std::size_t from, const std::size_t to)
 {
 	return (from + 0x100 - to) % 0x100;
 }

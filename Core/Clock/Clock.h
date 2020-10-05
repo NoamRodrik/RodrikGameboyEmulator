@@ -7,6 +7,7 @@
 #define __CYCLE_H__
 
 #include <API/StaticInstance.h>
+#include <API/Definitions.h>
 #include <chrono>
 
 namespace Core

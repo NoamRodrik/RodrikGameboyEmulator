@@ -8,12 +8,12 @@
 
 #include <Core/CPU/Interrupts/Registers/InterruptEnable.h>
 #include <Core/CPU/Interrupts/Registers/InterruptFlag.h>
-#include <Core/CPU/Timers/Registers/DividerRegister.h>
-#include <Core/CPU/Timers/Registers/TimerCounter.h>
-#include <Core/CPU/Timers/Registers/TimerControl.h>
-#include <Core/CPU/Timers/Registers/TimerModulo.h>
+#include <Core/Timers/Registers/DividerRegister.h>
 #include <Core/Joypad/Registers/JoypadRegister.h>
 #include <Core/CPU/Interrupts/InterruptHandler.h>
+#include <Core/Timers/Registers/TimerCounter.h>
+#include <Core/Timers/Registers/TimerControl.h>
+#include <Core/Timers/Registers/TimerModulo.h>
 #include <Core/GPU/Registers/LCDC_Control.h>
 #include <Core/GPU/Registers/LCDC_Status.h>
 #include <Core/Bus/Devices/CartridgeRAM.h>
@@ -48,9 +48,9 @@
 #include <Core/GPU/Registers/LY.h>
 #include <Core/GPU/Registers/WY.h>
 #include <Core/GPU/Registers/WX.h>
-#include <Core/CPU/Timers/Timer.h>
 #include <Core/Joypad/Joypad.h>
 #include <Core/Bus/RAMDevice.h>
+#include <Core/Timers/Timer.h>
 #include <API/Definitions.h>
 
 namespace Core
