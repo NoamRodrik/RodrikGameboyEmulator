@@ -47,10 +47,8 @@ void Timer::Tick()
 	while (Timer::DividerPassedThreshold())
 	{
 		Timer::Divider().Lower(Timer::TIMER_THRESHOLD);
-
-		// Writing with the bus will reset the value.
-		static auto* io_ram_ptr{static_cast<IORAM*>(Processor::GetInstance().GetMemory().GetDeviceAtAddress(DividerRegister::DIVIDER_REGISTER_ADDRESS))->GetMemoryPointer()};
-		io_ram_ptr[DividerRegister::DIVIDER_REGISTER_ADDRESS - IORAM::START_ADDRESS] += 1;
+		SANITY(Processor::GetInstance().GetMemory().WriteDirectly(DividerRegister::DIVIDER_REGISTER_ADDRESS, DividerRegister{} + 1),
+			   "Failed writing the div register value directly");
 	}
 
 	if (Timer::IsTimerEnabled())

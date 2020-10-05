@@ -152,6 +152,12 @@ private:
 		return false;
 	}
 
+	virtual bool WriteDirectly(const API::address_t absolute_address, const API::data_t data) override
+	{
+		STOP_RUNNING("Can't write to cartridge header");
+		return false;
+	}
+
 private:
 	static constexpr std::size_t CARTRIDGE_TYPE_OFFSET{0x0147};
 	static constexpr std::size_t ROM_SIZE_OFFSET{0x0148};

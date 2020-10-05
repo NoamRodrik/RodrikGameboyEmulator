@@ -247,9 +247,10 @@ private:
 	{
 		SANITY(static_cast<API::data_t>(new_state) <= 0x03, "Invalid new state");
 
-		static IORAM* io_ram_memory_ptr{static_cast<IORAM*>(this->_ppu.GetProcessor().GetMemory().GetDeviceAtAddress(LCDC_Status::LCDC_ADDRESS))};
-		io_ram_memory_ptr->GetMemoryPointer()[LCDC_Status::LCDC_ADDRESS - IORAM::START_ADDRESS] &= 0xFC;
-		io_ram_memory_ptr->GetMemoryPointer()[LCDC_Status::LCDC_ADDRESS - IORAM::START_ADDRESS] |= static_cast<API::data_t>(new_state);
+		API::data_t new_lcdc_status{LCDC_Status{}};
+		new_lcdc_status &= 0xFC;
+		new_lcdc_status |= static_cast<API::data_t>(new_state);
+		SANITY(this->_ppu.GetProcessor().GetMemory().WriteDirectly(LCDC_Status::LCDC_ADDRESS, new_lcdc_status), "Failed changing lcdc status");
 
 		LCDC_Status lcdc_status{};
 		bool interrupt_state{false};
@@ -284,17 +285,18 @@ private:
 
 	void CompareLYC() const
 	{
-		static IORAM* io_ram_memory_ptr{static_cast<IORAM*>(this->_ppu.GetProcessor().GetMemory().GetDeviceAtAddress(LCDC_Status::LCDC_ADDRESS))};
+		API::data_t lcdc_status{LCDC_Status{}};
 		Message("Not sure if + 1 or without!?");
-		Tools::MutateBitByCondition(static_cast<data_t>(LY{}) == static_cast<data_t>(LYC{}),
-								    io_ram_memory_ptr->GetMemoryPointer()[LCDC_Status::LCDC_ADDRESS - IORAM::START_ADDRESS], 2);
+		Tools::MutateBitByCondition(static_cast<data_t>(LY{}) == static_cast<data_t>(LYC{}), lcdc_status, 2);
 
-		LCDC_Status::Status lcdc_status{LCDC_Status{}};
-		if (lcdc_status.mode_lyc == LCDC_Status::Status::MODE_SELECTION &&
-			lcdc_status.coincidence_flag == LCDC_Status::Status::LYC_EQUAL_LCDC)
+		if (static_cast<LCDC_Status::Status>(lcdc_status).mode_lyc == LCDC_Status::Status::MODE_SELECTION &&
+			static_cast<LCDC_Status::Status>(lcdc_status).coincidence_flag == LCDC_Status::Status::LYC_EQUAL_LCDC)
 		{
 			InterruptHandler::IRQ(EInterrupts::LCDC);
 		}
+
+		SANITY(this->_ppu.GetProcessor().GetMemory().WriteDirectly(LCDC_Status::LCDC_ADDRESS, lcdc_status),
+			   "Failed writing directly to status");
 	}
 
 	void Reset()

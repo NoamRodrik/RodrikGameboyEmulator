@@ -83,4 +83,10 @@ bool MBCController::Write(const API::address_t absolute_address, const API::data
 	SANITY(this->_mbcs[this->_chosen_mbc].get() != nullptr, "Failed fetching MBC");
 	return this->_mbcs[this->_chosen_mbc]->Write(absolute_address, data);
 }
+
+bool MBCController::WriteDirectly(const API::address_t absolute_address, const API::data_t data)
+{
+	SANITY(this->_mbcs[this->_chosen_mbc].get() != nullptr, "Failed fetching MBC");
+	return this->_mbcs[this->_chosen_mbc]->WriteDirectly(absolute_address, data);
+}
 }

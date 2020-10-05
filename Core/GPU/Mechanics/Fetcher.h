@@ -92,8 +92,6 @@ private:
 	 */
 	const bool FetchTile()
 	{
-		static auto* vram_memory_ptr{static_cast<VideoRAM*>(this->_ppu.GetProcessor().GetMemory().GetDeviceAtAddress(VideoRAM::START_ADDRESS))->GetMemoryPointer()};
-
 		if (this->_clocks >= FETCH_TILE_CLOCKS)
 		{	
 			const API::data_t WINDOW_X{WX{}};
@@ -109,7 +107,7 @@ private:
 				}
 
 				const uint32_t TILE_OFFSET = ((this->_fifo.GetY() - WINDOW_Y) / 8) * 32 + ((this->_tile_offset_x - WINDOW_X) / 8);
-				this->_tile_index = vram_memory_ptr[this->GetWindowMapStart() + TILE_OFFSET - VideoRAM::START_ADDRESS];
+				RET_FALSE_IF_FAIL(this->_ppu.GetProcessor().GetMemory().Read(this->GetWindowMapStart() + TILE_OFFSET, this->_tile_index), "Failed fetching tile index");
 				this->_pixel_row_container.Initialize(PixelSource::WIN);
 				this->_clocks -= FETCH_TILE_CLOCKS;
 				this->_state = State::READ_DATA_0;
@@ -118,7 +116,7 @@ private:
 			else
 			{
 				const uint32_t TILE_OFFSET = (this->_fifo.GetY() / 8) * 32 + (this->_tile_offset_x / 8);
-				this->_tile_index = vram_memory_ptr[this->GetBackgroundMapStart() + TILE_OFFSET - VideoRAM::START_ADDRESS];
+				RET_FALSE_IF_FAIL(this->_ppu.GetProcessor().GetMemory().Read(this->GetBackgroundMapStart() + TILE_OFFSET, this->_tile_index), "Failed fetching tile index");
 				this->_pixel_row_container.Initialize(PixelSource::BGP);
 				this->_clocks -= FETCH_TILE_CLOCKS;
 				this->_state = State::READ_DATA_0;
@@ -226,8 +224,9 @@ private:
 		const API::data_t ROW_INDEX_OFFSET = 2 * (this->_fifo.GetY() % PixelRow::PIXEL_COUNT);
 
 		// Setting pixel row's upper to the fetched tile byte.
-		static auto* vram_memory_ptr{static_cast<VideoRAM*>(this->_ppu.GetProcessor().GetMemory().GetDeviceAtAddress(VideoRAM::START_ADDRESS))->GetMemoryPointer()};
-		return vram_memory_ptr[(TILE_INDEX_OFFSET + ROW_INDEX_OFFSET + static_cast<API::data_t>(lower)) - VideoRAM::START_ADDRESS];
+		API::data_t result{0x00};
+		SANITY(this->_ppu.GetProcessor().GetMemory().Read(TILE_INDEX_OFFSET + ROW_INDEX_OFFSET + static_cast<API::data_t>(lower), result), "Failed fetching tile");
+		return result;
 	}
 
 private:

@@ -52,6 +52,15 @@ public:
 		return true;
 	}
 
+	/**
+	 * Default implementation.
+	 */
+	virtual bool WriteDirectly(const API::address_t absolute_address, const API::data_t data) override
+	{
+		this->_memory[this->RelativeAddress(absolute_address)] = data;
+		return true;
+	}
+
 protected:
 	virtual bool InterceptWrite(const API::address_t absolute_address, const API::data_t data) override
 	{

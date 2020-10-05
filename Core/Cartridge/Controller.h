@@ -39,6 +39,7 @@ public:
 	virtual void LoadMBC() override;
 	virtual bool Read(const API::address_t absolute_address, API::data_t& result) const override;
 	virtual bool Write(const API::address_t absolute_address, const API::data_t data) override;
+	virtual bool WriteDirectly(const API::address_t absolute_address, const API::data_t data) override;
 
 private:
 	void Setup();

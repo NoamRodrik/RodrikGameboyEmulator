@@ -144,8 +144,8 @@ public:
 	void SetY(const API::data_t y)
 	{
 		this->_y = y;
-		static auto* io_ram_memory_ptr{static_cast<IORAM*>(this->_ppu.GetProcessor().GetMemory().GetDeviceAtAddress(LY::LY_ADDRESS))->GetMemoryPointer()};
-		io_ram_memory_ptr[LY::LY_ADDRESS - IORAM::START_ADDRESS] = GetWrappedAroundDistance(this->_y, this->_scy) % 0x9A;
+		const API::data_t NEW_LY = GetWrappedAroundDistance(this->_y, this->_scy) % 0x9A;
+		SANITY(this->_ppu.GetProcessor().GetMemory().WriteDirectly(LY::LY_ADDRESS, NEW_LY), "Failed changing LY directly");
 
 		if (LY{} == 0)
 		{

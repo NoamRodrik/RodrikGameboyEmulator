@@ -63,6 +63,12 @@ bool MemoryBankController_2::Read(const API::address_t absolute_address, API::da
 	return false;
 }
 
+bool MemoryBankController_2::WriteDirectly(const API::address_t absolute_address, const API::data_t data)
+{
+	// For MBC, write directly is just write....
+	return this->Write(absolute_address, data);
+}
+
 bool MemoryBankController_2::Write(const API::address_t absolute_address, const API::data_t data)
 {
 	// If the inner didnt' handle, let's try.

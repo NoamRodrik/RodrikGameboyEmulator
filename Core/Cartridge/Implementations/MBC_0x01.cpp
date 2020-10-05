@@ -61,6 +61,12 @@ bool MemoryBankController_1::Read(const API::address_t absolute_address, API::da
 	return false;
 }
 
+bool MemoryBankController_1::WriteDirectly(const API::address_t absolute_address, const API::data_t data)
+{
+	// For MBC, write directly is just write....
+	return this->Write(absolute_address, data);
+}
+
 bool MemoryBankController_1::Write(const API::address_t absolute_address, const API::data_t data)
 {
 	if (absolute_address >= MemoryBankController_1::ROM_LOWER_BANK_NUMBER_START &&
