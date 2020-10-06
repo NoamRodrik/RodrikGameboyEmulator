@@ -123,6 +123,11 @@ private:
 						status |= Joypad::GetButtonStatus();
 						break;
 					}
+
+					default:
+					{
+						status |= 0x0F;
+					}
 				}
 
 				data = status;

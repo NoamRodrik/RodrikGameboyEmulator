@@ -40,8 +40,8 @@ public:
 	static const API::data_t GetDirectionStatus();
 
 private:
-	API::data_t _direction_status{0x00};
-	API::data_t _button_status{0x00};
+	API::data_t _direction_status{0x0F};
+	API::data_t _button_status{0x0F};
 };
 } // Core
 

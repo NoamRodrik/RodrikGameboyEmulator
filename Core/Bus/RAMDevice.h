@@ -43,9 +43,6 @@ public:
 	{
 		if (!this->InterceptWrite(absolute_address, data))
 		{
-#ifdef TETRIS_PATCH
-			if (absolute_address != 0xFF80)
-#endif
 			this->_memory[this->RelativeAddress(absolute_address)] = data;
 		}
 
