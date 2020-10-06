@@ -129,7 +129,7 @@ private:
 			Tools::SetBit(button_status, static_cast<std::size_t>(Joypad::Control::START));
 		}
 
-		if (this->GetKey(olc::Key::ENTER).bPressed)
+		if (this->GetKey(olc::Key::SPACE).bPressed)
 		{
 			Tools::SetBit(button_status, static_cast<std::size_t>(Joypad::Control::SELECT));
 		}
