@@ -51,6 +51,7 @@ public:
 		this->_pixel_row_container.Clear();
 		this->_state = State::FETCH_TILE;
 		this->_tile_offset_x = this->_fifo.GetSCX();
+		this->_window_tile_offset_x = WX{} - 7;
 	}
 
 	bool Execute(std::size_t clocks)
@@ -96,17 +97,20 @@ private:
 		{	
 			const API::data_t WINDOW_X{WX{}};
 			const API::data_t WINDOW_Y{WY{}};
+			const API::data_t SCREEN_X = GetWrappedAroundDistance(this->_fifo.GetX(), this->_fifo.GetSCX());
+			const API::data_t SCREEN_Y = GetWrappedAroundDistance(this->_fifo.GetY(), this->_fifo.GetSCY());
 
 			if (static_cast<LCDC_Control::Control>(LCDC_Control{}).IsWindowEnabled() &&
-				this->_fifo.GetY() >= WINDOW_Y && this->_fifo.GetX() >= WINDOW_X)
+				SCREEN_Y >= WINDOW_Y && SCREEN_X >= (WINDOW_X - 7))
 			{
 				// If they're equal, clear fifo
-				if (this->_tile_offset_x == static_cast<API::data_t>(WX{}))
+				if (this->_window_tile_offset_x == (WINDOW_X - 7))
 				{
 					this->_fifo.Reset();
 				}
 
-				const uint32_t TILE_OFFSET = ((this->_fifo.GetY() - WINDOW_Y) / 8) * 32 + ((this->_tile_offset_x - WINDOW_X) / 8);
+				const uint32_t TILE_OFFSET = ((SCREEN_Y - WINDOW_Y) / 8) * 32 + ((this->_window_tile_offset_x - (WINDOW_X - 7)) / 8);
+				this->_window_tile_offset_x = (this->_window_tile_offset_x + 8) % 0x100;
 				RET_FALSE_IF_FAIL(this->_ppu.GetProcessor().GetMemory().Read(this->GetWindowMapStart() + TILE_OFFSET, this->_tile_index), "Failed fetching tile index");
 				this->_pixel_row_container.Initialize(PixelSource::WIN);
 				this->_clocks -= FETCH_TILE_CLOCKS;
@@ -116,13 +120,12 @@ private:
 			else
 			{
 				const uint32_t TILE_OFFSET = (this->_fifo.GetY() / 8) * 32 + (this->_tile_offset_x / 8);
+				this->_tile_offset_x = (this->_tile_offset_x + 8) % 0x100;
 				RET_FALSE_IF_FAIL(this->_ppu.GetProcessor().GetMemory().Read(this->GetBackgroundMapStart() + TILE_OFFSET, this->_tile_index), "Failed fetching tile index");
 				this->_pixel_row_container.Initialize(PixelSource::BGP);
 				this->_clocks -= FETCH_TILE_CLOCKS;
 				this->_state = State::READ_DATA_0;
 			}
-
-			this->_tile_offset_x = (this->_tile_offset_x + 8) % 0x100;
 		}
 
 		return true;
@@ -241,6 +244,7 @@ private:
 	PixelFIFO&        _fifo;
 	State             _state{State::FETCH_TILE};
 	API::address_t    _tile_offset_x{0x00};
+	API::address_t    _window_tile_offset_x{0x00};
 	API::data_t       _tile_index{0x00};
 	PixelRowContainer _pixel_row_container{};
 	std::size_t       _clocks{0x00};
