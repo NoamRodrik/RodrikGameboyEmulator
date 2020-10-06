@@ -6,7 +6,7 @@
 #ifndef __MBC_ROM_1_RAM_SAVE_H__
 #define __MBC_ROM_1_RAM_SAVE_H__
 
-#include <Core/Cartridge/Implementations/MBC1_0x02.h>
+#include <Core/Cartridge/Implementation/MBC1_0x02.h>
 #include <API/Cartridge/IMemoryBankController.h>
 #include <API/Memory/Memory.h>
 

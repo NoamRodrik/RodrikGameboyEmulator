@@ -5,10 +5,10 @@
  */
 #include "Controller.h"
 
-#include <Core/Cartridge/Implementations/MBC1_0x03.h>
-#include <Core/Cartridge/Implementations/MBC1_0x02.h>
-#include <Core/Cartridge/Implementations/MBC1_0x01.h>
-#include <Core/Cartridge/Implementations/ROM_0x00.h>
+#include <Core/Cartridge/Implementation/MBC1_0x03.h>
+#include <Core/Cartridge/Implementation/MBC1_0x02.h>
+#include <Core/Cartridge/Implementation/MBC1_0x01.h>
+#include <Core/Cartridge/Implementation/ROM_0x00.h>
 #include <Core/Bus/Devices/CartridgeRAM.h>
 #include <API/Cartridge/Header.h>
 #include <Core/CPU/Processor.h>
