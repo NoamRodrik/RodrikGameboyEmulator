@@ -21,6 +21,7 @@ namespace API
 
 	/* BATTERY files */
 	static constexpr std::string_view FILE_POSTFIX{".bin"};
+	static constexpr std::string_view FOLDER_PREFIX{"Saves/"};
 
 	/* PPU */
 	static constexpr address_t TILE_SET_BANK_0_OFFSET{0x8000};

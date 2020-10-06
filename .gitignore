@@ -4,3 +4,4 @@ Debug/*
 .vs/*
 **/*.gb
 *.bin
+Saves/*

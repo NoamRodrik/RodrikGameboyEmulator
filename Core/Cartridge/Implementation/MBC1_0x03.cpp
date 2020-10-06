@@ -19,7 +19,7 @@ void MemoryBankController_3::LoadMBC()
 {
 	this->_inner_mbc.LoadMBC();
 	CartridgeHeader cartridge_header{this->_inner_mbc._inner_mbc._rom_memory.GetMemoryPointer()};
-	this->_filename = std::to_string(cartridge_header.GlobalChecksum()).append(FILE_POSTFIX);
+	this->_filename = std::string{FOLDER_PREFIX}.append(std::to_string(cartridge_header.GlobalChecksum()).append(FILE_POSTFIX));
 
 	// Check that file_id.FILE_POSTFIX exists
 	if (this->DoesFileExist())
