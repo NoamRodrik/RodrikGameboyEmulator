@@ -252,6 +252,14 @@ private:
 				return true;
 				break;
 			}
+
+			case (DMA::DMA_ADDRESS):
+			{
+				this->_memory[this->RelativeAddress(JoypadRegister::JOYPAD_REGISTER_ADDRESS)] = data;
+				Processor::GetInstance().GetPPU()->InitiateDMA();
+				return true;
+				break;
+			}
 		}
 
 		return false;

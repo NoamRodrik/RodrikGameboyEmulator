@@ -99,6 +99,11 @@ private:
 		return this->Render();
 	}
 
+	virtual void InitiateDMA() override
+	{
+		this->_render.InitiateDMA();
+	}
+
 	bool Render()
 	{
 		auto& screen = this->_render.GetScreen();

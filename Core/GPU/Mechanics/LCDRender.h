@@ -108,6 +108,25 @@ public:
 		this->_fifo.WhiteScreen();
 	}
 
+	void InitiateDMA()
+	{
+		// The source address is represented by the data being written to address 0xFF46 except this value
+		// is the source address divided by 100. So to get the correct start address it is the data being written to * 100.
+		// (to make it faster instead of multiplying by 100 we will shift left 8 places, it is the same thing)
+		const API::data_t DMA_START_ADDRESS = DMA{} << 8;
+
+		// The destination address of the DMA is the sprite RAM between memory adddress (0xFE00-0xFE9F)
+		// which means that a total of 0xA0 bytes will be copied to this region
+		static constexpr API::address_t START_ADDRESS{0xFE00};
+		for (API::data_t index = 0x00; index < 0xA0; ++index)
+		{
+			API::data_t fetched_memory{0x00};
+
+			SANITY(this->_memory.Read(DMA_START_ADDRESS + 1, fetched_memory), "Failed fetching memory via DMA");
+			SANITY(this->_memory.WriteDirectly(START_ADDRESS + index, fetched_memory), "Failed writing directly via DMA");
+		}
+	}
+
 private:
 	const bool OAMSearch()
 	{
@@ -242,7 +261,6 @@ private:
 		return true;
 	}
 
-private:
 	void ChangeState(const PPUState new_state)
 	{
 		SANITY(static_cast<API::data_t>(new_state) <= 0x03, "Invalid new state");

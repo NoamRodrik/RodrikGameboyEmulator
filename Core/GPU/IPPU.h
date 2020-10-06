@@ -24,6 +24,7 @@ public:
 	virtual void DisableLCD() = 0;
 	virtual void EnableLCD() = 0;
 	virtual PPUState GetState() const = 0;
+	virtual void InitiateDMA() = 0;
 };
 } // Core
 
