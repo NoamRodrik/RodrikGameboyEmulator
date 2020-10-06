@@ -105,6 +105,12 @@ public:
 	~CartridgeHeader() = default;
 
 public:
+	inline const API::address_t GlobalChecksum() const
+	{
+		return static_cast<API::address_t>(CartridgeHeader::Fetch<GLOBAL_CHECKSUM_OFFSET>()) << 8 |
+			   static_cast<API::address_t>(CartridgeHeader::Fetch<GLOBAL_CHECKSUM_OFFSET + 1>());
+	}
+
 	inline const CartridgeType MBC() const
 	{
 		return static_cast<CartridgeType>(CartridgeHeader::Fetch<CARTRIDGE_TYPE_OFFSET>());
@@ -162,6 +168,7 @@ private:
 	static constexpr std::size_t CARTRIDGE_TYPE_OFFSET{0x0147};
 	static constexpr std::size_t ROM_SIZE_OFFSET{0x0148};
 	static constexpr std::size_t RAM_SIZE_OFFSET{0x0149};
+	static constexpr std::size_t GLOBAL_CHECKSUM_OFFSET{0x014E};
 
 private:
 	IMemoryDeviceAccess* _device_access{nullptr};

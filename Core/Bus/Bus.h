@@ -48,6 +48,7 @@ private:
 	DeviceManager _device_manager{};
 
 private:
+	friend class MainPixelEngine;
 	friend class Timer;
 };
 } // Core

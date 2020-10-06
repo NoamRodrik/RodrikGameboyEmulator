@@ -7,6 +7,7 @@
 #define __API_DEFINITIONS_H__
 
 #include <Tools/Tools.h>
+#include <string_view>
 #include <stdint.h>
 #include <limits>
 #include <array>
@@ -17,6 +18,9 @@ namespace API
 	using address_t = uint16_t;
 	using data_t = uint8_t;
 	using r8_t = int8_t;
+
+	/* BATTERY files */
+	static constexpr std::string_view FILE_POSTFIX{".bin"};
 
 	/* PPU */
 	static constexpr address_t TILE_SET_BANK_0_OFFSET{0x8000};

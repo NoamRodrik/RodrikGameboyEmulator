@@ -54,6 +54,9 @@ protected:
 	std::array<std::unique_ptr<API::IMemoryDevice>, API::DEVICES_ON_BUS> _devices{};
 	std::unique_ptr<API::IMemoryBankController> _mbc_controller{nullptr};
 	uint32_t _last_added_device{0};
+
+private:
+	friend class MainPixelEngine;
 };
 } // Core
 

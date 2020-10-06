@@ -5,9 +5,10 @@
  */
 #include "Controller.h"
 
+#include <Core/Cartridge/Implementations/MBC1_0x03.h>
 #include <Core/Cartridge/Implementations/MBC1_0x02.h>
+#include <Core/Cartridge/Implementations/MBC1_0x01.h>
 #include <Core/Cartridge/Implementations/ROM_0x00.h>
-#include <Core/Cartridge/Implementations/MBC_0x01.h>
 #include <Core/Bus/Devices/CartridgeRAM.h>
 #include <API/Cartridge/Header.h>
 #include <Core/CPU/Processor.h>
@@ -34,6 +35,7 @@ void MBCController::Setup()
 	this->_mbcs[0] = std::make_unique<MemoryBankController_ROM>(this->_memory_device, this->_loader);
 	this->_mbcs[1] = std::make_unique<MemoryBankController_1>(this->_memory_device, this->_loader);
 	this->_mbcs[2] = std::make_unique<MemoryBankController_2>(this->_memory_device, this->_loader);
+	this->_mbcs[3] = std::make_unique<MemoryBankController_3>(this->_memory_device, this->_loader);
 }
 
 bool MBCController::UpdateMBC()
@@ -70,6 +72,12 @@ void MBCController::LoadMBC()
 {
 	SANITY(this->_mbcs[this->_chosen_mbc].get() != nullptr, "Failed fetching MBC");
 	this->_mbcs[this->_chosen_mbc]->LoadMBC();
+}
+
+void MBCController::CloseMBC()
+{
+	SANITY(this->_mbcs[this->_chosen_mbc].get() != nullptr, "Failed fetching MBC");
+	this->_mbcs[this->_chosen_mbc]->CloseMBC();
 }
 
 bool MBCController::Read(const API::address_t absolute_address, API::data_t& result) const

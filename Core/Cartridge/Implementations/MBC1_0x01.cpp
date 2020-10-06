@@ -1,10 +1,10 @@
 /**
- * @file		MBC_0x01.cpp
+ * @file		MBC1_0x01.cpp
  * @author		Noam Rodrik
  * @description Main logic of MBC1
  * @note        According to: https://retrocomputing.stackexchange.com/questions/11732/how-does-the-gameboys-memory-bank-switching-work
  */
-#include "MBC_0x01.h"
+#include "MBC1_0x01.h"
 
 #include <Core/Bus/Devices/CartridgeRAM.h>
 #include <Core/Bus/DeviceTools.h>

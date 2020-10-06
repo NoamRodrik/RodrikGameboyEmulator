@@ -37,6 +37,7 @@ public:
 	virtual API::CartridgeHeader::CartridgeType Type() const override;
 	virtual size_t BankSize() const override;
 	virtual void LoadMBC() override;
+	virtual void CloseMBC() override;
 	virtual bool Read(const API::address_t absolute_address, API::data_t& result) const override;
 	virtual bool Write(const API::address_t absolute_address, const API::data_t data) override;
 	virtual bool WriteDirectly(const API::address_t absolute_address, const API::data_t data) override;

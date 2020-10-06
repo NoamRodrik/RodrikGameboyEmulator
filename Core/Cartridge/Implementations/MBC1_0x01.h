@@ -1,5 +1,5 @@
 /**
- * @file		MBC_0x01.h
+ * @file		MBC1_0x01.h
  * @author		Noam Rodrik
  * @description Implementation of the first mbc.
  */
@@ -57,6 +57,7 @@ private:
 
 private:
 	friend class MemoryBankController_2;
+	friend class MemoryBankController_3;
 };
 } // Core
 

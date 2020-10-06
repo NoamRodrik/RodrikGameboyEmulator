@@ -79,6 +79,7 @@ public:
 private:
 	virtual bool OnUserDestroy() override
 	{
+		this->_processor.GetMemory()._device_manager._mbc_controller->CloseMBC();
 		return olc::SOUND::DestroyAudio();
 	}
 
