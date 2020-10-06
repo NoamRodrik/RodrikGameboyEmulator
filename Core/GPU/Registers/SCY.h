@@ -24,6 +24,6 @@ public:
 	static constexpr API::address_t SCY_ADDRESS{0xFF42};
 	static constexpr API::address_t SCY_DEFAULT_VALUE{0x00};
 };
-}
+} // Core
 
 #endif // __LR35902_SCY_H__

@@ -15,7 +15,6 @@
 
 Message("To remove!");
 #define SERIAL_TRANSFER_PRINT_DEBUG
-#define TETRIS_PATCH
 
 #define NO_PRINT
 

@@ -7,7 +7,7 @@
 #define __LR35902_TIMER_COUNTER_REGISTER_H__
 
 #include <Core/CPU/Registers/MemoryRegister.h>
-#include <Core/CPU/Timers/Timer.h>
+#include <Core/Timers/Timer.h>
 
 namespace Core
 {

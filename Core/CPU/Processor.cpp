@@ -8,10 +8,10 @@
 #include <Core/CPU/Instructions/General/LookupTable.h>
 #include <Core/CPU/Instructions/Prefix/LookupTable.h>
 #include <Core/CPU/Interrupts/InterruptHandler.h>
-#include <Core/GPU/Engine/MainPixelEngine.h>
 #include <Core/CPU/Instructions/Shortcuts.h>
-#include <Core/CPU/Timers/Timer.h>
+#include <Core/Engine/MainPixelEngine.h>
 #include <Core/CPU/Processor.h>
+#include <Core/Timers/Timer.h>
 #include <Core/Clock/Clock.h>
 #include <Tools/Loader.h>
 #include <filesystem>
@@ -40,7 +40,7 @@ const size_t Processor::Clock()
 		do
 		{
 			// The CPU will be unhalted on any triggered interrupt
-			const auto command_to_execute = Processor::IsPrefix() ?
+			const auto& command_to_execute = Processor::IsPrefix() ?
 							PREFIX_LOOKUP_TABLE[READ_DATA_AT(PC_const)] :
 							GENERAL_LOOKUP_TABLE[READ_DATA_AT(PC_const)];
 

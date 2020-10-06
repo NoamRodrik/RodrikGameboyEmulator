@@ -24,6 +24,6 @@ public:
 	static constexpr API::address_t WY_ADDRESS{0xFF4A};
 	static constexpr API::address_t WY_DEFAULT_VALUE{0x00};
 };
-}
+} // Core
 
 #endif // __LR35902_WY_H__

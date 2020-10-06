@@ -6,9 +6,9 @@
 #ifndef __MBC_ROM_1_RAM_H__
 #define __MBC_ROM_1_RAM_H__
 
+#include <Core/Cartridge/Implementation/MBC1_0x01.h>
 #include <API/Cartridge/IMemoryBankController.h>
 #include <API/Memory/Memory.h>
-#include <Core\Cartridge\Implementations\MBC_0x01.h>
 
 namespace Core
 {
@@ -42,11 +42,14 @@ private:
 	static constexpr API::address_t RAM_ROM_BANK_NUMBER_END = 0x5FFF;
 
 private:
-	MemoryBankController_1                 _inner_mbc;
-	API::Memory<Tools::BytesInRAMBanks(4)> _ram_memory;
-	API::data_t							   _selected_ram_bank{0};
-	bool								   _ram_enable{false};
+	MemoryBankController_1                  _inner_mbc;
+	API::Memory<Tools::BytesInRAMBanks(16)> _ram_memory;
+	API::data_t							    _selected_ram_bank{0};
+	bool								    _ram_enable{false};
+
+private:
+	friend class MemoryBankController_3;
 };
-}
+} // Core
 
 #endif // __MBC_ROM_1_RAM_H__

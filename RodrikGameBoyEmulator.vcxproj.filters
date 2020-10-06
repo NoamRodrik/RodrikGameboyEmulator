@@ -33,22 +33,25 @@
     <ClCompile Include="Core\Bus\DeviceManager\DeviceManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Core\CPU\Timers\Timer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="API\Cartridge\Header.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\Cartridge\Implementations\MBC_0x01.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\Cartridge\Implementations\ROM_0x00.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Core\Cartridge\Controller.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Core\Cartridge\Implementations\MBC1_0x02.cpp">
+    <ClCompile Include="Core\Timers\Timer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Cartridge\Implementation\MBC1_0x01.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Cartridge\Implementation\MBC1_0x02.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Cartridge\Implementation\MBC1_0x03.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Cartridge\Implementation\ROM_0x00.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -60,9 +63,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Contrib\PixelGameEngine\OLCPixelGameEngine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\GPU\Engine\MainPixelEngine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Core\CPU\Interrupts\Registers\InterruptEnable.h">
@@ -224,21 +224,6 @@
     <ClInclude Include="Core\CPU\Instructions\Shortcuts.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Core\CPU\Timers\Registers\DividerRegister.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CPU\Timers\Registers\TimerControl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CPU\Timers\Registers\TimerCounter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CPU\Timers\Registers\TimerModulo.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CPU\Timers\Timer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Core\CPU\Instructions\Prefix\LookupTable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -362,16 +347,7 @@
     <ClInclude Include="Tools\Loader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Cartridge\Implementations\MBC_0x01.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Cartridge\Implementations\ROM_0x00.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Core\Cartridge\Controller.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Cartridge\Implementations\MBC1_0x02.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Core\GPU\Registers\LCDC_Control.h">
@@ -443,6 +419,102 @@
     <ClInclude Include="Core\Bus\Devices\VideoRAM.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Contrib\PixelGameEngine\OLCPGEXSound.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Engine\MainPixelEngine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\APU\Registers\NR10.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\APU\Registers\NR11.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\APU\Registers\NR12.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\APU\Registers\NR14.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\APU\Registers\NR21.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\APU\Registers\NR22.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\APU\Registers\NR24.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\APU\Registers\NR30.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\APU\Registers\NR31.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\APU\Registers\NR32.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\APU\Registers\NR33.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\APU\Registers\NR34.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\APU\Registers\NR41.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\APU\Registers\NR42.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\APU\Registers\NR43.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\APU\Registers\NR44.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\APU\Registers\NR50.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\APU\Registers\NR51.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\APU\Registers\NR52.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\APU\Registers\NR13.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\APU\Registers\NR23.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Timers\Registers\DividerRegister.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Timers\Registers\TimerControl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Timers\Registers\TimerCounter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Timers\Registers\TimerModulo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Timers\Timer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Cartridge\Implementation\MBC1_0x01.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Cartridge\Implementation\MBC1_0x02.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Cartridge\Implementation\MBC1_0x03.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Cartridge\Implementation\ROM_0x00.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="BootROM\tetris.gb" />
@@ -469,5 +541,6 @@
     <None Include="TestROM\09-op r,r.gb" />
     <None Include="TestROM\10-bit ops.gb" />
     <None Include="TestROM\11-op a,(hl).gb" />
+    <None Include="LICENSE" />
   </ItemGroup>
 </Project>

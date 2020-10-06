@@ -91,6 +91,6 @@ private:
 	std::size_t _pixel_row_index{EMPTY_PIXEL_ROW_INDEX_COUNT};
 	PixelSource _pixel_source{PixelSource::BGP};
 };
-}
+} // Core
 
 #endif // __LR35902_PIXEL_ROW_CONTAINER_H__

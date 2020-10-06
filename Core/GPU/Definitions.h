@@ -11,7 +11,7 @@
 
 namespace Core
 {
-static constexpr API::address_t GetWrappedAroundDistance(const API::address_t from, const API::address_t to)
+static constexpr API::address_t GetWrappedAroundDistance(const std::size_t from, const std::size_t to)
 {
 	return (from + 0x100 - to) % 0x100;
 }
@@ -78,6 +78,6 @@ static constexpr uint8_t    LIGHT_GREY_PIXEL[]{221, 180, 180};
 static constexpr uint8_t    DARK_GREY_PIXEL[]{97, 79, 76};
 #endif
 
-}
+} // Core
 
 #endif // __LR35902_DEFINITIONS_H__

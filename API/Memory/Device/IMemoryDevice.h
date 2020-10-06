@@ -14,7 +14,7 @@
 namespace Core
 {
 class DeviceTools;
-}
+} // Core
 
 namespace API
 {

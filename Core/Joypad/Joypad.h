@@ -26,11 +26,10 @@ public:
 		START = 3
 	};
 
-	Message("Check order");
 	enum class Mode : API::data_t
 	{
-		SELECT_BUTTONS = 4,
-		SELECT_DIRECTIONS = 5
+		 SELECT_BUTTONS = 4,
+		 SELECT_DIRECTIONS = 5
 	};
 
 public:
@@ -41,9 +40,9 @@ public:
 	static const API::data_t GetDirectionStatus();
 
 private:
-	API::data_t _direction_status{0x00};
-	API::data_t _button_status{0x00};
+	API::data_t _direction_status{0x0F};
+	API::data_t _button_status{0x0F};
 };
-}
+} // Core
 
 #endif // __JOYPAD_H__

@@ -17,11 +17,11 @@ namespace Tools
 class Loader : public API::ILoader
 {
 public:
-	Loader(const std::string& binary_path) : _binary_path{binary_path}, _binary_file{fopen(binary_path.c_str(), FILE_READ_MODE)}
+	explicit Loader(const std::string& binary_path) : _binary_path{binary_path}, _binary_file{fopen(binary_path.c_str(), FILE_READ_MODE)}
 	{
 	}
 
-	virtual ~Loader()
+	virtual ~Loader() override
 	{
 		SANITY(fclose(this->_binary_file) == 0, "Failed closing game loader file ptr");
 	}
@@ -39,6 +39,6 @@ private:
 	const std::string&   _binary_path;
 	gsl::not_null<FILE*> _binary_file;
 };
-} // API
+} // Tools
 
 #endif // __TOOLS_LOADER_H__

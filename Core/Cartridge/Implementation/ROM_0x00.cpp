@@ -42,4 +42,4 @@ size_t MemoryBankController_ROM::BankSize() const
 {
 	return MemoryBankController_ROM::BANK_SIZE;
 }
-}
+} // Core

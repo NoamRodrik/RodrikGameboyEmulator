@@ -23,6 +23,7 @@ public:
 	virtual CartridgeHeader::CartridgeType Type() const = 0;
 	virtual size_t BankSize() const = 0;
 	virtual void LoadMBC() = 0;
+	virtual void CloseMBC() = 0;
 };
 
 class AMemoryBankController : public IMemoryBankController
@@ -33,10 +34,14 @@ public:
 		_loader{loader} {}
 	virtual ~AMemoryBankController() = default;
 
+public:
+	/* By default, doesn't do anything */
+	virtual void CloseMBC() override {}
+
 protected:
 	IMemoryDeviceAccess& _memory_device;
 	std::shared_ptr<ILoader> _loader;
 };
-}
+} // API
 
 #endif // __API_IMEMORY_BANK_CONTROLLER_H__

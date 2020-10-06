@@ -26,8 +26,10 @@ void Joypad::ChangeStatus(const API::data_t direction_status, const API::data_t 
 		InterruptHandler::IRQ(EInterrupts::H_L_P);
 	}
 
-	Joypad::GetInstance()._direction_status = direction_status;
-	Joypad::GetInstance()._button_status = button_status;
+	// Invert the controls.
+	// Since, in H_L_O, if a button is pressed - it turns into 0!
+	Joypad::GetInstance()._direction_status = (~direction_status) & 0x0F;
+	Joypad::GetInstance()._button_status = (~button_status) & 0x0F;
 }
 
 const API::data_t Joypad::GetButtonStatus()

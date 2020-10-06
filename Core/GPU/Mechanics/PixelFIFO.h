@@ -25,7 +25,7 @@ namespace Core
 class PixelFIFO
 {
 public:
-	PixelFIFO(IPPU& ppu) : _ppu{ppu} {}
+	explicit PixelFIFO(IPPU& ppu) : _ppu{ppu} {}
 	~PixelFIFO() = default;
 
 public:
@@ -144,7 +144,7 @@ public:
 	void SetY(const API::data_t y)
 	{
 		this->_y = y;
-		const API::data_t NEW_LY = GetWrappedAroundDistance(this->_y, this->_scy) % 0x9A;
+		const API::data_t NEW_LY = static_cast<API::data_t>(GetWrappedAroundDistance(this->_y, this->_scy)) % 0x9A;
 		SANITY(this->_ppu.GetProcessor().GetMemory().WriteDirectly(LY::LY_ADDRESS, NEW_LY), "Failed changing LY directly");
 
 		if (LY{} == 0)
@@ -157,19 +157,19 @@ public:
 
 	const API::data_t GetY() const
 	{
-		return this->_y;
+		return static_cast<API::data_t>(this->_y);
 	}
 
 	const API::data_t GetX() const
 	{
-		return this->_x;
+		return static_cast<API::data_t>(this->_x);
 	}
 
 	void WhiteScreen()
 	{
-		for (std::size_t height = 0; height < SCREEN_HEIGHT_PIXELS; ++height)
+		for (int32_t height = 0; height < SCREEN_HEIGHT_PIXELS; ++height)
 		{
-			for (std::size_t width = 0; width < SCREEN_WIDTH_PIXELS; ++width)
+			for (int32_t width = 0; width < SCREEN_WIDTH_PIXELS; ++width)
 			{
 				SANITY(this->DrawPixel(width, height, PixelColor::WHITE), "Failed drawing pixels");
 			}
@@ -188,12 +188,12 @@ public:
 
 	const API::data_t GetSCY() const
 	{
-		return this->_scy;
+		return static_cast<API::data_t>(this->_scy);
 	}
 
 	const API::data_t GetSCX() const
 	{
-		return this->_scx;
+		return static_cast<API::data_t>(this->_scx);
 	}
 
 private:
@@ -250,6 +250,6 @@ private:
 	PixelRowContainer		  _upper_row{};
 	std::array<std::array<olc::Pixel, SCREEN_WIDTH_PIXELS>, SCREEN_HEIGHT_PIXELS> _screen{};
 };
-}
+} // Core
 
 #endif // __LR35902_PIXEL_FIFO_H__

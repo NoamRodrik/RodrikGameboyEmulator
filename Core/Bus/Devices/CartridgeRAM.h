@@ -16,7 +16,7 @@ namespace Core
 class CartridgeRAM : public RAMDevice<0x0000, 0x7FFF>
 {
 public:
-	CartridgeRAM(API::IMemoryDeviceAccess& memory_accessor) : RAMDevice{memory_accessor} {}
+	explicit CartridgeRAM(API::IMemoryDeviceAccess& memory_accessor) : RAMDevice{memory_accessor} {}
 	virtual ~CartridgeRAM() override = default;
 
 public:
