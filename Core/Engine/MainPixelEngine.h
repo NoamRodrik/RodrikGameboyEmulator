@@ -21,6 +21,7 @@
 #include <Core/Clock/Clock.h>
 #include <API/Definitions.h>
 #include <Core/GPU/IPPU.h>
+#include <Core/APU/APU.h>
 #include <Tools/Tools.h>
 #include <array>
 
@@ -77,19 +78,22 @@ public:
 	}
 
 private:
+	virtual bool OnUserCreate() override
+	{
+		// Called once at startup, drawing white pixels.
+		// The Gameboy LR35902 has 4 channels.
+		olc::SOUND::InitialiseAudio(APU::SAMPLE_RATE, APU::CHANNEL_AMOUNT, APU::BLOCKS_AMOUNT, APU::BLOCKS_SAMPLE_SIZE);
+		olc::SOUND::SetUserSynthFunction(APU::SoundDemultiplexer);
+
+		this->SetPixelMode(olc::Pixel::Mode::NORMAL);
+		this->EnableLCD();
+		return true;
+	}
+
 	virtual bool OnUserDestroy() override
 	{
 		this->_processor.GetMemory()._device_manager._mbc_controller->CloseMBC();
 		return olc::SOUND::DestroyAudio();
-	}
-
-	virtual bool OnUserCreate() override
-	{
-		// Called once at startup, drawing white pixels.
-		RET_FALSE_IF_FAIL(olc::SOUND::InitialiseAudio(44100, 1, 8, 512), "Failed initializing audio");
-		this->SetPixelMode(olc::Pixel::Mode::NORMAL);
-		this->EnableLCD();
-		return true;
 	}
 
 	virtual bool OnUserUpdate(float) override

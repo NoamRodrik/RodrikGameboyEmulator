@@ -1,10 +1,10 @@
 /**
  * @file		Definitions.h
  * @author		Noam Rodrik
- * @description LR35902 PPU definitions
+ * @description LR35902 GPU definitions
  */
-#ifndef __LR35902_DEFINITIONS_H__
-#define __LR35902_DEFINITIONS_H__
+#ifndef __LR35902_GPU_DEFINITIONS_H__
+#define __LR35902_GPU_DEFINITIONS_H__
 
 #include <API/Definitions.h>
 #include <Tools/Tools.h>
@@ -80,4 +80,4 @@ static constexpr uint8_t    DARK_GREY_PIXEL[]{97, 79, 76};
 
 } // Core
 
-#endif // __LR35902_DEFINITIONS_H__
+#endif // __LR35902_GPU_DEFINITIONS_H__

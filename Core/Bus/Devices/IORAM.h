@@ -65,7 +65,8 @@ public:
 		this->_memory[this->RelativeAddress(TimerCounter::TIMER_COUNTER_ADDRESS)] = TimerCounter::TIMER_COUNTER_DEFAULT_VALUE;
 		this->_memory[this->RelativeAddress(TimerModulo::TIMER_MODULO_ADDRESS)] = TimerModulo::TIMER_MODULO_DEFAULT_VALUE;
 		this->_memory[this->RelativeAddress(TimerControl::TIMER_CONTROL_ADDRESS)] = TimerControl::TIMER_CONTROL_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(NR10::NR10_ADDRESS)] = NR10::NR10_DEFAULT_VALUE;
+		Message("Return this when needed");
+		/*this->_memory[this->RelativeAddress(NR10::NR10_ADDRESS)] = NR10::NR10_DEFAULT_VALUE;
 		this->_memory[this->RelativeAddress(NR11::NR11_ADDRESS)] = NR11::NR11_DEFAULT_VALUE;
 		this->_memory[this->RelativeAddress(NR12::NR12_ADDRESS)] = NR12::NR12_DEFAULT_VALUE;
 		this->_memory[this->RelativeAddress(NR13::NR13_ADDRESS)] = NR13::NR13_DEFAULT_VALUE;
@@ -85,7 +86,7 @@ public:
 		this->_memory[this->RelativeAddress(NR44::NR44_ADDRESS)] = NR44::NR44_DEFAULT_VALUE;
 		this->_memory[this->RelativeAddress(NR50::NR50_ADDRESS)] = NR50::NR50_DEFAULT_VALUE;
 		this->_memory[this->RelativeAddress(NR51::NR51_ADDRESS)] = NR51::NR51_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(NR52::NR52_ADDRESS)] = NR52::NR52_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(NR52::NR52_ADDRESS)] = NR52::NR52_DEFAULT_VALUE;*/
 		this->_memory[this->RelativeAddress(LCDC_Control::LCDC_ADDRESS)] = LCDC_Control::LCDC_DEFAULT_VALUE;
 		this->_memory[this->RelativeAddress(LCDC_Status::LCDC_ADDRESS)] = LCDC_Status::LCDC_DEFAULT_VALUE;
 		this->_memory[this->RelativeAddress(SCY::SCY_ADDRESS)] = SCY::SCY_DEFAULT_VALUE;

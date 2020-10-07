@@ -193,6 +193,8 @@
     <ClInclude Include="Contrib\PixelGameEngine\OLCPGEXSound.h" />
     <ClInclude Include="Contrib\PixelGameEngine\OLCPixelGameEngine.h" />
     <ClInclude Include="API\Registers\RegisterPair.h" />
+    <ClInclude Include="Core\APU\APU.h" />
+    <ClInclude Include="Core\APU\Definitions.h" />
     <ClInclude Include="Core\APU\Registers\NR10.h" />
     <ClInclude Include="Core\APU\Registers\NR11.h" />
     <ClInclude Include="Core\APU\Registers\NR12.h" />
@@ -214,6 +216,13 @@
     <ClInclude Include="Core\APU\Registers\NR50.h" />
     <ClInclude Include="Core\APU\Registers\NR51.h" />
     <ClInclude Include="Core\APU\Registers\NR52.h" />
+    <ClInclude Include="Core\APU\Waves\ASoundChannel.h" />
+    <ClInclude Include="Core\APU\Waves\ISoundChannel.h" />
+    <ClInclude Include="Core\APU\Waves\Implementation\SoundChannel1.h" />
+    <ClInclude Include="Core\APU\Waves\Implementation\SoundChannel2.h" />
+    <ClInclude Include="Core\APU\Waves\Implementation\SoundChannel3.h" />
+    <ClInclude Include="Core\APU\Waves\Implementation\SoundChannelNoise.h" />
+    <ClInclude Include="Core\APU\Waves\WaveController.h" />
     <ClInclude Include="Core\Bus\Bus.h" />
     <ClInclude Include="Core\Bus\DeviceManager\DeviceManager.h" />
     <ClInclude Include="Core\Bus\Devices\VideoRAM.h" />
@@ -343,6 +352,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="API\Cartridge\Header.cpp" />
+    <ClCompile Include="Core\APU\APU.cpp" />
+    <ClCompile Include="Core\APU\Waves\Implementation\SoundChannel1.cpp" />
+    <ClCompile Include="Core\APU\Waves\Implementation\SoundChannel2.cpp" />
+    <ClCompile Include="Core\APU\Waves\Implementation\SoundChannel3.cpp" />
+    <ClCompile Include="Core\APU\Waves\Implementation\SoundChannelNoise.cpp" />
+    <ClCompile Include="Core\APU\Waves\WaveController.cpp" />
     <ClCompile Include="Core\Bus\DeviceManager\DeviceManager.cpp" />
     <ClCompile Include="Core\Cartridge\Controller.cpp" />
     <ClCompile Include="Core\Cartridge\Implementation\MBC1_0x02.cpp" />

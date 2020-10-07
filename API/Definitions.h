@@ -23,6 +23,9 @@ namespace API
 	static constexpr std::string_view FILE_POSTFIX{".bin"};
 	static constexpr std::string_view FOLDER_PREFIX{"Saves/"};
 
+	/* APU */
+	static constexpr size_t    AUDIO_CHANNELS_AMOUNT{4};
+
 	/* PPU */
 	static constexpr address_t TILE_SET_BANK_0_OFFSET{0x8000};
 	static constexpr address_t TILE_SET_BANK_1_OFFSET{0x9000};

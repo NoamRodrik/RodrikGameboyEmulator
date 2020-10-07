@@ -97,8 +97,8 @@ private:
 		{	
 			const API::data_t WINDOW_X{WX{}};
 			const API::data_t WINDOW_Y{WY{}};
-			const API::data_t SCREEN_X = GetWrappedAroundDistance(this->_fifo.GetX(), this->_fifo.GetSCX());
-			const API::data_t SCREEN_Y = GetWrappedAroundDistance(this->_fifo.GetY(), this->_fifo.GetSCY());
+			const API::data_t SCREEN_X = static_cast<API::data_t>(GetWrappedAroundDistance(this->_fifo.GetX(), this->_fifo.GetSCX()));
+			const API::data_t SCREEN_Y = static_cast<API::data_t>(GetWrappedAroundDistance(this->_fifo.GetY(), this->_fifo.GetSCY()));
 
 			if (static_cast<LCDC_Control::Control>(LCDC_Control{}).IsWindowEnabled() &&
 				SCREEN_Y >= WINDOW_Y && SCREEN_X >= (WINDOW_X - 7))
