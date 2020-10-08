@@ -21,6 +21,7 @@ public:
 	using MemoryRegister::operator API::data_t;
 
 public:
+	static constexpr API::data_t    SEQUENCE_BIT{0x06};
 	static constexpr API::address_t NR11_ADDRESS{0xFF11};
 	static constexpr API::address_t NR11_DEFAULT_VALUE{0xBF};
 };

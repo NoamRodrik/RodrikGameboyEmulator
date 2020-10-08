@@ -10,10 +10,15 @@
 #include <string_view>
 #include <stdint.h>
 #include <limits>
+#include <cmath>
 #include <array>
 
 namespace API
 {
+	/* Necessary mathematical constants */
+	template <typename T>
+	static constexpr T PI{static_cast<T>(3.14159265358979323846)};
+
 	/* Necessary types for the CPU */
 	using address_t = uint16_t;
 	using data_t = uint8_t;
@@ -24,7 +29,9 @@ namespace API
 	static constexpr std::string_view FOLDER_PREFIX{"Saves/"};
 
 	/* APU */
-	static constexpr size_t    AUDIO_CHANNELS_AMOUNT{4};
+	static constexpr size_t  AUDIO_CHANNELS_AMOUNT{4};
+	static constexpr float_t BASE_FREQUENCY{440.0f};
+	static constexpr float_t BASE_AMPLITUDE{0.5f};
 
 	/* PPU */
 	static constexpr address_t TILE_SET_BANK_0_OFFSET{0x8000};

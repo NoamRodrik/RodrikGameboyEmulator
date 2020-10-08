@@ -21,6 +21,10 @@ public:
 	WaveController();
 	~WaveController() = default;
 
+public:
+	ISoundChannel* GetWave(const SoundChannel type);
+	const float_t Sample(const OutputTerminal output, const float_t global_time, const float_t time_step, const float_t volume);
+
 private:
 	std::array<std::unique_ptr<ISoundChannel>, API::AUDIO_CHANNELS_AMOUNT> _waves{};
 };

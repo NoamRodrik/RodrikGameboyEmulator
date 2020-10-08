@@ -11,6 +11,11 @@
 
 namespace Core
 {
+void APU::Clock(std::size_t clocks)
+{
+	Message("TODO");
+}
+
 float_t APU::SoundDemultiplexer(int32_t channel, float_t global_time, float_t time_step)
 {
 	SANITY(channel >= static_cast<int32_t>(OutputTerminal::SO1) && channel <= static_cast<int32_t>(OutputTerminal::SO2),
@@ -18,37 +23,17 @@ float_t APU::SoundDemultiplexer(int32_t channel, float_t global_time, float_t ti
 
 	// Checking if APU device is on.
 	NR52 nr52{};
-	if (!nr52.IsSoundEnabled())
+	if (nr52.IsSoundEnabled())
 	{
-		return 0;
+		return APU::Play(static_cast<OutputTerminal>(channel), global_time, time_step);
 	}
 
-	return APU::Play(static_cast<OutputTerminal>(channel), global_time, time_step);
+	return 0;
 }
 
 const float_t APU::Sample(const OutputTerminal output, const float_t global_time, const float_t time_step, const API::data_t volume)
 {
-	switch (output)
-	{
-		// Normal channels
-		case OutputTerminal::SO1:
-		{
-			// This should be right.
-			Message("TEST!");
-			//return APU::VolumeWaveManipulator(volume) * sin(global_time * 440.0f * 2.0f * atan(1) * 4);
-			break;
-		}
-	
-		case OutputTerminal::SO2:
-		{
-			// This should be left.
-			Message("TEST!");
-			//return APU::VolumeWaveManipulator(volume) * sin(global_time * 349.228f * 2.0f * atan(1) * 4);
-			break;
-		}
-	}
-
-	return 0;
+	return APU::GetInstance()._wave_controller.Sample(output, global_time, time_step, APU::VolumeWaveManipulator(volume));
 }
 
 const float_t APU::Play(const OutputTerminal output, const float_t global_time, const float_t time_step)
@@ -85,6 +70,6 @@ const float_t APU::VolumeWaveManipulator(const API::data_t volume)
 	// . . . . . . . . . . . .   <------------------- 0 * sin(x)
 	//
 	//
-	return (volume / APU::MAX_VOLUME);
+	return (static_cast<float_t>(volume) / APU::MAX_VOLUME);
 }
 } // Core

@@ -304,7 +304,6 @@ private:
 	void CompareLYC() const
 	{
 		API::data_t lcdc_status{LCDC_Status{}};
-		Message("Not sure if + 1 or without!?");
 		Tools::MutateBitByCondition(static_cast<data_t>(LY{}) == static_cast<data_t>(LYC{}), lcdc_status, 2);
 
 		if (static_cast<LCDC_Status::Status>(lcdc_status).mode_lyc == LCDC_Status::Status::MODE_SELECTION &&
