@@ -260,7 +260,7 @@ private:
 
 			case (DMA::DMA_ADDRESS):
 			{
-				this->_memory[this->RelativeAddress(JoypadRegister::JOYPAD_REGISTER_ADDRESS)] = data;
+				this->_memory[this->RelativeAddress(DMA::DMA_ADDRESS)] = data;
 				Processor::GetInstance().GetPPU()->InitiateDMA();
 				return true;
 				break;
