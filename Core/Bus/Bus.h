@@ -12,29 +12,29 @@
 
 namespace Core
 {
-class Bus : public API::IMemoryDeviceAccess
+class [[nodiscard]] Bus : public API::IMemoryDeviceAccess
 {
 public:
 	Bus() = default;
 	virtual ~Bus() = default;
 
 public:
-	virtual bool Write(const API::address_t absolute_address, const API::data_t data) override
+	[[nodiscard]] virtual bool Write(const API::address_t absolute_address, const API::data_t data) override
 	{
 		return this->_device_manager.Write(absolute_address, data);
 	}
 
-	virtual bool Read(const API::address_t absolute_address, API::data_t& result) const override
+	[[nodiscard]] virtual bool Read(const API::address_t absolute_address, API::data_t& result) const override
 	{
 		return this->_device_manager.Read(absolute_address, result);
 	}
 
-	virtual bool WriteDirectly(const API::address_t absolute_address, const API::data_t data) override
+	[[nodiscard]] virtual bool WriteDirectly(const API::address_t absolute_address, const API::data_t data) override
 	{
 		return this->_device_manager.WriteDirectly(absolute_address, data);
 	}
 	
-	API::IMemoryDevice* GetDeviceAtAddress(const API::address_t absolute_address)
+	[[nodiscard]] API::IMemoryDevice* GetDeviceAtAddress(const API::address_t absolute_address)
 	{
 		return this->_device_manager.GetDeviceAtAddress(absolute_address);
 	}

@@ -10,7 +10,7 @@
 
 namespace Core
 {
-class BGP : public MemoryRegister<API::data_t>
+class [[nodiscard]] BGP : public MemoryRegister<API::data_t>
 {
 public:
 	constexpr BGP() : MemoryRegister{BGP_ADDRESS} {}

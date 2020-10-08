@@ -10,7 +10,7 @@
 
 namespace Core
 {
-class NR51 : public MemoryRegister<API::data_t>
+class [[nodiscard]] NR51 : public MemoryRegister<API::data_t>
 {
 public:
 	constexpr NR51() : MemoryRegister{NR51_ADDRESS} {}
@@ -21,7 +21,7 @@ public:
 	using MemoryRegister::operator API::data_t;
 
 public:
-	static constexpr std::size_t OutputTerminalOffset(const OutputTerminal output)
+	[[nodiscard]] static constexpr std::size_t OutputTerminalOffset(const OutputTerminal output)
 	{
 		switch (output)
 		{

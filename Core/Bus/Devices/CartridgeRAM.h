@@ -13,14 +13,14 @@
 
 namespace Core
 {
-class CartridgeRAM : public RAMDevice<0x0000, 0x7FFF>
+class [[nodiscard]] CartridgeRAM : public RAMDevice<0x0000, 0x7FFF>
 {
 public:
 	explicit CartridgeRAM(API::IMemoryDeviceAccess& memory_accessor) : RAMDevice{memory_accessor} {}
 	virtual ~CartridgeRAM() override = default;
 
 public:
-	virtual bool Read(const API::address_t absolute_address, API::data_t& result) const override
+	[[nodiscard]] virtual bool Read(const API::address_t absolute_address, API::data_t& result) const override
 	{
 		// While 0xFF50 isn't 0x1, we still return the system_boot code.
 		if (!this->_covered_system_boot && this->RelativeAddress(absolute_address) < BOOT_END_ADDRESS)
@@ -40,11 +40,11 @@ public:
 	 * Will be called when the system boot code will be swapped with the cartridge code.
 	 */
 	inline void CoverSystemBoot() { this->_covered_system_boot = true; }
-	const bool IsBootCovered() const { return this->_covered_system_boot; }
+	[[nodiscard]] const bool IsBootCovered() const { return this->_covered_system_boot; }
 
 public:
 	// Public for all the MBCS
-	virtual uint8_t* GetMemoryPointer() override { return RAMDevice::GetMemoryPointer(); }
+	[[nodiscard]] virtual uint8_t* GetMemoryPointer() override { return RAMDevice::GetMemoryPointer(); }
 
 public:
 	static constexpr API::address_t BOOT_END_ADDRESS{0x0100};

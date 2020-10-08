@@ -11,7 +11,7 @@
 namespace API
 {
 template <typename T>
-class StaticInstance
+class [[nodiscard]] StaticInstance
 {
 public:
 	static T& GetInstance()

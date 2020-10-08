@@ -13,14 +13,14 @@
 
 namespace Core
 {
-class SoundChannel1 : public ASoundChannel<SoundChannel::PULSE_A>
+class [[nodiscard]] SoundChannel1 : public ASoundChannel<SoundChannel::PULSE_A>
 {
 public:
 	SoundChannel1() = default;
 	virtual ~SoundChannel1() override = default;
 
 public:
-	virtual const float_t Sample(const float_t time) const override;
+	[[nodiscard]] virtual const float_t Sample(const float_t time) const override;
 };
 } // Core
 

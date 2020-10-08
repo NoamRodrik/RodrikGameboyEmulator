@@ -11,7 +11,7 @@
 
 namespace Core
 {
-class LCDC_Control : public MemoryRegister<API::data_t>
+class [[nodiscard]] LCDC_Control : public MemoryRegister<API::data_t>
 {
 public:
 	constexpr LCDC_Control() : MemoryRegister{LCDC_ADDRESS} {}
@@ -22,7 +22,7 @@ public:
 	using MemoryRegister::operator API::data_t;
 
 public:
-	struct Control
+	struct [[nodiscard]] Control
 	{
 	public:
 		constexpr Control(const API::data_t data) :

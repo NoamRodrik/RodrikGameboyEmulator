@@ -11,22 +11,22 @@
 
 namespace Core
 {
-class MemoryBankController_1 : public API::AMemoryBankController
+class [[nodiscard]] MemoryBankController_1 : public API::AMemoryBankController
 {
 public:
 	using API::AMemoryBankController::AMemoryBankController;
 	virtual ~MemoryBankController_1() = default;
 
 public:
-	virtual API::CartridgeHeader::CartridgeType Type() const override { return API::CartridgeHeader::CartridgeType::MBC1; }
-	virtual size_t BankSize() const override;
+	[[nodiscard]] virtual API::CartridgeHeader::CartridgeType Type() const override { return API::CartridgeHeader::CartridgeType::MBC1; }
+	[[nodiscard]] virtual size_t BankSize() const override;
 	virtual void LoadMBC() override;
-	virtual bool Read(const API::address_t absolute_address, API::data_t& result) const override;
-	virtual bool Write(const API::address_t absolute_address, const API::data_t data) override;
-	virtual bool WriteDirectly(const API::address_t absolute_address, const API::data_t data) override;
+	[[nodiscard]] virtual bool Read(const API::address_t absolute_address, API::data_t& result) const override;
+	[[nodiscard]] virtual bool Write(const API::address_t absolute_address, const API::data_t data) override;
+	[[nodiscard]] virtual bool WriteDirectly(const API::address_t absolute_address, const API::data_t data) override;
 
 private:
-	enum class Mode
+	enum class [[nodiscard]] Mode
 	{
 		ROM_MODE = 0x00,
 		RAM_MODE = 0x01
@@ -37,8 +37,8 @@ public:
 	static constexpr size_t MBC_SIZE = Tools::MebibytesToBytes(16);
 
 private:
-	bool RomLowerBankNumberAction(const API::data_t data);
-	bool RomUpperBankNumberAction(const API::data_t data);
+	[[nodiscard]] const bool RomLowerBankNumberAction(const API::data_t data);
+	[[nodiscard]] const bool RomUpperBankNumberAction(const API::data_t data);
 
 private:
 	static constexpr API::address_t ADDITIONAL_ROM_BANKS_OFFSET = 0x4000;

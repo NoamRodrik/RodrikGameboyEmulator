@@ -10,7 +10,7 @@
 
 namespace Core
 {
-class JoypadRegister : public MemoryRegister<API::data_t>
+class [[nodiscard]] JoypadRegister : public MemoryRegister<API::data_t>
 {
 public:
 	JoypadRegister() : MemoryRegister{JOYPAD_REGISTER_ADDRESS} {}

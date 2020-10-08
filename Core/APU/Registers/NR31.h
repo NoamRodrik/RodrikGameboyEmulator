@@ -10,7 +10,7 @@
 
 namespace Core
 {
-class NR31 : public MemoryRegister<API::data_t>
+class [[nodiscard]] NR31 : public MemoryRegister<API::data_t>
 {
 public:
 	constexpr NR31() : MemoryRegister{NR31_ADDRESS} {}

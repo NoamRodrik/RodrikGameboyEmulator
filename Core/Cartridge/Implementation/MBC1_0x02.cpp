@@ -101,7 +101,7 @@ bool MemoryBankController_2::Write(const API::address_t absolute_address, const 
 
 		if (this->_inner_mbc._mode == MemoryBankController_1::Mode::ROM_MODE)
 		{
-			this->_ram_memory[absolute_address - ExternalRAM::START_ADDRESS];
+			this->_ram_memory[absolute_address - ExternalRAM::START_ADDRESS] = data;
 			return true;
 		}
 		else
@@ -117,7 +117,7 @@ bool MemoryBankController_2::Write(const API::address_t absolute_address, const 
 	return false;
 }
 
-bool MemoryBankController_2::RamRomBankNumberAction(const data_t data)
+const bool MemoryBankController_2::RamRomBankNumberAction(const data_t data)
 {
 	SANITY(this->_inner_mbc.RomUpperBankNumberAction(data), "Failed setting upper bank");
 

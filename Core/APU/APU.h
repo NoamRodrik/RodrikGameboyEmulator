@@ -14,7 +14,7 @@
 
 namespace Core
 {
-class APU : public API::StaticInstance<APU>
+class [[nodiscard]] APU : public API::StaticInstance<APU>
 {
 public:
 	APU() = default;
@@ -24,17 +24,17 @@ public:
 	void Clock(std::size_t clocks);
 
 	// The type of function pointer needed for the pixel engine's sound manipulator.
-	static float_t SoundDemultiplexer(int32_t channel, float_t global_time, float_t time_step);
+	[[nodiscard]] static float_t SoundDemultiplexer(int32_t channel, float_t global_time, float_t time_step);
 
-	WaveController& GetOscillator()
+	[[nodiscard]] WaveController& GetOscillator()
 	{
 		return APU::GetInstance()._wave_controller;
 	}
 
 private:
-	static const float_t Play(const OutputTerminal output, const float_t global_time, const float_t time_step);
-	static const float_t Sample(const OutputTerminal output, const float_t global_time, const float_t time_step, const API::data_t volume);
-	static const float_t VolumeWaveManipulator(const API::data_t volume);
+	[[nodiscard]] static const float_t Play(const OutputTerminal output, const float_t global_time, const float_t time_step);
+	[[nodiscard]] static const float_t Sample(const OutputTerminal output, const float_t global_time, const float_t time_step, const API::data_t volume);
+	[[nodiscard]] static const float_t VolumeWaveManipulator(const API::data_t volume);
 
 public:
 	// Sample rate at 44.1kHZ

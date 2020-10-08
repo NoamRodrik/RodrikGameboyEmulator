@@ -12,24 +12,24 @@
 
 namespace Core
 {
-class ISoundChannel
+class [[nodiscard]] ISoundChannel
 {
 public:
 	virtual ~ISoundChannel() = default;
 
 public:
-	virtual const float_t Sample(const float_t time) const = 0;
+	[[nodiscard]] virtual const float_t Sample(const float_t time) const = 0;
 
 	virtual void SetSequence(const API::data_t sequence) = 0;
-	virtual const API::data_t GetSequence() const = 0;
+	[[nodiscard]] virtual const API::data_t GetSequence() const = 0;
 	virtual void SetFrequency(const API::address_t frequency) = 0;
-	virtual const API::address_t GetFrequency() const = 0;
+	[[nodiscard]] virtual const API::address_t GetFrequency() const = 0;
 
-	virtual const bool IsEnabled() const = 0;
+	[[nodiscard]] virtual const bool IsEnabled() const = 0;
 	virtual void Enable() = 0;
 	virtual void Disable() = 0;
 
-	virtual const bool Activated(const OutputTerminal output) const = 0;
+	[[nodiscard]] virtual const bool Activated(const OutputTerminal output) const = 0;
 };
 } // Core
 

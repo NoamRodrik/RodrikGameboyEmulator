@@ -10,7 +10,7 @@
 
 namespace Core
 {
-class TimerControl : public MemoryRegister<API::data_t>
+class [[nodiscard]] TimerControl : public MemoryRegister<API::data_t>
 {
 public:
 	TimerControl() : MemoryRegister{TIMER_CONTROL_ADDRESS} {}

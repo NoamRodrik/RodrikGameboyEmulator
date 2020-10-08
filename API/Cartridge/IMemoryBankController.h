@@ -14,7 +14,7 @@
 
 namespace API
 {
-class IMemoryBankController : public IMemoryDeviceAccess
+class [[nodiscard]] IMemoryBankController : public IMemoryDeviceAccess
 {
 public:
 	virtual ~IMemoryBankController() = default;

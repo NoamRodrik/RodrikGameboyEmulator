@@ -13,14 +13,14 @@
 
 namespace Core
 {
-class WorkRAM : public RAMDevice<0xC000, 0xDFFF>
+class [[nodiscard]] WorkRAM : public RAMDevice<0xC000, 0xDFFF>
 {
 public:
 	WorkRAM(API::IMemoryDeviceAccess& memory_accessor) : RAMDevice{memory_accessor} {}
 	virtual ~WorkRAM() override = default;
 
 public:
-	virtual bool Write(const API::address_t absolute_address, const API::data_t data) override
+	[[nodiscard]] virtual bool Write(const API::address_t absolute_address, const API::data_t data) override
 	{
 		RET_FALSE_IF_FAIL(RAMDevice::Write(absolute_address, data), "Failed modifying data");
 

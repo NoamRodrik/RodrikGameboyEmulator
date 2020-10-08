@@ -12,24 +12,24 @@
 namespace API
 {
 template <size_t SIZE>
-class Memory
+class [[nodiscard]] Memory
 {
 public:
 	constexpr Memory() = default;
 	~Memory() = default;
 
 public:
-	constexpr data_t& operator[](const size_t index)
+	[[nodiscard]] constexpr data_t& operator[](const size_t index)
 	{
 		return this->_ram[index];
 	}
 
-	constexpr const data_t& operator[](const size_t index) const
+	[[nodiscard]] constexpr const data_t& operator[](const size_t index) const
 	{
 		return this->_ram[index];
 	}
 
-	constexpr data_t* GetMemoryPointer() { return this->_ram.data(); }
+	[[nodiscard]] constexpr data_t* GetMemoryPointer() { return this->_ram.data(); }
 
 	static constexpr size_t MEMORY_SIZE = SIZE;
 

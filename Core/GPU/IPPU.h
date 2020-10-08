@@ -11,19 +11,19 @@
 
 namespace Core
 {
-class IPPU
+class [[nodiscard]] IPPU
 {
 public:
 	virtual ~IPPU() = default;
 
 public:
-	virtual bool Startup() = 0;
+	[[nodiscard]] virtual bool Startup() = 0;
 	virtual void Clock(std::size_t clock) = 0;
-	virtual Processor& GetProcessor() = 0;
-	virtual bool IsLCDEnabled() const = 0;
+	[[nodiscard]] virtual Processor& GetProcessor() = 0;
+	[[nodiscard]] virtual bool IsLCDEnabled() const = 0;
 	virtual void DisableLCD() = 0;
 	virtual void EnableLCD() = 0;
-	virtual PPUState GetState() const = 0;
+	[[nodiscard]] virtual PPUState GetState() const = 0;
 	virtual void InitiateDMA() = 0;
 };
 } // Core

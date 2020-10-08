@@ -15,7 +15,7 @@
 namespace Core
 {
 template <API::address_t START, API::address_t END>
-class RAMDevice : public IRAMDevice, public API::IMemoryDevice
+class [[nodiscard]] RAMDevice : public IRAMDevice, public API::IMemoryDevice
 {
 public:
 	RAMDevice(API::IMemoryDeviceAccess& memory_accessor) : API::IMemoryDevice{START, END, memory_accessor} {}
@@ -26,7 +26,7 @@ public:
 	/**
 	 * Default implementation.
 	 */
-	virtual bool Read(const API::address_t absolute_address, API::data_t& result) const override
+	[[nodiscard]] virtual bool Read(const API::address_t absolute_address, API::data_t& result) const override
 	{
 		if (!this->InterceptRead(absolute_address, result))
 		{
@@ -39,7 +39,7 @@ public:
 	/**
 	 * Default implementation.
 	 */
-	virtual bool Write(const API::address_t absolute_address, const API::data_t data) override
+	[[nodiscard]] virtual bool Write(const API::address_t absolute_address, const API::data_t data) override
 	{
 		if (!this->InterceptWrite(absolute_address, data))
 		{
@@ -52,19 +52,19 @@ public:
 	/**
 	 * Default implementation.
 	 */
-	virtual bool WriteDirectly(const API::address_t absolute_address, const API::data_t data) override
+	[[nodiscard]] virtual bool WriteDirectly(const API::address_t absolute_address, const API::data_t data) override
 	{
 		this->_memory[this->RelativeAddress(absolute_address)] = data;
 		return true;
 	}
 
 protected:
-	virtual bool InterceptWrite(const API::address_t absolute_address, const API::data_t data) override
+	[[nodiscard]] virtual bool InterceptWrite(const API::address_t absolute_address, const API::data_t data) override
 	{
 		return false;
 	}
 
-	virtual bool InterceptRead(const API::address_t absolute_address, API::data_t& result) const override
+	[[nodiscard]] virtual bool InterceptRead(const API::address_t absolute_address, API::data_t& result) const override
 	{
 		return false;
 	}
@@ -75,8 +75,8 @@ public:
 	static constexpr size_t   SIZE = END_ADDRESS - START_ADDRESS + 1;
 
 protected:
-	static constexpr API::address_t RelativeAddress(const API::address_t address) { return address - START; }
-	virtual uint8_t* GetMemoryPointer() override { return this->_memory.GetMemoryPointer(); }
+	[[nodiscard]] static constexpr API::address_t RelativeAddress(const API::address_t address) { return address - START; }
+	[[nodiscard]] virtual uint8_t* GetMemoryPointer() override { return this->_memory.GetMemoryPointer(); }
 
 protected:
 	API::Memory<SIZE> _memory;

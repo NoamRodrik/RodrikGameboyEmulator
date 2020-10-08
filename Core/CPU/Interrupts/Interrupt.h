@@ -21,7 +21,7 @@ enum class EInterrupts : API::data_t
 	H_L_P  = 1 << 4
 };
 	
-class Interrupt
+class [[nodiscard]] Interrupt
 {
 public:
 	inline bool Execute() const { return this->func(); }

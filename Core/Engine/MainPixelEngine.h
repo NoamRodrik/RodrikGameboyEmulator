@@ -27,7 +27,7 @@
 
 namespace Core
 {
-class MainPixelEngine : public olc::PixelGameEngine, public IPPU
+class [[nodiscard]] MainPixelEngine : public olc::PixelGameEngine, public IPPU
 {
 public:
 	MainPixelEngine(Processor& processor) : _processor{processor}
@@ -39,7 +39,7 @@ public:
 	virtual ~MainPixelEngine() = default;
 
 public:
-	virtual bool Startup() override
+	[[nodiscard]] virtual bool Startup() override
 	{
 		RET_FALSE_IF_FAIL(this->Construct(SCREEN_WIDTH_PIXELS, SCREEN_HEIGHT_PIXELS, 4, 4), "Failed constructing pixel engine");
 		this->_gpu_thread.reset(gsl::not_null<std::thread*>{new std::thread{&MainPixelEngine::Start, this}});
@@ -55,7 +55,7 @@ public:
 		}
 	}
 
-	virtual bool IsLCDEnabled() const override
+	[[nodiscard]] virtual bool IsLCDEnabled() const override
 	{
 		return this->_enabled;
 	}
@@ -72,13 +72,13 @@ public:
 		this->_render.Start();
 	}
 
-	virtual PPUState GetState() const override
+	[[nodiscard]] virtual PPUState GetState() const override
 	{
 		return this->_render._state;
 	}
 
 private:
-	virtual bool OnUserCreate() override
+	[[nodiscard]] virtual bool OnUserCreate() override
 	{
 		// Called once at startup, drawing white pixels.
 		// The Gameboy LR35902 has 4 channels.
@@ -90,13 +90,13 @@ private:
 		return true;
 	}
 
-	virtual bool OnUserDestroy() override
+	[[nodiscard]] virtual bool OnUserDestroy() override
 	{
 		this->_processor.GetMemory()._device_manager._mbc_controller->CloseMBC();
 		return olc::SOUND::DestroyAudio();
 	}
 
-	virtual bool OnUserUpdate(float) override
+	[[nodiscard]] virtual bool OnUserUpdate(float) override
 	{
 		Clock::SyncGPUFrame();
 		this->HandleButtonPress();
@@ -108,7 +108,7 @@ private:
 		this->_render.InitiateDMA();
 	}
 
-	bool Render()
+	[[nodiscard]] const bool Render()
 	{
 		auto& screen = this->_render.GetScreen();
 
@@ -123,7 +123,7 @@ private:
 		return true;
 	}
 
-	virtual Processor& GetProcessor() override
+	[[nodiscard]] virtual Processor& GetProcessor() override
 	{
 		return this->_processor;
 	}

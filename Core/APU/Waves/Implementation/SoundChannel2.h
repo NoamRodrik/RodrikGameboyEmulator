@@ -13,7 +13,7 @@
 
 namespace Core
 {
-class SoundChannel2 : public ASoundChannel<SoundChannel::PULSE_B>
+class [[nodiscard]] SoundChannel2 : public ASoundChannel<SoundChannel::PULSE_B>
 {
 public:
 	SoundChannel2() = default;

@@ -11,10 +11,10 @@
 
 namespace Core
 {
-class Joypad : public API::StaticInstance<Joypad>
+class [[nodiscard]] Joypad : public API::StaticInstance<Joypad>
 {
 public:
-	enum class Control : API::data_t
+	enum class [[nodiscard]] Control : API::data_t
 	{
 		RIGHT = 0, 
 		LEFT = 1,
@@ -26,7 +26,7 @@ public:
 		START = 3
 	};
 
-	enum class Mode : API::data_t
+	enum class [[nodiscard]] Mode : API::data_t
 	{
 		 SELECT_BUTTONS = 4,
 		 SELECT_DIRECTIONS = 5
@@ -36,8 +36,8 @@ public:
 	static void ChangeStatus(const API::data_t direction_status, const API::data_t button_status);
 
 public:
-	static const API::data_t GetButtonStatus();
-	static const API::data_t GetDirectionStatus();
+	[[nodiscard]] static const API::data_t GetButtonStatus();
+	[[nodiscard]] static const API::data_t GetDirectionStatus();
 
 private:
 	API::data_t _direction_status{0x0F};

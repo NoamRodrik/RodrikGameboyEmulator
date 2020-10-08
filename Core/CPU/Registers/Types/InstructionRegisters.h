@@ -10,7 +10,7 @@
 
 namespace Core
 {
-class PC_Register : public API::AddressRegisterBase
+class [[nodiscard]] PC_Register : public API::AddressRegisterBase
 {
 public:
 	using API::AddressRegisterBase::AddressRegisterBase;

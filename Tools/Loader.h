@@ -14,7 +14,7 @@
 
 namespace Tools
 {
-class Loader : public API::ILoader
+class [[nodiscard]] Loader : public API::ILoader
 {
 public:
 	explicit Loader(const std::string& binary_path) : _binary_path{binary_path}, _binary_file{fopen(binary_path.c_str(), FILE_READ_MODE)}

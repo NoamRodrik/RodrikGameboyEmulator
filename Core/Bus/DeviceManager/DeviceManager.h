@@ -15,23 +15,23 @@
 
 namespace Core
 {
-class DeviceManager : public API::IMemoryDeviceAccess
+class [[nodiscard]] DeviceManager : public API::IMemoryDeviceAccess
 {
 public:
 	DeviceManager();
 	virtual ~DeviceManager() = default;
 
 public:
-	virtual bool Write(const API::address_t absolute_address, const API::data_t data) override;
-	virtual bool Read(const API::address_t absolute_address, API::data_t& result) const override;
-	virtual bool WriteDirectly(const API::address_t absolute_address, const API::data_t data) override;
+	[[nodiscard]] virtual bool Write(const API::address_t absolute_address, const API::data_t data) override;
+	[[nodiscard]] virtual bool Read(const API::address_t absolute_address, API::data_t& result) const override;
+	[[nodiscard]] virtual bool WriteDirectly(const API::address_t absolute_address, const API::data_t data) override;
 
-	API::IMemoryDevice* GetDeviceAtAddress(const API::address_t absolute_address);
+	[[nodiscard]] API::IMemoryDevice* GetDeviceAtAddress(const API::address_t absolute_address);
 
 	void SetMemoryBankController(std::unique_ptr<API::IMemoryBankController> memory_bank_controller);
 
 protected:
-	bool RegisterDevice(gsl::unique_ptr<API::IMemoryDevice> new_device)
+	[[nodiscard]] bool RegisterDevice(gsl::unique_ptr<API::IMemoryDevice> new_device)
 	{
 		SANITY(this->_last_added_device < this->_devices.size(), "Added too many elements, overflow!");
 

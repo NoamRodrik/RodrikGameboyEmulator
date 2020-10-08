@@ -12,7 +12,7 @@
 
 namespace Core
 {
-class MemoryBankController_3 : public API::AMemoryBankController
+class [[nodiscard]] MemoryBankController_3 : public API::AMemoryBankController
 {
 public:
 	MemoryBankController_3(IMemoryDeviceAccess& memory_device, std::shared_ptr<API::ILoader> loader) :
@@ -21,19 +21,19 @@ public:
 	virtual ~MemoryBankController_3() = default;
 
 public:
-	virtual API::CartridgeHeader::CartridgeType Type() const override { return API::CartridgeHeader::CartridgeType::MBC1_RAM_BATTERY; }
-	virtual size_t BankSize() const override;
+	[[nodiscard]] virtual API::CartridgeHeader::CartridgeType Type() const override { return API::CartridgeHeader::CartridgeType::MBC1_RAM_BATTERY; }
+	[[nodiscard]] virtual size_t BankSize() const override;
 	virtual void LoadMBC() override;
 	virtual void CloseMBC() override;
-	virtual bool Read(const API::address_t absolute_address, API::data_t& result) const override;
-	virtual bool Write(const API::address_t absolute_address, const API::data_t data) override;
-	virtual bool WriteDirectly(const API::address_t absolute_address, const API::data_t data) override;
+	[[nodiscard]] virtual bool Read(const API::address_t absolute_address, API::data_t& result) const override;
+	[[nodiscard]] virtual bool Write(const API::address_t absolute_address, const API::data_t data) override;
+	[[nodiscard]] virtual bool WriteDirectly(const API::address_t absolute_address, const API::data_t data) override;
 
 public:
 	static constexpr size_t BANK_SIZE = 125;
 
 private:
-	const bool DoesFileExist() const;
+	[[nodiscard]] const bool DoesFileExist() const;
 
 private:
 	MemoryBankController_2 _inner_mbc;

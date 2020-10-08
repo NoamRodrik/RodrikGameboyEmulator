@@ -11,7 +11,7 @@
 
 namespace Core
 {
-static constexpr API::address_t GetWrappedAroundDistance(const std::size_t from, const std::size_t to)
+[[nodiscard]] static constexpr API::address_t GetWrappedAroundDistance(const std::size_t from, const std::size_t to)
 {
 	return (from + 0x100 - to) % 0x100;
 }
@@ -19,7 +19,7 @@ static constexpr API::address_t GetWrappedAroundDistance(const std::size_t from,
 /**
  * The original colors to choose from.
  */
-enum class PixelColor : API::data_t
+enum class [[nodiscard]] PixelColor : API::data_t
 {
 	WHITE = 0x00,
 	LIGHT_GREY = 0x01,
@@ -30,7 +30,7 @@ enum class PixelColor : API::data_t
 /**
  * The chosen colors as the palette.
  */
-enum class PaletteColor : API::data_t
+enum class [[nodiscard]] PaletteColor : API::data_t
 {
 	FIRST_PALETTE = 0x00,
 	SECOND_PALETTE = 0x01,
@@ -41,7 +41,7 @@ enum class PaletteColor : API::data_t
 /**
  * The source in which the pixel is written from.
  */
-enum class PixelSource : API::data_t
+enum class [[nodiscard]] PixelSource : API::data_t
 {
 	BGP = 0x00,
 	OBP0 = 0x01,
@@ -52,7 +52,7 @@ enum class PixelSource : API::data_t
 /**
  * The state of the PPU.
  */
-enum class PPUState
+enum class [[nodiscard]] PPUState
 {
 	H_BLANK = 0x00,
 	V_BLANK = 0x01,

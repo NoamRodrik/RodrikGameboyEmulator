@@ -11,7 +11,7 @@
 
 namespace Core
 {
-class InterruptHandler
+class [[nodiscard]] InterruptHandler
 {
 public:
 	static bool ProcessInterrupts();

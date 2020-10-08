@@ -16,7 +16,7 @@ namespace Core
  * A register can now be on the RAM and act as something independent on itself.
  */
 template <typename T>
-class MemoryRegister
+class [[nodiscard]] MemoryRegister
 {
 public:
 	constexpr MemoryRegister(const API::address_t address) : MEMORY_ADDRESS{address} {}
@@ -28,7 +28,7 @@ public:
 		return *this;
 	}
 
-	operator T() const
+	[[nodiscard]] operator T() const
 	{
 		return READ_DATA_AT(MEMORY_ADDRESS);
 	}

@@ -56,7 +56,7 @@
 
 namespace Core
 {
-class IORAM : public RAMDevice<0xFF00, 0xFF7F>
+class [[nodiscard]] IORAM : public RAMDevice<0xFF00, 0xFF7F>
 {
 public:
 	IORAM(API::IMemoryDeviceAccess& memory_accessor) : RAMDevice{memory_accessor}
@@ -105,7 +105,7 @@ public:
 	}
 
 private:
-	virtual bool InterceptRead(const API::address_t absolute_address, API::data_t& data) const override
+	[[nodiscard]] virtual bool InterceptRead(const API::address_t absolute_address, API::data_t& data) const override
 	{
 		switch (absolute_address)
 		{
@@ -142,7 +142,7 @@ private:
 		return false;
 	}
 
-	virtual bool InterceptWrite(const API::address_t absolute_address, const API::data_t data) override
+	[[nodiscard]] virtual bool InterceptWrite(const API::address_t absolute_address, const API::data_t data) override
 	{
 		switch (absolute_address)
 		{

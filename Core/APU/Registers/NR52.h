@@ -11,7 +11,7 @@
 
 namespace Core
 {
-class NR52 : public MemoryRegister<API::data_t>
+class [[nodiscard]] NR52 : public MemoryRegister<API::data_t>
 {
 public:
 	constexpr NR52() : MemoryRegister{NR52_ADDRESS} {}
@@ -22,7 +22,7 @@ public:
 	using MemoryRegister::operator API::data_t;
 
 public:
-	const bool IsSoundEnabled() const
+	[[nodiscard]] const bool IsSoundEnabled() const
 	{
 		return Tools::IsBitSet(operator API::data_t(), SOUND_ENABLED_BIT);
 	}

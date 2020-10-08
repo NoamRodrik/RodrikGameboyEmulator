@@ -11,7 +11,7 @@
 
 namespace Core
 {
-class VideoRAM : public RAMDevice<0x8000, 0x9FFF>
+class [[nodiscard]] VideoRAM : public RAMDevice<0x8000, 0x9FFF>
 {
 public:
 	VideoRAM(API::IMemoryDeviceAccess& memory_accessor) : RAMDevice{memory_accessor} {}

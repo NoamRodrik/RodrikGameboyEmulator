@@ -17,7 +17,7 @@
 
 namespace Core
 {
-class LCDRender
+class [[nodiscard]] LCDRender
 {
 public:
 	LCDRender(API::IMemoryDeviceAccess& memory, IPPU& ppu) :
@@ -28,7 +28,7 @@ public:
 	/**
 	 * Executes next batch of instructions.
 	 */
-	bool Execute(std::size_t clocks)
+	[[nodiscard]] const bool Execute(std::size_t clocks)
 	{
 		this->_clocks += clocks;
 
@@ -87,7 +87,7 @@ public:
 		return true;
 	}
 
-	const auto& GetScreen() const
+	[[nodiscard]] const auto& GetScreen() const
 	{
 		return this->_fifo.GetScreen();
 	}
@@ -128,7 +128,7 @@ public:
 	}
 
 private:
-	const bool OAMSearch()
+	[[nodiscard]] const bool OAMSearch()
 	{
 		if (this->_clocks >= OAM_SEARCH_MAXIMUM_CYCLES)
 		{
@@ -141,7 +141,7 @@ private:
 		return false;
 	}
 
-	const bool HBlank()
+	[[nodiscard]] const bool HBlank()
 	{		
 		if (this->_clocks >= HBLANK_CLOCK_MINIMUM_CYCLES)
 		{
@@ -174,7 +174,7 @@ private:
 		return false;
 	}
 
-	bool VBlank()
+	[[nodiscard]] const bool VBlank()
 	{
 		if (this->_clocks >= VBLANK_CLOCKS)
 		{
@@ -195,7 +195,7 @@ private:
 		return false;
 	}
 
-	bool PixelRender()
+	[[nodiscard]] const bool PixelRender()
 	{
 		if (this->_clocks >= PIXEL_RENDER_MAXIMUM_CYCLES)
 		{
@@ -217,7 +217,7 @@ private:
 	/**
 	 * All combinations of possibilities of running the fetcher and fifo.
 	 */
-	const bool InnerExecute(std::size_t& io_clocks)
+	[[nodiscard]] const bool InnerExecute(std::size_t& io_clocks)
 	{
 		if (io_clocks == FIFO_PIXEL_CLOCKS)
 		{

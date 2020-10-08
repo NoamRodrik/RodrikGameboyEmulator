@@ -10,7 +10,7 @@
 
 namespace Core
 {
-class ArithmeticRegister : public API::ArithmeticRegisterBase
+class [[nodiscard]] ArithmeticRegister : public API::ArithmeticRegisterBase
 {
 public:
 	using API::ArithmeticRegisterBase::ArithmeticRegisterBase;
@@ -47,7 +47,7 @@ public:
 		return *this;
 	}
 
-	auto operator ~()
+	[[nodiscard]] auto operator ~()
 	{
 		return ~this->_data;
 	}

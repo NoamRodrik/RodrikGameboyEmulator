@@ -17,13 +17,13 @@
 namespace Core
 {
 template <SoundChannel SOUND_CHANNEL>
-class ASoundChannel : public ISoundChannel
+class [[nodiscard]] ASoundChannel : public ISoundChannel
 {
 public:
 	virtual ~ASoundChannel() override = default;
 
 public:
-	virtual const bool IsEnabled() const override
+	[[nodiscard]] virtual const bool IsEnabled() const override
 	{
 		return this->_enabled;
 	}
@@ -40,7 +40,7 @@ public:
 		this->UpdateStatus();
 	}
 
-	virtual const bool Activated(const OutputTerminal output) const override
+	[[nodiscard]] virtual const bool Activated(const OutputTerminal output) const override
 	{
 		return (NR51{} >> (NR51::OutputTerminalOffset(output) + (static_cast<size_t>(SOUND_CHANNEL) - 1))) & 0b00000001;
 	}
@@ -60,7 +60,7 @@ public:
 		this->_frequency = frequency;
 	}
 
-	virtual const API::address_t GetFrequency() const override
+	[[nodiscard]] virtual const API::address_t GetFrequency() const override
 	{
 		return this->_frequency;
 	}
@@ -68,7 +68,7 @@ public:
 	/**
 	 * Default implementation
 	 */
-	virtual const float_t Sample(const float_t time) const override
+	[[nodiscard]] virtual const float_t Sample(const float_t time) const override
 	{
 		return 0;
 	}

@@ -10,7 +10,7 @@
 
 namespace Core
 {
-class InterruptEnable : public MemoryRegister<API::data_t>
+class [[nodiscard]] InterruptEnable : public MemoryRegister<API::data_t>
 {
 public:
 	InterruptEnable() : MemoryRegister{INTERRUPT_ENABLE_ADDRESS} {}

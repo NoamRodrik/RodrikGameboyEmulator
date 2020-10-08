@@ -11,7 +11,7 @@
 
 namespace Core
 {
-enum class OutputTerminal
+enum class [[nodiscard]] OutputTerminal
 {
 	// Right
 	SO1 = 0,
@@ -20,7 +20,7 @@ enum class OutputTerminal
 	SO2 = 1
 };
 
-enum class SoundChannel
+enum class [[nodiscard]] SoundChannel
 {
 	PULSE_A = 1,
 	PULSE_B = 2,

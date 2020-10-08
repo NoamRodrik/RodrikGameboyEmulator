@@ -12,7 +12,7 @@
 
 namespace Core
 {
-class NR50 : public MemoryRegister<API::data_t>
+class [[nodiscard]] NR50 : public MemoryRegister<API::data_t>
 {
 public:
 	constexpr NR50() : MemoryRegister{NR50_ADDRESS} {}
@@ -23,7 +23,7 @@ public:
 	using MemoryRegister::operator API::data_t;
 
 public:
-	const bool IsVINSoundEnabled(const OutputTerminal output) const
+	[[nodiscard]] const bool IsVINSoundEnabled(const OutputTerminal output) const
 	{
 		switch (output)
 		{
@@ -44,7 +44,7 @@ public:
 		}
 	}
 
-	const API::data_t MasterVolumeLevel(const OutputTerminal output) const
+	[[nodiscard]] const API::data_t MasterVolumeLevel(const OutputTerminal output) const
 	{
 		switch (output)
 		{

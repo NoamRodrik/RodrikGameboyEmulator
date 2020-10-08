@@ -11,14 +11,14 @@
 
 namespace Core
 {
-class IRAMDevice
+class [[nodiscard]] IRAMDevice
 {
 public:
 	virtual ~IRAMDevice() = default;
 
 protected:
-	virtual bool InterceptWrite(const API::address_t absolute_address, const API::data_t data) = 0;
-	virtual bool InterceptRead(const API::address_t absolute_address, API::data_t& result) const = 0;
+	[[nodiscard]] virtual bool InterceptWrite(const API::address_t absolute_address, const API::data_t data) = 0;
+	[[nodiscard]] virtual bool InterceptRead(const API::address_t absolute_address, API::data_t& result) const = 0;
 
 private:
 	friend class DeviceManager;

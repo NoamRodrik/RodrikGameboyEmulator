@@ -11,7 +11,7 @@
 
 namespace Core
 {
-class UnusedRAM : public RAMDevice<0xFEA0, 0xFEFF>
+class [[nodiscard]] UnusedRAM : public RAMDevice<0xFEA0, 0xFEFF>
 {
 public:
 	UnusedRAM(API::IMemoryDeviceAccess& memory_accessor) : RAMDevice{memory_accessor} {}

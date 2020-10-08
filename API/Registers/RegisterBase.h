@@ -17,7 +17,7 @@ namespace API
  * A base class made for registers.
  */
 template <typename T>
-class RegisterBase
+class [[nodiscard]] RegisterBase
 {
 public:
 	static_assert(std::is_integral<T>::value, "Got a non-integral register-base data type.");
@@ -25,12 +25,12 @@ public:
 public:
 	constexpr explicit RegisterBase(T&& data) : _data{data} {};
 
-	operator T&()
+	[[nodiscard]] operator T&()
 	{
 		return this->_data;
 	}
 
-	operator T() const
+	[[nodiscard]] operator T() const
 	{
 		return this->_data;
 	}
@@ -43,7 +43,7 @@ protected:
 /**
  * All addressing registers use 16 bits.
  */
-class AddressRegisterBase : public RegisterBase<address_t>
+class [[nodiscard]] AddressRegisterBase : public RegisterBase<address_t>
 {
 public:
 	using RegisterBase::RegisterBase;
@@ -60,7 +60,7 @@ public:
 /**
  * In use for stack arithmetic
  */
-class StackRegisterBase : public AddressRegisterBase
+class [[nodiscard]] StackRegisterBase : public AddressRegisterBase
 {
 public:
 	using AddressRegisterBase::AddressRegisterBase;
@@ -78,7 +78,7 @@ public:
 /**
  * The stack registers hold 8 bit data segments that maintain their position in the stack.
  */
-class FlagsRegisterBase : public RegisterBase<data_t>
+class [[nodiscard]] FlagsRegisterBase : public RegisterBase<data_t>
 {
 public:
 	using RegisterBase::RegisterBase;
@@ -86,7 +86,7 @@ public:
 	using RegisterBase::operator data_t;
 
 protected:
-	constexpr bool GetFlag(const data_t bit_index) const
+	[[nodiscard]] constexpr bool GetFlag(const data_t bit_index) const
 	{
 		return (this->_data >> bit_index) & 0x01;
 	}
@@ -105,7 +105,7 @@ protected:
 /**
  * The arithmetic registers hold 8 bit data segments, that maintain their logic.
  */
-class ArithmeticRegisterBase : public RegisterBase<data_t>
+class [[nodiscard]] ArithmeticRegisterBase : public RegisterBase<data_t>
 {
 public:
 	using RegisterBase::RegisterBase;

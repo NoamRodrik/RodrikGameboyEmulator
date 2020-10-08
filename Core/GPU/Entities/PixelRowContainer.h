@@ -14,7 +14,7 @@
 
 namespace Core
 {
-class PixelRowContainer
+class [[nodiscard]] PixelRowContainer
 {
 public:
 	constexpr PixelRowContainer() = default;
@@ -40,7 +40,7 @@ public:
 	/**
 	 * No pixels left in the pixel container.
 	 */
-	constexpr bool IsEmpty() const
+	[[nodiscard]] constexpr bool IsEmpty() const
 	{
 		return this->_pixel_row_index > PixelRow::PIXEL_COUNT;
 	}
@@ -48,7 +48,7 @@ public:
 	/**
 	 * Fetching left-most pixel from the pixel row.
 	 */
-	constexpr PaletteColor GetNextPixel()
+	[[nodiscard]] constexpr PaletteColor GetNextPixel()
 	{
 		SANITY(this->_pixel_row_index >= UNUSED_PIXEL_ROW_INDEX_COUNT && this->_pixel_row_index <= PixelRow::PIXEL_COUNT,
 			"Got invalid values for pixel row index");
@@ -65,7 +65,7 @@ public:
 	/**
 	 * Returns from where the pixel was taken (Background, OAM....).
 	 */
-	constexpr PixelSource GetSource() const
+	[[nodiscard]] constexpr PixelSource GetSource() const
 	{
 		return this->_pixel_source;
 	}
@@ -77,7 +77,7 @@ public:
 		this->_current_pixel_row = PixelRow{};
 	}
 
-	constexpr std::size_t EmptyBitsAmount()
+	[[nodiscard]] constexpr std::size_t EmptyBitsAmount()
 	{
 		return PixelRow::PIXEL_COUNT - (EMPTY_PIXEL_ROW_INDEX_COUNT - this->_pixel_row_index);
 	}

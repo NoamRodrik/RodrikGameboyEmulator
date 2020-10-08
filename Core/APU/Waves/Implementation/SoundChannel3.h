@@ -13,7 +13,7 @@
 
 namespace Core
 {
-class SoundChannel3 : public ASoundChannel<SoundChannel::WAVE>
+class [[nodiscard]] SoundChannel3 : public ASoundChannel<SoundChannel::WAVE>
 {
 public:
 	SoundChannel3() = default;

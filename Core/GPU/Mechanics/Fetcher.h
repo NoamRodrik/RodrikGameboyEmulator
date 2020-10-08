@@ -30,14 +30,14 @@ namespace Core
  * 
  * This process is looped over and over again.
  */
-class Fetcher
+class [[nodiscard]] Fetcher
 {
 public:
 	constexpr Fetcher(PixelFIFO& fifo, IPPU& ppu) : _fifo{fifo}, _ppu{ppu} {}
 	~Fetcher() = default;
 
 private:
-	enum class State
+	enum class [[nodiscard]] State
 	{
 		FETCH_TILE = 0x00,
 		READ_DATA_0 = 0x01,
@@ -54,7 +54,7 @@ public:
 		this->_window_tile_offset_x = WX{} - 7;
 	}
 
-	bool Execute(std::size_t clocks)
+	[[nodiscard]] const bool Execute(std::size_t clocks)
 	{
 		this->_clocks += clocks;
 		switch (this->_state)
@@ -91,7 +91,7 @@ private:
 	/**
 	 * Fetch tile state -> Read data 0 state
 	 */
-	const bool FetchTile()
+	[[nodiscard]] const bool FetchTile()
 	{
 		if (this->_clocks >= FETCH_TILE_CLOCKS)
 		{	
@@ -134,7 +134,7 @@ private:
 	/**
 	 * Read data 0 state -> Read data 1 state
 	 */
-	bool ReadDataUpper()
+	[[nodiscard]] const bool ReadDataUpper()
 	{
 		if (this->_clocks >= READ_DATA_0_CLOCKS)
 		{
@@ -149,7 +149,7 @@ private:
 	/**
 	 * Read data 1 state -> Wait for FIFO state
 	 */
-	bool ReadDataLower()
+	[[nodiscard]] const bool ReadDataLower()
 	{
 		if (this->_clocks >= READ_DATA_1_CLOCKS)
 		{
@@ -164,7 +164,7 @@ private:
 	/**
 	 * Wait for FIFO state -> Fetch tile state
 	 */
-	bool WaitForFIFO()
+	[[nodiscard]] const bool WaitForFIFO()
 	{
 		if (this->_clocks >= WAIT_FOR_FIFO_CLOCKS)
 		{
@@ -183,27 +183,27 @@ private:
 	}
 
 private:
-	const API::address_t GetBackgroundMapStart() const
+	[[nodiscard]] const API::address_t GetBackgroundMapStart() const
 	{
 		return static_cast<LCDC_Control::Control>(LCDC_Control{}).GetBackgroundMapStart();
 	}
 
-	const API::address_t GetWindowMapStart() const
+	[[nodiscard]] const API::address_t GetWindowMapStart() const
 	{
 		return static_cast<LCDC_Control::Control>(LCDC_Control{}).GetWindowMapStart();
 	}
 
-	const API::data_t GetUpperTileByte() const
+	[[nodiscard]] const API::data_t GetUpperTileByte() const
 	{
 		return this->GetTileInformation(false);
 	}
 
-	const API::data_t GetLowerTileByte() const
+	[[nodiscard]] const API::data_t GetLowerTileByte() const
 	{
 		return this->GetTileInformation(true);
 	}
 
-	const API::data_t GetTileInformation(bool lower = false) const
+	[[nodiscard]] const API::data_t GetTileInformation(bool lower = false) const
 	{
 		auto lcdc_control{static_cast<LCDC_Control::Control>(LCDC_Control{})};
 

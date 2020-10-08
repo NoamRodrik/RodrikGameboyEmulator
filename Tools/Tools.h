@@ -71,49 +71,49 @@ Message("To remove!");
 
 namespace Tools
 {
-static constexpr size_t Pow(size_t base, size_t power)
+[[nodiscard]] static constexpr size_t Pow(size_t base, size_t power)
 {
 	return power == 0 ? 1 : Pow(base, power - 1) * base;
 }
 
-static constexpr size_t SlotsToBytes(const uint32_t slots)
+[[nodiscard]] static constexpr size_t SlotsToBytes(const uint32_t slots)
 {
 	return Pow(2, slots);
 }
 
-static constexpr size_t MebibytesToBytes(size_t mebibytes)
+[[nodiscard]] static constexpr size_t MebibytesToBytes(size_t mebibytes)
 {
 	// 1 Mebibyte = 1024 Kibibyte
 	// = 1024 * 1024 bytes
 	return mebibytes * 1'024 * 1'024;
 }
 
-static constexpr bool IsBitSet(const uint8_t data, const size_t index)
+[[nodiscard]] static constexpr bool IsBitSet(const uint8_t data, const size_t index)
 {
 	return (data >> index) & 0x01;
 }
 
-static constexpr void SetBit(uint8_t& data, const size_t index)
+[[nodiscard]] static constexpr void SetBit(uint8_t& data, const size_t index)
 {
 	data |= 1 << index;
 }
 
-static constexpr void ClearBit(uint8_t& data, const size_t index)
+[[nodiscard]] static constexpr void ClearBit(uint8_t& data, const size_t index)
 {
 	data &= static_cast<uint8_t>(~(1 << index));
 }
 
-static constexpr void MutateBitByCondition(const bool condition, uint8_t& data, const size_t index)
+[[nodiscard]] static constexpr void MutateBitByCondition(const bool condition, uint8_t& data, const size_t index)
 {
 	(condition ? SetBit(data, index) : ClearBit(data, index));
 }
 
-static constexpr size_t BytesInROMBanks(const size_t bank_size)
+[[nodiscard]] static constexpr size_t BytesInROMBanks(const size_t bank_size)
 {
 	return bank_size * 0x4000;
 }
 
-static constexpr size_t BytesInRAMBanks(const size_t bank_size)
+[[nodiscard]] static constexpr size_t BytesInRAMBanks(const size_t bank_size)
 {
 	return bank_size * 0x2000;
 }

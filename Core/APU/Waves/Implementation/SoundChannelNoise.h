@@ -13,7 +13,7 @@
 
 namespace Core
 {
-class SoundChannelNoise : public ASoundChannel<SoundChannel::NOISE>
+class [[nodiscard]] SoundChannelNoise : public ASoundChannel<SoundChannel::NOISE>
 {
 public:
 	SoundChannelNoise() = default;
