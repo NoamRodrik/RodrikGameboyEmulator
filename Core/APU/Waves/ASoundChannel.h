@@ -84,8 +84,6 @@ protected:
 	static constexpr SoundChannel MY_CHANNEL{SOUND_CHANNEL};
 
 protected:
-	std::atomic<float_t>        _duty_cycle{0.0f};
-	std::atomic<float_t>        _harmonics{0.0f};
 	std::atomic<API::data_t>    _sequence{0x00};
 	std::atomic<API::address_t> _frequency{0x00};
 
