@@ -36,7 +36,7 @@ public:
 
 	[[nodiscard]] virtual const bool Activated(const OutputTerminal output) const override
 	{
-		return (NR51{} >> (NR51::OutputTerminalOffset(output) + (static_cast<size_t>(SOUND_CHANNEL) - 1))) & 0b00000001;
+		return static_cast<API::data_t>(NR51{}) & (Tools::Pow(2, static_cast<size_t>(SOUND_CHANNEL) - 1) << (output == OutputTerminal::SO1 ? 0 : 4));
 	}
 
 	virtual void SetLength(const API::Length& new_length) override
@@ -74,16 +74,6 @@ public:
 		return this->_clocks;
 	}
 
-	virtual void SetSequence(const API::data_t sequence) override
-	{
-		this->_sequence = sequence;
-	}
-
-	virtual const API::data_t GetSequence() const override
-	{
-		return this->_sequence;
-	}
-
 	virtual void SetFrequency(const API::address_t frequency) override
 	{
 		this->_frequency = frequency;
@@ -111,15 +101,12 @@ protected:
 protected:
 	static constexpr SoundChannel MY_CHANNEL{SOUND_CHANNEL};
 
-protected:
-	std::atomic<API::data_t>    _sequence{0x00};
-	std::atomic<API::address_t> _frequency{0x00};
-
 private:
+	API::address_t    _frequency{0x00};
 	API::Length       _length{};
-	std::atomic<bool> _enabled{false};
 	std::size_t       _clocks{0x00};
 	API::data_t       _current_sample{0x00};
+	bool			  _enabled{false};
 };
 } // Core
 

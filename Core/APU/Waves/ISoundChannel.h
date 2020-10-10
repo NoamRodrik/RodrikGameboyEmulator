@@ -40,8 +40,6 @@ public:
 	[[nodiscard]] virtual const API::data_t GetCurrentSample() const = 0;
 	virtual void SetClocks(const std::size_t clocks) = 0;
 	[[nodiscard]] virtual const std::size_t GetClocks() const = 0;
-	virtual void SetSequence(const API::data_t sequence) = 0;
-	[[nodiscard]] virtual const API::data_t GetSequence() const = 0;
 	virtual void SetFrequency(const API::address_t frequency) = 0;
 	[[nodiscard]] virtual const API::address_t GetFrequency() const = 0;
 

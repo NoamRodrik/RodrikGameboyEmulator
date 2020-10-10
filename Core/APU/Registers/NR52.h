@@ -7,6 +7,7 @@
 #define __LR35902_NR52_H__
 
 #include <Core/CPU/Registers/MemoryRegister.h>
+#include <Core/APU/Definitions.h>
 #include <Tools/Tools.h>
 
 namespace Core
@@ -29,7 +30,7 @@ public:
 
 	void SetStatus(const SoundChannel channel, const bool status)
 	{
-		API::data_t nr52{operator API::data_t()};
+		API::data_t nr52{static_cast<API::data_t>(*this)};
 		Tools::MutateBitByCondition(status, nr52, static_cast<size_t>(channel) - 1);
 		*this = nr52;
 	}

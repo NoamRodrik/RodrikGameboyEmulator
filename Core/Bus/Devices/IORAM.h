@@ -66,8 +66,7 @@ public:
 		this->_memory[this->RelativeAddress(TimerCounter::TIMER_COUNTER_ADDRESS)] = TimerCounter::TIMER_COUNTER_DEFAULT_VALUE;
 		this->_memory[this->RelativeAddress(TimerModulo::TIMER_MODULO_ADDRESS)] = TimerModulo::TIMER_MODULO_DEFAULT_VALUE;
 		this->_memory[this->RelativeAddress(TimerControl::TIMER_CONTROL_ADDRESS)] = TimerControl::TIMER_CONTROL_DEFAULT_VALUE;
-		Message("Return this when needed");
-		/*this->_memory[this->RelativeAddress(NR10::NR10_ADDRESS)] = NR10::NR10_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(NR10::NR10_ADDRESS)] = NR10::NR10_DEFAULT_VALUE;
 		this->_memory[this->RelativeAddress(NR11::NR11_ADDRESS)] = NR11::NR11_DEFAULT_VALUE;
 		this->_memory[this->RelativeAddress(NR12::NR12_ADDRESS)] = NR12::NR12_DEFAULT_VALUE;
 		this->_memory[this->RelativeAddress(NR13::NR13_ADDRESS)] = NR13::NR13_DEFAULT_VALUE;
@@ -87,7 +86,7 @@ public:
 		this->_memory[this->RelativeAddress(NR44::NR44_ADDRESS)] = NR44::NR44_DEFAULT_VALUE;
 		this->_memory[this->RelativeAddress(NR50::NR50_ADDRESS)] = NR50::NR50_DEFAULT_VALUE;
 		this->_memory[this->RelativeAddress(NR51::NR51_ADDRESS)] = NR51::NR51_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(NR52::NR52_ADDRESS)] = NR52::NR52_DEFAULT_VALUE;*/
+		this->_memory[this->RelativeAddress(NR52::NR52_ADDRESS)] = NR52::NR52_DEFAULT_VALUE;
 		this->_memory[this->RelativeAddress(LCDC_Control::LCDC_ADDRESS)] = LCDC_Control::LCDC_DEFAULT_VALUE;
 		this->_memory[this->RelativeAddress(LCDC_Status::LCDC_ADDRESS)] = LCDC_Status::LCDC_DEFAULT_VALUE;
 		this->_memory[this->RelativeAddress(SCY::SCY_ADDRESS)] = SCY::SCY_DEFAULT_VALUE;
@@ -268,34 +267,11 @@ private:
 				break;
 			}
 
-			case (NR11::NR11_ADDRESS):
-			{
-				API::data_t sequence{0x00};
-				switch ((data >> NR11::SEQUENCE_BIT) & 0x03)
-				{
-					case (0x00): sequence = 0b00000001; break;
-					case (0x01): sequence = 0b00000011; break;
-					case (0x02): sequence = 0b00001111; break;
-					case (0x03): sequence = 0b11111100; break;
-				}
-
-				APU::GetInstance().GetOscillator().GetWave(SoundChannel::PULSE_A)->SetSequence(sequence);
-
-				Message("TODO length");
-				break;
-			}
-
-			case (NR12::NR12_ADDRESS):
-			{
-				Message("TODO envelope");
-				break;
-			}
-
 			case (NR13::NR13_ADDRESS):
 			{
 				// Lower 8 bits of the frequency, the rest (3 more bits) are at NR14.
 				API::address_t frequency{APU::GetInstance().GetOscillator().GetWave(SoundChannel::PULSE_A)->GetFrequency()};
-				frequency = (frequency & 0xF0) | (data & 0x0F);
+				frequency = (frequency & 0xFF00) | (data & 0x00FF);
 				APU::GetInstance().GetOscillator().GetWave(SoundChannel::PULSE_A)->SetFrequency(frequency);
 				break;
 			}
@@ -315,34 +291,11 @@ private:
 				break;
 			}
 
-			case (NR21::NR21_ADDRESS):
-			{
-				API::data_t sequence{0x00};
-				switch ((data >> NR21::SEQUENCE_BIT) & 0x03)
-				{
-					case (0x00): sequence = 0b00000001; break;
-					case (0x01): sequence = 0b00000011; break;
-					case (0x02): sequence = 0b00001111; break;
-					case (0x03): sequence = 0b11111100; break;
-				}
-
-				APU::GetInstance().GetOscillator().GetWave(SoundChannel::PULSE_B)->SetSequence(sequence);
-
-				Message("TODO length");
-				break;
-			}
-
-			case (NR22::NR22_ADDRESS):
-			{
-				Message("TODO envelope");
-				break;
-			}
-
 			case (NR23::NR23_ADDRESS):
 			{
 				// Lower 8 bits of the frequency, the rest (3 more bits) are at NR24.
 				API::address_t frequency{APU::GetInstance().GetOscillator().GetWave(SoundChannel::PULSE_B)->GetFrequency()};
-				frequency = (frequency & 0xF0) | (data & 0x0F);
+				frequency = (frequency & 0xFF00) | (data & 0x00FF);
 				APU::GetInstance().GetOscillator().GetWave(SoundChannel::PULSE_B)->SetFrequency(frequency);
 				break;
 			}
@@ -366,7 +319,7 @@ private:
 			{
 				// Lower 8 bits of the frequency, the rest (3 more bits) are at NR34.
 				API::address_t frequency{APU::GetInstance().GetOscillator().GetWave(SoundChannel::WAVE)->GetFrequency()};
-				frequency = (frequency & 0xF0) | (data & 0x0F);
+				frequency = (frequency & 0xFF00) | (data & 0x00FF);
 				APU::GetInstance().GetOscillator().GetWave(SoundChannel::WAVE)->SetFrequency(frequency);
 				break;
 			}
