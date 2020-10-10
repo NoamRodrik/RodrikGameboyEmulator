@@ -10,10 +10,10 @@
 using namespace API;
 using namespace Core;
 
-int main(int argc, char** argv)
+[[nodiscard]] int main(int argc, char** argv)
 {
 	Processor::GetInstance().LoadGame();
-	Processor::GetInstance().GetPPU()->Startup();
+	SANITY(Processor::GetInstance().GetPPU()->Startup(), "Failed startup of PPU");
 
 	while (true)
 	{

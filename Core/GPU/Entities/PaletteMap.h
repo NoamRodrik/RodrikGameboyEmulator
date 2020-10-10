@@ -14,7 +14,7 @@ namespace Core
 class PaletteMap
 {
 public:
-	static const PixelColor ColorOf(const PaletteColor color)
+	[[nodiscard]] static const PixelColor ColorOf(const PaletteColor color)
 	{
 		// Get the left bits of the chosen color index.
 		return static_cast<PixelColor>(((BGP{} & (0b11 << (static_cast<API::data_t>(color) * 2))) >> (static_cast<API::data_t>(color) * 2)) & 0x03);

@@ -13,14 +13,14 @@ namespace Core
 {
 class WorkRAM;
 
-class CloneWorkRAM : public RAMDevice<0xE000, 0xFDFF>
+class [[nodiscard]] CloneWorkRAM : public RAMDevice<0xE000, 0xFDFF>
 {
 public:
 	CloneWorkRAM(API::IMemoryDeviceAccess& memory_accessor) : RAMDevice{memory_accessor} {}
 	virtual ~CloneWorkRAM() override = default;
 
 public:
-	virtual bool Write(const API::address_t absolute_address, const API::data_t data) override
+	[[nodiscard]] virtual bool Write(const API::address_t absolute_address, const API::data_t data) override
 	{
 		RET_FALSE_IF_FAIL(RAMDevice::Write(absolute_address, data), "Failed writing CloneWorkRAM data");
 

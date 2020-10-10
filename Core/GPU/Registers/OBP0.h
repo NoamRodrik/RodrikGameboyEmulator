@@ -10,7 +10,7 @@
 
 namespace Core
 {
-class OBP0 : public MemoryRegister<API::data_t>
+class [[nodiscard]] OBP0 : public MemoryRegister<API::data_t>
 {
 public:
 	constexpr OBP0() : MemoryRegister{OBP0_ADDRESS} {}

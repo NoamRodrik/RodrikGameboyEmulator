@@ -72,22 +72,28 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\Users\User\source\repos\RodrikGameBoyEmulator;$(IncludePath)</IncludePath>
-    <LibraryPath>$(LibraryPath)</LibraryPath>
+    <IncludePath>$(MSBuildProjectDirectory);$(IncludePath)</IncludePath>
+    <LibraryPath>$(MSBuildProjectDirectory)\Libs;$(LibraryPath)</LibraryPath>
+    <SourcePath>$(MSBuildProjectDirectory)\Libs;$(VC_SourcePath);</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>C:\Users\User\source\repos\RodrikGameBoyEmulator;$(IncludePath)</IncludePath>
-    <LibraryPath>$(LibraryPath)</LibraryPath>
+    <IncludePath>$(MSBuildProjectDirectory);$(IncludePath)</IncludePath>
+    <LibraryPath>$(MSBuildProjectDirectory)\Libs;$(LibraryPath)</LibraryPath>
+    <SourcePath>$(MSBuildProjectDirectory)\Libs;$(VC_SourcePath);</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>$(MSBuildProjectDirectory);$(IncludePath)</IncludePath>
     <SdlEntryPoint-SDL>WithStdioRedirect</SdlEntryPoint-SDL>
     <Linkage-SDL>static</Linkage-SDL>
+    <LibraryPath>$(MSBuildProjectDirectory)\Libs;$(LibraryPath)</LibraryPath>
+    <SourcePath>$(MSBuildProjectDirectory)\Libs;$(VC_SourcePath);</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>$(MSBuildProjectDirectory);$(IncludePath)</IncludePath>
     <SdlEntryPoint-SDL>WithStdioRedirect</SdlEntryPoint-SDL>
     <Linkage-SDL>static</Linkage-SDL>
+    <LibraryPath>$(MSBuildProjectDirectory)\Libs;$(LibraryPath)</LibraryPath>
+    <SourcePath>$(MSBuildProjectDirectory)\Libs;$(VC_SourcePath);</SourcePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -110,12 +116,17 @@
       <CompileAsManaged>false</CompileAsManaged>
       <AssemblerOutput>NoListing</AssemblerOutput>
       <PrecompiledHeaderFile />
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PreprocessorDefinitions>PA_ENABLE_DEBUG_OUTPUT=0;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>portaudio_x86.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <StackReserveSize>1048576</StackReserveSize>
     </Link>
+    <ProjectReference>
+      <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -128,11 +139,17 @@
       <CompileAs>CompileAsCpp</CompileAs>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>portaudio_x64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>
+      </DelayLoadDLLs>
     </Link>
+    <ProjectReference>
+      <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -156,14 +173,19 @@
       <CompileAsManaged>false</CompileAsManaged>
       <AssemblerOutput>NoListing</AssemblerOutput>
       <PrecompiledHeaderFile />
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PreprocessorDefinitions>PA_ENABLE_DEBUG_OUTPUT=0;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>portaudio_x86.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <StackReserveSize>1048576</StackReserveSize>
     </Link>
+    <ProjectReference>
+      <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -178,21 +200,33 @@
       <CompileAs>CompileAsCpp</CompileAs>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>portaudio_x64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>
+      </DelayLoadDLLs>
     </Link>
+    <ProjectReference>
+      <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="API\APU\Effects\IEffect.h" />
+    <ClInclude Include="API\APU\Effects\Length.h" />
     <ClInclude Include="API\Cartridge\ILoader.h" />
     <ClInclude Include="API\Cartridge\IMemoryBankController.h" />
     <ClInclude Include="API\Cartridge\Header.h" />
-    <ClInclude Include="Contrib\PixelGameEngine\OLCPGEXSound.h" />
+    <ClInclude Include="API\RingBuffer.h" />
     <ClInclude Include="Contrib\PixelGameEngine\OLCPixelGameEngine.h" />
     <ClInclude Include="API\Registers\RegisterPair.h" />
+    <ClInclude Include="Core\APU\APU.h" />
+    <ClInclude Include="Core\APU\Definitions.h" />
+    <ClInclude Include="API\APU\Effects\Envelope.h" />
+    <ClInclude Include="Core\APU\Mechanics\DAC.h" />
     <ClInclude Include="Core\APU\Registers\NR10.h" />
     <ClInclude Include="Core\APU\Registers\NR11.h" />
     <ClInclude Include="Core\APU\Registers\NR12.h" />
@@ -214,6 +248,14 @@
     <ClInclude Include="Core\APU\Registers\NR50.h" />
     <ClInclude Include="Core\APU\Registers\NR51.h" />
     <ClInclude Include="Core\APU\Registers\NR52.h" />
+    <ClInclude Include="Core\APU\Waves\ASoundChannel.h" />
+    <ClInclude Include="Core\APU\Waves\ISoundChannel.h" />
+    <ClInclude Include="Core\APU\Waves\Implementation\SoundChannel1.h" />
+    <ClInclude Include="Core\APU\Waves\Implementation\SoundChannel2.h" />
+    <ClInclude Include="Core\APU\Waves\Implementation\SoundChannel3.h" />
+    <ClInclude Include="Core\APU\Waves\Implementation\SoundChannelNoise.h" />
+    <ClInclude Include="Core\APU\Waves\Implementation\ASoundChannelSquare.h" />
+    <ClInclude Include="Core\APU\Waves\WaveController.h" />
     <ClInclude Include="Core\Bus\Bus.h" />
     <ClInclude Include="Core\Bus\DeviceManager\DeviceManager.h" />
     <ClInclude Include="Core\Bus\Devices\VideoRAM.h" />
@@ -343,6 +385,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="API\Cartridge\Header.cpp" />
+    <ClCompile Include="Core\APU\APU.cpp" />
+    <ClCompile Include="Core\APU\Mechanics\DAC.cpp" />
+    <ClCompile Include="Core\APU\Waves\Implementation\SoundChannel1.cpp" />
+    <ClCompile Include="Core\APU\Waves\Implementation\SoundChannel2.cpp" />
+    <ClCompile Include="Core\APU\Waves\Implementation\SoundChannel3.cpp" />
+    <ClCompile Include="Core\APU\Waves\Implementation\SoundChannelNoise.cpp" />
+    <ClCompile Include="Core\APU\Waves\WaveController.cpp" />
     <ClCompile Include="Core\Bus\DeviceManager\DeviceManager.cpp" />
     <ClCompile Include="Core\Cartridge\Controller.cpp" />
     <ClCompile Include="Core\Cartridge\Implementation\MBC1_0x02.cpp" />
@@ -363,6 +412,7 @@
     <None Include="BootROM\cpu_instrs.gb" />
     <None Include="BootROM\tetris.gb" />
     <None Include="LICENSE" />
+    <None Include="packages.config" />
     <None Include="README.md" />
     <None Include="RodrikGameBoyEmulator.aps" />
     <None Include="TestROM\01-special.gb" />
@@ -384,5 +434,15 @@
     <None Include="TestROM\tetris.gb" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="packages\portaudio.redist.0.19.1\build\native\portaudio.redist.targets" Condition="Exists('packages\portaudio.redist.0.19.1\build\native\portaudio.redist.targets')" />
+    <Import Project="packages\portaudio.0.19.1\build\native\portaudio.targets" Condition="Exists('packages\portaudio.0.19.1\build\native\portaudio.targets')" />
+  </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('packages\portaudio.redist.0.19.1\build\native\portaudio.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\portaudio.redist.0.19.1\build\native\portaudio.redist.targets'))" />
+    <Error Condition="!Exists('packages\portaudio.0.19.1\build\native\portaudio.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\portaudio.0.19.1\build\native\portaudio.targets'))" />
+  </Target>
 </Project>

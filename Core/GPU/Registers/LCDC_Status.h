@@ -11,7 +11,7 @@
 
 namespace Core
 {
-class LCDC_Status : public MemoryRegister<API::data_t>
+class [[nodiscard]] LCDC_Status : public MemoryRegister<API::data_t>
 {
 public:
 	constexpr LCDC_Status() : MemoryRegister{LCDC_ADDRESS} {}
@@ -22,7 +22,7 @@ public:
 	using MemoryRegister::operator API::data_t;
 
 public:
-	struct Status
+	struct [[nodiscard]] Status
 	{
 	public:
 		constexpr Status(const API::data_t data) :

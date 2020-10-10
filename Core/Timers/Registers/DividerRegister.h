@@ -10,7 +10,7 @@
 
 namespace Core
 {
-class DividerRegister : public MemoryRegister<API::data_t>
+class [[nodiscard]] DividerRegister : public MemoryRegister<API::data_t>
 {
 public:
 	DividerRegister() : MemoryRegister{DIVIDER_REGISTER_ADDRESS} {}

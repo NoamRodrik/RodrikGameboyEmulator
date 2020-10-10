@@ -15,25 +15,25 @@ namespace Core
 {
 class Instruction;
 
-class Processor : public API::StaticInstance<Processor>
+class [[nodiscard]] Processor : public API::StaticInstance<Processor>
 {
 public:
 	/* Returns the amount of clocks the operation needs. */
-	static const size_t Clock();
-	RegisterEngine& GetRegisters() { return this->_registers; }
-	Bus& GetMemory() { return this->_bus; }
-	gsl::not_null<IPPU*> GetPPU();
+	[[nodiscard]] static const size_t Clock();
+	[[nodiscard]] RegisterEngine& GetRegisters() { return this->_registers; }
+	[[nodiscard]] Bus& GetMemory() { return this->_bus; }
+	[[nodiscard]] gsl::not_null<IPPU*> GetPPU();
 
-	const RegisterEngine& GetRegisters() const { return this->_registers; }
-	const Bus& GetMemory() const { return this->_bus; }
+	[[nodiscard]] const RegisterEngine& GetRegisters() const { return this->_registers; }
+	[[nodiscard]] const Bus& GetMemory() const { return this->_bus; }
 
 	static inline void Stop() { Processor::GetInstance()._stop_request = true; }
 	static inline void Halt() { Processor::GetInstance()._halted = true; }
 	static inline void SetPrefixCommand() { Processor::GetInstance()._last_command_prefix = true; }
 
-	static inline bool IsStopped() { return Processor::GetInstance()._stop_request; }
-	static inline bool IsHalted() { return Processor::GetInstance()._halted; }
-	static inline bool IsPrefix() { return Processor::GetInstance()._last_command_prefix; }
+	[[nodiscard]] static inline bool IsStopped() { return Processor::GetInstance()._stop_request; }
+	[[nodiscard]] static inline bool IsHalted() { return Processor::GetInstance()._halted; }
+	[[nodiscard]] static inline bool IsPrefix() { return Processor::GetInstance()._last_command_prefix; }
 
 	static inline void ClearPrefixCommand() { Processor::GetInstance()._last_command_prefix = false; }
 	static inline void ClearStop() { Processor::GetInstance()._stop_request = false; }

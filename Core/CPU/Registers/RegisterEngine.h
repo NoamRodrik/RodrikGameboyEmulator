@@ -12,22 +12,22 @@
 
 namespace Core
 {
-class RegisterEngine
+class [[nodiscard]] RegisterEngine
 {
 public:
 	RegisterEngine(Bus& memory) : _memory{memory} {}
 
-	API::StackRegisterBase& GetStackRegister()
+	[[nodiscard]] API::StackRegisterBase& GetStackRegister()
 	{
 		return this->_stack_pointer;
 	}
 
-	API::AddressRegisterBase& GetProgramCounter()
+	[[nodiscard]] API::AddressRegisterBase& GetProgramCounter()
 	{
 		return this->_program_counter;
 	}
 
-	LogicRegisters& GetLogicRegisters()
+	[[nodiscard]] LogicRegisters& GetLogicRegisters()
 	{
 		return this->_logic_registers;
 	}

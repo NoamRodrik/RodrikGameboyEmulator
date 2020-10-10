@@ -12,13 +12,13 @@
 
 namespace Core
 {
-class Timer : public API::StaticInstance<Timer>
+class [[nodiscard]] Timer : public API::StaticInstance<Timer>
 {
 private:
-	class TimerObject
+	class [[nodiscard]] TimerObject
 	{
 	public:
-		size_t GetTime() const;
+		[[nodiscard]] size_t GetTime() const;
 		void Increase(size_t amount);
 		void Lower(size_t amount);
 
@@ -27,22 +27,22 @@ private:
 	};
 public:
 	static void Clock(size_t cycles);
-	static bool IsCounterOverflow(const API::data_t new_timer_counter);
+	[[nodiscard]] static bool IsCounterOverflow(const API::data_t new_timer_counter);
 	static void LaunchInterrupt();
 
 private:
 	static void Tick();
-	static size_t TimerControlThreshold();
-	static bool IsTimerEnabled();
+	[[nodiscard]] static size_t TimerControlThreshold();
+	[[nodiscard]] static bool IsTimerEnabled();
 	static void AssignCounterToModulo();
-	static bool MachinePassedThreshold();
-	static bool CounterPassedThreshold();
-	static bool DividerPassedThreshold();
+	[[nodiscard]] static bool MachinePassedThreshold();
+	[[nodiscard]] static bool CounterPassedThreshold();
+	[[nodiscard]] static bool DividerPassedThreshold();
 
 private:
-	static TimerObject& Machine();
-	static TimerObject& Counter();
-	static TimerObject& Divider();
+	[[nodiscard]] static TimerObject& Machine();
+	[[nodiscard]] static TimerObject& Counter();
+	[[nodiscard]] static TimerObject& Divider();
 
 private:
 	static constexpr auto TIMER_THRESHOLD{16};

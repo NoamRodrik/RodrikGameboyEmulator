@@ -22,7 +22,7 @@ namespace Core
  * The pixel FIFO works as a pixel priority mechanic.
  * It's in charge of all points in the PPU (from background, to sprites...).
  */
-class PixelFIFO
+class [[nodiscard]] PixelFIFO
 {
 public:
 	explicit PixelFIFO(IPPU& ppu) : _ppu{ppu} {}
@@ -42,7 +42,7 @@ public:
 		this->SetY(this->GetY() + 1);
 	}
 
-	std::pair<PixelSource, PaletteColor> FetchNextPixel()
+	[[nodiscard]] std::pair<PixelSource, PaletteColor> FetchNextPixel()
 	{
 		// Fetching from the first row if it isn't empty.
 		if (!this->_lower_row.IsEmpty())
@@ -62,17 +62,17 @@ public:
 		return {PixelSource::BGP, PaletteColor::FIRST_PALETTE};
 	}
 
-	bool IsEmpty() const
+	[[nodiscard]] const bool IsEmpty() const
 	{
 		return this->_lower_row.IsEmpty() && this->_upper_row.IsEmpty();
 	}
 
-	bool NeedsFill() const
+	[[nodiscard]] const bool NeedsFill() const
 	{
 		return this->_upper_row.IsEmpty();
 	}
 
-	const bool Execute()
+	[[nodiscard]] const bool Execute()
 	{
 		// If we need to fill the FIFO, we can't fetch pixels yet.
 		// If we passed the screen, we don't need to draw.
@@ -131,7 +131,7 @@ public:
 		SANITY(this->_lower_row.EmptyBitsAmount() == 0, "Serious bug occurred");
 	}
 
-	const auto& GetScreen() const
+	[[nodiscard]] const auto& GetScreen() const
 	{
 		return this->_screen;
 	}
@@ -155,12 +155,12 @@ public:
 		}
 	}
 
-	const API::data_t GetY() const
+	[[nodiscard]] const API::data_t GetY() const
 	{
 		return static_cast<API::data_t>(this->_y);
 	}
 
-	const API::data_t GetX() const
+	[[nodiscard]] const API::data_t GetX() const
 	{
 		return static_cast<API::data_t>(this->_x);
 	}
@@ -176,33 +176,33 @@ public:
 		}
 	}
 
-	const bool YPassedThreshold() const
+	[[nodiscard]] const bool YPassedThreshold() const
 	{
 		return GetWrappedAroundDistance(this->GetY(), this->GetSCY()) >= SCREEN_HEIGHT_PIXELS - 1;
 	}
 
-	const bool XPassedThreshold() const
+	[[nodiscard]] const bool XPassedThreshold() const
 	{
 		return GetWrappedAroundDistance(this->GetX(), this->GetSCX()) >= SCREEN_WIDTH_PIXELS;
 	}
 
-	const API::data_t GetSCY() const
+	[[nodiscard]] const API::data_t GetSCY() const
 	{
 		return static_cast<API::data_t>(this->_scy);
 	}
 
-	const API::data_t GetSCX() const
+	[[nodiscard]] const API::data_t GetSCX() const
 	{
 		return static_cast<API::data_t>(this->_scx);
 	}
 
 private:
-	bool DrawPalette(int32_t x, int32_t y, PaletteColor color)
+	[[nodiscard]] const bool DrawPalette(int32_t x, int32_t y, PaletteColor color)
 	{
 		return DrawPixel(x, y, PaletteMap::ColorOf(color));
 	}
 
-	bool DrawPixel(int32_t x, int32_t y, PixelColor color)
+	[[nodiscard]] const bool DrawPixel(int32_t x, int32_t y, PixelColor color)
 	{
 		switch (color)
 		{

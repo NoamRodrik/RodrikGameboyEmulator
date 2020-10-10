@@ -11,7 +11,7 @@
 
 namespace Core
 {
-class HighRAM : public RAMDevice<0xFF80, 0xFFFE>
+class [[nodiscard]] HighRAM : public RAMDevice<0xFF80, 0xFFFE>
 {
 public:
 	HighRAM(API::IMemoryDeviceAccess& memory_accessor) : RAMDevice{memory_accessor} {}

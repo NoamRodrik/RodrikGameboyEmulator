@@ -7,11 +7,10 @@
 #define __LR35902_TIMER_MODULO_REGISTER_H__
 
 #include <Core/CPU/Registers/MemoryRegister.h>
-#include "TimerCounter.h"
 
 namespace Core
 {
-class TimerModulo : public MemoryRegister<API::data_t>
+class [[nodiscard]] TimerModulo : public MemoryRegister<API::data_t>
 {
 public:
 	TimerModulo() : MemoryRegister{TIMER_MODULO_ADDRESS} {}

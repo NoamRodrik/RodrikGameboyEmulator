@@ -10,7 +10,7 @@
 
 namespace Core
 {
-class NR30 : public MemoryRegister<API::data_t>
+class [[nodiscard]] NR30 : public MemoryRegister<API::data_t>
 {
 public:
 	constexpr NR30() : MemoryRegister{NR30_ADDRESS} {}
@@ -21,6 +21,13 @@ public:
 	using MemoryRegister::operator API::data_t;
 
 public:
+	[[nodiscard]] const bool IsSoundOn() const
+	{
+		return (static_cast<API::data_t>(*this) >> NR30_ACTIVATED_BIT) & 0b01;
+	}
+
+public:
+	static constexpr API::data_t    NR30_ACTIVATED_BIT{0x07};
 	static constexpr API::address_t NR30_ADDRESS{0xFF1A};
 	static constexpr API::address_t NR30_DEFAULT_VALUE{0x7F};
 };

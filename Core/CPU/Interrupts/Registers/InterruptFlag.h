@@ -10,7 +10,7 @@
 
 namespace Core
 {
-class InterruptFlag : public MemoryRegister<API::data_t>
+class [[nodiscard]] InterruptFlag : public MemoryRegister<API::data_t>
 {
 public:
 	InterruptFlag() : MemoryRegister{INTERRUPT_FLAG_ADDRESS} {}

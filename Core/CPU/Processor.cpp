@@ -13,6 +13,7 @@
 #include <Core/CPU/Processor.h>
 #include <Core/Timers/Timer.h>
 #include <Core/Clock/Clock.h>
+#include <Core/APU/APU.h>
 #include <Tools/Loader.h>
 #include <filesystem>
 #include <time.h>
@@ -88,6 +89,7 @@ const size_t Processor::Clock()
 	{
 		// If it's not stopped, update devices.
 		Processor::GetInstance().GetPPU()->Clock(clock_cycle);
+		APU::GetInstance().Clock(clock_cycle);
 		Timer::Clock(clock_cycle);
 	}
 

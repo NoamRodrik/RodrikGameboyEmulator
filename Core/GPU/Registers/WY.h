@@ -10,7 +10,7 @@
 
 namespace Core
 {
-class WY : public MemoryRegister<API::data_t>
+class [[nodiscard]] WY : public MemoryRegister<API::data_t>
 {
 public:
 	constexpr WY() : MemoryRegister{WY_ADDRESS} {}

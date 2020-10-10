@@ -11,7 +11,7 @@
 namespace Core
 {
 /* Write only! */
-class DMA : public MemoryRegister<API::data_t>
+class [[nodiscard]] DMA : public MemoryRegister<API::data_t>
 {
 public:
 	constexpr DMA() : MemoryRegister{DMA_ADDRESS} {}

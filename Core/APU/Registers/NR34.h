@@ -10,7 +10,7 @@
 
 namespace Core
 {
-class NR34 : public MemoryRegister<API::data_t>
+class [[nodiscard]] NR34 : public MemoryRegister<API::data_t>
 {
 public:
 	constexpr NR34() : MemoryRegister{NR34_ADDRESS} {}
@@ -21,6 +21,14 @@ public:
 	using MemoryRegister::operator API::data_t;
 
 public:
+	[[nodiscard]] const bool IsLengthExpired() const
+	{
+		return Tools::IsBitSet(static_cast<API::data_t>(*this), NR34_LENGTH_EXPIRES_BIT);
+	}
+
+public:
+	static constexpr API::data_t    NR34_RESTART_BIT{0x07};
+	static constexpr API::data_t    NR34_LENGTH_EXPIRES_BIT{0x06};
 	static constexpr API::address_t NR34_ADDRESS{0xFF1E};
 	static constexpr API::address_t NR34_DEFAULT_VALUE{0xBF};
 };

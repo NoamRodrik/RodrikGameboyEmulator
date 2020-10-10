@@ -7,11 +7,9 @@
 #define __GPU_ENGINE_MAIN_PIXEL_ENGINE_H__
 
 #define OLC_PGE_APPLICATION
-#define OLC_PGEX_SOUND
 
 #include <Contrib/PixelGameEngine/OLCPixelGameEngine.h>
 #include <API/Memory/Device/IMemoryDeviceAccess.h>
-#include <Contrib/PixelGameEngine/OLCPGEXSound.h>
 #include <Core/GPU/Registers/LCDC_Control.h>
 #include <Core/GPU/Mechanics/LCDRender.h>
 #include <Core/GPU/Entities/PaletteMap.h>
@@ -21,12 +19,13 @@
 #include <Core/Clock/Clock.h>
 #include <API/Definitions.h>
 #include <Core/GPU/IPPU.h>
+#include <Core/APU/APU.h>
 #include <Tools/Tools.h>
 #include <array>
 
 namespace Core
 {
-class MainPixelEngine : public olc::PixelGameEngine, public IPPU
+class [[nodiscard]] MainPixelEngine : public olc::PixelGameEngine, public IPPU
 {
 public:
 	MainPixelEngine(Processor& processor) : _processor{processor}
@@ -38,7 +37,7 @@ public:
 	virtual ~MainPixelEngine() = default;
 
 public:
-	virtual bool Startup() override
+	[[nodiscard]] virtual bool Startup() override
 	{
 		RET_FALSE_IF_FAIL(this->Construct(SCREEN_WIDTH_PIXELS, SCREEN_HEIGHT_PIXELS, 4, 4), "Failed constructing pixel engine");
 		this->_gpu_thread.reset(gsl::not_null<std::thread*>{new std::thread{&MainPixelEngine::Start, this}});
@@ -54,7 +53,7 @@ public:
 		}
 	}
 
-	virtual bool IsLCDEnabled() const override
+	[[nodiscard]] virtual bool IsLCDEnabled() const override
 	{
 		return this->_enabled;
 	}
@@ -71,28 +70,27 @@ public:
 		this->_render.Start();
 	}
 
-	virtual PPUState GetState() const override
+	[[nodiscard]] virtual PPUState GetState() const override
 	{
 		return this->_render._state;
 	}
 
 private:
-	virtual bool OnUserDestroy() override
-	{
-		this->_processor.GetMemory()._device_manager._mbc_controller->CloseMBC();
-		return olc::SOUND::DestroyAudio();
-	}
-
-	virtual bool OnUserCreate() override
+	[[nodiscard]] virtual bool OnUserCreate() override
 	{
 		// Called once at startup, drawing white pixels.
-		RET_FALSE_IF_FAIL(olc::SOUND::InitialiseAudio(44100, 1, 8, 512), "Failed initializing audio");
 		this->SetPixelMode(olc::Pixel::Mode::NORMAL);
 		this->EnableLCD();
 		return true;
 	}
 
-	virtual bool OnUserUpdate(float) override
+	[[nodiscard]] virtual bool OnUserDestroy() override
+	{
+		this->_processor.GetMemory()._device_manager._mbc_controller->CloseMBC();
+		return true;
+	}
+
+	[[nodiscard]] virtual bool OnUserUpdate(float) override
 	{
 		Clock::SyncGPUFrame();
 		this->HandleButtonPress();
@@ -104,7 +102,7 @@ private:
 		this->_render.InitiateDMA();
 	}
 
-	bool Render()
+	[[nodiscard]] const bool Render()
 	{
 		auto& screen = this->_render.GetScreen();
 
@@ -119,7 +117,7 @@ private:
 		return true;
 	}
 
-	virtual Processor& GetProcessor() override
+	[[nodiscard]] virtual Processor& GetProcessor() override
 	{
 		return this->_processor;
 	}

@@ -11,7 +11,7 @@
 
 namespace Core
 {
-class OAMRAM : public RAMDevice<0xFE00, 0xFE9F>
+class [[nodiscard]] OAMRAM : public RAMDevice<0xFE00, 0xFE9F>
 {
 public:
 	OAMRAM(API::IMemoryDeviceAccess& memory_accessor) : RAMDevice{memory_accessor} {}

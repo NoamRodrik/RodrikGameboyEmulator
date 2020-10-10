@@ -10,7 +10,7 @@
 
 namespace Core
 {
-class IME : API::StaticInstance<IME>
+class [[nodiscard]] IME : API::StaticInstance<IME>
 {
 public:
 	static inline void EnableInterrupts() { IME::GetInstance()._enabled = true; }

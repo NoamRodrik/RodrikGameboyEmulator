@@ -10,11 +10,11 @@
 #include <API/Definitions.h>
 #include <chrono>
 
-namespace Core
-{
 using namespace std::chrono_literals;
 
-class Clock : public API::StaticInstance<Clock>
+namespace Core
+{
+class [[nodiscard]] Clock : public API::StaticInstance<Clock>
 {
 public:
 	Clock() = default;

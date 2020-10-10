@@ -92,7 +92,7 @@ bool MemoryBankController_1::Write(const API::address_t absolute_address, const 
 	return false;
 }
 
-bool MemoryBankController_1::RomUpperBankNumberAction(const data_t data)
+const bool MemoryBankController_1::RomUpperBankNumberAction(const data_t data)
 {
 	CartridgeHeader header{this->_rom_memory.GetMemoryPointer()};
 
@@ -123,7 +123,7 @@ bool MemoryBankController_1::RomUpperBankNumberAction(const data_t data)
 	return true;
 }
 
-bool MemoryBankController_1::RomLowerBankNumberAction(const data_t data)
+const bool MemoryBankController_1::RomLowerBankNumberAction(const data_t data)
 {
 	CartridgeHeader header{this->_rom_memory.GetMemoryPointer()};
 

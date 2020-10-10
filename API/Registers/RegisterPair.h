@@ -14,7 +14,7 @@ namespace API
 static_assert(std::numeric_limits<data_t>::digits == 8);
 static_assert(std::numeric_limits<address_t>::digits == std::numeric_limits<data_t>::digits * 2);
 
-class RegisterPair
+class [[nodiscard]] RegisterPair
 {
 public:
 	constexpr RegisterPair(data_t& msb, data_t& lsb) : _msb{msb}, _lsb{lsb} {}
@@ -37,18 +37,18 @@ public:
 		return *this;
 	}
 
-	constexpr operator address_t() const
+	[[nodiscard]] constexpr operator address_t() const
 	{
 		return ((address_t{this->_msb} << std::numeric_limits<data_t>::digits) & 0xFF00) | (this->_lsb & 0x00FF);
 	}
 
 private:
-	static constexpr data_t get_msb(const address_t value)
+	[[nodiscard]] static constexpr data_t get_msb(const address_t value)
 	{
 		return (value >> std::numeric_limits<data_t>::digits) & 0x00FF;
 	}
 
-	static constexpr data_t get_lsb(const address_t value)
+	[[nodiscard]] static constexpr data_t get_lsb(const address_t value)
 	{
 		return value & 0x00FF;
 	}

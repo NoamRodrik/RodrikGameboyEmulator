@@ -11,7 +11,7 @@
 namespace Core
 {
 /* Read only (for the game!) */
-class LY : public MemoryRegister<API::data_t>
+class [[nodiscard]] LY : public MemoryRegister<API::data_t>
 {
 public:
 	constexpr LY() : MemoryRegister{LY_ADDRESS} {}

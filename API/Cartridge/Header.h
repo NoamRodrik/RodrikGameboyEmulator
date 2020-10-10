@@ -12,10 +12,10 @@
 
 namespace API
 {
-class CartridgeHeader : public API::IMemoryDeviceAccess
+class [[nodiscard]] CartridgeHeader : public API::IMemoryDeviceAccess
 {
 public:
-	enum class CartridgeType : std::uint8_t
+	enum class [[nodiscard]] CartridgeType : std::uint8_t
 	{
 		ROM = 0x00,
 		MBC1 = 0x01,
@@ -47,7 +47,7 @@ public:
 		HUC1_RAM_BATTERY = 0xFF
 	};
 
-	enum class ROMSizeType : std::uint8_t
+	enum class [[nodiscard]] ROMSizeType : std::uint8_t
 	{
 		_32_KB = 0x00,
 		_64_KB = 0x01,
@@ -63,7 +63,7 @@ public:
 		_1500_KB = 0x54
 	};
 
-	enum class ROMSizeValue : std::uint16_t
+	enum class [[nodiscard]] ROMSizeValue : std::uint16_t
 	{
 		_32_KB = 32,
 		_64_KB = 64,
@@ -79,7 +79,7 @@ public:
 		_1500_KB = 1536
 	};
 
-	enum class RAMSizeType : std::uint8_t
+	enum class [[nodiscard]] RAMSizeType : std::uint8_t
 	{
 		NONE = 0x00,
 		_2_KB = 0x01,
@@ -89,7 +89,7 @@ public:
 		_64_KB = 0x05
 	};
 
-	enum class RAMSizeValue : std::uint16_t
+	enum class [[nodiscard]] RAMSizeValue : std::uint16_t
 	{
 		NONE = 0,
 		_2_KB = 2,
@@ -105,33 +105,33 @@ public:
 	~CartridgeHeader() = default;
 
 public:
-	inline const API::address_t GlobalChecksum() const
+	[[nodiscard]] inline const API::address_t GlobalChecksum() const
 	{
 		return static_cast<API::address_t>(CartridgeHeader::Fetch<GLOBAL_CHECKSUM_OFFSET>()) << 8 |
 			   static_cast<API::address_t>(CartridgeHeader::Fetch<GLOBAL_CHECKSUM_OFFSET + 1>());
 	}
 
-	inline const CartridgeType MBC() const
+	[[nodiscard]] inline const CartridgeType MBC() const
 	{
 		return static_cast<CartridgeType>(CartridgeHeader::Fetch<CARTRIDGE_TYPE_OFFSET>());
 	}
 
-	inline const ROMSizeType ROM() const
+	[[nodiscard]] inline const ROMSizeType ROM() const
 	{
 		return static_cast<ROMSizeType>(CartridgeHeader::Fetch<ROM_SIZE_OFFSET>());
 	}
 
-	inline const RAMSizeType RAM() const
+	[[nodiscard]] inline const RAMSizeType RAM() const
 	{
 		return static_cast<RAMSizeType>(CartridgeHeader::Fetch<RAM_SIZE_OFFSET>());
 	}
 
-	const ROMSizeValue ROMSize() const;
-	const RAMSizeValue RAMSize() const;
+	[[nodiscard]] const ROMSizeValue ROMSize() const;
+	[[nodiscard]] const RAMSizeValue RAMSize() const;
 
 private:
 	template <std::size_t OFFSET>
-	inline const data_t Fetch() const
+	[[nodiscard]] inline const data_t Fetch() const
 	{
 		data_t data{0};
 		SANITY(this->Read(OFFSET, data),
@@ -139,7 +139,7 @@ private:
 		return data;
 	}
 
-	virtual bool Read(const API::address_t absolute_address, API::data_t& result) const override
+	[[nodiscard]] virtual bool Read(const API::address_t absolute_address, API::data_t& result) const override
 	{
 		if (this->_device_access != nullptr)
 		{
@@ -152,13 +152,13 @@ private:
 		return true;
 	}
 
-	virtual bool Write(const API::address_t absolute_address, const API::data_t data) override
+	[[nodiscard]] virtual bool Write(const API::address_t absolute_address, const API::data_t data) override
 	{
 		STOP_RUNNING("Can't write to cartridge header");
 		return false;
 	}
 
-	virtual bool WriteDirectly(const API::address_t absolute_address, const API::data_t data) override
+	[[nodiscard]] virtual bool WriteDirectly(const API::address_t absolute_address, const API::data_t data) override
 	{
 		STOP_RUNNING("Can't write to cartridge header");
 		return false;

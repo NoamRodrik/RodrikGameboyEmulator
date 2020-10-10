@@ -10,7 +10,7 @@
 
 namespace Core
 {
-class LYC : public MemoryRegister<API::data_t>
+class [[nodiscard]] LYC : public MemoryRegister<API::data_t>
 {
 public:
 	constexpr LYC() : MemoryRegister{LYC_ADDRESS} {}

@@ -18,7 +18,7 @@ namespace Core
  * Serves as an abstraction between the MBC type and the MBC operations.
  * Must call UpdateMBC before usage (otherwise will use the wrong MBC).
  */
-class MBCController : public API::AMemoryBankController
+class [[nodiscard]] MBCController : public API::AMemoryBankController
 {
 public:
 	MBCController(API::IMemoryDeviceAccess& memory_accessor, std::shared_ptr<API::ILoader> loader);
@@ -31,16 +31,16 @@ public:
 	 *
 	 * Returns true if exists such MBC.
 	 */
-	bool UpdateMBC();
+	[[nodiscard]] const bool UpdateMBC();
 
 public:
-	virtual API::CartridgeHeader::CartridgeType Type() const override;
-	virtual size_t BankSize() const override;
+	[[nodiscard]] virtual API::CartridgeHeader::CartridgeType Type() const override;
+	[[nodiscard]] virtual size_t BankSize() const override;
 	virtual void LoadMBC() override;
 	virtual void CloseMBC() override;
-	virtual bool Read(const API::address_t absolute_address, API::data_t& result) const override;
-	virtual bool Write(const API::address_t absolute_address, const API::data_t data) override;
-	virtual bool WriteDirectly(const API::address_t absolute_address, const API::data_t data) override;
+	[[nodiscard]] virtual bool Read(const API::address_t absolute_address, API::data_t& result) const override;
+	[[nodiscard]] virtual bool Write(const API::address_t absolute_address, const API::data_t data) override;
+	[[nodiscard]] virtual bool WriteDirectly(const API::address_t absolute_address, const API::data_t data) override;
 
 private:
 	void Setup();

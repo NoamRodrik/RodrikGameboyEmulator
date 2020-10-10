@@ -10,10 +10,15 @@
 #include <string_view>
 #include <stdint.h>
 #include <limits>
+#include <cmath>
 #include <array>
 
 namespace API
 {
+	/* Necessary mathematical constants */
+	template <typename T>
+	static constexpr T PI{static_cast<T>(3.14159265358979323846)};
+
 	/* Necessary types for the CPU */
 	using address_t = uint16_t;
 	using data_t = uint8_t;
@@ -57,7 +62,22 @@ namespace API
 	static constexpr address_t OVERRIDE_BOOTROM_ADDRESS{0xFF50};
 
 	/* Timer Definitions */
-	static constexpr auto LR35902_HZ_CLOCK = 4'194'304;
+	static constexpr auto		 LR35902_HZ_CLOCK{4'194'304};
+	static constexpr std::size_t LR35902_HZ_CLOCK_256HZ{LR35902_HZ_CLOCK / 256};
+	static constexpr std::size_t LR35902_HZ_CLOCK_128HZ{LR35902_HZ_CLOCK / 128};
+	static constexpr std::size_t LR35902_HZ_CLOCK_64HZ{LR35902_HZ_CLOCK / 64};
+
+	/* APU */
+	static constexpr size_t		 SAMPLE_RATE{44100};
+	static constexpr std::size_t AUDIO_SAMPLE_IN_CYCLES{LR35902_HZ_CLOCK / (SAMPLE_RATE + 0xF0)};
+	static constexpr size_t		 BUFFER_FRAMES{1024};
+	static constexpr size_t		 OUTPUT_TERMINALS_AMOUNT{2};
+	static constexpr size_t		 AUDIO_CHANNELS_AMOUNT{4};
+	static constexpr float_t	 BASE_FREQUENCY{440.0f};
+	static constexpr float_t	 BASE_AMPLITUDE{1.0f};
+	static constexpr data_t		 AUDIO_DEFAULT_NOTE_LENGTH{0x40};
+	static constexpr address_t   WAVE_PATTERN_RAM_OFFSET{0xFF30};
+	static constexpr address_t   WAVE_PATTERN_RAM_END{0xFF3F};
 
 	/* Boot Definitions */
 #ifdef SKIP_BOOT

@@ -12,7 +12,7 @@
 namespace Core
 {
 /* Flag Register Index */
-enum class Flag : API::data_t
+enum class [[nodiscard]] Flag : API::data_t
 {
 	ZERO = 7,
 	SUB = 6,
@@ -25,14 +25,14 @@ static_assert(static_cast<uint8_t>(Flag::ZERO) < CHAR_BIT &&
 	          static_cast<uint8_t>(Flag::HALF_CARRY) < CHAR_BIT &&
 	          static_cast<uint8_t>(Flag::CARRY) < CHAR_BIT);
 
-class EFL_Register : public API::FlagsRegisterBase
+class [[nodiscard]] EFL_Register : public API::FlagsRegisterBase
 {
 public:
 	using API::FlagsRegisterBase::FlagsRegisterBase;
 	using API::FlagsRegisterBase::RegisterType;
 
 public:
-	constexpr bool IsSet(const Flag flag) const
+	[[nodiscard]] constexpr bool IsSet(const Flag flag) const
 	{
 		return API::FlagsRegisterBase::GetFlag(static_cast<const uint8_t>(flag));
 	}

@@ -12,7 +12,7 @@
 
 namespace Core
 {
-class InterruptSwitch : public RAMDevice<0xFFFF, 0xFFFF>
+class [[nodiscard]] InterruptSwitch : public RAMDevice<0xFFFF, 0xFFFF>
 {
 public:
 	InterruptSwitch(API::IMemoryDeviceAccess& memory_accessor) : RAMDevice{memory_accessor}

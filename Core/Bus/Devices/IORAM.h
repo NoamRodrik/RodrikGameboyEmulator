@@ -52,10 +52,11 @@
 #include <Core/Bus/RAMDevice.h>
 #include <Core/Timers/Timer.h>
 #include <API/Definitions.h>
+#include <Core/APU/APU.h>
 
 namespace Core
 {
-class IORAM : public RAMDevice<0xFF00, 0xFF7F>
+class [[nodiscard]] IORAM : public RAMDevice<0xFF00, 0xFF7F>
 {
 public:
 	IORAM(API::IMemoryDeviceAccess& memory_accessor) : RAMDevice{memory_accessor}
@@ -103,7 +104,7 @@ public:
 	}
 
 private:
-	virtual bool InterceptRead(const API::address_t absolute_address, API::data_t& data) const override
+	[[nodiscard]] virtual bool InterceptRead(const API::address_t absolute_address, API::data_t& data) const override
 	{
 		switch (absolute_address)
 		{
@@ -140,7 +141,7 @@ private:
 		return false;
 	}
 
-	virtual bool InterceptWrite(const API::address_t absolute_address, const API::data_t data) override
+	[[nodiscard]] virtual bool InterceptWrite(const API::address_t absolute_address, const API::data_t data) override
 	{
 		switch (absolute_address)
 		{
@@ -263,6 +264,78 @@ private:
 				this->_memory[this->RelativeAddress(DMA::DMA_ADDRESS)] = data;
 				Processor::GetInstance().GetPPU()->InitiateDMA();
 				return true;
+				break;
+			}
+
+			case (NR13::NR13_ADDRESS):
+			{
+				// Lower 8 bits of the frequency, the rest (3 more bits) are at NR14.
+				API::address_t frequency{APU::GetInstance().GetOscillator().GetWave(SoundChannel::PULSE_A)->GetFrequency()};
+				frequency = (frequency & 0xFF00) | (data & 0x00FF);
+				APU::GetInstance().GetOscillator().GetWave(SoundChannel::PULSE_A)->SetFrequency(frequency);
+				break;
+			}
+
+			case (NR14::NR14_ADDRESS):
+			{
+				// Upper 3 bits of the frequency, the rest (8 more bits) are at NR13.
+				API::address_t frequency{APU::GetInstance().GetOscillator().GetWave(SoundChannel::PULSE_A)->GetFrequency()};
+				frequency = ((data & 0b111) << CHAR_BIT) | (frequency & 0xFF);
+				APU::GetInstance().GetOscillator().GetWave(SoundChannel::PULSE_A)->SetFrequency(frequency);
+
+				if ((data >> NR14::NR14_RESTART_BIT) & 0b01)
+				{
+					APU::GetInstance().GetOscillator().GetWave(SoundChannel::PULSE_A)->Restart();
+				}
+
+				break;
+			}
+
+			case (NR23::NR23_ADDRESS):
+			{
+				// Lower 8 bits of the frequency, the rest (3 more bits) are at NR24.
+				API::address_t frequency{APU::GetInstance().GetOscillator().GetWave(SoundChannel::PULSE_B)->GetFrequency()};
+				frequency = (frequency & 0xFF00) | (data & 0x00FF);
+				APU::GetInstance().GetOscillator().GetWave(SoundChannel::PULSE_B)->SetFrequency(frequency);
+				break;
+			}
+
+			case (NR24::NR24_ADDRESS):
+			{
+				// Upper 3 bits of the frequency, the rest (8 more bits) are at NR23.
+				API::address_t frequency{APU::GetInstance().GetOscillator().GetWave(SoundChannel::PULSE_B)->GetFrequency()};
+				frequency = ((data & 0b111) << CHAR_BIT) | (frequency & 0xFF);
+				APU::GetInstance().GetOscillator().GetWave(SoundChannel::PULSE_B)->SetFrequency(frequency);
+
+				if ((data >> NR24::NR24_RESTART_BIT) & 0b01)
+				{
+					APU::GetInstance().GetOscillator().GetWave(SoundChannel::PULSE_B)->Restart();
+				}
+
+				break;
+			}
+
+			case (NR33::NR33_ADDRESS):
+			{
+				// Lower 8 bits of the frequency, the rest (3 more bits) are at NR34.
+				API::address_t frequency{APU::GetInstance().GetOscillator().GetWave(SoundChannel::WAVE)->GetFrequency()};
+				frequency = (frequency & 0xFF00) | (data & 0x00FF);
+				APU::GetInstance().GetOscillator().GetWave(SoundChannel::WAVE)->SetFrequency(frequency);
+				break;
+			}
+
+			case (NR34::NR34_ADDRESS):
+			{
+				// Upper 3 bits of the frequency, the rest (8 more bits) are at NR33.
+				API::address_t frequency{APU::GetInstance().GetOscillator().GetWave(SoundChannel::WAVE)->GetFrequency()};
+				frequency = ((data & 0b111) << CHAR_BIT) | (frequency & 0xFF);
+				APU::GetInstance().GetOscillator().GetWave(SoundChannel::WAVE)->SetFrequency(frequency);
+
+				if ((data >> NR34::NR34_RESTART_BIT) & 0b01)
+				{
+					APU::GetInstance().GetOscillator().GetWave(SoundChannel::WAVE)->Restart();
+				}
+
 				break;
 			}
 		}

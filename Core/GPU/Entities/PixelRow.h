@@ -22,7 +22,7 @@ namespace Core
  * Each column is a bit, but data is read as a row.
  * Thus there are 8 pixels in one row.
  */
-class PixelRow
+class [[nodiscard]] PixelRow
 {
 public:
 	constexpr PixelRow() = default;
@@ -42,7 +42,7 @@ public:
 	}
 
 public:
-	constexpr auto StealTopColor()
+	[[nodiscard]] constexpr auto StealTopColor()
 	{
 		auto color = PaletteColor{(static_cast<uint8_t>(Tools::IsBitSet(this->_upper, TOP_COLOR_INDEX)) << 1) |
 								  (static_cast<uint8_t>(Tools::IsBitSet(this->_lower, TOP_COLOR_INDEX)))};

@@ -10,7 +10,7 @@
 
 namespace Core
 {
-class WX : public MemoryRegister<API::data_t>
+class [[nodiscard]] WX : public MemoryRegister<API::data_t>
 {
 public:
 	constexpr WX() : MemoryRegister{WX_ADDRESS} {}

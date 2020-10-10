@@ -11,7 +11,7 @@
 
 namespace Core
 {
-class ExternalRAM : public RAMDevice<0xA000, 0xBFFF>
+class [[nodiscard]] ExternalRAM : public RAMDevice<0xA000, 0xBFFF>
 {
 public:
 	ExternalRAM(API::IMemoryDeviceAccess& memory_accessor) : RAMDevice{memory_accessor} {}

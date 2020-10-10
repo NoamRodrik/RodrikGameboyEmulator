@@ -11,7 +11,7 @@
 
 namespace Core
 {
-class SP_Register : public API::StackRegisterBase
+class [[nodiscard]] SP_Register : public API::StackRegisterBase
 {
 public:
 	SP_Register(RegisterType&& reg_value, API::IMemoryDeviceAccess& memory_context) :

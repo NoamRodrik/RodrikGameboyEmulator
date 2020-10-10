@@ -18,7 +18,7 @@ class DeviceTools;
 
 namespace API
 {
-class IMemoryDevice : public IMemoryDeviceAccess
+class [[nodiscard]] IMemoryDevice : public IMemoryDeviceAccess
 {
 public:
 	constexpr IMemoryDevice(const API::address_t start_address, const API::address_t end_address, IMemoryDeviceAccess& memory_accessor) :
@@ -30,11 +30,11 @@ public:
 
 	virtual ~IMemoryDevice() = default;
 
-	constexpr API::address_t GetStartAddress() const { return this->_start_address; }
-	constexpr API::address_t GetEndAddress() const { return this->_end_address; }
+	[[nodiscard]] constexpr API::address_t GetStartAddress() const { return this->_start_address; }
+	[[nodiscard]] constexpr API::address_t GetEndAddress() const { return this->_end_address; }
 
 protected:
-	virtual uint8_t* GetMemoryPointer() = 0;
+	[[nodiscard]] virtual uint8_t* GetMemoryPointer() = 0;
 
 	IMemoryDeviceAccess& _memory_accessor;
 

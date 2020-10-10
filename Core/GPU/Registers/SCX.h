@@ -10,7 +10,7 @@
 
 namespace Core
 {
-class SCX : public MemoryRegister<API::data_t>
+class [[nodiscard]] SCX : public MemoryRegister<API::data_t>
 {
 public:
 	constexpr SCX() : MemoryRegister{SCX_ADDRESS} {}

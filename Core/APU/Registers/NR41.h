@@ -10,7 +10,7 @@
 
 namespace Core
 {
-class NR41 : public MemoryRegister<API::data_t>
+class [[nodiscard]] NR41 : public MemoryRegister<API::data_t>
 {
 public:
 	constexpr NR41() : MemoryRegister{NR41_ADDRESS} {}
@@ -21,6 +21,13 @@ public:
 	using MemoryRegister::operator API::data_t;
 
 public:
+	[[nodiscard]] const API::data_t GetLength() const
+	{
+		return (static_cast<API::data_t>(*this) >> NR41_LENGTH_BIT) & 0b111111;
+	}
+
+public:
+	static constexpr API::data_t    NR41_LENGTH_BIT{0x00};
 	static constexpr API::address_t NR41_ADDRESS{0xFF20};
 	static constexpr API::address_t NR41_DEFAULT_VALUE{0xFF};
 };

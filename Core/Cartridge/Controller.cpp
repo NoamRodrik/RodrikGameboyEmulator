@@ -38,7 +38,7 @@ void MBCController::Setup()
 	this->_mbcs[3] = std::make_unique<MemoryBankController_3>(this->_memory_device, this->_loader);
 }
 
-bool MBCController::UpdateMBC()
+const bool MBCController::UpdateMBC()
 {
 	CartridgeHeader loaded_header{&this->_memory_device};
 

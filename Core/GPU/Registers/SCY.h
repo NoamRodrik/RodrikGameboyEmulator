@@ -10,7 +10,7 @@
 
 namespace Core
 {
-class SCY : public MemoryRegister<API::data_t>
+class [[nodiscard]] SCY : public MemoryRegister<API::data_t>
 {
 public:
 	constexpr SCY() : MemoryRegister{SCY_ADDRESS} {}

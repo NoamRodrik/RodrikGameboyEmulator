@@ -12,7 +12,7 @@
 namespace Core
 {
 #pragma pack(push, 1)
-struct LogicRegisters
+struct [[nodiscard]] LogicRegisters
 {
 	ArithmeticRegister a{0x01};
 	EFL_Register	   f{0xB0};
