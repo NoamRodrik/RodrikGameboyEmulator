@@ -7,6 +7,7 @@
 #define __CORE_SOUND_CHANNEL_1_H__
 
 #include <Core/APU/Waves/ASoundChannel.h>
+#include <API/APU/Effects/Envelope.h>
 #include <Core/APU/Definitions.h>
 #include <API/Definitions.h>
 #include <cstddef>
@@ -21,6 +22,19 @@ public:
 
 public:
 	[[nodiscard]] virtual const float_t Sample(const float_t time) const override;
+	virtual void Restart() override;
+	virtual void Cycle(const uint8_t cycles) override;
+	virtual void UpdateSample() override;
+
+	/* Clock functions */
+	virtual void LengthTick() override;
+	virtual void EnvelopeTick() override;
+	virtual void SweepTick() override;
+
+private:
+	API::Envelope _envelope{};
+	uint16_t	  _sample_index{0x00};
+	uint8_t		  _sweep_time_elapsed{0x00};
 };
 } // Core
 

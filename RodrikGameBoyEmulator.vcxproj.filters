@@ -72,6 +72,9 @@
     <ClCompile Include="Core\APU\Waves\Implementation\SoundChannelNoise.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Core\APU\Mechanics\DAC.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tools\Tools.h">
@@ -437,9 +440,6 @@
     <ClInclude Include="Core\Bus\Devices\VideoRAM.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Contrib\PixelGameEngine\OLCPGEXSound.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Core\Engine\MainPixelEngine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -560,6 +560,21 @@
     <ClInclude Include="Core\APU\Waves\WaveController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Core\APU\Mechanics\DAC.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="API\RingBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="API\APU\Effects\Envelope.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="API\APU\Effects\Length.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="API\APU\Effects\IEffect.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="BootROM\tetris.gb" />
@@ -587,5 +602,6 @@
     <None Include="TestROM\10-bit ops.gb" />
     <None Include="TestROM\11-op a,(hl).gb" />
     <None Include="LICENSE" />
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

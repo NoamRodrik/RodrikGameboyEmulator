@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" InitialTargets="portaudio_init">
+  <PropertyGroup Label="Default initializers for properties">
+    <Linkage-portaudio Condition="'$(Linkage-portaudio)' == ''">dynamic</Linkage-portaudio>
+    <CallingConvention-portaudio Condition="'$(CallingConvention-portaudio)' == ''">cdecl</CallingConvention-portaudio>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <PreprocessorDefinitions>HAS_PORTAUDIO_H;HAS_PORTAUDIO;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)../..//build/native/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)../..//build/native/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Label="Win32 and v120 and Debug" Condition="'$(Platform.ToLower())' == 'win32' And ( $(PlatformToolset.ToLower().IndexOf('v120')) &gt; -1 Or '$(PlatformToolset.ToLower())' == 'windowskernelmodedriver8.0' Or '$(PlatformToolset.ToLower())' == 'windowsapplicationfordrivers8.0' Or '$(PlatformToolset.ToLower())' == 'windowsusermodedriver8.0' ) And ( $(Configuration.ToLower().IndexOf('debug')) &gt; -1 )">
+    <Link>
+      <AdditionalDependencies>$(MSBuildThisFileDirectory)../..//build/native/lib/Win32\v120\Debug\portaudio_x86.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Label="Win32 and v120 and Release" Condition="'$(Platform.ToLower())' == 'win32' And ( $(PlatformToolset.ToLower().IndexOf('v120')) &gt; -1 Or '$(PlatformToolset.ToLower())' == 'windowskernelmodedriver8.0' Or '$(PlatformToolset.ToLower())' == 'windowsapplicationfordrivers8.0' Or '$(PlatformToolset.ToLower())' == 'windowsusermodedriver8.0' ) And ( $(Configuration.ToLower().IndexOf('debug')) == -1 )">
+    <Link>
+      <AdditionalDependencies>$(MSBuildThisFileDirectory)../..//build/native/lib/Win32\v120\Release\portaudio_x86.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Label="x64 and v120 and Debug" Condition="'$(Platform.ToLower())' == 'x64' And ( $(PlatformToolset.ToLower().IndexOf('v120')) &gt; -1 Or '$(PlatformToolset.ToLower())' == 'windowskernelmodedriver8.0' Or '$(PlatformToolset.ToLower())' == 'windowsapplicationfordrivers8.0' Or '$(PlatformToolset.ToLower())' == 'windowsusermodedriver8.0' ) And ( $(Configuration.ToLower().IndexOf('debug')) &gt; -1 )">
+    <Link>
+      <AdditionalDependencies>$(MSBuildThisFileDirectory)../..//build/native/lib/x64\v120\Debug\portaudio_x64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Label="x64 and v120 and Release" Condition="'$(Platform.ToLower())' == 'x64' And ( $(PlatformToolset.ToLower().IndexOf('v120')) &gt; -1 Or '$(PlatformToolset.ToLower())' == 'windowskernelmodedriver8.0' Or '$(PlatformToolset.ToLower())' == 'windowsapplicationfordrivers8.0' Or '$(PlatformToolset.ToLower())' == 'windowsusermodedriver8.0' ) And ( $(Configuration.ToLower().IndexOf('debug')) == -1 )">
+    <Link>
+      <AdditionalDependencies>$(MSBuildThisFileDirectory)../..//build/native/lib/x64\v120\Release\portaudio_x64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <PropertyPageSchema Include="$(MSBuildThisFileDirectory)\default-propertiesui.xml" />
+  </ItemGroup>
+  <UsingTask TaskName="portaudio_Contains" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll" TaskFactory="CodeTaskFactory">
+    <ParameterGroup>
+      <Text Output="false" ParameterType="System.String" />
+      <Library Output="false" Required="true" ParameterType="System.String" />
+      <Value Output="false" Required="true" ParameterType="System.String" />
+      <Result Output="true" ParameterType="System.String" />
+    </ParameterGroup>
+    <Task>
+      <Code>Result = ((Text ?? "").Split(';').Contains(Library) ) ? Value : String.Empty;</Code>
+    </Task>
+  </UsingTask>
+  <Target Name="portaudio_init">
+    <portaudio_Contains Text="Linkage-dynamic" Library="portaudio" Value="dynamic" Condition="'$(Linkage-portaudio)'==''">
+      <Output TaskParameter="Result" PropertyName="Linkage-portaudio" />
+    </portaudio_Contains>
+    <portaudio_Contains Text="Linkage-static" Library="portaudio" Value="static" Condition="'$(Linkage-portaudio)'==''">
+      <Output TaskParameter="Result" PropertyName="Linkage-portaudio" />
+    </portaudio_Contains>
+    <portaudio_Contains Text="Linkage-ltcg" Library="portaudio" Value="ltcg" Condition="'$(Linkage-portaudio)'==''">
+      <Output TaskParameter="Result" PropertyName="Linkage-portaudio" />
+    </portaudio_Contains>
+    <portaudio_Contains Text="Linkage-sxs" Library="portaudio" Value="sxs" Condition="'$(Linkage-portaudio)'==''">
+      <Output TaskParameter="Result" PropertyName="Linkage-portaudio" />
+    </portaudio_Contains>
+    <portaudio_Contains Text="CallingConvention-cdecl" Library="portaudio" Value="cdecl" Condition="'$(CallingConvention-portaudio)'==''">
+      <Output TaskParameter="Result" PropertyName="CallingConvention-portaudio" />
+    </portaudio_Contains>
+    <portaudio_Contains Text="CallingConvention-stdcall" Library="portaudio" Value="stdcall" Condition="'$(CallingConvention-portaudio)'==''">
+      <Output TaskParameter="Result" PropertyName="CallingConvention-portaudio" />
+    </portaudio_Contains>
+    <portaudio_Contains Text="CallingConvention-fastcall" Library="portaudio" Value="fastcall" Condition="'$(CallingConvention-portaudio)'==''">
+      <Output TaskParameter="Result" PropertyName="CallingConvention-portaudio" />
+    </portaudio_Contains>
+    <portaudio_Contains Text="CallingConvention-thiscall" Library="portaudio" Value="thiscall" Condition="'$(CallingConvention-portaudio)'==''">
+      <Output TaskParameter="Result" PropertyName="CallingConvention-portaudio" />
+    </portaudio_Contains>
+    <portaudio_Contains Text="CallingConvention-clrcall" Library="portaudio" Value="clrcall" Condition="'$(CallingConvention-portaudio)'==''">
+      <Output TaskParameter="Result" PropertyName="CallingConvention-portaudio" />
+    </portaudio_Contains>
+  </Target>
+</Project>

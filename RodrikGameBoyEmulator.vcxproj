@@ -113,7 +113,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>./packages/portaudio.0.19.1/build/native/lib/Win32/v120/Release/portaudio_x86.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <StackReserveSize>1048576</StackReserveSize>
     </Link>
   </ItemDefinitionGroup>
@@ -131,7 +131,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>./packages/portaudio.0.19.1/build/native/lib/x64/v120/Release/portaudio_x64.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -161,7 +161,7 @@
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>./packages/portaudio.0.19.1/build/native/lib/Win32/v120/Release/portaudio_x86.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <StackReserveSize>1048576</StackReserveSize>
     </Link>
   </ItemDefinitionGroup>
@@ -183,18 +183,22 @@
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>./packages/portaudio.0.19.1/build/native/lib/x64/v120/Release/portaudio_x64.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="API\APU\Effects\IEffect.h" />
+    <ClInclude Include="API\APU\Effects\Length.h" />
     <ClInclude Include="API\Cartridge\ILoader.h" />
     <ClInclude Include="API\Cartridge\IMemoryBankController.h" />
     <ClInclude Include="API\Cartridge\Header.h" />
-    <ClInclude Include="Contrib\PixelGameEngine\OLCPGEXSound.h" />
+    <ClInclude Include="API\RingBuffer.h" />
     <ClInclude Include="Contrib\PixelGameEngine\OLCPixelGameEngine.h" />
     <ClInclude Include="API\Registers\RegisterPair.h" />
     <ClInclude Include="Core\APU\APU.h" />
     <ClInclude Include="Core\APU\Definitions.h" />
+    <ClInclude Include="API\APU\Effects\Envelope.h" />
+    <ClInclude Include="Core\APU\Mechanics\DAC.h" />
     <ClInclude Include="Core\APU\Registers\NR10.h" />
     <ClInclude Include="Core\APU\Registers\NR11.h" />
     <ClInclude Include="Core\APU\Registers\NR12.h" />
@@ -353,6 +357,7 @@
   <ItemGroup>
     <ClCompile Include="API\Cartridge\Header.cpp" />
     <ClCompile Include="Core\APU\APU.cpp" />
+    <ClCompile Include="Core\APU\Mechanics\DAC.cpp" />
     <ClCompile Include="Core\APU\Waves\Implementation\SoundChannel1.cpp" />
     <ClCompile Include="Core\APU\Waves\Implementation\SoundChannel2.cpp" />
     <ClCompile Include="Core\APU\Waves\Implementation\SoundChannel3.cpp" />
@@ -378,6 +383,7 @@
     <None Include="BootROM\cpu_instrs.gb" />
     <None Include="BootROM\tetris.gb" />
     <None Include="LICENSE" />
+    <None Include="packages.config" />
     <None Include="README.md" />
     <None Include="RodrikGameBoyEmulator.aps" />
     <None Include="TestROM\01-special.gb" />
@@ -399,5 +405,15 @@
     <None Include="TestROM\tetris.gb" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="packages\portaudio.redist.0.19.1\build\native\portaudio.redist.targets" Condition="Exists('packages\portaudio.redist.0.19.1\build\native\portaudio.redist.targets')" />
+    <Import Project="packages\portaudio.0.19.1\build\native\portaudio.targets" Condition="Exists('packages\portaudio.0.19.1\build\native\portaudio.targets')" />
+  </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('packages\portaudio.redist.0.19.1\build\native\portaudio.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\portaudio.redist.0.19.1\build\native\portaudio.redist.targets'))" />
+    <Error Condition="!Exists('packages\portaudio.0.19.1\build\native\portaudio.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\portaudio.0.19.1\build\native\portaudio.targets'))" />
+  </Target>
 </Project>

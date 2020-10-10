@@ -304,7 +304,7 @@ private:
 			{
 				// Upper 3 bits of the frequency, the rest (8 more bits) are at NR13.
 				API::address_t frequency{APU::GetInstance().GetOscillator().GetWave(SoundChannel::PULSE_A)->GetFrequency()};
-				frequency = (data & 0b111) | (frequency & 0x0F);
+				frequency = ((data & 0b111) << CHAR_BIT) | (frequency & 0xFF);
 				APU::GetInstance().GetOscillator().GetWave(SoundChannel::PULSE_A)->SetFrequency(frequency);
 				Message("TODO rest");
 				break;

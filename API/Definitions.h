@@ -29,9 +29,13 @@ namespace API
 	static constexpr std::string_view FOLDER_PREFIX{"Saves/"};
 
 	/* APU */
+	static constexpr size_t  SAMPLE_RATE{44100};
+	static constexpr size_t  BUFFER_FRAMES{1024};
+	static constexpr size_t  OUTPUT_TERMINALS_AMOUNT{2};
 	static constexpr size_t  AUDIO_CHANNELS_AMOUNT{4};
 	static constexpr float_t BASE_FREQUENCY{440.0f};
 	static constexpr float_t BASE_AMPLITUDE{0.5f};
+	static constexpr data_t  AUDIO_DEFAULT_NOTE_LENGTH{0x40};
 
 	/* PPU */
 	static constexpr address_t TILE_SET_BANK_0_OFFSET{0x8000};

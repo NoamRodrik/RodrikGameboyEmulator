@@ -27,6 +27,13 @@ enum class [[nodiscard]] SoundChannel
 	WAVE = 3,
 	NOISE = 4
 };
+
+static constexpr const uint8_t SQUARE_WAVES_TYPES[API::AUDIO_CHANNELS_AMOUNT][CHAR_BIT] = {
+    { 0, 0, 0, 0, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 0, 1, 1, 1 },
+    { 0, 1, 1, 1, 1, 1, 1, 0 }
+};
 } // Core
 
 #endif // __LR35902_APU_DEFINITIONS_H__

@@ -7,11 +7,9 @@
 #define __GPU_ENGINE_MAIN_PIXEL_ENGINE_H__
 
 #define OLC_PGE_APPLICATION
-#define OLC_PGEX_SOUND
 
 #include <Contrib/PixelGameEngine/OLCPixelGameEngine.h>
 #include <API/Memory/Device/IMemoryDeviceAccess.h>
-#include <Contrib/PixelGameEngine/OLCPGEXSound.h>
 #include <Core/GPU/Registers/LCDC_Control.h>
 #include <Core/GPU/Mechanics/LCDRender.h>
 #include <Core/GPU/Entities/PaletteMap.h>
@@ -81,10 +79,6 @@ private:
 	[[nodiscard]] virtual bool OnUserCreate() override
 	{
 		// Called once at startup, drawing white pixels.
-		// The Gameboy LR35902 has 4 channels.
-		olc::SOUND::InitialiseAudio(APU::SAMPLE_RATE, APU::CHANNEL_AMOUNT, APU::BLOCKS_AMOUNT, APU::BLOCKS_SAMPLE_SIZE);
-		olc::SOUND::SetUserSynthFunction(APU::SoundDemultiplexer);
-
 		this->SetPixelMode(olc::Pixel::Mode::NORMAL);
 		this->EnableLCD();
 		return true;
@@ -93,7 +87,7 @@ private:
 	[[nodiscard]] virtual bool OnUserDestroy() override
 	{
 		this->_processor.GetMemory()._device_manager._mbc_controller->CloseMBC();
-		return olc::SOUND::DestroyAudio();
+		return true;
 	}
 
 	[[nodiscard]] virtual bool OnUserUpdate(float) override

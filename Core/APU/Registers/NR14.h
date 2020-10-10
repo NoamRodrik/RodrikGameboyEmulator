@@ -21,6 +21,13 @@ public:
 	using MemoryRegister::operator API::data_t;
 
 public:
+	[[nodiscard]] const bool IsLengthExpired() const
+	{
+		return Tools::IsBitSet(static_cast<API::data_t>(*this), LENGTH_EXPIRES_BIT);
+	}
+
+public:
+	static constexpr API::data_t    LENGTH_EXPIRES_BIT{0x06};
 	static constexpr API::address_t NR14_ADDRESS{0xFF14};
 	static constexpr API::address_t NR14_DEFAULT_VALUE{0xBF};
 };
