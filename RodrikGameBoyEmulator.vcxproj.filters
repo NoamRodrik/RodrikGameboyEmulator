@@ -575,6 +575,9 @@
     <ClInclude Include="API\APU\Effects\IEffect.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Core\APU\Waves\Implementation\ASoundChannelSquare.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="BootROM\tetris.gb" />

@@ -17,59 +17,17 @@ using namespace API;
 
 namespace Core
 {
-const float_t SoundChannel1::Sample(const float_t time) const
-{
-	// Square wave
-	Message("TODO");
-	return 0;
-}
-
 void SoundChannel1::Restart()
 {
-	this->SetEnabled(true);
-
-	// NOTE definitions
-	this->GetLength().SetLength(AUDIO_DEFAULT_NOTE_LENGTH - NR11{}.GetLength(), NR14{}.IsLengthExpired());
-
-	// ENVELOPE definitions
-	const NR12 nr12{};
-	this->_envelope = Envelope{nr12.GetEnvelopeSweep(), nr12.GetEnvelopeVolume(), nr12.GetEnvelopeDirection()};
-
-	// Normal definitions
-	this->SetCycles(0x00);
-	this->_sample_index = 0x00;
+	ASoundChannelSquare::SquareChannelRestart<NR11, NR14, NR12>();
 
 	// ONLY SoundChannel1 has sweep!
 	this->_sweep_time_elapsed = 0x00;
 }
 
-void SoundChannel1::Cycle(const uint8_t cycles)
-{
-	// No magic number here, this is how the PANDOCS defines the sample rate.
-	const std::size_t CURRENT_SAMPLE_UPDATE_RATE = (2048 - static_cast<std::size_t>(this->GetFrequency() & 0b11111111111)) * 4;
-	this->SetCycles(this->GetCycles() + cycles);
-
-	if (this->GetCycles() >= CURRENT_SAMPLE_UPDATE_RATE)
-	{
-		this->_sample_index = (this->_sample_index == 7 ? 0 : this->_sample_index + 1);
-		this->UpdateSample();
-		this->SetCycles(this->GetCycles() - CURRENT_SAMPLE_UPDATE_RATE);
-	}
-}
-
 void SoundChannel1::UpdateSample()
 {
-	this->SetCurrentSample(this->IsEnabled() ? SQUARE_WAVES_TYPES[(NR11{} &0xC0) >> NR11::SEQUENCE_BIT][this->_sample_index] * this->_envelope.GetVolume() : 0x00);
-}
-
-void SoundChannel1::LengthTick()
-{
-	this->SetEnabled(this->GetLength().Play());
-}
-
-void SoundChannel1::EnvelopeTick()
-{
-	SANITY(this->_envelope.Play(), "Failed playing envelope on note");
+	ASoundChannelSquare::SquareChannelUpdateSamples<NR11>();
 }
 
 void SoundChannel1::SweepTick()

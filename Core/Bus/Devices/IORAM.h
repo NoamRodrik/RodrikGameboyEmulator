@@ -309,6 +309,48 @@ private:
 				Message("TODO rest");
 				break;
 			}
+
+			case (NR21::NR21_ADDRESS):
+			{
+				API::data_t sequence{0x00};
+				switch ((data >> NR21::SEQUENCE_BIT) & 0x03)
+				{
+					case (0x00): sequence = 0b00000001; break;
+					case (0x01): sequence = 0b00000011; break;
+					case (0x02): sequence = 0b00001111; break;
+					case (0x03): sequence = 0b11111100; break;
+				}
+
+				APU::GetInstance().GetOscillator().GetWave(SoundChannel::PULSE_B)->SetSequence(sequence);
+
+				Message("TODO length");
+				break;
+			}
+
+			case (NR22::NR22_ADDRESS):
+			{
+				Message("TODO envelope");
+				break;
+			}
+
+			case (NR23::NR23_ADDRESS):
+			{
+				// Lower 8 bits of the frequency, the rest (3 more bits) are at NR24.
+				API::address_t frequency{APU::GetInstance().GetOscillator().GetWave(SoundChannel::PULSE_B)->GetFrequency()};
+				frequency = (frequency & 0xF0) | (data & 0x0F);
+				APU::GetInstance().GetOscillator().GetWave(SoundChannel::PULSE_B)->SetFrequency(frequency);
+				break;
+			}
+
+			case (NR24::NR24_ADDRESS):
+			{
+				// Upper 3 bits of the frequency, the rest (8 more bits) are at NR23.
+				API::address_t frequency{APU::GetInstance().GetOscillator().GetWave(SoundChannel::PULSE_B)->GetFrequency()};
+				frequency = ((data & 0b111) << CHAR_BIT) | (frequency & 0xFF);
+				APU::GetInstance().GetOscillator().GetWave(SoundChannel::PULSE_B)->SetFrequency(frequency);
+				Message("TODO rest");
+				break;
+			}
 		}
 
 		return false;

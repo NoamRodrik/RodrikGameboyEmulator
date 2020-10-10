@@ -226,6 +226,7 @@
     <ClInclude Include="Core\APU\Waves\Implementation\SoundChannel2.h" />
     <ClInclude Include="Core\APU\Waves\Implementation\SoundChannel3.h" />
     <ClInclude Include="Core\APU\Waves\Implementation\SoundChannelNoise.h" />
+    <ClInclude Include="Core\APU\Waves\Implementation\ASoundChannelSquare.h" />
     <ClInclude Include="Core\APU\Waves\WaveController.h" />
     <ClInclude Include="Core\Bus\Bus.h" />
     <ClInclude Include="Core\Bus\DeviceManager\DeviceManager.h" />
