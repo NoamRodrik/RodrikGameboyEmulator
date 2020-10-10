@@ -24,8 +24,7 @@ public:
 
 public:
 	virtual void UpdateSample() = 0;
-	[[nodiscard]] virtual const float_t Sample(const float_t time) const = 0;
-	virtual void Cycle(const uint8_t cycles) = 0;
+	virtual void Clock(const uint8_t clocks) = 0;
 	virtual void Restart() = 0;
 
 	/* Clock functions */
@@ -39,8 +38,8 @@ public:
 	[[nodiscard]] virtual API::Length& GetLength() = 0;
 	virtual void SetCurrentSample(const API::data_t current_sample) = 0;
 	[[nodiscard]] virtual const API::data_t GetCurrentSample() const = 0;
-	virtual void SetCycles(const std::size_t cycles) = 0;
-	[[nodiscard]] virtual const std::size_t GetCycles() const = 0;
+	virtual void SetClocks(const std::size_t clocks) = 0;
+	[[nodiscard]] virtual const std::size_t GetClocks() const = 0;
 	virtual void SetSequence(const API::data_t sequence) = 0;
 	[[nodiscard]] virtual const API::data_t GetSequence() const = 0;
 	virtual void SetFrequency(const API::address_t frequency) = 0;

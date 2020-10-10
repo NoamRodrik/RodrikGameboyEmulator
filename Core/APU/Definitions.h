@@ -34,6 +34,10 @@ static constexpr const uint8_t SQUARE_WAVES_TYPES[API::AUDIO_CHANNELS_AMOUNT][CH
     { 1, 0, 0, 0, 0, 1, 1, 1 },
     { 0, 1, 1, 1, 1, 1, 1, 0 }
 };
+
+static constexpr const uint8_t DIVISOR_ARRAY[CHAR_BIT] = {
+	8, 16, 32, 48, 64, 80, 96, 112
+};
 } // Core
 
 #endif // __LR35902_APU_DEFINITIONS_H__

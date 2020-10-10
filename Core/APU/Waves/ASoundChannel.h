@@ -32,7 +32,6 @@ public:
 	virtual void SetEnabled(bool status) override
 	{
 		this->_enabled = status;
-		this->UpdateStatus();
 	}
 
 	[[nodiscard]] virtual const bool Activated(const OutputTerminal output) const override
@@ -65,14 +64,14 @@ public:
 		return this->_current_sample;
 	}
 
-	virtual void SetCycles(const std::size_t cycles) override
+	virtual void SetClocks(const std::size_t clocks) override
 	{
-		this->_cycle_count = cycles;
+		this->_clocks = clocks;
 	}
 
-	[[nodiscard]] virtual const std::size_t GetCycles() const override
+	[[nodiscard]] virtual const std::size_t GetClocks() const override
 	{
-		return this->_cycle_count;
+		return this->_clocks;
 	}
 
 	virtual void SetSequence(const API::data_t sequence) override
@@ -98,42 +97,11 @@ public:
 	/**
 	 * Default implementation
 	 */
-	[[nodiscard]] virtual const float_t Sample(const float_t time) const override
-	{
-		return 0;
-	}
-
-	/**
-	 * Default implementation
-	 */
-	virtual void Restart() override	{}
-
-	/**
-	 * Default implementation
-	 */
-	virtual void Cycle(const uint8_t cycles) override {}
-
-	/**
-	 * Default implementation
-	 */
 	virtual void UpdateSample() override {}
-
-	/**
-	 * Default implementation
-	 */
-	virtual void LengthTick() override {}
-
-	/**
-	 * Default implementation
-	 */
 	virtual void EnvelopeTick() override {}
-
-	/**
-	 * Default implementation
-	 */
 	virtual void SweepTick() override {}
 
-private:
+protected:
 	void UpdateStatus() const
 	{
 		NR52 nr52{};
@@ -150,7 +118,7 @@ protected:
 private:
 	API::Length       _length{};
 	std::atomic<bool> _enabled{false};
-	std::size_t       _cycle_count{0x00};
+	std::size_t       _clocks{0x00};
 	API::data_t       _current_sample{0x00};
 };
 } // Core

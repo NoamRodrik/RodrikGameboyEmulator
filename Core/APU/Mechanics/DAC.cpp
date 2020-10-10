@@ -47,11 +47,11 @@ void DAC::FeedSamples(const SampleData& samples)
                 samples.SoundChannel3Right[current_frame] +
                 samples.SoundChannelNoiseRight[current_frame]) / 4;
     
-        this->_sample_buffer_per_terminal[static_cast<std::size_t>(OutputTerminal::SO1)].Push((LEFT_CHANNEL_ACCUMULATED - 8) / 8);
-        this->_sample_buffer_per_terminal[static_cast<std::size_t>(OutputTerminal::SO2)].Push((RIGHT_CHANNEL_ACCUMULATED - 8) / 8);
+        this->_sample_buffer_per_terminal[static_cast<std::size_t>(OutputTerminal::SO1)].Push((RIGHT_CHANNEL_ACCUMULATED - 8) / 8);
+        this->_sample_buffer_per_terminal[static_cast<std::size_t>(OutputTerminal::SO2)].Push((LEFT_CHANNEL_ACCUMULATED - 8) / 8);
     }
     
-    // Wait with the start of the dac until we filled the buffer a bit
+    // Wait with the start of the DAC until we filled the buffer a bit
     if (!Pa_IsStreamActive(this->_stream) &&
         this->_sample_buffer_per_terminal[static_cast<std::size_t>(OutputTerminal::SO1)].GetSize() >= API::BUFFER_FRAMES * 2)
     {
@@ -59,12 +59,12 @@ void DAC::FeedSamples(const SampleData& samples)
     }
 }
 
-void DAC::Populate(gsl::not_null<float*> buffer)
+void DAC::Populate(gsl::not_null<float*> buffer)    
 {
     for (std::size_t current_frame = 0; current_frame < API::BUFFER_FRAMES * API::OUTPUT_TERMINALS_AMOUNT; current_frame += API::OUTPUT_TERMINALS_AMOUNT)
     {
-        buffer.get()[current_frame] = this->_sample_buffer_per_terminal[static_cast<std::size_t>(OutputTerminal::SO1)].Pop();
-        buffer.get()[current_frame + 1] = this->_sample_buffer_per_terminal[static_cast<std::size_t>(OutputTerminal::SO2)].Pop();
+        buffer.get()[current_frame] = this->_sample_buffer_per_terminal[static_cast<std::size_t>(OutputTerminal::SO2)].Pop();
+        buffer.get()[current_frame + 1] = this->_sample_buffer_per_terminal[static_cast<std::size_t>(OutputTerminal::SO1)].Pop();
     }
 }
 } // Core

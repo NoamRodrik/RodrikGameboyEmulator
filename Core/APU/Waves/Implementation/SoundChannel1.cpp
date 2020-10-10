@@ -60,7 +60,7 @@ void SoundChannel1::SweepTick()
 			{
 				// We can change the frequency here.
 				this->SetFrequency(this->GetFrequency() + NEW_SWEEP);
-				this->SetCycles(0x00);
+				this->SetClocks(0x00);
 				this->_sweep_time_elapsed = 0x00;
 
 				// Set frequency in memory

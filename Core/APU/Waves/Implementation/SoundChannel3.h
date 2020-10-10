@@ -18,6 +18,18 @@ class [[nodiscard]] SoundChannel3 : public ASoundChannel<SoundChannel::WAVE>
 public:
 	SoundChannel3() = default;
 	virtual ~SoundChannel3() override = default;
+
+public:
+	virtual void UpdateSample() override;
+	virtual void Restart() override;
+	virtual void LengthTick() override;
+	virtual void Clock(uint8_t clocks) override;
+	void Start();
+	void Stop();
+
+private:
+	uint8_t  _sample_index{0x00};
+	bool     _started{false};
 };
 } // Core
 

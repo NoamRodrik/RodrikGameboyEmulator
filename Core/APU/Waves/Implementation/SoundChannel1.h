@@ -27,7 +27,7 @@ public:
 	virtual void SweepTick() override;
 
 private:
-	uint8_t		  _sweep_time_elapsed{0x00};
+	uint8_t _sweep_time_elapsed{0x00};
 };
 } // Core
 

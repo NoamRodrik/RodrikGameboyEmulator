@@ -306,7 +306,12 @@ private:
 				API::address_t frequency{APU::GetInstance().GetOscillator().GetWave(SoundChannel::PULSE_A)->GetFrequency()};
 				frequency = ((data & 0b111) << CHAR_BIT) | (frequency & 0xFF);
 				APU::GetInstance().GetOscillator().GetWave(SoundChannel::PULSE_A)->SetFrequency(frequency);
-				Message("TODO rest");
+
+				if ((data >> NR14::NR14_RESTART_BIT) & 0b01)
+				{
+					APU::GetInstance().GetOscillator().GetWave(SoundChannel::PULSE_A)->Restart();
+				}
+
 				break;
 			}
 
@@ -348,7 +353,36 @@ private:
 				API::address_t frequency{APU::GetInstance().GetOscillator().GetWave(SoundChannel::PULSE_B)->GetFrequency()};
 				frequency = ((data & 0b111) << CHAR_BIT) | (frequency & 0xFF);
 				APU::GetInstance().GetOscillator().GetWave(SoundChannel::PULSE_B)->SetFrequency(frequency);
-				Message("TODO rest");
+
+				if ((data >> NR24::NR24_RESTART_BIT) & 0b01)
+				{
+					APU::GetInstance().GetOscillator().GetWave(SoundChannel::PULSE_B)->Restart();
+				}
+
+				break;
+			}
+
+			case (NR33::NR33_ADDRESS):
+			{
+				// Lower 8 bits of the frequency, the rest (3 more bits) are at NR34.
+				API::address_t frequency{APU::GetInstance().GetOscillator().GetWave(SoundChannel::WAVE)->GetFrequency()};
+				frequency = (frequency & 0xF0) | (data & 0x0F);
+				APU::GetInstance().GetOscillator().GetWave(SoundChannel::WAVE)->SetFrequency(frequency);
+				break;
+			}
+
+			case (NR34::NR34_ADDRESS):
+			{
+				// Upper 3 bits of the frequency, the rest (8 more bits) are at NR33.
+				API::address_t frequency{APU::GetInstance().GetOscillator().GetWave(SoundChannel::WAVE)->GetFrequency()};
+				frequency = ((data & 0b111) << CHAR_BIT) | (frequency & 0xFF);
+				APU::GetInstance().GetOscillator().GetWave(SoundChannel::WAVE)->SetFrequency(frequency);
+
+				if ((data >> NR34::NR34_RESTART_BIT) & 0b01)
+				{
+					APU::GetInstance().GetOscillator().GetWave(SoundChannel::WAVE)->Restart();
+				}
+
 				break;
 			}
 		}
