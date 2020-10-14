@@ -28,7 +28,7 @@ public:
 
 		// ENVELOPE definitions
 		const ENVELOPE_REGISTER envelope_register{};
-		this->_envelope = API::Envelope{ envelope_register.GetEnvelopeSweep(), envelope_register.GetEnvelopeVolume(), envelope_register.GetEnvelopeDirection()};
+		this->_envelope = API::Envelope{envelope_register.GetEnvelopeSweep(), envelope_register.GetEnvelopeVolume(), envelope_register.GetEnvelopeDirection()};
 
 		// Normal definitions
 		this->SetClocks(0x00);
