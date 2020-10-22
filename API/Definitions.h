@@ -13,6 +13,10 @@
 #include <cmath>
 #include <array>
 
+Message("Global control definitions!");
+//#define GREEN_DISPLAY
+//#define SERIAL_TRANSFER_PRINT_DEBUG
+
 namespace API
 {
 	/* Necessary mathematical constants */

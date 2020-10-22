@@ -264,12 +264,14 @@
     <ClInclude Include="Core\Cartridge\Implementation\MBC1_0x02.h" />
     <ClInclude Include="Core\Cartridge\Implementation\MBC1_0x03.h" />
     <ClInclude Include="Core\GPU\Definitions.h" />
+    <ClInclude Include="Core\GPU\Entities\OAMEntry.h" />
     <ClInclude Include="Core\GPU\Entities\PixelRowContainer.h" />
     <ClInclude Include="Core\GPU\IPPU.h" />
     <ClInclude Include="Core\GPU\Entities\PaletteMap.h" />
     <ClInclude Include="Core\GPU\Entities\PixelRow.h" />
     <ClInclude Include="Core\GPU\Mechanics\Fetcher.h" />
     <ClInclude Include="Core\GPU\Mechanics\LCDRender.h" />
+    <ClInclude Include="Core\GPU\Mechanics\OAMEntryManager.h" />
     <ClInclude Include="Core\GPU\Mechanics\PixelFIFO.h" />
     <ClInclude Include="Core\GPU\Registers\BGP.h" />
     <ClInclude Include="Core\GPU\Registers\DMA.h" />
@@ -400,6 +402,8 @@
     <ClCompile Include="Core\Cartridge\Implementation\ROM_0x00.cpp" />
     <ClCompile Include="Core\CPU\Interrupts\InterruptHandler.cpp" />
     <ClCompile Include="Core\Clock\Clock.cpp" />
+    <ClCompile Include="Core\GPU\Entities\OAMEntry.cpp" />
+    <ClCompile Include="Core\GPU\Mechanics\OAMEntryManager.cpp" />
     <ClCompile Include="Core\Joypad\Joypad.cpp" />
     <ClCompile Include="Core\CPU\Processor.cpp" />
     <ClCompile Include="Core\Timers\Timer.cpp" />

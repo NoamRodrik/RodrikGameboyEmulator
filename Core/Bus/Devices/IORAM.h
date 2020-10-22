@@ -153,7 +153,7 @@ private:
 				{
 					API::data_t byte_read{0};
 					SANITY(this->Read(API::SERIAL_TRANSFER_DATA, byte_read), "Failed reading serial data");
-					MAIN_LOG_NO_ENTER("%c", byte_read);
+					LOG_NO_ENTER("%c", byte_read);
 				}
 #endif
 				break;

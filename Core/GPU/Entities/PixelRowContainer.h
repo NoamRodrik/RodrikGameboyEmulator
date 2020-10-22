@@ -37,6 +37,11 @@ public:
 		this->_pixel_row_index = UNUSED_PIXEL_ROW_INDEX_COUNT;
 	}
 
+	constexpr void SetPixelRow(const PixelRow pixel_row)
+	{
+		this->_current_pixel_row = pixel_row;
+	}
+
 	/**
 	 * No pixels left in the pixel container.
 	 */
@@ -74,7 +79,7 @@ public:
 	{
 		this->_pixel_row_index = EMPTY_PIXEL_ROW_INDEX_COUNT;
 		this->_pixel_source = PixelSource::BGP;
-		this->_current_pixel_row = PixelRow{};
+		this->SetPixelRow(PixelRow{});
 	}
 
 	[[nodiscard]] constexpr std::size_t EmptyBitsAmount()

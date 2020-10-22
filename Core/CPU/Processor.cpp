@@ -102,13 +102,13 @@ void Processor::LoadGame()
 	size_t index{1};
 	for (const auto& file : std::filesystem::directory_iterator("TestROM"))
 	{
-		MAIN_LOG("%llu) %s", index++, file.path().string().c_str());
+		LOG("%llu) %s", index++, file.path().string().c_str());
 	}
 
 	uint32_t chosen_index{0};
 	do
 	{
-		MAIN_LOG("Choose a wanted file from the file list.");
+		LOG("Choose a wanted file from the file list.");
 		scanf_s("%u", &chosen_index);
 	} while (chosen_index >= index || chosen_index < 1);
 	index = chosen_index;

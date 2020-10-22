@@ -52,7 +52,7 @@ const bool MBCController::UpdateMBC()
 		}
 	}
 	
-	MAIN_LOG("MBC does not exist: %u.", loaded_header.MBC());
+	LOG("MBC does not exist: %u.", loaded_header.MBC());
 	return false;
 }
 

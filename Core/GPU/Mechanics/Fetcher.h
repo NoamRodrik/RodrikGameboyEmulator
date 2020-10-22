@@ -7,6 +7,7 @@
 #define __LR35902_FETCHER_H__
 
 #include <Core/GPU/Entities/PixelRowContainer.h>
+#include <Core/GPU/Mechanics/OAMEntryManager.h>
 #include <Core/GPU/Registers/LCDC_Control.h>
 #include <Core/GPU/Mechanics/PixelFIFO.h>
 #include <Core/Bus/Devices/VideoRAM.h>
@@ -33,7 +34,7 @@ namespace Core
 class [[nodiscard]] Fetcher
 {
 public:
-	constexpr Fetcher(PixelFIFO& fifo, IPPU& ppu) : _fifo{fifo}, _ppu{ppu} {}
+	Fetcher(PixelFIFO& fifo, IPPU& ppu) : _fifo{fifo}, _ppu{ppu} {}
 	~Fetcher() = default;
 
 private:
@@ -46,12 +47,28 @@ private:
 	};
 
 public:
+	OAMEntryManager& GetOAMEntryManager()
+	{
+		return this->_entry_manager;
+	}
+
+	const OAMEntryManager& GetOAMEntryManager() const
+	{
+		return this->_entry_manager;
+	}
+
+	PixelFIFO& GetPixelFIFO()
+	{
+		return this->_fifo;
+	}
+
 	void Reset()
 	{
 		this->_pixel_row_container.Clear();
 		this->_state = State::FETCH_TILE;
 		this->_tile_offset_x = this->_fifo.GetSCX();
 		this->_window_tile_offset_x = WX{} - 7;
+		this->_sprites = this->_entry_manager.GetSpritesInLine(LY{});
 	}
 
 	[[nodiscard]] const bool Execute(std::size_t clocks)
@@ -81,7 +98,7 @@ public:
 
 			default:
 			{
-				MAIN_LOG("Got into an impossible state in the fetcher: %02X!", this->_state);
+				LOG("Got into an impossible state in the fetcher: %02X!", this->_state);
 				return false;
 			}
 		}
@@ -100,6 +117,14 @@ private:
 			const API::data_t SCREEN_X = static_cast<API::data_t>(GetWrappedAroundDistance(this->_fifo.GetX(), this->_fifo.GetSCX()));
 			const API::data_t SCREEN_Y = static_cast<API::data_t>(GetWrappedAroundDistance(this->_fifo.GetY(), this->_fifo.GetSCY()));
 
+			OAMEntry* entry{this->SpriteToDraw()};
+
+			if (entry != nullptr)
+			{
+				// We have an entry to draw.
+				this->_pixel_row_container.SetPixelRow(entry->GetSpritePixelRow(this->_fifo.GetY()));
+				this->_pixel_row_container.Initialize(entry->GetSource());
+			}
 			if (static_cast<LCDC_Control::Control>(LCDC_Control{}).IsWindowEnabled() &&
 				SCREEN_Y >= WINDOW_Y && SCREEN_X >= (WINDOW_X - 7))
 			{
@@ -113,8 +138,6 @@ private:
 				this->_window_tile_offset_x = (this->_window_tile_offset_x + 8) % 0x100;
 				RET_FALSE_IF_FAIL(this->_ppu.GetProcessor().GetMemory().Read(this->GetWindowMapStart() + TILE_OFFSET, this->_tile_index), "Failed fetching tile index");
 				this->_pixel_row_container.Initialize(PixelSource::WIN);
-				this->_clocks -= FETCH_TILE_CLOCKS;
-				this->_state = State::READ_DATA_0;
 			}
 			// If the window didn't succeed.
 			else
@@ -123,9 +146,10 @@ private:
 				this->_tile_offset_x = (this->_tile_offset_x + 8) % 0x100;
 				RET_FALSE_IF_FAIL(this->_ppu.GetProcessor().GetMemory().Read(this->GetBackgroundMapStart() + TILE_OFFSET, this->_tile_index), "Failed fetching tile index");
 				this->_pixel_row_container.Initialize(PixelSource::BGP);
-				this->_clocks -= FETCH_TILE_CLOCKS;
-				this->_state = State::READ_DATA_0;
 			}
+
+			this->_clocks -= FETCH_TILE_CLOCKS;
+			this->_state = State::READ_DATA_0;
 		}
 
 		return true;
@@ -138,7 +162,12 @@ private:
 	{
 		if (this->_clocks >= READ_DATA_0_CLOCKS)
 		{
-			this->_pixel_row_container.SetUpper(this->GetUpperTileByte());
+			if (this->_pixel_row_container.GetSource() == PixelSource::BGP ||
+				this->_pixel_row_container.GetSource() == PixelSource::WIN)
+			{
+				this->_pixel_row_container.SetUpper(this->GetUpperTileByte());
+			}
+
 			this->_clocks -= READ_DATA_0_CLOCKS;
 			this->_state = State::READ_DATA_1;
 		}
@@ -153,7 +182,12 @@ private:
 	{
 		if (this->_clocks >= READ_DATA_1_CLOCKS)
 		{
-			this->_pixel_row_container.SetLower(this->GetLowerTileByte());
+			if (this->_pixel_row_container.GetSource() == PixelSource::BGP ||
+				this->_pixel_row_container.GetSource() == PixelSource::WIN)
+			{
+				this->_pixel_row_container.SetLower(this->GetLowerTileByte());
+			}
+
 			this->_clocks -= READ_DATA_1_CLOCKS;
 			this->_state = State::WAIT_FOR_FIFO;
 		}
@@ -183,6 +217,22 @@ private:
 	}
 
 private:
+	[[nodiscard]] OAMEntry* SpriteToDraw()
+	{
+		Message("TODO: OBJ-TO-BG Priority");
+		if (!static_cast<LCDC_Control::Control>(LCDC_Control{}).IsSpriteEnabled())
+		{
+			return nullptr;
+		}
+
+		auto iterator{std::find_if(this->_sprites.begin(), this->_sprites.end(), [&](std::shared_ptr<OAMEntry>& entry)
+		{
+			return (entry.get() != nullptr) && GetWrappedAroundDistance(this->GetPixelFIFO().GetX(), this->GetPixelFIFO().GetSCX()) == (entry->GetX() - PixelRow::PIXEL_COUNT);
+		})};
+
+		return iterator != this->_sprites.end() ? iterator->get() : nullptr;
+	}
+
 	[[nodiscard]] const API::address_t GetBackgroundMapStart() const
 	{
 		return static_cast<LCDC_Control::Control>(LCDC_Control{}).GetBackgroundMapStart();
@@ -240,14 +290,16 @@ private:
 	static constexpr std::size_t TILES_IN_ROW{0x20};
 
 private:
-	IPPU&             _ppu;
-	PixelFIFO&        _fifo;
-	State             _state{State::FETCH_TILE};
-	API::address_t    _tile_offset_x{0x00};
-	API::address_t    _window_tile_offset_x{0x00};
-	API::data_t       _tile_index{0x00};
-	PixelRowContainer _pixel_row_container{};
-	std::size_t       _clocks{0x00};
+	IPPU&							   _ppu;
+	PixelFIFO&						   _fifo;
+	State							   _state{State::FETCH_TILE};
+	API::address_t					   _tile_offset_x{0x00};
+	API::address_t					   _window_tile_offset_x{0x00};
+	API::data_t						   _tile_index{0x00};
+	PixelRowContainer				   _pixel_row_container{};
+	std::size_t						   _clocks{0x00};
+	OAMEntryManager					   _entry_manager{this->_ppu.GetProcessor().GetMemory()};
+	OAMEntryManager::sprites_in_line_t _sprites{};
 };
 } // Core
 

@@ -13,12 +13,6 @@
 #define MacroStr2(x)  MacroStr(x)
 #define Message(desc) __pragma(message(__FILE__ "(" MacroStr2(__LINE__) ") : " desc))
 
-Message("To remove!");
-#define SERIAL_TRANSFER_PRINT_DEBUG
-
-#define NO_PRINT
-
-#ifndef NO_PRINT
 #define LOG_NO_ENTER(fmt, ...)				\
 		do									\
 		{									\
@@ -30,18 +24,6 @@ Message("To remove!");
 		{										 \
 			LOG_NO_ENTER(fmt "\n", __VA_ARGS__); \
 		} while (false)
-#else
-#define LOG_NO_ENTER(fmt, ...)
-#define LOG(fmt, ...)	
-#endif
-
-#define MAIN_LOG_NO_ENTER(fmt, ...)	  \
-		do							  \
-		{							  \
-			printf(fmt, __VA_ARGS__); \
-		} while (false)
-
-#define MAIN_LOG(fmt, ...) MAIN_LOG_NO_ENTER(fmt "\n", __VA_ARGS__)
 
 #define SANITY(cond, fmt, ...)				    \
 		do									    \
@@ -55,7 +37,7 @@ Message("To remove!");
 #define STOP_RUNNING(fmt, ...)				   \
 		do									   \
 		{									   \
-			MAIN_LOG(fmt, __VA_ARGS__);		   \
+			LOG(fmt, __VA_ARGS__);		       \
 			std::abort();					   \
 		} while (false)
 
@@ -64,7 +46,7 @@ Message("To remove!");
 		{									   \
 			if (!(cond))					   \
 			{								   \
-				MAIN_LOG(fmt, __VA_ARGS__);    \
+				LOG(fmt, __VA_ARGS__);         \
 				return false;				   \
 			}								   \
 		} while (false)
@@ -116,6 +98,14 @@ namespace Tools
 [[nodiscard]] static constexpr size_t BytesInRAMBanks(const size_t bank_size)
 {
 	return bank_size * 0x2000;
+}
+
+[[nodiscard]] static constexpr uint8_t ReverseByte(const uint8_t byte)
+{
+	return ((byte & 0x1) << 7) |  ((byte & 0x2) << 5) |
+		   ((byte & 0x4) << 3) |  ((byte & 0x8) << 1) |
+		   ((byte & 0x10) >> 1) | ((byte & 0x20) >> 3) |
+		   ((byte & 0x40) >> 5) | ((byte & 0x80) >> 7);
 }
 } // Tools
 

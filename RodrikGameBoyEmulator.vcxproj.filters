@@ -75,6 +75,12 @@
     <ClCompile Include="Core\APU\Mechanics\DAC.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Core\GPU\Mechanics\OAMEntryManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\GPU\Entities\OAMEntry.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tools\Tools.h">
@@ -576,6 +582,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Core\APU\Waves\Implementation\ASoundChannelSquare.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\GPU\Mechanics\OAMEntryManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\GPU\Entities\OAMEntry.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

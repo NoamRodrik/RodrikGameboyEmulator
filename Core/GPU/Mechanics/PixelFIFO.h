@@ -88,7 +88,20 @@ public:
 			const API::data_t DRAWN_Y{static_cast<API::data_t>(LY{})};
 			const LCDC_Control::Control lcdc_control{LCDC_Control{}};
 
-			if (lcdc_control.background_enable == LCDC_Control::Control::BACKGROUND_ON && PIXEL.first == PixelSource::BGP)
+			Message("TODO priority!");
+			if (PIXEL.first == PixelSource::OBP0)
+			{
+				RET_FALSE_IF_FAIL(this->DrawPalette<OBP0>(DRAWN_X, DRAWN_Y, PIXEL.second),
+					"Failed drawing palette (%u, %u) for SCX %u and SCY %u, x %u y %u!",
+					DRAWN_X, DRAWN_Y, this->GetSCX(), this->GetSCY(), this->GetX(), this->GetY());
+			}
+			else if (PIXEL.first == PixelSource::OBP1)
+			{
+				RET_FALSE_IF_FAIL(this->DrawPalette<OBP1>(DRAWN_X, DRAWN_Y, PIXEL.second),
+					"Failed drawing palette (%u, %u) for SCX %u and SCY %u, x %u y %u!",
+					DRAWN_X, DRAWN_Y, this->GetSCX(), this->GetSCY(), this->GetX(), this->GetY());
+			}
+			else if (lcdc_control.background_enable == LCDC_Control::Control::BACKGROUND_ON && PIXEL.first == PixelSource::BGP)
 			{
 				RET_FALSE_IF_FAIL(this->DrawPalette(DRAWN_X, DRAWN_Y, PIXEL.second),
 					"Failed drawing palette (%u, %u) for SCX %u and SCY %u, x %u y %u!",
@@ -197,9 +210,10 @@ public:
 	}
 
 private:
+	template <typename PALETTE_REGISTER = BGP>
 	[[nodiscard]] const bool DrawPalette(int32_t x, int32_t y, PaletteColor color)
 	{
-		return DrawPixel(x, y, PaletteMap::ColorOf(color));
+		return DrawPixel(x, y, PaletteMap::ColorOf<PALETTE_REGISTER>(color));
 	}
 
 	[[nodiscard]] const bool DrawPixel(int32_t x, int32_t y, PixelColor color)
@@ -232,7 +246,7 @@ private:
 
 			default:
 			{
-				MAIN_LOG("Got an invalid pixel color: %u", static_cast<uint32_t>(color));
+				LOG("Got an invalid pixel color: %u", static_cast<uint32_t>(color));
 				return false;
 			}
 		}

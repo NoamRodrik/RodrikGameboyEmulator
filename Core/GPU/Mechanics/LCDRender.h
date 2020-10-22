@@ -78,7 +78,7 @@ public:
 
 				default:
 				{
-					MAIN_LOG("Got into an impossible state in the lcd renderer!");
+					LOG("Got into an impossible state in the lcd renderer!");
 					return false;
 				}
 			}
@@ -186,6 +186,7 @@ private:
 			{
 				// Going back to the beginning.
 				this->Reset();
+				this->_fetcher.GetOAMEntryManager().LoadSprites();
 				this->ChangeState(PPUState::OAM_SEARCH);
 			}
 

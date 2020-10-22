@@ -86,7 +86,7 @@ public:
 			return DATA;
 		}
 
-		constexpr bool Validate() const
+		[[nodiscard]] constexpr bool Validate() const
 		{
 			return (lcd_enable == DURING_H_BLANK || lcd_enable == DURING_V_BLANK ||
 				    lcd_enable == DURING_SEARCH_OAM_RAM || lcd_enable == DURING_DATA_TRANSFER_LCD) &&

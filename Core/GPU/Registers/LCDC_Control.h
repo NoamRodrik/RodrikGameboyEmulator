@@ -43,7 +43,7 @@ public:
 		static constexpr API::data_t BACKGROUND_ON{0x01};
 		API::data_t background_enable : 1;
 
-		constexpr bool IsBackgroundEnabled() const
+		[[nodiscard]] constexpr bool IsBackgroundEnabled() const
 		{
 			return background_enable == BACKGROUND_ON;
 		}
@@ -55,12 +55,22 @@ public:
 		static constexpr API::data_t SPRITE_ON{0x01};
 		API::data_t sprite_enable : 1;
 
+		[[nodiscard]] constexpr const bool IsSpriteEnabled() const
+		{
+			return sprite_enable == SPRITE_ON;
+		}
+
 		// OBJ_SIZE
 		// 0: 8 * 8
 		static constexpr API::data_t SPRITE_SIZE_8_BY_8{0x00};
 		// 1: 8 * 16 (width * height)
 		static constexpr API::data_t SPRITE_SIZE_8_BY_16{0x01};
 		API::data_t sprite_size : 1;
+
+		[[nodiscard]] constexpr const bool AreSpritesWide() const
+		{
+			return sprite_size == SPRITE_SIZE_8_BY_16;
+		}
 
 		// BG_MAP
 		// 0: $9800 - $9BFF
@@ -69,13 +79,13 @@ public:
 		static constexpr API::data_t BACKGROUND_MAP_9C00_9FFF{0x01};
 		API::data_t background_map_select : 1;
 
-		constexpr API::address_t GetBackgroundMapStart() const
+		[[nodiscard]] constexpr API::address_t GetBackgroundMapStart() const
 		{
 			return background_map_select == BACKGROUND_MAP_9800_9BFF ?
 				0x9800 : 0x9C00;
 		}
 
-		constexpr API::address_t GetBackgroundMapEnd() const
+		[[nodiscard]] constexpr API::address_t GetBackgroundMapEnd() const
 		{
 			return background_map_select == BACKGROUND_MAP_9800_9BFF ?
 				0x9BFF : 0x9FFF;
@@ -88,13 +98,13 @@ public:
 		static constexpr API::data_t TILE_MAP_SELECT_8000_8FFF{0x01};
 		API::data_t tile_select : 1;
 
-		constexpr API::address_t GetTileSelectOffset() const
+		[[nodiscard]] constexpr API::address_t GetTileSelectOffset() const
 		{
 			return tile_select == TILE_MAP_SELECT_8000_8FFF ?
 				API::TILE_SET_BANK_0_OFFSET : API::TILE_SET_BANK_1_OFFSET;
 		}
 
-		constexpr bool IsSigned() const
+		[[nodiscard]] constexpr bool IsSigned() const
 		{
 			return tile_select == TILE_MAP_SELECT_8800_97FF;
 		}
@@ -106,7 +116,7 @@ public:
 		static constexpr API::data_t WINDOW_ON{0x01};
 		API::data_t window_enable : 1;
 
-		constexpr bool IsWindowEnabled() const
+		[[nodiscard]] constexpr bool IsWindowEnabled() const
 		{
 			return window_enable == WINDOW_ON;
 		}
@@ -118,13 +128,13 @@ public:
 		static constexpr API::data_t WINDOWS_MAP_9C00_9FFF{0x01};
 		API::data_t window_map_select : 1;
 
-		constexpr API::address_t GetWindowMapStart() const
+		[[nodiscard]] constexpr API::address_t GetWindowMapStart() const
 		{
 			return window_map_select == WINDOWS_MAP_9800_9BFF ?
 					0x9800 : 0x9C00;
 		}
 
-		constexpr API::address_t GetWindowMapEnd() const
+		[[nodiscard]] constexpr API::address_t GetWindowMapEnd() const
 		{
 			return window_map_select == WINDOWS_MAP_9800_9BFF ?
 					0x9BFF : 0x9FFF;
@@ -137,12 +147,12 @@ public:
 		static constexpr API::data_t LCD_OPERATION{0x01};
 		API::data_t lcd_operation : 1;
 
-		inline constexpr const bool IsLCDEnabled() const
+		[[nodiscard]] constexpr const bool IsLCDEnabled() const
 		{
 			return this->lcd_operation == LCD_OPERATION;
 		}
 
-		constexpr operator API::data_t() const
+		[[nodiscard]] constexpr operator API::data_t() const
 		{
 			const API::data_t DATA = lcd_operation << 7 |
 									 window_map_select << 6 |
@@ -155,7 +165,7 @@ public:
 			return DATA;
 		}
 
-		constexpr bool Validate() const
+		[[nodiscard]] constexpr bool Validate() const
 		{
 			return (lcd_operation == LCD_STOP || lcd_operation == LCD_OPERATION) &&
 				   (window_map_select == WINDOWS_MAP_9800_9BFF || window_map_select == WINDOWS_MAP_9C00_9FFF) &&

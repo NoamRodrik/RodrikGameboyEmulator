@@ -52,7 +52,7 @@ enum class [[nodiscard]] PixelSource : API::data_t
 /**
  * The state of the PPU.
  */
-enum class [[nodiscard]] PPUState
+enum class [[nodiscard]] PPUState : API::data_t
 {
 	H_BLANK = 0x00,
 	V_BLANK = 0x01,
@@ -64,8 +64,9 @@ static constexpr const char ENGINE_WINDOW_NAME[]{"RodrikGameBoyEmulator"};
 static constexpr size_t     BACKGROUND_MAP_SIZE{Tools::SlotsToBytes(10)};
 static constexpr size_t     SCREEN_WIDTH_PIXELS{160};
 static constexpr size_t     SCREEN_HEIGHT_PIXELS{144};
+static constexpr size_t     AMOUNT_OF_SPRITES{40};
+static constexpr size_t     AMOUNT_OF_SPRITES_PER_LINE{10};
 
-//#define GREEN_DISPLAY
 #ifdef GREEN_DISPLAY
 static constexpr uint8_t    WHITE_PIXEL[]{143, 144, 85};
 static constexpr uint8_t    BLACK_PIXEL[]{32, 55, 50};

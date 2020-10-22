@@ -59,9 +59,18 @@ public:
 		Tools::MutateBitByCondition(static_cast<API::data_t>(pixel_color) & 0x01, this->_lower, 0);
 	}
 
+	/**
+	 * Flips the row by the X axis.
+	 */
+	constexpr void Flip()
+	{
+		this->_lower = Tools::ReverseByte(this->_lower);
+		this->_upper = Tools::ReverseByte(this->_upper);
+	}
+
 public:
-	static constexpr auto TOP_COLOR_INDEX{7};
-	static constexpr auto PIXEL_COUNT{8};
+	static constexpr API::data_t TOP_COLOR_INDEX{7};
+	static constexpr API::data_t PIXEL_COUNT{8};
 
 private:
 	API::data_t _upper{0};
