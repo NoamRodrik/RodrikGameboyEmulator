@@ -9,7 +9,7 @@
 #include <Contrib/PixelGameEngine/OLCPixelGameEngine.h>
 #include <Core/GPU/Entities/PixelRowContainer.h>
 #include <Core/GPU/Entities/PaletteMap.h>
-#include <Core/Bus/Devices/IORAM.h>
+#include <Core/Bus/Devices/IODevice.h>
 #include <Core/GPU/Registers/SCY.h>
 #include <Core/GPU/Registers/SCX.h>
 #include <Core/GPU/Registers/LY.h>

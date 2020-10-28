@@ -10,7 +10,7 @@
 #include <Core/GPU/Mechanics/OAMEntryManager.h>
 #include <Core/GPU/Registers/LCDC_Control.h>
 #include <Core/GPU/Mechanics/PixelFIFO.h>
-#include <Core/Bus/Devices/VideoRAM.h>
+#include <Core/Bus/Devices/VideoRAMDevice.h>
 #include <Core/GPU/Registers/SCY.h>
 #include <Core/GPU/Registers/WY.h>
 #include <Core/GPU/Registers/WX.h>
@@ -225,9 +225,9 @@ private:
 			return nullptr;
 		}
 
-		auto iterator{std::find_if(this->_sprites.begin(), this->_sprites.end(), [&](std::shared_ptr<OAMEntry>& entry)
+		auto iterator{std::find_if(this->_sprites.begin(), this->_sprites.end(), [this](std::shared_ptr<OAMEntry>& entry)
 		{
-			return (entry.get() != nullptr) && GetWrappedAroundDistance(this->GetPixelFIFO().GetX(), this->GetPixelFIFO().GetSCX()) == (entry->GetX() - PixelRow::PIXEL_COUNT);
+			return (entry.get() != nullptr) && GetWrappedAroundDistance(this->GetPixelFIFO().GetX(), this->GetPixelFIFO().GetSCX()) == entry->GetX();
 		})};
 
 		return iterator != this->_sprites.end() ? iterator->get() : nullptr;

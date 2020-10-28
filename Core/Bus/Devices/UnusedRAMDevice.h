@@ -1,21 +1,21 @@
 /**
- * @file		UnusedRAM.h
+ * @file		UnusedRAMDevice.h
  * @author		Noam Rodrik
  * @description LR35902 main unused RAM device header.
  */
 #ifndef __LR35902_MEMORY_DEVICE_UNUSED_RAM_H__
 #define __LR35902_MEMORY_DEVICE_UNUSED_RAM_H__
 
-#include <Core/Bus/RAMDevice.h>
+#include <Core/Bus/MemoryDevice.h>
 #include <API/Definitions.h>
 
 namespace Core
 {
-class [[nodiscard]] UnusedRAM : public RAMDevice<0xFEA0, 0xFEFF>
+class [[nodiscard]] UnusedRAMDevice : public MemoryDevice<0xFEA0, 0xFEFF>
 {
 public:
-	UnusedRAM(API::IMemoryDeviceAccess& memory_accessor) : RAMDevice{memory_accessor} {}
-	virtual ~UnusedRAM() override = default;
+	UnusedRAMDevice(API::IMemoryDeviceAccess& memory_accessor) : MemoryDevice{memory_accessor} {}
+	virtual ~UnusedRAMDevice() override = default;
 
 private:
 	friend class DeviceManager;

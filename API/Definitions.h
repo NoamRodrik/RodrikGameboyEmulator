@@ -15,7 +15,7 @@
 
 Message("Global control definitions!");
 //#define GREEN_DISPLAY
-//#define SERIAL_TRANSFER_PRINT_DEBUG
+#define SERIAL_TRANSFER_PRINT_DEBUG
 
 namespace API
 {
@@ -67,6 +67,7 @@ namespace API
 
 	/* Timer Definitions */
 	static constexpr auto		 LR35902_HZ_CLOCK{4'194'304};
+	static constexpr auto		 LR35902_HZ_CYCLE{4'194'304 / 4};
 	static constexpr std::size_t LR35902_HZ_CLOCK_256HZ{LR35902_HZ_CLOCK / 256};
 	static constexpr std::size_t LR35902_HZ_CLOCK_128HZ{LR35902_HZ_CLOCK / 128};
 	static constexpr std::size_t LR35902_HZ_CLOCK_64HZ{LR35902_HZ_CLOCK / 64};

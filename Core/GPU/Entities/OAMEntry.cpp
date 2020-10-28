@@ -5,7 +5,7 @@
  */
 #include <Core/GPU/Registers/LCDC_Control.h>
 #include <Core/GPU/Entities/OAMEntry.h>
-#include <Core/Bus/Devices/OAMRAM.h>
+#include <Core/Bus/Devices/OAMRAMDevice.h>
 
 using namespace API;
 
@@ -14,13 +14,15 @@ namespace Core
 OAMEntry::OAMEntry(IMemoryDeviceAccess& memory_accessor, std::size_t index) : _memory_accessor{memory_accessor}
 {
 	API::data_t attributes{0x00};
-	SANITY(memory_accessor.Read(OAMRAM::START_ADDRESS + index * OAM_ENTRY_SIZE + X_POSITION_INDEX, this->_x),
+	SANITY(memory_accessor.Read(OAMRAMDevice::START_ADDRESS + index * OAM_ENTRY_SIZE + X_POSITION_INDEX, this->_x),
 		   "Failed reading X position index from OAM entry: %llu.", index);
-	SANITY(memory_accessor.Read(OAMRAM::START_ADDRESS + index * OAM_ENTRY_SIZE + Y_POSITION_INDEX, this->_y),
+	this->_x -= PixelRow::PIXEL_COUNT;
+	SANITY(memory_accessor.Read(OAMRAMDevice::START_ADDRESS + index * OAM_ENTRY_SIZE + Y_POSITION_INDEX, this->_y),
 		   "Failed reading Y position index from OAM entry: %llu.", index);
-	SANITY(memory_accessor.Read(OAMRAM::START_ADDRESS + index * OAM_ENTRY_SIZE + TILE_NUMBER_INDEX, this->_tile_index),
+	this->_y -= 2 * PixelRow::PIXEL_COUNT;
+	SANITY(memory_accessor.Read(OAMRAMDevice::START_ADDRESS + index * OAM_ENTRY_SIZE + TILE_NUMBER_INDEX, this->_tile_index),
 		   "Failed reading tile number index from OAM entry: %llu.", index);
-	SANITY(memory_accessor.Read(OAMRAM::START_ADDRESS + index * OAM_ENTRY_SIZE + ATTRIBUTES_INDEX, attributes),
+	SANITY(memory_accessor.Read(OAMRAMDevice::START_ADDRESS + index * OAM_ENTRY_SIZE + ATTRIBUTES_INDEX, attributes),
 		"Failed reading tile number index from OAM entry: %llu.", index);
 
 	const OAMAttributes OAM_ATTRIBUTES{attributes};
@@ -33,13 +35,11 @@ OAMEntry::OAMEntry(IMemoryDeviceAccess& memory_accessor, std::size_t index) : _m
 PixelRow OAMEntry::GetSpritePixelRow(std::size_t y) const
 {
 	// Deciding which line to fetch from the sprite.
-	// "However, in order to allow sprites to move sprites into the frame from the top smoothly,
-	//  16 is subtracted from this value to determine the actual Y-Position."
-	y = (y - this->_y) - 2 * PixelRow::PIXEL_COUNT;
+	y -= this->_y;
 
 	const bool WIDE_SPRITES{static_cast<LCDC_Control::Control>(LCDC_Control{}).AreSpritesWide()};
-	const API::data_t TILE_INDEX = this->_tile_index + !WIDE_SPRITES ? 0 :
-								   (this->_y_flip == Flip::NO && y >= PixelRow::PIXEL_COUNT) || (this->_y_flip == Flip::YES && y < PixelRow::PIXEL_COUNT);
+	API::data_t tile_index = this->_tile_index & (0xFE | !WIDE_SPRITES);
+	tile_index += !WIDE_SPRITES ? 0 : (this->_y_flip == Flip::NO && y >= PixelRow::PIXEL_COUNT) || (this->_y_flip == Flip::YES && y < PixelRow::PIXEL_COUNT);
 
 	if (this->_y_flip == Flip::YES)
 	{
@@ -47,7 +47,7 @@ PixelRow OAMEntry::GetSpritePixelRow(std::size_t y) const
 	}
 
 	// Fetching the sprite tile address.
-	const API::address_t SPRITE_TILE_ADDRESS = TILE_SET_BANK_0_OFFSET + (TILE_INDEX * 2 * PixelRow::PIXEL_COUNT) + 2 * y;
+	const API::address_t SPRITE_TILE_ADDRESS = TILE_SET_BANK_0_OFFSET + (tile_index * 2 * PixelRow::PIXEL_COUNT) + 2 * y;
 	API::data_t lower{0x00};
 	API::data_t upper{0x00};
 

@@ -8,7 +8,7 @@
 
 #include <API/Memory/Device/IMemoryDeviceAccess.h>
 #include <Core/GPU/Entities/OAMEntry.h>
-#include <Core/Bus/Devices/OAMRAM.h>
+#include <Core/Bus/Devices/OAMRAMDevice.h>
 #include <memory>
 #include <array>
 

@@ -16,7 +16,7 @@ namespace Core
 class Instruction
 {
 public:
-	inline bool Execute() const { return this->_func(); }
+	[[nodiscard]] inline bool Execute() const { return this->_func(); }
 
 public:
 	const std::function<bool()> _func{nullptr};

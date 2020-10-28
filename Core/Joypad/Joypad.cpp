@@ -6,7 +6,7 @@
 #include <Core/Joypad/Joypad.h>
 #include <Core/CPU/Interrupts/InterruptHandler.h>
 #include <Core/Joypad/Registers/JoypadRegister.h>
-#include <Core/Bus/Devices/IORAM.h>
+#include <Core/Bus/Devices/IODevice.h>
 
 using namespace API;
 

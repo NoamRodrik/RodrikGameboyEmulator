@@ -1,20 +1,20 @@
 /**
- * @file		IRAMDevice.h
+ * @file		IInterceptor.h
  * @author		Noam Rodrik
- * @description LR35902 main ram device interface.
+ * @description LR35902 main interceptor interface.
  */
-#ifndef __LR35902_IRAM_DEVICE_H__
-#define __LR35902_IRAM_DEVICE_H__
+#ifndef __LR35902_IINTERCEPTOR_H__
+#define __LR35902_IINTERCEPTOR_H__
 
 #include <API/Memory/Device/IMemoryDevice.h>
 #include <API/Definitions.h>
 
 namespace Core
 {
-class [[nodiscard]] IRAMDevice
+class [[nodiscard]] IInterceptor
 {
 public:
-	virtual ~IRAMDevice() = default;
+	virtual ~IInterceptor() = default;
 
 protected:
 	[[nodiscard]] virtual bool InterceptWrite(const API::address_t absolute_address, const API::data_t data) = 0;
@@ -25,4 +25,4 @@ private:
 };
 } // Core
 
-#endif // __LR35902_IRAM_DEVICE_H__
+#endif // __LR35902_IINTERCEPTOR_H__

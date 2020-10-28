@@ -1,5 +1,5 @@
 /**
- * @file		RAMDevice.h
+ * @file		MemoryDevice.h
  * @author		Noam Rodrik
  * @description LR35902 main ram device header.
  */
@@ -8,19 +8,19 @@
 
 #include <API/Memory/Device/IMemoryDeviceAccess.h>
 #include <API/Memory/Device/IMemoryDevice.h>
-#include <Core/Bus/IRAMDevice.h>
+#include <Core/Bus/IInterceptor.h>
 #include <API/Memory/Memory.h>
 #include <API/Definitions.h>
 
 namespace Core
 {
 template <API::address_t START, API::address_t END>
-class [[nodiscard]] RAMDevice : public IRAMDevice, public API::IMemoryDevice
+class [[nodiscard]] MemoryDevice : public IInterceptor, public API::IMemoryDevice
 {
 public:
-	RAMDevice(API::IMemoryDeviceAccess& memory_accessor) : API::IMemoryDevice{START, END, memory_accessor} {}
+	MemoryDevice(API::IMemoryDeviceAccess& memory_accessor) : API::IMemoryDevice{START, END, memory_accessor} {}
 
-	virtual ~RAMDevice() override = default;
+	virtual ~MemoryDevice() override = default;
 
 public:
 	/**

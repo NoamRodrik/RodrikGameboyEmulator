@@ -83,8 +83,8 @@ private:
 
 private:
 	static constexpr std::size_t OAM_ENTRY_SIZE{0x04};
-	static constexpr std::size_t X_POSITION_INDEX{0x00};
-	static constexpr std::size_t Y_POSITION_INDEX{0x01};
+	static constexpr std::size_t Y_POSITION_INDEX{0x00};
+	static constexpr std::size_t X_POSITION_INDEX{0x01};
 	static constexpr std::size_t TILE_NUMBER_INDEX{0x02};
 	static constexpr std::size_t ATTRIBUTES_INDEX{0x03};
 

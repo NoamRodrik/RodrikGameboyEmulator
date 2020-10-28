@@ -6,7 +6,7 @@
  */
 #include "MBC1_0x01.h"
 
-#include <Core/Bus/Devices/CartridgeRAM.h>
+#include <Core/Bus/Devices/CartridgeDevice.h>
 #include <Core/Bus/DeviceTools.h>
 #include <Core/CPU/Processor.h>
 #include <Tools/Tools.h>
@@ -27,16 +27,16 @@ size_t MemoryBankController_1::BankSize() const
 
 bool MemoryBankController_1::Read(const API::address_t absolute_address, API::data_t& result) const
 {
-	static CartridgeRAM* CRAM{static_cast<CartridgeRAM*>(Processor::GetInstance().GetMemory().GetDeviceAtAddress(CartridgeRAM::START_ADDRESS))};
+	static CartridgeDevice* CRAM{static_cast<CartridgeDevice*>(Processor::GetInstance().GetMemory().GetDeviceAtAddress(CartridgeDevice::START_ADDRESS))};
 
-	if (!CRAM->IsBootCovered() && absolute_address < CartridgeRAM::BOOT_END_ADDRESS)
+	if (!CRAM->IsBootCovered() && absolute_address < CartridgeDevice::BOOT_END_ADDRESS)
 	{
 		// Don't intercept.
 		return false;
 	}
 
-	if (absolute_address >= CartridgeRAM::START_ADDRESS &&
-		absolute_address <= CartridgeRAM::END_ADDRESS)
+	if (absolute_address >= CartridgeDevice::START_ADDRESS &&
+		absolute_address <= CartridgeDevice::END_ADDRESS)
 	{
 		if (absolute_address < ADDITIONAL_ROM_BANKS_OFFSET)
 		{

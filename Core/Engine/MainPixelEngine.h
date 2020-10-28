@@ -13,7 +13,7 @@
 #include <Core/GPU/Registers/LCDC_Control.h>
 #include <Core/GPU/Mechanics/LCDRender.h>
 #include <Core/GPU/Entities/PaletteMap.h>
-#include <Core/Bus/Devices/IORAM.h>
+#include <Core/Bus/Devices/IODevice.h>
 #include <Core/GPU/Definitions.h>
 #include <Core/Joypad/Joypad.h>
 #include <Core/Clock/Clock.h>

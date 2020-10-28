@@ -9,7 +9,7 @@
 #include <Core/Cartridge/Implementation/MBC1_0x02.h>
 #include <Core/Cartridge/Implementation/MBC1_0x01.h>
 #include <Core/Cartridge/Implementation/ROM_0x00.h>
-#include <Core/Bus/Devices/CartridgeRAM.h>
+#include <Core/Bus/Devices/CartridgeDevice.h>
 #include <API/Cartridge/Header.h>
 #include <Core/CPU/Processor.h>
 
@@ -24,7 +24,7 @@ MBCController::MBCController(IMemoryDeviceAccess& memory_accessor, std::shared_p
 	this->Setup();
 
 	// Load the first 8KB with the game data.
-	this->_loader->Load(static_cast<CartridgeRAM*>(Processor::GetInstance().GetMemory().GetDeviceAtAddress(CartridgeRAM::START_ADDRESS))->GetMemoryPointer(),
+	this->_loader->Load(static_cast<CartridgeDevice*>(Processor::GetInstance().GetMemory().GetDeviceAtAddress(CartridgeDevice::START_ADDRESS))->GetMemoryPointer(),
 						 static_cast<long>(Tools::BytesInROMBanks(1) / 2));
 
 	SANITY(this->UpdateMBC(), "Failed loading MBC");

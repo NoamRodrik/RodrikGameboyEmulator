@@ -1,5 +1,5 @@
 /**
- * @file		IORAM.h
+ * @file		IODevice.h
  * @author		Noam Rodrik
  * @description LR35902 main IO RAM device header.
  */
@@ -16,7 +16,7 @@
 #include <Core/Timers/Registers/TimerModulo.h>
 #include <Core/GPU/Registers/LCDC_Control.h>
 #include <Core/GPU/Registers/LCDC_Status.h>
-#include <Core/Bus/Devices/CartridgeRAM.h>
+#include <Core/Bus/Devices/CartridgeDevice.h>
 #include <Core/APU/Registers/NR10.h>
 #include <Core/APU/Registers/NR11.h>
 #include <Core/APU/Registers/NR12.h>
@@ -49,17 +49,17 @@
 #include <Core/GPU/Registers/WY.h>
 #include <Core/GPU/Registers/WX.h>
 #include <Core/Joypad/Joypad.h>
-#include <Core/Bus/RAMDevice.h>
+#include <Core/Bus/MemoryDevice.h>
 #include <Core/Timers/Timer.h>
 #include <API/Definitions.h>
 #include <Core/APU/APU.h>
 
 namespace Core
 {
-class [[nodiscard]] IORAM : public RAMDevice<0xFF00, 0xFF7F>
+class [[nodiscard]] IODevice : public MemoryDevice<0xFF00, 0xFF7F>
 {
 public:
-	IORAM(API::IMemoryDeviceAccess& memory_accessor) : RAMDevice{memory_accessor}
+	IODevice(API::IMemoryDeviceAccess& memory_accessor) : MemoryDevice{memory_accessor}
 	{
 		this->_memory[this->RelativeAddress(DividerRegister::DIVIDER_REGISTER_ADDRESS_LSB)] = DividerRegister::DIVIDER_REGISTER_DEFAULT_VALUE_LSB;
 		this->_memory[this->RelativeAddress(DividerRegister::DIVIDER_REGISTER_ADDRESS)] = DividerRegister::DIVIDER_REGISTER_DEFAULT_VALUE;
@@ -205,7 +205,7 @@ private:
 				// Once this is written with 0x1, we can read the software BOOT-ROM section.
 				if (data == 0x01)
 				{
-					static_cast<CartridgeRAM*>(Processor::GetInstance().GetMemory().GetDeviceAtAddress(CartridgeRAM::START_ADDRESS))->CoverSystemBoot();
+					static_cast<CartridgeDevice*>(Processor::GetInstance().GetMemory().GetDeviceAtAddress(CartridgeDevice::START_ADDRESS))->CoverSystemBoot();
 				}
 
 				break;

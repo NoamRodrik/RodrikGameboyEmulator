@@ -5,7 +5,7 @@
 #include "Registers/TimerCounter.h"
 #include "Registers/TimerModulo.h"
 #include "Registers/DividerRegister.h"
-#include <Core/Bus/Devices/IORAM.h>
+#include <Core/Bus/Devices/IODevice.h>
 
 using namespace API;
 

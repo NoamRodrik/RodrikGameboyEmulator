@@ -122,8 +122,8 @@ public:
 		{
 			API::data_t fetched_memory{0x00};
 
-			SANITY(this->_memory.Read(DMA_START_ADDRESS + 1, fetched_memory), "Failed fetching memory via DMA");
-			SANITY(this->_memory.WriteDirectly(START_ADDRESS + index, fetched_memory), "Failed writing directly via DMA");
+			SANITY(this->_memory.Read(DMA_START_ADDRESS + index, fetched_memory), "Failed fetching memory via DMA");
+			SANITY(this->_memory.Write(START_ADDRESS + index, fetched_memory), "Failed writing directly via DMA");
 		}
 	}
 
@@ -185,8 +185,8 @@ private:
 			if (static_cast<API::data_t>(LY{}) == VBLANK_LY_END)
 			{
 				// Going back to the beginning.
-				this->Reset();
 				this->_fetcher.GetOAMEntryManager().LoadSprites();
+				this->Reset();
 				this->ChangeState(PPUState::OAM_SEARCH);
 			}
 
