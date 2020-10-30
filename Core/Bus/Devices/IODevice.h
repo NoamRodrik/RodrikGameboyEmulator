@@ -61,46 +61,46 @@ class [[nodiscard]] IODevice : public MemoryDevice<0xFF00, 0xFF7F>
 public:
 	IODevice(API::IMemoryDeviceAccess& memory_accessor) : MemoryDevice{memory_accessor}
 	{
-		this->_memory[this->RelativeAddress(DividerRegister::DIVIDER_REGISTER_ADDRESS_LSB)] = DividerRegister::DIVIDER_REGISTER_DEFAULT_VALUE_LSB;
-		this->_memory[this->RelativeAddress(DividerRegister::DIVIDER_REGISTER_ADDRESS)] = DividerRegister::DIVIDER_REGISTER_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(TimerCounter::TIMER_COUNTER_ADDRESS)] = TimerCounter::TIMER_COUNTER_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(TimerModulo::TIMER_MODULO_ADDRESS)] = TimerModulo::TIMER_MODULO_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(TimerControl::TIMER_CONTROL_ADDRESS)] = TimerControl::TIMER_CONTROL_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(NR10::NR10_ADDRESS)] = NR10::NR10_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(NR11::NR11_ADDRESS)] = NR11::NR11_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(NR12::NR12_ADDRESS)] = NR12::NR12_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(NR13::NR13_ADDRESS)] = NR13::NR13_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(NR14::NR14_ADDRESS)] = NR14::NR14_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(NR21::NR21_ADDRESS)] = NR21::NR21_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(NR22::NR22_ADDRESS)] = NR22::NR22_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(NR23::NR23_ADDRESS)] = NR23::NR23_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(NR24::NR24_ADDRESS)] = NR24::NR24_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(NR30::NR30_ADDRESS)] = NR30::NR30_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(NR31::NR31_ADDRESS)] = NR31::NR31_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(NR32::NR32_ADDRESS)] = NR32::NR32_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(NR33::NR33_ADDRESS)] = NR33::NR33_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(NR34::NR34_ADDRESS)] = NR34::NR34_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(NR41::NR41_ADDRESS)] = NR41::NR41_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(NR42::NR42_ADDRESS)] = NR42::NR42_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(NR43::NR43_ADDRESS)] = NR43::NR43_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(NR44::NR44_ADDRESS)] = NR44::NR44_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(NR50::NR50_ADDRESS)] = NR50::NR50_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(NR51::NR51_ADDRESS)] = NR51::NR51_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(NR52::NR52_ADDRESS)] = NR52::NR52_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(LCDC_Control::LCDC_ADDRESS)] = LCDC_Control::LCDC_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(LCDC_Status::LCDC_ADDRESS)] = LCDC_Status::LCDC_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(SCY::SCY_ADDRESS)] = SCY::SCY_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(SCX::SCX_ADDRESS)] = SCX::SCX_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(LY::LY_ADDRESS)] = LY::LY_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(LYC::LYC_ADDRESS)] = LYC::LYC_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(DMA::DMA_ADDRESS)] = DMA::DMA_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(BGP::BGP_ADDRESS)] = BGP::BGP_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(OBP0::OBP0_ADDRESS)] = OBP0::OBP0_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(OBP1::OBP1_ADDRESS)] = OBP1::OBP1_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(WY::WY_ADDRESS)] = WY::WY_DEFAULT_VALUE;
-		this->_memory[this->RelativeAddress(WX::WX_ADDRESS)] = WX::WX_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(DividerRegister::MEMORY_ADDRESS_LSB)] = DividerRegister::DIVIDER_REGISTER_DEFAULT_VALUE_LSB;
+		this->_memory[this->RelativeAddress(DividerRegister::MEMORY_ADDRESS)] = DividerRegister::DIVIDER_REGISTER_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(TimerCounter::MEMORY_ADDRESS)] = TimerCounter::TIMER_COUNTER_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(TimerModulo::MEMORY_ADDRESS)] = TimerModulo::TIMER_MODULO_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(TimerControl::MEMORY_ADDRESS)] = TimerControl::TIMER_CONTROL_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(NR10::MEMORY_ADDRESS)] = NR10::NR10_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(NR11::MEMORY_ADDRESS)] = NR11::NR11_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(NR12::MEMORY_ADDRESS)] = NR12::NR12_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(NR13::MEMORY_ADDRESS)] = NR13::NR13_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(NR14::MEMORY_ADDRESS)] = NR14::NR14_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(NR21::MEMORY_ADDRESS)] = NR21::NR21_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(NR22::MEMORY_ADDRESS)] = NR22::NR22_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(NR23::MEMORY_ADDRESS)] = NR23::NR23_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(NR24::MEMORY_ADDRESS)] = NR24::NR24_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(NR30::MEMORY_ADDRESS)] = NR30::NR30_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(NR31::MEMORY_ADDRESS)] = NR31::NR31_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(NR32::MEMORY_ADDRESS)] = NR32::NR32_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(NR33::MEMORY_ADDRESS)] = NR33::NR33_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(NR34::MEMORY_ADDRESS)] = NR34::NR34_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(NR41::MEMORY_ADDRESS)] = NR41::NR41_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(NR42::MEMORY_ADDRESS)] = NR42::NR42_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(NR43::MEMORY_ADDRESS)] = NR43::NR43_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(NR44::MEMORY_ADDRESS)] = NR44::NR44_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(NR50::MEMORY_ADDRESS)] = NR50::NR50_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(NR51::MEMORY_ADDRESS)] = NR51::NR51_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(NR52::MEMORY_ADDRESS)] = NR52::NR52_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(LCDC_Control::MEMORY_ADDRESS)] = LCDC_Control::LCDC_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(LCDC_Status::MEMORY_ADDRESS)] = LCDC_Status::LCDC_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(SCY::MEMORY_ADDRESS)] = SCY::SCY_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(SCX::MEMORY_ADDRESS)] = SCX::SCX_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(LY::MEMORY_ADDRESS)] = LY::LY_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(LYC::MEMORY_ADDRESS)] = LYC::LYC_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(DMA::MEMORY_ADDRESS)] = DMA::DMA_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(BGP::MEMORY_ADDRESS)] = BGP::BGP_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(OBP0::MEMORY_ADDRESS)] = OBP0::OBP0_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(OBP1::MEMORY_ADDRESS)] = OBP1::OBP1_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(WY::MEMORY_ADDRESS)] = WY::WY_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(WX::MEMORY_ADDRESS)] = WX::WX_DEFAULT_VALUE;
 
-		this->_memory[this->RelativeAddress(InterruptFlag::INTERRUPT_FLAG_ADDRESS)] = InterruptFlag::INTERRUPT_FLAG_DEFAULT_VALUE;
+		this->_memory[this->RelativeAddress(InterruptFlag::MEMORY_ADDRESS)] = InterruptFlag::INTERRUPT_FLAG_DEFAULT_VALUE;
 	}
 
 private:
@@ -108,9 +108,9 @@ private:
 	{
 		switch (absolute_address)
 		{
-			case (JoypadRegister::JOYPAD_REGISTER_ADDRESS):
+			case (JoypadRegister::MEMORY_ADDRESS):
 			{
-				API::data_t status = 0xC0 | (this->_memory[this->RelativeAddress(JoypadRegister::JOYPAD_REGISTER_ADDRESS)] & 0x30);
+				API::data_t status = 0xC0 | (this->_memory[this->RelativeAddress(JoypadRegister::MEMORY_ADDRESS)] & 0x30);
 				switch (status & 0x30)
 				{
 					case (1 << static_cast<std::size_t>(Joypad::Mode::SELECT_DIRECTIONS)):
@@ -159,21 +159,21 @@ private:
 				break;
 			}
 
-			case (TimerModulo::TIMER_MODULO_ADDRESS):
+			case (TimerModulo::MEMORY_ADDRESS):
 			{
 				// Writing also onto the timer counter!
 				// NOTE: This can't be *Write* since it will cause an infinite loop!
-				this->_memory[this->RelativeAddress(TimerCounter::TIMER_COUNTER_ADDRESS)] = data;
+				this->_memory[this->RelativeAddress(TimerCounter::MEMORY_ADDRESS)] = data;
 
 				break;
 			}
 
-			case (TimerCounter::TIMER_COUNTER_ADDRESS):
+			case (TimerCounter::MEMORY_ADDRESS):
 			{
 				if (Timer::IsCounterOverflow(data))
 				{
 					// NOTE: This can't be *Write* since it will cause an infinite loop!
-					this->_memory[this->RelativeAddress(absolute_address)] = this->_memory[this->RelativeAddress(TimerModulo::TIMER_MODULO_ADDRESS)];
+					this->_memory[this->RelativeAddress(absolute_address)] = this->_memory[this->RelativeAddress(TimerModulo::MEMORY_ADDRESS)];
 					Timer::LaunchInterrupt();
 					return true;
 				}
@@ -181,7 +181,7 @@ private:
 				break;
 			}
 
-			case (TimerControl::TIMER_CONTROL_ADDRESS):
+			case (TimerControl::MEMORY_ADDRESS):
 			{
 				// Using only the allowed portion of the TAC.
 				// NOTE: This can't be *Write* since it will cause an infinite loop!
@@ -189,7 +189,7 @@ private:
 				return true;
 			}
 
-			case (DividerRegister::DIVIDER_REGISTER_ADDRESS):
+			case (DividerRegister::MEMORY_ADDRESS):
 			{
 				// Writing to the divier register resets the divider timer.
 				// NOTE: This can't be *Write* since it will cause an infinite loop!
@@ -211,7 +211,7 @@ private:
 				break;
 			}
 
-			case (LY::LY_ADDRESS):
+			case (LY::MEMORY_ADDRESS):
 			{
 				// Writing will reset the counter.
 				this->_memory[this->RelativeAddress(absolute_address)] = 0;
@@ -220,9 +220,9 @@ private:
 				break;
 			}
 
-			case (LCDC_Control::LCDC_ADDRESS):
+			case (LCDC_Control::MEMORY_ADDRESS):
 			{
-				this->_memory[this->RelativeAddress(LCDC_Control::LCDC_ADDRESS)] = data;
+				this->_memory[this->RelativeAddress(LCDC_Control::MEMORY_ADDRESS)] = data;
 
 				if (static_cast<LCDC_Control::Control>(data).IsLCDEnabled() &&
 					!Processor::GetInstance().GetPPU()->IsLCDEnabled())
@@ -242,32 +242,33 @@ private:
 				break;
 			}
 
-			case (LCDC_Status::LCDC_ADDRESS) :
+			case (LCDC_Status::MEMORY_ADDRESS) :
 			{
 				// Don't allow the override of values in bits [0,2]
-				this->_memory[this->RelativeAddress(LCDC_Status::LCDC_ADDRESS)] = (data & 0x78) | (this->_memory[this->RelativeAddress(LCDC_Status::LCDC_ADDRESS)] & 0x07);
+				this->_memory[this->RelativeAddress(LCDC_Status::MEMORY_ADDRESS)] =
+					(data & 0x78) | (this->_memory[this->RelativeAddress(LCDC_Status::MEMORY_ADDRESS)] & 0x07);
 
 				return true;
 				break;
 			}
 
-			case (JoypadRegister::JOYPAD_REGISTER_ADDRESS):
+			case (JoypadRegister::MEMORY_ADDRESS):
 			{
-				this->_memory[this->RelativeAddress(JoypadRegister::JOYPAD_REGISTER_ADDRESS)] = 0xCF | (data & 0x30);
+				this->_memory[this->RelativeAddress(JoypadRegister::MEMORY_ADDRESS)] = 0xCF | (data & 0x30);
 
 				return true;
 				break;
 			}
 
-			case (DMA::DMA_ADDRESS):
+			case (DMA::MEMORY_ADDRESS):
 			{
-				this->_memory[this->RelativeAddress(DMA::DMA_ADDRESS)] = data;
+				this->_memory[this->RelativeAddress(DMA::MEMORY_ADDRESS)] = data;
 				Processor::GetInstance().GetPPU()->InitiateDMA();
 				return true;
 				break;
 			}
 
-			case (NR13::NR13_ADDRESS):
+			case (NR13::MEMORY_ADDRESS):
 			{
 				// Lower 8 bits of the frequency, the rest (3 more bits) are at NR14.
 				API::address_t frequency{APU::GetInstance().GetOscillator().GetWave(SoundChannel::PULSE_A)->GetFrequency()};
@@ -276,7 +277,7 @@ private:
 				break;
 			}
 
-			case (NR14::NR14_ADDRESS):
+			case (NR14::MEMORY_ADDRESS):
 			{
 				// Upper 3 bits of the frequency, the rest (8 more bits) are at NR13.
 				API::address_t frequency{APU::GetInstance().GetOscillator().GetWave(SoundChannel::PULSE_A)->GetFrequency()};
@@ -291,7 +292,7 @@ private:
 				break;
 			}
 
-			case (NR23::NR23_ADDRESS):
+			case (NR23::MEMORY_ADDRESS):
 			{
 				// Lower 8 bits of the frequency, the rest (3 more bits) are at NR24.
 				API::address_t frequency{APU::GetInstance().GetOscillator().GetWave(SoundChannel::PULSE_B)->GetFrequency()};
@@ -300,7 +301,7 @@ private:
 				break;
 			}
 
-			case (NR24::NR24_ADDRESS):
+			case (NR24::MEMORY_ADDRESS):
 			{
 				// Upper 3 bits of the frequency, the rest (8 more bits) are at NR23.
 				API::address_t frequency{APU::GetInstance().GetOscillator().GetWave(SoundChannel::PULSE_B)->GetFrequency()};
@@ -315,7 +316,7 @@ private:
 				break;
 			}
 
-			case (NR33::NR33_ADDRESS):
+			case (NR33::MEMORY_ADDRESS):
 			{
 				// Lower 8 bits of the frequency, the rest (3 more bits) are at NR34.
 				API::address_t frequency{APU::GetInstance().GetOscillator().GetWave(SoundChannel::WAVE)->GetFrequency()};
@@ -324,7 +325,7 @@ private:
 				break;
 			}
 
-			case (NR34::NR34_ADDRESS):
+			case (NR34::MEMORY_ADDRESS):
 			{
 				// Upper 3 bits of the frequency, the rest (8 more bits) are at NR33.
 				API::address_t frequency{APU::GetInstance().GetOscillator().GetWave(SoundChannel::WAVE)->GetFrequency()};
@@ -341,12 +342,6 @@ private:
 		}
 
 		return false;
-	}
-
-protected:
-	void MaskLCDCStatus(API::data_t mask)
-	{
-		this->_memory[this->RelativeAddress(LCDC_Status::LCDC_ADDRESS)] &= mask;
 	}
 
 private:

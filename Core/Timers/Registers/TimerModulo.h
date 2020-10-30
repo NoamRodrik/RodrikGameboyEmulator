@@ -6,23 +6,19 @@
 #ifndef __LR35902_TIMER_MODULO_REGISTER_H__
 #define __LR35902_TIMER_MODULO_REGISTER_H__
 
-#include <Core/CPU/Registers/MemoryRegister.h>
+#include <Core/CPU/Registers/DeviceRegister.h>
 
 namespace Core
 {
-class [[nodiscard]] TimerModulo : public MemoryRegister<API::data_t>
+class [[nodiscard]] TimerModulo : public DeviceRegister<0xFF06>
 {
 public:
-	TimerModulo() : MemoryRegister{TIMER_MODULO_ADDRESS} {}
-	TimerModulo(const API::data_t value) : MemoryRegister{TIMER_MODULO_ADDRESS} { *this = value; }
+	using DeviceRegister::DeviceRegister;
+	using DeviceRegister::operator=;
+	using DeviceRegister::operator API::data_t;
 
 public:
-	using MemoryRegister::operator API::data_t;
-	using MemoryRegister::operator=;
-
-public:
-	static constexpr auto TIMER_MODULO_DEFAULT_VALUE{0};
-	static constexpr API::address_t TIMER_MODULO_ADDRESS{0xFF06};
+	static constexpr API::data_t TIMER_MODULO_DEFAULT_VALUE{0x00};
 };
 } // Core
 

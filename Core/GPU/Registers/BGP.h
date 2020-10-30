@@ -6,23 +6,19 @@
 #ifndef __LR35902_BGP_H__
 #define __LR35902_BGP_H__
 
-#include <Core/CPU/Registers/MemoryRegister.h>
+#include <Core/CPU/Registers/DeviceRegister.h>
 
 namespace Core
 {
-class [[nodiscard]] BGP : public MemoryRegister<API::data_t>
+class [[nodiscard]] BGP : public DeviceRegister<0xFF47>
 {
 public:
-	constexpr BGP() : MemoryRegister{BGP_ADDRESS} {}
-	BGP(const API::data_t value) : MemoryRegister{BGP_ADDRESS} { *this = value; }
+	using DeviceRegister::DeviceRegister;
+	using DeviceRegister::operator=;
+	using DeviceRegister::operator API::data_t;
 
 public:
-	using MemoryRegister::operator=;
-	using MemoryRegister::operator API::data_t;
-
-public:
-	static constexpr API::address_t BGP_ADDRESS{0xFF47};
-	static constexpr API::address_t BGP_DEFAULT_VALUE{0xFC};
+	static constexpr API::data_t BGP_DEFAULT_VALUE{0xFC};
 };
 } // Core
 

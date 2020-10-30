@@ -6,23 +6,19 @@
 #ifndef __LR35902_WX_H__
 #define __LR35902_WX_H__
 
-#include <Core/CPU/Registers/MemoryRegister.h>
+#include <Core/CPU/Registers/DeviceRegister.h>
 
 namespace Core
 {
-class [[nodiscard]] WX : public MemoryRegister<API::data_t>
+class [[nodiscard]] WX : public DeviceRegister<0xFF4B>
 {
 public:
-	constexpr WX() : MemoryRegister{WX_ADDRESS} {}
-	WX(const API::data_t value) : MemoryRegister{WX_ADDRESS} { *this = value; }
+	using DeviceRegister::DeviceRegister;
+	using DeviceRegister::operator=;
+	using DeviceRegister::operator API::data_t;
 
 public:
-	using MemoryRegister::operator=;
-	using MemoryRegister::operator API::data_t;
-
-public:
-	static constexpr API::address_t WX_ADDRESS{0xFF4B};
-	static constexpr API::address_t WX_DEFAULT_VALUE{0x00};
+	static constexpr API::data_t WX_DEFAULT_VALUE{0x00};
 };
 } // Core
 

@@ -6,21 +6,18 @@
 #ifndef __LR35902_NR50_H__
 #define __LR35902_NR50_H__
 
-#include <Core/CPU/Registers/MemoryRegister.h>
+#include <Core/CPU/Registers/DeviceRegister.h>
 #include <Core/APU/Definitions.h>
 #include <Tools/Tools.h>
 
 namespace Core
 {
-class [[nodiscard]] NR50 : public MemoryRegister<API::data_t>
+class [[nodiscard]] NR50 : public DeviceRegister<0xFF24>
 {
 public:
-	constexpr NR50() : MemoryRegister{NR50_ADDRESS} {}
-	NR50(const API::data_t value) : MemoryRegister{NR50_ADDRESS} { *this = value; }
-
-public:
-	using MemoryRegister::operator=;
-	using MemoryRegister::operator API::data_t;
+	using DeviceRegister::DeviceRegister;
+	using DeviceRegister::operator=;
+	using DeviceRegister::operator API::data_t;
 
 public:
 	[[nodiscard]] const bool IsVINSoundEnabled(const OutputTerminal output) const
@@ -72,8 +69,7 @@ private:
 	static constexpr auto SO2_ENABLED_BIT_INDEX{7};
 
 public:
-	static constexpr API::address_t NR50_ADDRESS{0xFF24};
-	static constexpr API::address_t NR50_DEFAULT_VALUE{0x77};
+	static constexpr API::data_t NR50_DEFAULT_VALUE{0x77};
 };
 } // Core
 

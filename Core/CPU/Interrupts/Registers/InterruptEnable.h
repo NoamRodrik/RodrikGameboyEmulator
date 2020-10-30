@@ -6,23 +6,19 @@
 #ifndef __LR35902_INTERRUPT_ENABLE_H__
 #define __LR35902_INTERRUPT_ENABLE_H__
 
-#include <Core/CPU/Registers/MemoryRegister.h>
+#include <Core/CPU/Registers/DeviceRegister.h>
 
 namespace Core
 {
-class [[nodiscard]] InterruptEnable : public MemoryRegister<API::data_t>
+class [[nodiscard]] InterruptEnable : public DeviceRegister<0xFFFF>
 {
 public:
-	InterruptEnable() : MemoryRegister{INTERRUPT_ENABLE_ADDRESS} {}
-	InterruptEnable(const API::data_t value) : MemoryRegister{INTERRUPT_ENABLE_ADDRESS} { *this = value; }
+	using DeviceRegister::DeviceRegister;
+	using DeviceRegister::operator=;
+	using DeviceRegister::operator API::data_t;
 
 public:
-	using MemoryRegister::operator=;
-	using MemoryRegister::operator API::data_t;
-
-public:
-	static constexpr API::address_t INTERRUPT_ENABLE_ADDRESS{0xFFFF};
-	static constexpr API::data_t	INTERRUPT_ENABLE_DEFAULT_VALUE{0x00};
+	static constexpr API::data_t INTERRUPT_ENABLE_DEFAULT_VALUE{0x00};
 };
 } // Core
 

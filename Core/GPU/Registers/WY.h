@@ -6,23 +6,19 @@
 #ifndef __LR35902_WY_H__
 #define __LR35902_WY_H__
 
-#include <Core/CPU/Registers/MemoryRegister.h>
+#include <Core/CPU/Registers/DeviceRegister.h>
 
 namespace Core
 {
-class [[nodiscard]] WY : public MemoryRegister<API::data_t>
+class [[nodiscard]] WY : public DeviceRegister<0xFF4A>
 {
 public:
-	constexpr WY() : MemoryRegister{WY_ADDRESS} {}
-	WY(const API::data_t value) : MemoryRegister{WY_ADDRESS} { *this = value; }
+	using DeviceRegister::DeviceRegister;
+	using DeviceRegister::operator=;
+	using DeviceRegister::operator API::data_t;
 
 public:
-	using MemoryRegister::operator=;
-	using MemoryRegister::operator API::data_t;
-
-public:
-	static constexpr API::address_t WY_ADDRESS{0xFF4A};
-	static constexpr API::address_t WY_DEFAULT_VALUE{0x00};
+	static constexpr API::data_t WY_DEFAULT_VALUE{0x00};
 };
 } // Core
 

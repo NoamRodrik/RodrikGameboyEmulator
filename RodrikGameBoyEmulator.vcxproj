@@ -373,7 +373,7 @@
     <ClInclude Include="Core\Timers\Registers\TimerCounter.h" />
     <ClInclude Include="Core\Timers\Registers\TimerModulo.h" />
     <ClInclude Include="Core\Timers\Timer.h" />
-    <ClInclude Include="Core\CPU\Registers\MemoryRegister.h" />
+    <ClInclude Include="Core\CPU\Registers\DeviceRegister.h" />
     <ClInclude Include="Core\CPU\Registers\Types\LogicRegisters.h" />
     <ClInclude Include="Core\CPU\Registers\RegisterEngine.h" />
     <ClInclude Include="Core\CPU\Registers\Types\EFLRegisters.h" />

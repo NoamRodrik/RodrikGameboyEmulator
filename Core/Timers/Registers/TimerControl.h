@@ -6,23 +6,19 @@
 #ifndef __LR35902_TIMER_CONTROL_REGISTER_H__
 #define __LR35902_TIMER_CONTROL_REGISTER_H__
 
-#include <Core/CPU/Registers/MemoryRegister.h>
+#include <Core/CPU/Registers/DeviceRegister.h>
 
 namespace Core
 {
-class [[nodiscard]] TimerControl : public MemoryRegister<API::data_t>
+class [[nodiscard]] TimerControl : public DeviceRegister<0xFF07>
 {
 public:
-	TimerControl() : MemoryRegister{TIMER_CONTROL_ADDRESS} {}
-	TimerControl(const API::data_t value) : MemoryRegister{TIMER_CONTROL_ADDRESS} { *this = value; }
+	using DeviceRegister::DeviceRegister;
+	using DeviceRegister::operator=;
+	using DeviceRegister::operator API::data_t;
 
 public:
-	using MemoryRegister::operator=;
-	using MemoryRegister::operator API::data_t;
-
-public:
-	static constexpr auto TIMER_CONTROL_DEFAULT_VALUE{0};
-	static constexpr API::address_t TIMER_CONTROL_ADDRESS{0xFF07};
+	static constexpr API::data_t TIMER_CONTROL_DEFAULT_VALUE{0x00};
 };
 } // Core
 

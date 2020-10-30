@@ -6,19 +6,16 @@
 #ifndef __LR35902_NR51_H__
 #define __LR35902_NR51_H__
 
-#include <Core/CPU/Registers/MemoryRegister.h>
+#include <Core/CPU/Registers/DeviceRegister.h>
 
 namespace Core
 {
-class [[nodiscard]] NR51 : public MemoryRegister<API::data_t>
+class [[nodiscard]] NR51 : public DeviceRegister<0xFF25>
 {
 public:
-	constexpr NR51() : MemoryRegister{NR51_ADDRESS} {}
-	NR51(const API::data_t value) : MemoryRegister{NR51_ADDRESS} { *this = value; }
-
-public:
-	using MemoryRegister::operator=;
-	using MemoryRegister::operator API::data_t;
+	using DeviceRegister::DeviceRegister;
+	using DeviceRegister::operator=;
+	using DeviceRegister::operator API::data_t;
 
 public:
 	[[nodiscard]] static constexpr std::size_t OutputTerminalOffset(const OutputTerminal output)
@@ -43,8 +40,7 @@ public:
 	}
 
 public:
-	static constexpr API::address_t NR51_ADDRESS{0xFF25};
-	static constexpr API::address_t NR51_DEFAULT_VALUE{0xF3};
+	static constexpr API::data_t NR51_DEFAULT_VALUE{0xF3};
 
 private:
 	static constexpr std::size_t SO1_OUTPUT_TERMINAL_OFFSET{0x00};

@@ -17,7 +17,7 @@ class [[nodiscard]] InterruptSwitch : public MemoryDevice<0xFFFF, 0xFFFF>
 public:
 	InterruptSwitch(API::IMemoryDeviceAccess& memory_accessor) : MemoryDevice{memory_accessor}
 	{
-		SANITY(this->Write(InterruptEnable::INTERRUPT_ENABLE_ADDRESS, InterruptEnable::INTERRUPT_ENABLE_DEFAULT_VALUE),
+		SANITY(this->Write(InterruptEnable::MEMORY_ADDRESS, InterruptEnable::INTERRUPT_ENABLE_DEFAULT_VALUE),
 			   "Failed setting interrupt switch");
 	}
 

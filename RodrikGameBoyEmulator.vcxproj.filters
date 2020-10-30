@@ -176,9 +176,6 @@
     <ClInclude Include="Core\CPU\Registers\Types\StackRegisters.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Core\CPU\Registers\MemoryRegister.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Core\CPU\Registers\RegisterEngine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -588,6 +585,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Core\Bus\Devices\WorkRAMDevice.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Registers\DeviceRegister.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

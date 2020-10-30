@@ -269,7 +269,7 @@ private:
 		API::data_t new_lcdc_status{LCDC_Status{}};
 		new_lcdc_status &= 0xFC;
 		new_lcdc_status |= static_cast<API::data_t>(new_state);
-		SANITY(this->_ppu.GetProcessor().GetMemory().WriteDirectly(LCDC_Status::LCDC_ADDRESS, new_lcdc_status), "Failed changing lcdc status");
+		SANITY(this->_ppu.GetProcessor().GetMemory().WriteDirectly(LCDC_Status::MEMORY_ADDRESS, new_lcdc_status), "Failed changing lcdc status");
 
 		LCDC_Status lcdc_status{};
 		bool interrupt_state{false};
@@ -313,7 +313,7 @@ private:
 			InterruptHandler::IRQ(EInterrupts::LCDC);
 		}
 
-		SANITY(this->_ppu.GetProcessor().GetMemory().WriteDirectly(LCDC_Status::LCDC_ADDRESS, lcdc_status),
+		SANITY(this->_ppu.GetProcessor().GetMemory().WriteDirectly(LCDC_Status::MEMORY_ADDRESS, lcdc_status),
 			   "Failed writing directly to status");
 	}
 

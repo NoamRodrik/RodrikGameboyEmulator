@@ -6,23 +6,19 @@
 #ifndef __LR35902_NR31_H__
 #define __LR35902_NR31_H__
 
-#include <Core/CPU/Registers/MemoryRegister.h>
+#include <Core/CPU/Registers/DeviceRegister.h>
 
 namespace Core
 {
-class [[nodiscard]] NR31 : public MemoryRegister<API::data_t>
+class [[nodiscard]] NR31 : public DeviceRegister<0xFF1B>
 {
 public:
-	constexpr NR31() : MemoryRegister{NR31_ADDRESS} {}
-	NR31(const API::data_t value) : MemoryRegister{NR31_ADDRESS} { *this = value; }
+	using DeviceRegister::DeviceRegister;
+	using DeviceRegister::operator=;
+	using DeviceRegister::operator API::data_t;
 
 public:
-	using MemoryRegister::operator=;
-	using MemoryRegister::operator API::data_t;
-
-public:
-	static constexpr API::address_t NR31_ADDRESS{0xFF1B};
-	static constexpr API::address_t NR31_DEFAULT_VALUE{0xFF};
+	static constexpr API::data_t NR31_DEFAULT_VALUE{0xFF};
 };
 } // Core
 

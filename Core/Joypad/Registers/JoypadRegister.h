@@ -6,22 +6,16 @@
 #ifndef __LR35902_JOYPAD_REGISTER_H__
 #define __LR35902_JOYPAD_REGISTER_H__
 
-#include <Core/CPU/Registers/MemoryRegister.h>
+#include <Core/CPU/Registers/DeviceRegister.h>
 
 namespace Core
 {
-class [[nodiscard]] JoypadRegister : public MemoryRegister<API::data_t>
+class [[nodiscard]] JoypadRegister : public DeviceRegister<0xFF00>
 {
 public:
-	JoypadRegister() : MemoryRegister{JOYPAD_REGISTER_ADDRESS} {}
-	JoypadRegister(const API::data_t value) : MemoryRegister{JOYPAD_REGISTER_ADDRESS} { *this = value; }
-
-public:
-	using MemoryRegister::operator=;
-	using MemoryRegister::operator API::data_t;
-
-public:
-	static constexpr API::address_t JOYPAD_REGISTER_ADDRESS{0xFF00};
+	using DeviceRegister::DeviceRegister;
+	using DeviceRegister::operator=;
+	using DeviceRegister::operator API::data_t;
 };
 } // Core
 

@@ -6,23 +6,19 @@
 #ifndef __LR35902_SCX_H__
 #define __LR35902_SCX_H__
 
-#include <Core/CPU/Registers/MemoryRegister.h>
+#include <Core/CPU/Registers/DeviceRegister.h>
 
 namespace Core
 {
-class [[nodiscard]] SCX : public MemoryRegister<API::data_t>
+class [[nodiscard]] SCX : public DeviceRegister<0xFF43>
 {
 public:
-	constexpr SCX() : MemoryRegister{SCX_ADDRESS} {}
-	SCX(const API::data_t value) : MemoryRegister{SCX_ADDRESS} { *this = value; }
+	using DeviceRegister::DeviceRegister;
+	using DeviceRegister::operator=;
+	using DeviceRegister::operator API::data_t;
 
 public:
-	using MemoryRegister::operator=;
-	using MemoryRegister::operator API::data_t;
-
-public:
-	static constexpr API::address_t SCX_ADDRESS{0xFF43};
-	static constexpr API::address_t SCX_DEFAULT_VALUE{0x00};
+	static constexpr API::data_t SCX_DEFAULT_VALUE{0x00};
 };
 } // Core
 

@@ -158,7 +158,7 @@ public:
 	{
 		this->_y = y;
 		const API::data_t NEW_LY = static_cast<API::data_t>(GetWrappedAroundDistance(this->_y, this->_scy)) % 0x9A;
-		SANITY(this->_ppu.GetProcessor().GetMemory().WriteDirectly(LY::LY_ADDRESS, NEW_LY), "Failed changing LY directly");
+		SANITY(this->_ppu.GetProcessor().GetMemory().WriteDirectly(LY::MEMORY_ADDRESS, NEW_LY), "Failed changing LY directly");
 
 		if (LY{} == 0)
 		{

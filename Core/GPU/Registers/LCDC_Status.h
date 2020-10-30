@@ -6,20 +6,17 @@
 #ifndef __LR35902_LCDC_STATUS_H__
 #define __LR35902_LCDC_STATUS_H__
 
-#include <Core/CPU/Registers/MemoryRegister.h>
+#include <Core/CPU/Registers/DeviceRegister.h>
 #include <API/Definitions.h>
 
 namespace Core
 {
-class [[nodiscard]] LCDC_Status : public MemoryRegister<API::data_t>
+class [[nodiscard]] LCDC_Status : public DeviceRegister<0xFF41>
 {
 public:
-	constexpr LCDC_Status() : MemoryRegister{LCDC_ADDRESS} {}
-	LCDC_Status(const API::data_t value) : MemoryRegister{LCDC_ADDRESS} { *this = value; }
-
-public:
-	using MemoryRegister::operator=;
-	using MemoryRegister::operator API::data_t;
+	using DeviceRegister::DeviceRegister;
+	using DeviceRegister::operator=;
+	using DeviceRegister::operator API::data_t;
 
 public:
 	struct [[nodiscard]] Status
@@ -110,14 +107,13 @@ public:
 		return {this->operator API::data_t()};
 	}
 
-	MemoryRegister& operator=(const Status other)
+	DeviceRegister& operator=(const Status other)
 	{
 		return this->operator=(static_cast<const API::data_t>(other));
 	}
 
 public:
-	static constexpr API::address_t LCDC_ADDRESS{0xFF41};
-	static constexpr API::address_t LCDC_DEFAULT_VALUE{0x00};
+	static constexpr API::data_t LCDC_DEFAULT_VALUE{0x00};
 };
 } // Core
 
