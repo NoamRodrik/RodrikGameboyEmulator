@@ -21,7 +21,8 @@ void OAMEntryManager::LoadSprites()
 OAMEntryManager::sprites_in_line_t OAMEntryManager::GetSpritesInLine(std::size_t y)
 {
 	std::size_t sprite_array_index{0x00};
-	sprites_in_line_t sprites{nullptr};
+	sprites_in_line_t sprites{};
+	sprites.fill(nullptr);
 
 	for (auto&& sprite : this->_sprites)
 	{

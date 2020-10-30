@@ -68,6 +68,7 @@ PixelRow OAMEntry::GetSpritePixelRow(std::size_t y) const
 const bool OAMEntry::IsInScanline(std::size_t y) const
 {
 	const bool WIDE_SPRITES{static_cast<LCDC_Control::Control>(LCDC_Control{}).AreSpritesWide()};
-	return ((y >= this->_y) && (y < (this->_y + PixelRow::PIXEL_COUNT + static_cast<API::data_t>(WIDE_SPRITES) * PixelRow::PIXEL_COUNT)));
+	//return ((y >= this->_y) && (y < (this->_y + PixelRow::PIXEL_COUNT + static_cast<API::data_t>(WIDE_SPRITES) * PixelRow::PIXEL_COUNT)));
+	return this->_x != 0 && (y + 16) >= this->_y && (y + 16) < (this->_y + WIDE_SPRITES ? 16 : 8);
 }
 } // Core

@@ -6,7 +6,7 @@
  */
 #include "MBC1_0x02.h"
 
-#include <Core/Bus/Devices/CartridgeDevice.h>
+#include <Core/Bus/Devices/CartridgeROMDevice.h>
 #include <Core/Bus/Devices/ExternalDevice.h>
 #include <Core/Bus/DeviceTools.h>
 #include <Core/CPU/Processor.h>
@@ -28,8 +28,8 @@ size_t MemoryBankController_2::BankSize() const
 
 bool MemoryBankController_2::Read(const API::address_t absolute_address, API::data_t& result) const
 {
-	if (absolute_address >= CartridgeDevice::START_ADDRESS &&
-		absolute_address <= CartridgeDevice::END_ADDRESS)
+	if (absolute_address >= CartridgeROMDevice::START_ADDRESS &&
+		absolute_address <= CartridgeROMDevice::END_ADDRESS)
 	{
 		return this->_inner_mbc.Read(absolute_address, result);
 	}

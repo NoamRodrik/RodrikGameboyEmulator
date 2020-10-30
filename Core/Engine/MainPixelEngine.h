@@ -75,6 +75,11 @@ public:
 		return this->_render._state;
 	}
 
+	[[nodiscard]] virtual bool CheckOnceDMAOccurred() override
+	{
+		return this->_render.CheckOnceDMAOccurred();
+	}
+
 private:
 	[[nodiscard]] virtual bool OnUserCreate() override
 	{
@@ -127,7 +132,7 @@ private:
 		API::data_t direction_status{0x00};
 		API::data_t button_status{0x00};
 
-		if (this->GetKey(olc::Key::ESCAPE).bPressed)
+		if (this->GetKey(olc::Key::ENTER).bPressed)
 		{
 			Tools::SetBit(button_status, static_cast<std::size_t>(Joypad::Control::START));
 		}

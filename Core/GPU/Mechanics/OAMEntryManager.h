@@ -27,7 +27,7 @@ public:
 
 public:
 	void LoadSprites();
-	sprites_in_line_t GetSpritesInLine(std::size_t y);
+	[[nodiscard]] sprites_in_line_t GetSpritesInLine(std::size_t y);
 
 private:
 	[[nodiscard]] OAMEntry GetEntry(const std::size_t index) const;

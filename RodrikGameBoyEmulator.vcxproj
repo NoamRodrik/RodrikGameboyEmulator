@@ -117,7 +117,7 @@
       <AssemblerOutput>NoListing</AssemblerOutput>
       <PrecompiledHeaderFile />
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <PreprocessorDefinitions>PA_ENABLE_DEBUG_OUTPUT=0;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -174,7 +174,7 @@
       <AssemblerOutput>NoListing</AssemblerOutput>
       <PrecompiledHeaderFile />
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <PreprocessorDefinitions>PA_ENABLE_DEBUG_OUTPUT=0;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -301,7 +301,7 @@
     <ClInclude Include="Core\CPU\Interrupts\Types\Serial.h" />
     <ClInclude Include="Core\CPU\Interrupts\Types\Timer.h" />
     <ClInclude Include="Core\CPU\Interrupts\Types\VBlank.h" />
-    <ClInclude Include="Core\Bus\Devices\CartridgeDevice.h" />
+    <ClInclude Include="Core\Bus\Devices\CartridgeROMDevice.h" />
     <ClInclude Include="Core\Bus\Devices\CloneWorkRAMDevice.h" />
     <ClInclude Include="Core\Bus\Devices\ExternalDevice.h" />
     <ClInclude Include="Core\Bus\Devices\HighRAMDevice.h" />

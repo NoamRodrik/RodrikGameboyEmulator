@@ -110,21 +110,30 @@ public:
 
 	void InitiateDMA()
 	{
-		// The source address is represented by the data being written to address 0xFF46 except this value
+		// The source address is represented by the data being written to address of the DMA except this value
 		// is the source address divided by 100. So to get the correct start address it is the data being written to * 100.
 		// (to make it faster instead of multiplying by 100 we will shift left 8 places, it is the same thing)
 		const API::data_t DMA_START_ADDRESS = DMA{} << 8;
 
 		// The destination address of the DMA is the sprite RAM between memory adddress (0xFE00-0xFE9F)
-		// which means that a total of 0xA0 bytes will be copied to this region
-		static constexpr API::address_t START_ADDRESS{0xFE00};
-		for (API::data_t index = 0x00; index < 0xA0; ++index)
+		// which means that a total of OAMRAMDevice size bytes will be copied to this region
+		for (API::data_t index = 0x00; index < OAMRAMDevice::SIZE; ++index)
 		{
 			API::data_t fetched_memory{0x00};
 
 			SANITY(this->_memory.Read(DMA_START_ADDRESS + index, fetched_memory), "Failed fetching memory via DMA");
-			SANITY(this->_memory.Write(START_ADDRESS + index, fetched_memory), "Failed writing directly via DMA");
+			SANITY(this->_memory.WriteDirectly(OAMRAMDevice::START_ADDRESS + index, fetched_memory), "Failed writing directly via DMA");
 		}
+
+		this->_dma_occurred = true;
+
+		// Reloading the sprites
+		this->_fetcher.GetOAMEntryManager().LoadSprites();
+	}
+
+	bool CheckOnceDMAOccurred()
+	{
+		return std::exchange(this->_dma_occurred, false);
 	}
 
 private:
@@ -343,6 +352,7 @@ public:
 	Fetcher					  _fetcher{this->_fifo, this->_ppu};
 	PPUState				  _state{PPUState::OAM_SEARCH};
 	std::size_t				  _clocks{0x00};
+	bool                      _dma_occurred{false};
 };
 } // Core
 

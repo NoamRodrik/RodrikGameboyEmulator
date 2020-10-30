@@ -5,7 +5,7 @@
  */
 #include "ROM_0x00.h"
 
-#include <Core/Bus/Devices/CartridgeDevice.h>
+#include <Core/Bus/Devices/CartridgeROMDevice.h>
 #include <Core/CPU/Processor.h>
 
 using namespace API;
@@ -16,8 +16,8 @@ void MemoryBankController_ROM::LoadMBC()
 {
 	// All that's needed is to load all the ROM, since that is what
 	// this MBC does.
-	this->_loader->Load(static_cast<CartridgeDevice*>(Processor::GetInstance().GetMemory().GetDeviceAtAddress(CartridgeDevice::START_ADDRESS))->GetMemoryPointer(),
-						 static_cast<long>(CartridgeDevice::SIZE));
+	this->_loader->Load(static_cast<CartridgeROMDevice*>(Processor::GetInstance().GetMemory().GetDeviceAtAddress(CartridgeROMDevice::START_ADDRESS))->GetMemoryPointer(),
+						 static_cast<long>(CartridgeROMDevice::SIZE));
 }
 
 bool MemoryBankController_ROM::Read(const API::address_t, API::data_t&) const

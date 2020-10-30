@@ -85,6 +85,12 @@ const size_t Processor::Clock()
 	// Clock adjust
 	clock_cycle *= 4;
 
+	// DMA takes another DMA_CYCLES_AMOUNT cycles if it occurred.
+	if (Processor::GetInstance().GetPPU()->CheckOnceDMAOccurred())
+	{
+		clock_cycle += API::DMA_CYCLES_AMOUNT;
+	}
+
 	if (!Processor::IsStopped())
 	{
 		// If it's not stopped, update devices.

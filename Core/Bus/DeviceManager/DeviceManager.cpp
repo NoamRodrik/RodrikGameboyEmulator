@@ -6,7 +6,7 @@
 
 #include "DeviceManager.h"
 #include <Core/Bus/Devices/InterruptSwitch.h>
-#include <Core/Bus/Devices/CartridgeDevice.h>
+#include <Core/Bus/Devices/CartridgeROMDevice.h>
 #include <Core/Bus/Devices/CloneWorkRAMDevice.h>
 #include <Core/Bus/Devices/ExternalDevice.h>
 #include <Core/Bus/Devices/UnusedRAMDevice.h>
@@ -40,12 +40,12 @@ void DeviceManager::SetMemoryBankController(std::unique_ptr<API::IMemoryBankCont
 
 void DeviceManager::StartDevices()
 {
-	static constexpr auto DEVICE_MEMORY_SIZE = CartridgeDevice::SIZE + VideoRAMDevice::SIZE + ExternalDevice::SIZE + WorkRAMDevice::SIZE + CloneWorkRAMDevice::SIZE +
+	static constexpr auto DEVICE_MEMORY_SIZE = CartridgeROMDevice::SIZE + VideoRAMDevice::SIZE + ExternalDevice::SIZE + WorkRAMDevice::SIZE + CloneWorkRAMDevice::SIZE +
 		OAMRAMDevice::SIZE + UnusedRAMDevice::SIZE + IODevice::SIZE + HighRAMDevice::SIZE + InterruptSwitch::SIZE;
 
 	static_assert(DEVICE_MEMORY_SIZE == MEMORY_SIZE, "Size of memory is invalid.");
 
-	std::unique_ptr<IMemoryDevice> devices_array[] = {std::make_unique<CartridgeDevice>(*this),
+	std::unique_ptr<IMemoryDevice> devices_array[] = {std::make_unique<CartridgeROMDevice>(*this),
 	 											      std::make_unique<VideoRAMDevice>(*this),
 	 											      std::make_unique<ExternalDevice>(*this),
 	 											      std::make_unique<WorkRAMDevice>(*this),

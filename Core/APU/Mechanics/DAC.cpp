@@ -13,7 +13,8 @@ namespace Core
 {
 DAC::DAC() : _sample_buffer_per_terminal{API::RingBuffer<float_t>{1024 * 4}, API::RingBuffer<float_t>{1024 * 4}}
 {
-	const auto wave_callback = [](const void* input, void* output, unsigned long frames,
+#if !defined(_DEBUG) || _DEBUG 0
+    const auto wave_callback = [](const void* input, void* output, unsigned long frames,
                            const PaStreamCallbackTimeInfo* time_info, PaStreamCallbackFlags status_flags, void* user_data)
     {
         DAC::GetInstance().Populate(reinterpret_cast<float*>(output));
@@ -29,10 +30,12 @@ DAC::DAC() : _sample_buffer_per_terminal{API::RingBuffer<float_t>{1024 * 4}, API
                                 API::BUFFER_FRAMES,
                                 wave_callback,
                                 nullptr) == PaErrorCode::paNoError, "Failed opening default stream for PortAudio");
+#endif
 }
 
 void DAC::FeedSamples(const SampleData& samples)
 {
+#if !defined(_DEBUG) || _DEBUG 0
     for (std::size_t current_frame = 0; current_frame < API::BUFFER_FRAMES; ++current_frame)
     {
         Message("TODO! Make WaveController control this");
@@ -57,14 +60,17 @@ void DAC::FeedSamples(const SampleData& samples)
     {
         SANITY(Pa_StartStream(this->_stream) == PaErrorCode::paNoError, "Failed starting stream");
     }
+#endif
 }
 
 void DAC::Populate(gsl::not_null<float*> buffer)    
 {
+#if !defined(_DEBUG) || _DEBUG 0
     for (std::size_t current_frame = 0; current_frame < API::BUFFER_FRAMES * API::OUTPUT_TERMINALS_AMOUNT; current_frame += API::OUTPUT_TERMINALS_AMOUNT)
     {
         buffer.get()[current_frame] = this->_sample_buffer_per_terminal[static_cast<std::size_t>(OutputTerminal::SO2)].Pop();
         buffer.get()[current_frame + 1] = this->_sample_buffer_per_terminal[static_cast<std::size_t>(OutputTerminal::SO1)].Pop();
     }
+#endif
 }
 } // Core

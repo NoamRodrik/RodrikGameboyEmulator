@@ -24,13 +24,10 @@ public:
 	 * 
 	 * @note This also includes wide tiles (8x16), controlled by the LSB.
 	 */
-	PixelRow GetSpritePixelRow(std::size_t y) const;
-
-	const bool IsInScanline(std::size_t y) const;
-	
-	const API::data_t GetX() const { return this->_x; }
-
-	const PixelSource GetSource() const
+	[[nodiscard]] PixelRow GetSpritePixelRow(std::size_t y) const;
+	[[nodiscard]] const bool IsInScanline(std::size_t y) const;
+	[[nodiscard]] const API::data_t GetX() const { return this->_x; }
+	[[nodiscard]] const PixelSource GetSource() const
 	{
 		return this->_palette == Palette::OBP0 ? PixelSource::OBP0 : PixelSource::OBP1;
 	}

@@ -8,6 +8,7 @@
 
 #include <Core/GPU/Registers/BGP.h>
 #include <Core/GPU/Definitions.h>
+#include <Tools/Tools.h>
 #include <type_traits>
 
 namespace Core
@@ -19,7 +20,8 @@ public:
 	[[nodiscard]] static const PixelColor ColorOf(const PaletteColor color)
 	{
 		// Get the left bits of the chosen color index.
-		return static_cast<PixelColor>(((PALETTE_REGISTER{} & (0b11 << (static_cast<API::data_t>(color) * 2))) >> (static_cast<API::data_t>(color) * 2)) & 0x03);
+		const auto pixel_index{Tools::Pow(4, static_cast<const API::data_t>(color))};
+		return static_cast<PixelColor>(((0b11 * pixel_index) & static_cast<const API::data_t>(PALETTE_REGISTER{})) / pixel_index);
 	}
 
 	template <typename PALETTE_REGISTER>

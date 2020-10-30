@@ -40,6 +40,7 @@ namespace API
 	static constexpr int32_t   CANVAS_HEIGHT{0x20};
 	static constexpr int32_t   CANVAS_WIDTH{0x20};
 	static constexpr address_t CANVAS_SIZE{CANVAS_HEIGHT * CANVAS_WIDTH};
+	static constexpr size_t    DMA_CYCLES_AMOUNT{160};
 
 	/* RAM */
 	static constexpr size_t MEMORY_SIZE{Tools::SlotsToBytes(std::numeric_limits<address_t>::digits)};

@@ -16,6 +16,7 @@
 #include <Core/GPU/Registers/WX.h>
 #include <API/Definitions.h>
 #include <Tools/Tools.h>
+#include <algorithm>
 
 namespace Core
 {
@@ -220,17 +221,17 @@ private:
 	[[nodiscard]] OAMEntry* SpriteToDraw()
 	{
 		Message("TODO: OBJ-TO-BG Priority");
-		if (!static_cast<LCDC_Control::Control>(LCDC_Control{}).IsSpriteEnabled())
+		if (static_cast<LCDC_Control::Control>(LCDC_Control{}).IsSpriteEnabled())
 		{
-			return nullptr;
+			auto iterator{std::find_if(this->_sprites.begin(), this->_sprites.end(), [this](const std::shared_ptr<OAMEntry>& entry)
+			{
+				return (entry.get() != nullptr) && GetWrappedAroundDistance(this->GetPixelFIFO().GetX(), this->GetPixelFIFO().GetSCX()) == entry->GetX();
+			})};
+
+			return (iterator != this->_sprites.end()) ? iterator->get() : nullptr;
 		}
 
-		auto iterator{std::find_if(this->_sprites.begin(), this->_sprites.end(), [this](std::shared_ptr<OAMEntry>& entry)
-		{
-			return (entry.get() != nullptr) && GetWrappedAroundDistance(this->GetPixelFIFO().GetX(), this->GetPixelFIFO().GetSCX()) == entry->GetX();
-		})};
-
-		return iterator != this->_sprites.end() ? iterator->get() : nullptr;
+		return nullptr;
 	}
 
 	[[nodiscard]] const API::address_t GetBackgroundMapStart() const

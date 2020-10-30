@@ -25,6 +25,7 @@ public:
 	virtual void EnableLCD() = 0;
 	[[nodiscard]] virtual PPUState GetState() const = 0;
 	virtual void InitiateDMA() = 0;
+	[[nodiscard]] virtual bool CheckOnceDMAOccurred() = 0;
 };
 } // Core
 

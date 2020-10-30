@@ -22,8 +22,8 @@ namespace Core
 enum class [[nodiscard]] PixelColor : API::data_t
 {
 	WHITE = 0x00,
-	LIGHT_GREY = 0x01,
-	DARK_GREY = 0x02,
+	DARK_GREY = 0x01,
+	LIGHT_GREY = 0x02,
 	BLACK = 0x03
 };
 
@@ -72,11 +72,16 @@ static constexpr uint8_t    WHITE_PIXEL[]{143, 144, 85};
 static constexpr uint8_t    BLACK_PIXEL[]{32, 55, 50};
 static constexpr uint8_t    LIGHT_GREY_PIXEL[]{81, 113, 88};
 static constexpr uint8_t    DARK_GREY_PIXEL[]{55, 85, 76};
-#else
+#elif BEAUTIFUL_DISPLAY
 static constexpr uint8_t    WHITE_PIXEL[]{255, 255, 255};
 static constexpr uint8_t    BLACK_PIXEL[]{0, 0, 0};
 static constexpr uint8_t    LIGHT_GREY_PIXEL[]{221, 180, 180};
 static constexpr uint8_t    DARK_GREY_PIXEL[]{97, 79, 76};
+#else
+static constexpr uint8_t    WHITE_PIXEL[]{255, 255, 255};
+static constexpr uint8_t    BLACK_PIXEL[]{0, 0, 0};
+static constexpr uint8_t    LIGHT_GREY_PIXEL[]{203, 203, 203};
+static constexpr uint8_t    DARK_GREY_PIXEL[]{149, 149, 149};
 #endif
 
 } // Core
