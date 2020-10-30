@@ -3,8 +3,8 @@
  * @author		Noam Rodrik
  * @description LR35902 main ram device header.
  */
-#ifndef __LR35902_RAM_DEVICE_H__
-#define __LR35902_RAM_DEVICE_H__
+#ifndef __LR35902_MEMORY_DEVICE_H__
+#define __LR35902_MEMORY_DEVICE_H__
 
 #include <API/Memory/Device/IMemoryDeviceAccess.h>
 #include <API/Memory/Device/IMemoryDevice.h>
@@ -19,7 +19,6 @@ class [[nodiscard]] MemoryDevice : public IInterceptor, public API::IMemoryDevic
 {
 public:
 	MemoryDevice(API::IMemoryDeviceAccess& memory_accessor) : API::IMemoryDevice{START, END, memory_accessor} {}
-
 	virtual ~MemoryDevice() override = default;
 
 public:
@@ -70,9 +69,9 @@ protected:
 	}
 
 public:
-	static constexpr API::address_t START_ADDRESS = START;
-	static constexpr API::address_t END_ADDRESS = END;
-	static constexpr size_t   SIZE = END_ADDRESS - START_ADDRESS + 1;
+	static constexpr API::address_t START_ADDRESS{START};
+	static constexpr API::address_t END_ADDRESS{END};
+	static constexpr size_t         SIZE = END_ADDRESS - START_ADDRESS + 1;
 
 protected:
 	[[nodiscard]] static constexpr API::address_t RelativeAddress(const API::address_t address) { return address - START; }
@@ -86,4 +85,4 @@ private:
 };
 } // Core
 
-#endif // __LR35902_RAM_DEVICE_H__
+#endif // __LR35902_MEMORY_DEVICE_H__

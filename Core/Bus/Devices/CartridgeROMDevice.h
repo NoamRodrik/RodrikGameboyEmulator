@@ -1,10 +1,10 @@
 /**
- * @file		CartridgeDevice.h
+ * @file		CartridgeROMDevice.h
  * @author		Noam Rodrik
  * @description LR35902 main cartridge RAM device header.
  */
-#ifndef __LR35902_MEMORY_DEVICE_CARTRIDGE_DEVICE_H__
-#define __LR35902_MEMORY_DEVICE_CARTRIDGE_DEVICE_H__
+#ifndef __LR35902_MEMORY_DEVICE_CARTRIDGE_ROM_DEVICE_H__
+#define __LR35902_MEMORY_DEVICE_CARTRIDGE_ROM_DEVICE_H__
 
 #include <Core/Bus/MemoryDevice.h>
 #include <API/Memory/Memory.h>
@@ -13,11 +13,11 @@
 
 namespace Core
 {
-class [[nodiscard]] CartridgeDevice : public MemoryDevice<0x0000, 0x7FFF>
+class [[nodiscard]] CartridgeROMDevice : public MemoryDevice<0x0000, 0x7FFF>
 {
 public:
-	explicit CartridgeDevice(API::IMemoryDeviceAccess& memory_accessor) : MemoryDevice{memory_accessor} {}
-	virtual ~CartridgeDevice() override = default;
+	explicit CartridgeROMDevice(API::IMemoryDeviceAccess& memory_accessor) : MemoryDevice{memory_accessor} {}
+	virtual ~CartridgeROMDevice() override = default;
 
 public:
 	[[nodiscard]] virtual bool Read(const API::address_t absolute_address, API::data_t& result) const override
@@ -57,4 +57,4 @@ private:
 };
 } // Core
 
-#endif // __LR35902_MEMORY_DEVICE_CARTRIDGE_RAM_H__
+#endif // __LR35902_MEMORY_DEVICE_CARTRIDGE_ROM_H__

@@ -1,11 +1,12 @@
 /**
  * @file		RingBuffer.h
- * @author		Noam Rodrik
+ * @author		Phillip Johnston, modified by Noam Rodrik
  * @description https://embeddedartistry.com/blog/2017/4/6/circular-buffers-in-cc
  */
 #ifndef __API_RING_BUFFER_H__
 #define __API_RING_BUFFER_H__
 
+#include <Tools/Tools.h>
 #include <cstdio>
 #include <memory>
 #include <mutex>
@@ -18,7 +19,10 @@ class RingBuffer
 public:
     explicit RingBuffer(const std::size_t size) :
         _buffer{std::unique_ptr<T[]>{new T[size]}},
-        _max_size{size} {}
+        _max_size{size}
+    {
+        SANITY(this->_buffer.get() != nullptr, "Got an invalid buffer");
+    }
 
     template <typename U>
     void Push(U&& item)
@@ -72,37 +76,30 @@ public:
         return this->_full;
     }
 
-    const size_t GetCapacity() const
+    [[nodiscard]] const size_t GetCapacity() const
     {
         return this->_max_size;
     }
 
-    const size_t GetSize() const
+    [[nodiscard]] const size_t GetSize() const
     {
-        size_t size = this->_max_size;
+        size_t size{this->_max_size};
 
         if (!this->_full)
         {
-            if (this->_head >= this->_tail)
-            {
-                size = this->_head - this->_tail;
-            }
-            else
-            {
-                size = this->_max_size + this->_head - this->_tail;
-            }
+            size = ((this->_head < this->_tail) ? this->_max_size : 0) + this->_head - this->_tail;
         }
 
         return size;
     }
 
 private:
-    std::mutex _mutex{};
+    std::mutex           _mutex{};
     std::unique_ptr<T[]> _buffer{nullptr};
-    size_t _head{0};
-    size_t _tail{0};
-    const size_t _max_size;
-    bool _full{false};
+    std::size_t          _head{0};
+    std::size_t          _tail{0};
+    const size_t         _max_size;
+    bool                 _full{false};
 };
 } // API
 

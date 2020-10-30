@@ -16,7 +16,7 @@
 #include <Core/Timers/Registers/TimerModulo.h>
 #include <Core/GPU/Registers/LCDC_Control.h>
 #include <Core/GPU/Registers/LCDC_Status.h>
-#include <Core/Bus/Devices/CartridgeDevice.h>
+#include <Core/Bus/Devices/CartridgeROMDevice.h>
 #include <Core/APU/Registers/NR10.h>
 #include <Core/APU/Registers/NR11.h>
 #include <Core/APU/Registers/NR12.h>
@@ -99,7 +99,6 @@ public:
 		this->_memory[this->RelativeAddress(OBP1::MEMORY_ADDRESS)] = OBP1::OBP1_DEFAULT_VALUE;
 		this->_memory[this->RelativeAddress(WY::MEMORY_ADDRESS)] = WY::WY_DEFAULT_VALUE;
 		this->_memory[this->RelativeAddress(WX::MEMORY_ADDRESS)] = WX::WX_DEFAULT_VALUE;
-
 		this->_memory[this->RelativeAddress(InterruptFlag::MEMORY_ADDRESS)] = InterruptFlag::INTERRUPT_FLAG_DEFAULT_VALUE;
 	}
 
@@ -205,7 +204,7 @@ private:
 				// Once this is written with 0x1, we can read the software BOOT-ROM section.
 				if (data == 0x01)
 				{
-					static_cast<CartridgeDevice*>(Processor::GetInstance().GetMemory().GetDeviceAtAddress(CartridgeDevice::START_ADDRESS))->CoverSystemBoot();
+					static_cast<CartridgeROMDevice*>(Processor::GetInstance().GetMemory().GetDeviceAtAddress(CartridgeROMDevice::START_ADDRESS))->CoverSystemBoot();
 				}
 
 				break;
