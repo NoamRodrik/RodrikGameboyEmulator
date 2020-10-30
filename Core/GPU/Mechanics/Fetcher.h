@@ -113,6 +113,8 @@ private:
 	{
 		if (this->_clocks >= FETCH_TILE_CLOCKS)
 		{	
+			this->_fetching_sprite = false;
+
 			const API::data_t WINDOW_X{WX{}};
 			const API::data_t WINDOW_Y{WY{}};
 			const API::data_t SCREEN_X = static_cast<API::data_t>(GetWrappedAroundDistance(this->_fifo.GetX(), this->_fifo.GetSCX()));
@@ -125,6 +127,7 @@ private:
 				// We have an entry to draw.
 				this->_pixel_row_container.SetPixelRow(entry->GetSpritePixelRow(this->_fifo.GetY()));
 				this->_pixel_row_container.Initialize(entry->GetSource());
+				this->_fetching_sprite = true;
 			}
 			if (static_cast<LCDC_Control::Control>(LCDC_Control{}).IsWindowEnabled() &&
 				SCREEN_Y >= WINDOW_Y && SCREEN_X >= (WINDOW_X - 7))
@@ -138,7 +141,7 @@ private:
 				const uint32_t TILE_OFFSET = ((SCREEN_Y - WINDOW_Y) / 8) * 32 + ((this->_window_tile_offset_x - (WINDOW_X - 7)) / 8);
 				this->_window_tile_offset_x = (this->_window_tile_offset_x + 8) % 0x100;
 				RET_FALSE_IF_FAIL(this->_ppu.GetProcessor().GetMemory().Read(this->GetWindowMapStart() + TILE_OFFSET, this->_tile_index), "Failed fetching tile index");
-				this->_pixel_row_container.Initialize(PixelSource::WIN);
+				this->_pixel_row_container.Initialize(PixelSource::BGP);
 			}
 			// If the window didn't succeed.
 			else
@@ -163,8 +166,7 @@ private:
 	{
 		if (this->_clocks >= READ_DATA_0_CLOCKS)
 		{
-			if (this->_pixel_row_container.GetSource() == PixelSource::BGP ||
-				this->_pixel_row_container.GetSource() == PixelSource::WIN)
+			if (!this->_fetching_sprite)
 			{
 				this->_pixel_row_container.SetUpper(this->GetUpperTileByte());
 			}
@@ -183,8 +185,7 @@ private:
 	{
 		if (this->_clocks >= READ_DATA_1_CLOCKS)
 		{
-			if (this->_pixel_row_container.GetSource() == PixelSource::BGP ||
-				this->_pixel_row_container.GetSource() == PixelSource::WIN)
+			if (!this->_fetching_sprite)
 			{
 				this->_pixel_row_container.SetLower(this->GetLowerTileByte());
 			}
@@ -301,6 +302,7 @@ private:
 	std::size_t						   _clocks{0x00};
 	OAMEntryManager					   _entry_manager{this->_ppu.GetProcessor().GetMemory()};
 	OAMEntryManager::sprites_in_line_t _sprites{};
+	bool                               _fetching_sprite{false};
 };
 } // Core
 

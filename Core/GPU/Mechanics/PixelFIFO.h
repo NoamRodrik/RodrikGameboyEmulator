@@ -53,10 +53,11 @@ public:
 			// and apply it to the right bit of the first row.
 			if (!this->_upper_row.IsEmpty())
 			{
-				this->_lower_row.SetLastPixel(this->_upper_row.GetNextPixel());
+				const auto TEMP_UPPER_PIXEL{this->_upper_row.GetNextPixel()};
+				this->_lower_row.SetLastPixel(TEMP_UPPER_PIXEL.first, TEMP_UPPER_PIXEL.second);
 			}
 
-			return {this->_lower_row.GetSource(), FETCHED_PALETTE_COLOR};
+			return FETCHED_PALETTE_COLOR;
 		}
 
 		return {PixelSource::BGP, PaletteColor::FIRST_PALETTE};
@@ -101,20 +102,12 @@ public:
 					"Failed drawing palette (%u, %u) for SCX %u and SCY %u, x %u y %u!",
 					DRAWN_X, DRAWN_Y, this->GetSCX(), this->GetSCY(), this->GetX(), this->GetY());
 			}
-			else if (lcdc_control.background_enable == LCDC_Control::Control::BACKGROUND_ON && PIXEL.first == PixelSource::BGP)
+			else if (lcdc_control.background_enable == LCDC_Control::Control::BACKGROUND_ON ||
+				     lcdc_control.window_enable == LCDC_Control::Control::WINDOW_ON)
 			{
-				RET_FALSE_IF_FAIL(this->DrawPalette(DRAWN_X, DRAWN_Y, PIXEL.second),
+				RET_FALSE_IF_FAIL(this->DrawPalette<BGP>(DRAWN_X, DRAWN_Y, PIXEL.second),
 					"Failed drawing palette (%u, %u) for SCX %u and SCY %u, x %u y %u!",
 					DRAWN_X, DRAWN_Y, this->GetSCX(), this->GetSCY(), this->GetX(), this->GetY());
-			}
-			else if (lcdc_control.window_enable == LCDC_Control::Control::WINDOW_ON && PIXEL.first == PixelSource::WIN)
-			{
-				// WindowX (0xFF4B): The X Positions -7 of the VIEWING AREA to start drawing the window from
-				// The minus 7 of the windowX pos is necessary. So if you wanted to start drawing the window
-				// in the upper left hand corner (coordinates 0,0) of the viewing area you'd set WindowY to 0 and WindowX to 7.
-				RET_FALSE_IF_FAIL(this->DrawPalette(DRAWN_X - 7, DRAWN_Y, PIXEL.second),
-					"Failed drawing palette (%u, %u) for SCX %u and SCY %u, x %u y %u!",
-					DRAWN_X - 7, DRAWN_Y, this->GetSCX(), this->GetSCY(), this->GetX(), this->GetY());
 			}
 			else
 			{

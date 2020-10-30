@@ -33,7 +33,11 @@ public:
 
 	constexpr void Initialize(const PixelSource pixel_source = PixelSource::BGP)
 	{
-		this->_pixel_source = pixel_source;
+		for (auto&& current_pixel_source : this->_pixel_source)
+		{
+			current_pixel_source = pixel_source;
+		}
+
 		this->_pixel_row_index = UNUSED_PIXEL_ROW_INDEX_COUNT;
 	}
 
@@ -53,32 +57,25 @@ public:
 	/**
 	 * Fetching left-most pixel from the pixel row.
 	 */
-	[[nodiscard]] constexpr PaletteColor GetNextPixel()
+	[[nodiscard]] constexpr std::pair<PixelSource, PaletteColor> GetNextPixel()
 	{
 		SANITY(this->_pixel_row_index >= UNUSED_PIXEL_ROW_INDEX_COUNT && this->_pixel_row_index <= PixelRow::PIXEL_COUNT,
 			"Got invalid values for pixel row index");
 		this->_pixel_row_index += 1;
-		return this->_current_pixel_row.StealTopColor();
+		return {this->_pixel_source[this->_pixel_row_index - 1], this->_current_pixel_row.StealTopColor()};
 	}
 
-	constexpr void SetLastPixel(PaletteColor pixel_color)
+	constexpr void SetLastPixel(PixelSource source, PaletteColor pixel_color)
 	{
+		this->_pixel_source[this->_pixel_row_index] = source;
 		this->_pixel_row_index -= 1;
 		this->_current_pixel_row.SetBottomColor(pixel_color);
 	}
 
-	/**
-	 * Returns from where the pixel was taken (Background, OAM....).
-	 */
-	[[nodiscard]] constexpr PixelSource GetSource() const
-	{
-		return this->_pixel_source;
-	}
-
 	constexpr void Clear()
 	{
+		this->Initialize();
 		this->_pixel_row_index = EMPTY_PIXEL_ROW_INDEX_COUNT;
-		this->_pixel_source = PixelSource::BGP;
 		this->SetPixelRow(PixelRow{});
 	}
 
@@ -94,7 +91,14 @@ private:
 private:
 	PixelRow    _current_pixel_row{};
 	std::size_t _pixel_row_index{EMPTY_PIXEL_ROW_INDEX_COUNT};
-	PixelSource _pixel_source{PixelSource::BGP};
+	PixelSource _pixel_source[PixelRow::PIXEL_COUNT]{PixelSource::BGP,
+													 PixelSource::BGP,
+													 PixelSource::BGP,
+													 PixelSource::BGP,
+													 PixelSource::BGP,
+													 PixelSource::BGP,
+													 PixelSource::BGP,
+													 PixelSource::BGP};
 };
 } // Core
 
