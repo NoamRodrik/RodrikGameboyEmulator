@@ -69,7 +69,11 @@ public:
 		this->_state = State::FETCH_TILE;
 		this->_tile_offset_x = this->_fifo.GetSCX();
 		this->_window_tile_offset_x = WX{} - 7;
-		this->_sprites = this->_entry_manager.GetSpritesInLine(LY{});
+
+		// Reloading the sprites
+		std::fill(this->_sprites.begin(), this->_sprites.end(), nullptr);
+		this->_entry_manager.LoadSprites();
+		this->_sprites = this->_entry_manager.GetSpritesInLine(this->_fifo.GetY());
 	}
 
 	[[nodiscard]] const bool Execute(std::size_t clocks)
@@ -122,14 +126,17 @@ private:
 
 			OAMEntry* entry{this->SpriteToDraw()};
 
+			Message("TODO: Sprite-Pixels merge with BG|WINDOW");
 			if (entry != nullptr)
 			{
 				// We have an entry to draw.
-				this->_pixel_row_container.SetPixelRow(entry->GetSpritePixelRow(this->_fifo.GetY()));
+				this->_pixel_row_container.SetPixelRow(entry->GetSpritePixelRow(SCREEN_Y));
 				this->_pixel_row_container.Initialize(entry->GetSource());
+				this->_window_tile_offset_x = (this->_window_tile_offset_x + 8) % 0x100;
+				this->_tile_offset_x = (this->_tile_offset_x + 8) % 0x100;
 				this->_fetching_sprite = true;
 			}
-			if (static_cast<LCDC_Control::Control>(LCDC_Control{}).IsWindowEnabled() &&
+			else if (static_cast<LCDC_Control::Control>(LCDC_Control{}).IsWindowEnabled() &&
 				SCREEN_Y >= WINDOW_Y && SCREEN_X >= (WINDOW_X - 7))
 			{
 				// If they're equal, clear fifo

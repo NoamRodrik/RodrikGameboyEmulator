@@ -16,10 +16,8 @@ OAMEntry::OAMEntry(IMemoryDeviceAccess& memory_accessor, std::size_t index) : _m
 	API::data_t attributes{0x00};
 	SANITY(memory_accessor.Read(OAMRAMDevice::START_ADDRESS + index * OAM_ENTRY_SIZE + X_POSITION_INDEX, this->_x),
 		   "Failed reading X position index from OAM entry: %llu.", index);
-	this->_x -= PixelRow::PIXEL_COUNT;
 	SANITY(memory_accessor.Read(OAMRAMDevice::START_ADDRESS + index * OAM_ENTRY_SIZE + Y_POSITION_INDEX, this->_y),
 		   "Failed reading Y position index from OAM entry: %llu.", index);
-	this->_y -= 2 * PixelRow::PIXEL_COUNT;
 	SANITY(memory_accessor.Read(OAMRAMDevice::START_ADDRESS + index * OAM_ENTRY_SIZE + TILE_NUMBER_INDEX, this->_tile_index),
 		   "Failed reading tile number index from OAM entry: %llu.", index);
 	SANITY(memory_accessor.Read(OAMRAMDevice::START_ADDRESS + index * OAM_ENTRY_SIZE + ATTRIBUTES_INDEX, attributes),
@@ -34,16 +32,24 @@ OAMEntry::OAMEntry(IMemoryDeviceAccess& memory_accessor, std::size_t index) : _m
 
 PixelRow OAMEntry::GetSpritePixelRow(std::size_t y) const
 {
-	// Deciding which line to fetch from the sprite.
-	y -= this->_y;
-
 	const bool WIDE_SPRITES{static_cast<LCDC_Control::Control>(LCDC_Control{}).AreSpritesWide()};
-	API::data_t tile_index = this->_tile_index & (0xFE | !WIDE_SPRITES);
-	tile_index += !WIDE_SPRITES ? 0 : (this->_y_flip == Flip::NO && y >= PixelRow::PIXEL_COUNT) || (this->_y_flip == Flip::YES && y < PixelRow::PIXEL_COUNT);
+	API::data_t tile_index{this->_tile_index};
 
+	// Deciding which line to fetch from the sprite.
+	y -= (this->_y - 16);
 	if (this->_y_flip == Flip::YES)
 	{
-		y = PixelRow::PIXEL_COUNT + WIDE_SPRITES * PixelRow::PIXEL_COUNT - y;
+		y = (WIDE_SPRITES ? 2 * PixelRow::PIXEL_COUNT : PixelRow::PIXEL_COUNT) - y;
+	}
+
+	if (WIDE_SPRITES)
+	{
+		// In 8x16 mode, the lower bit of the tile number is ignored.
+		tile_index &= 0xFE;
+
+		// We add another +1 to the index if we are wide sprites and we need the second part of the sprite.
+		tile_index += (this->_y_flip == Flip::NO && y >= PixelRow::PIXEL_COUNT) ||
+			          (this->_y_flip == Flip::YES && y < PixelRow::PIXEL_COUNT);
 	}
 
 	// Fetching the sprite tile address.
@@ -68,7 +74,8 @@ PixelRow OAMEntry::GetSpritePixelRow(std::size_t y) const
 const bool OAMEntry::IsInScanline(std::size_t y) const
 {
 	const bool WIDE_SPRITES{static_cast<LCDC_Control::Control>(LCDC_Control{}).AreSpritesWide()};
-	//return ((y >= this->_y) && (y < (this->_y + PixelRow::PIXEL_COUNT + static_cast<API::data_t>(WIDE_SPRITES) * PixelRow::PIXEL_COUNT)));
-	return this->_x != 0 && (y + 16) >= this->_y && (y + 16) < (this->_y + WIDE_SPRITES ? 16 : 8);
+	return this->_x != 0 &&
+		((y >= (this->_y - 16)) &&
+			(y < ((this->_y - 16) + (WIDE_SPRITES ? 16 : 8))));
 }
 } // Core

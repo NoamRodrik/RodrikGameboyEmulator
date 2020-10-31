@@ -113,7 +113,7 @@ public:
 		// The source address is represented by the data being written to address of the DMA except this value
 		// is the source address divided by 100. So to get the correct start address it is the data being written to * 100.
 		// (to make it faster instead of multiplying by 100 we will shift left 8 places, it is the same thing)
-		const API::data_t DMA_START_ADDRESS = DMA{} << 8;
+		const API::address_t DMA_START_ADDRESS = DMA{} << 8;
 
 		// The destination address of the DMA is the sprite RAM between memory adddress (0xFE00-0xFE9F)
 		// which means that a total of OAMRAMDevice size bytes will be copied to this region
@@ -126,9 +126,6 @@ public:
 		}
 
 		this->_dma_occurred = true;
-
-		// Reloading the sprites
-		this->_fetcher.GetOAMEntryManager().LoadSprites();
 	}
 
 	bool CheckOnceDMAOccurred()
@@ -194,7 +191,6 @@ private:
 			if (static_cast<API::data_t>(LY{}) == VBLANK_LY_END)
 			{
 				// Going back to the beginning.
-				this->_fetcher.GetOAMEntryManager().LoadSprites();
 				this->Reset();
 				this->ChangeState(PPUState::OAM_SEARCH);
 			}
