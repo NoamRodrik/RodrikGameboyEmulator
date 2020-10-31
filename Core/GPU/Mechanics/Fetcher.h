@@ -72,7 +72,6 @@ public:
 
 		// Reloading the sprites
 		std::fill(this->_sprites.begin(), this->_sprites.end(), nullptr);
-		this->_entry_manager.LoadSprites();
 		this->_sprites = this->_entry_manager.GetSpritesInLine(this->_fifo.GetY());
 	}
 
@@ -130,7 +129,8 @@ private:
 			if (entry != nullptr)
 			{
 				// We have an entry to draw.
-				this->_pixel_row_container.SetPixelRow(entry->GetSpritePixelRow(SCREEN_Y));
+				this->_pixel_row_container.SetPixelRow(entry->GetSpritePixelRow(LY{}));
+				Message("TODO: Merge only relevant pixels");
 				this->_pixel_row_container.Initialize(entry->GetSource());
 				this->_window_tile_offset_x = (this->_window_tile_offset_x + 8) % 0x100;
 				this->_tile_offset_x = (this->_tile_offset_x + 8) % 0x100;
@@ -233,7 +233,8 @@ private:
 		{
 			auto iterator{std::find_if(this->_sprites.begin(), this->_sprites.end(), [this](const std::shared_ptr<OAMEntry>& entry)
 			{
-				return (entry.get() != nullptr) && GetWrappedAroundDistance(this->GetPixelFIFO().GetX(), this->GetPixelFIFO().GetSCX()) == entry->GetX();
+				const auto SCREEN_X{GetWrappedAroundDistance(this->GetPixelFIFO().GetX(), this->GetPixelFIFO().GetSCX())};
+				return (entry.get() != nullptr) && (SCREEN_X + 8 > entry->GetX() && SCREEN_X <= entry->GetX());
 			})};
 
 			return (iterator != this->_sprites.end()) ? iterator->get() : nullptr;

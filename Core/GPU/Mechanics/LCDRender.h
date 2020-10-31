@@ -192,6 +192,7 @@ private:
 			{
 				// Going back to the beginning.
 				this->Reset();
+				this->_fetcher.GetOAMEntryManager().LoadSprites();
 				this->ChangeState(PPUState::OAM_SEARCH);
 			}
 

@@ -36,7 +36,7 @@ PixelRow OAMEntry::GetSpritePixelRow(std::size_t y) const
 	API::data_t tile_index{this->_tile_index};
 
 	// Deciding which line to fetch from the sprite.
-	y -= (this->_y - 16);
+	y -= (this->_y - 16) + 1;
 	if (this->_y_flip == Flip::YES)
 	{
 		y = (WIDE_SPRITES ? 2 * PixelRow::PIXEL_COUNT : PixelRow::PIXEL_COUNT) - y;
@@ -46,10 +46,6 @@ PixelRow OAMEntry::GetSpritePixelRow(std::size_t y) const
 	{
 		// In 8x16 mode, the lower bit of the tile number is ignored.
 		tile_index &= 0xFE;
-
-		// We add another +1 to the index if we are wide sprites and we need the second part of the sprite.
-		tile_index += (this->_y_flip == Flip::NO && y >= PixelRow::PIXEL_COUNT) ||
-			          (this->_y_flip == Flip::YES && y < PixelRow::PIXEL_COUNT);
 	}
 
 	// Fetching the sprite tile address.
@@ -74,7 +70,7 @@ PixelRow OAMEntry::GetSpritePixelRow(std::size_t y) const
 const bool OAMEntry::IsInScanline(std::size_t y) const
 {
 	const bool WIDE_SPRITES{static_cast<LCDC_Control::Control>(LCDC_Control{}).AreSpritesWide()};
-	return this->_x != 0 &&
+	return !(this->_x == 0 && this->_y == 0) &&
 		((y >= (this->_y - 16)) &&
 			(y < ((this->_y - 16) + (WIDE_SPRITES ? 16 : 8))));
 }
