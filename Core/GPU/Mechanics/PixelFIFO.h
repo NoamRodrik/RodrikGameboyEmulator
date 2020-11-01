@@ -250,6 +250,9 @@ private:
 	PixelRowContainer		  _upper_row{};
 	OAMEntryManager&          _entry_manager;
 	std::array<std::array<olc::Pixel, SCREEN_WIDTH_PIXELS>, SCREEN_HEIGHT_PIXELS> _screen{};
+
+private:
+	friend class Fetcher;
 };
 } // Core
 

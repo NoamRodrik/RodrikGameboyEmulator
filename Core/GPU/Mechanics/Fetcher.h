@@ -190,9 +190,27 @@ private:
 				OAMEntry* entry{this->SpriteToDraw()};
 				if (entry != nullptr)
 				{
+					const API::data_t SCREEN_X = static_cast<API::data_t>(GetWrappedAroundDistance(this->_fifo.GetX(), this->_fifo.GetSCX()));
+					const API::data_t SCREEN_Y = static_cast<API::data_t>(GetWrappedAroundDistance(this->_fifo.GetY(), this->_fifo.GetSCY()));
 					PixelRowContainer pixel_row_container{};
-					pixel_row_container.SetPixelRow(entry->GetSpritePixelRow(LY{}));
+					PixelRow sprite_pixel_row{entry->GetSpritePixelRow(SCREEN_Y)};
+					pixel_row_container.SetPixelRow(sprite_pixel_row);
 					pixel_row_container.InitializeSource(entry->GetID());
+
+					// Shift N transparent pixels from the left to the right.
+					const PaletteColor TRANSPARENT_COLOR = 
+						static_cast<PaletteColor>(entry->GetPalette() == OAMEntry::Palette::OBP0 ?
+						PaletteMap::TransparentColor<OBP0>() : PaletteMap::TransparentColor<OBP1>());
+
+					if (SCREEN_X != entry->GetX())
+					{
+						PixelRowContainer lower_half{};
+						lower_half.SetPixelRow(sprite_pixel_row);
+						lower_half.InitializeSource(entry->GetID());
+						lower_half.ShiftRightPixels(PixelRow::PIXEL_COUNT - (SCREEN_X - entry->GetX()), TRANSPARENT_COLOR);
+						this->_fifo._lower_row.Combine(lower_half, this->_entry_manager);
+						pixel_row_container.ShiftLeftPixels(SCREEN_X - entry->GetX(), TRANSPARENT_COLOR);
+					}
 
 					// We have an entry to draw.
 					this->_pixel_row_container.Combine(pixel_row_container, this->_entry_manager);
@@ -214,8 +232,14 @@ private:
 		{
 			auto iterator{std::find_if(this->_sprites.begin(), this->_sprites.end(), [this](const std::shared_ptr<OAMEntry>& entry)
 			{
-				const auto SCREEN_X{GetWrappedAroundDistance(this->GetPixelFIFO().GetX(), this->GetPixelFIFO().GetSCX())};
-				return (entry.get() != nullptr) && (SCREEN_X + 8 > entry->GetX() && SCREEN_X <= entry->GetX());
+				const int SCREEN_X{GetWrappedAroundDistance(this->GetPixelFIFO().GetX(), this->GetPixelFIFO().GetSCX())};
+				if (entry.get() != nullptr)
+				{
+					const int DISTANCE{SCREEN_X - entry->GetX()};
+					return DISTANCE >= 0 && DISTANCE < PixelRow::PIXEL_COUNT;
+				}
+
+				return false;
 			})};
 
 			return (iterator != this->_sprites.end()) ? iterator->get() : nullptr;

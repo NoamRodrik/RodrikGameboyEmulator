@@ -39,7 +39,6 @@ public:
 	 */
 	[[nodiscard]] PixelRow GetSpritePixelRow(std::size_t y) const;
 	[[nodiscard]] const bool IsInScanline(std::size_t y) const;
-	Message("Might need to be -8");
 	[[nodiscard]] const API::data_t GetX() const { return this->_x - 16; }
 	[[nodiscard]] const int32_t GetID() const { return this->_id; }
 	[[nodiscard]] const auto GetPalette() const { return this->_palette; }

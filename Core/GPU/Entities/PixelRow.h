@@ -44,19 +44,43 @@ public:
 public:
 	[[nodiscard]] constexpr auto StealTopColor()
 	{
-		auto color = PaletteColor{(static_cast<uint8_t>(Tools::IsBitSet(this->_upper, TOP_COLOR_INDEX)) << 1) |
-								  (static_cast<uint8_t>(Tools::IsBitSet(this->_lower, TOP_COLOR_INDEX)))};
+		const auto COLOR = PaletteColor{(static_cast<uint8_t>(Tools::IsBitSet(this->_upper, TOP_COLOR_INDEX)) << 1) |
+					  				    (static_cast<uint8_t>(Tools::IsBitSet(this->_lower, TOP_COLOR_INDEX)))};
 		this->_lower <<= 1;
 		this->_upper <<= 1;
-		return color;
+		return COLOR;
 	}
 
-	constexpr void SetBottomColor(PaletteColor pixel_color)
+	constexpr void SetBottomColor(const PaletteColor pixel_color)
 	{
-		Tools::ClearBit(this->_upper, 0);
-		Tools::ClearBit(this->_lower, 0);
 		Tools::MutateBitByCondition(static_cast<API::data_t>(pixel_color) & 0x02, this->_upper, 0);
 		Tools::MutateBitByCondition(static_cast<API::data_t>(pixel_color) & 0x01, this->_lower, 0);
+	}
+
+	constexpr void SetTopColor(const PaletteColor pixel_color)
+	{
+		Tools::MutateBitByCondition(static_cast<API::data_t>(pixel_color) & 0x02, this->_upper, 7);
+		Tools::MutateBitByCondition(static_cast<API::data_t>(pixel_color) & 0x01, this->_lower, 7);
+	}
+
+	constexpr void ShiftRightPixels(const std::size_t count, const PaletteColor color)
+	{
+		for (std::size_t index = 0; index < count; ++index)
+		{
+			this->_upper >>= 1;
+			this->_lower >>= 1;
+			SetTopColor(color);
+		}
+	}
+
+	constexpr void ShiftLeftPixels(const std::size_t count, const PaletteColor color)
+	{
+		for (std::size_t index = 0; index < count; ++index)
+		{
+			this->_upper <<= 1;
+			this->_lower <<= 1;
+			SetBottomColor(color);
+		}
 	}
 
 	/**

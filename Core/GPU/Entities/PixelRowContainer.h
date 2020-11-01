@@ -86,6 +86,16 @@ public:
 		return PixelRow::PIXEL_COUNT - this->_pixel_row_index;
 	}
 
+	void ShiftRightPixels(const std::size_t count, const PaletteColor palette_color)
+	{
+		this->_current_pixel_row.ShiftRightPixels(count, palette_color);
+	}
+
+	void ShiftLeftPixels(const std::size_t count, const PaletteColor palette_color)
+	{
+		this->_current_pixel_row.ShiftLeftPixels(count, palette_color);
+	}
+
 	void Combine(const PixelRowContainer& other, OAMEntryManager& entries)
 	{
 		for (size_t pixel_index = 0; pixel_index < PixelRow::PIXEL_COUNT; ++pixel_index)
@@ -94,7 +104,19 @@ public:
 			const auto HIS_SOURCE{other._pixel_source[pixel_index]};
 			bool swap{false};
 
-			if (MY_SOURCE == BGP_PIXEL)
+			if (MY_SOURCE == HIS_SOURCE)
+			{
+				const auto& HIS_SPRITE{entries.GetSprite(HIS_SOURCE)};
+				if (HIS_SPRITE->GetPalette() == OAMEntry::Palette::OBP0)
+				{
+					swap = other._current_pixel_row.GetColorAtIndex(pixel_index) != PaletteMap::TransparentColor<OBP0>();
+				}
+				else
+				{
+					swap = other._current_pixel_row.GetColorAtIndex(pixel_index) != PaletteMap::TransparentColor<OBP1>();
+				}
+			}
+			else if (MY_SOURCE == BGP_PIXEL)
 			{
 				// I'm a background pixel.
 				const auto& HIS_SPRITE{entries.GetSprite(HIS_SOURCE)};
