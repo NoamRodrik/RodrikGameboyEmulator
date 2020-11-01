@@ -15,7 +15,7 @@
 
 Message("Global control definitions!");
 //#define GREEN_DISPLAY
-#define BEAUTIFUL_DISPLAY
+//#define BEAUTIFUL_DISPLAY
 #define SERIAL_TRANSFER_PRINT_DEBUG
 
 namespace API

@@ -129,9 +129,11 @@ private:
 			if (entry != nullptr)
 			{
 				// We have an entry to draw.
-				this->_pixel_row_container.SetPixelRow(entry->GetSpritePixelRow(LY{}));
+				this->_building_pixel_row = entry->GetSpritePixelRow(SCREEN_Y);
+
 				Message("TODO: Merge only relevant pixels");
-				this->_pixel_row_container.Initialize(entry->GetSource());
+				this->_pixel_row_container.InitializeSource(entry->GetSource());
+
 				this->_window_tile_offset_x = (this->_window_tile_offset_x + 8) % 0x100;
 				this->_tile_offset_x = (this->_tile_offset_x + 8) % 0x100;
 				this->_fetching_sprite = true;
@@ -148,7 +150,7 @@ private:
 				const uint32_t TILE_OFFSET = ((SCREEN_Y - WINDOW_Y) / 8) * 32 + ((this->_window_tile_offset_x - (WINDOW_X - 7)) / 8);
 				this->_window_tile_offset_x = (this->_window_tile_offset_x + 8) % 0x100;
 				RET_FALSE_IF_FAIL(this->_ppu.GetProcessor().GetMemory().Read(this->GetWindowMapStart() + TILE_OFFSET, this->_tile_index), "Failed fetching tile index");
-				this->_pixel_row_container.Initialize(PixelSource::BGP);
+				this->_pixel_row_container.InitializeSource(PixelSource::BGP);
 			}
 			// If the window didn't succeed.
 			else
@@ -156,7 +158,7 @@ private:
 				const uint32_t TILE_OFFSET = (this->_fifo.GetY() / 8) * 32 + (this->_tile_offset_x / 8);
 				this->_tile_offset_x = (this->_tile_offset_x + 8) % 0x100;
 				RET_FALSE_IF_FAIL(this->_ppu.GetProcessor().GetMemory().Read(this->GetBackgroundMapStart() + TILE_OFFSET, this->_tile_index), "Failed fetching tile index");
-				this->_pixel_row_container.Initialize(PixelSource::BGP);
+				this->_pixel_row_container.InitializeSource(PixelSource::BGP);
 			}
 
 			this->_clocks -= FETCH_TILE_CLOCKS;
@@ -175,7 +177,7 @@ private:
 		{
 			if (!this->_fetching_sprite)
 			{
-				this->_pixel_row_container.SetUpper(this->GetUpperTileByte());
+				this->_building_pixel_row.SetUpper(this->GetUpperTileByte());
 			}
 
 			this->_clocks -= READ_DATA_0_CLOCKS;
@@ -194,7 +196,7 @@ private:
 		{
 			if (!this->_fetching_sprite)
 			{
-				this->_pixel_row_container.SetLower(this->GetLowerTileByte());
+				this->_building_pixel_row.SetLower(this->GetLowerTileByte());
 			}
 
 			this->_clocks -= READ_DATA_1_CLOCKS;
@@ -216,6 +218,7 @@ private:
 
 			if (this->_fifo.NeedsFill())
 			{
+				this->_pixel_row_container.SetPixelRow(this->_building_pixel_row);
 				this->_fifo.Fill(this->_pixel_row_container);
 				this->_pixel_row_container.Clear();
 				this->_state = State::FETCH_TILE;
@@ -307,6 +310,7 @@ private:
 	API::address_t					   _window_tile_offset_x{0x00};
 	API::data_t						   _tile_index{0x00};
 	PixelRowContainer				   _pixel_row_container{};
+	PixelRow                           _building_pixel_row{};
 	std::size_t						   _clocks{0x00};
 	OAMEntryManager					   _entry_manager{this->_ppu.GetProcessor().GetMemory()};
 	OAMEntryManager::sprites_in_line_t _sprites{};

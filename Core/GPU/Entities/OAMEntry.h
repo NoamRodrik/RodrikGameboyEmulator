@@ -26,7 +26,8 @@ public:
 	 */
 	[[nodiscard]] PixelRow GetSpritePixelRow(std::size_t y) const;
 	[[nodiscard]] const bool IsInScanline(std::size_t y) const;
-	[[nodiscard]] const API::data_t GetX() const { return this->_x - 8; }
+	Message("Might need to be -8");
+	[[nodiscard]] const API::data_t GetX() const { return this->_x - 16; }
 	[[nodiscard]] const PixelSource GetSource() const
 	{
 		return this->_palette == Palette::OBP0 ? PixelSource::OBP0 : PixelSource::OBP1;
