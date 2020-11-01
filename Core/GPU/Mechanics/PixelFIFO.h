@@ -8,6 +8,7 @@
 
 #include <Contrib/PixelGameEngine/OLCPixelGameEngine.h>
 #include <Core/GPU/Entities/PixelRowContainer.h>
+#include <Core/GPU/Mechanics/OAMEntryManager.h>
 #include <Core/GPU/Entities/PaletteMap.h>
 #include <Core/Bus/Devices/IODevice.h>
 #include <Core/GPU/Registers/SCY.h>
@@ -25,7 +26,7 @@ namespace Core
 class [[nodiscard]] PixelFIFO
 {
 public:
-	explicit PixelFIFO(IPPU& ppu) : _ppu{ppu} {}
+	explicit PixelFIFO(IPPU& ppu, OAMEntryManager& entry_manager) : _ppu{ppu}, _entry_manager{entry_manager} {}
 	~PixelFIFO() = default;
 
 public:
@@ -42,25 +43,21 @@ public:
 		this->SetY(this->GetY() + 1);
 	}
 
-	[[nodiscard]] std::pair<PixelSource, PaletteColor> FetchNextPixel()
+	[[nodiscard]] std::pair<int32_t, PaletteColor> FetchNextPixel()
 	{
-		// Fetching from the first row if it isn't empty.
-		if (!this->_lower_row.IsEmpty())
-		{
-			const auto FETCHED_PALETTE_COLOR{this->_lower_row.GetNextPixel()};
-			
-			// If the second row isn't empty, take the left bit from the second row
-			// and apply it to the right bit of the first row.
-			if (!this->_upper_row.IsEmpty())
-			{
-				const auto TEMP_UPPER_PIXEL{this->_upper_row.GetNextPixel()};
-				this->_lower_row.SetLastPixel(TEMP_UPPER_PIXEL.first, TEMP_UPPER_PIXEL.second);
-			}
+		SANITY(!this->_lower_row.IsEmpty(), "Lower row cannot be empty");
 
-			return FETCHED_PALETTE_COLOR;
+		const auto FETCHED_PALETTE_COLOR{this->_lower_row.GetNextPixel()};
+		
+		// If the second row isn't empty, take the left bit from the second row
+		// and apply it to the right bit of the first row.
+		if (!this->_upper_row.IsEmpty())
+		{
+			const auto TEMP_UPPER_PIXEL{this->_upper_row.GetNextPixel()};
+			this->_lower_row.SetLastPixel(TEMP_UPPER_PIXEL.first, TEMP_UPPER_PIXEL.second);
 		}
 
-		return {PixelSource::BGP, PaletteColor::FIRST_PALETTE};
+		return FETCHED_PALETTE_COLOR;
 	}
 
 	[[nodiscard]] const bool IsEmpty() const
@@ -90,29 +87,25 @@ public:
 			const LCDC_Control::Control lcdc_control{LCDC_Control{}};
 
 			Message("TODO priority!");
-			if (PIXEL.first == PixelSource::OBP0)
+			if (PIXEL.first != BGP_PIXEL)
 			{
-				RET_FALSE_IF_FAIL(this->DrawPalette<OBP0>(DRAWN_X, DRAWN_Y, PIXEL.second),
-					"Failed drawing palette (%u, %u) for SCX %u and SCY %u, x %u y %u!",
-					DRAWN_X, DRAWN_Y, this->GetSCX(), this->GetSCY(), this->GetX(), this->GetY());
-			}
-			else if (PIXEL.first == PixelSource::OBP1)
-			{
-				RET_FALSE_IF_FAIL(this->DrawPalette<OBP1>(DRAWN_X, DRAWN_Y, PIXEL.second),
-					"Failed drawing palette (%u, %u) for SCX %u and SCY %u, x %u y %u!",
-					DRAWN_X, DRAWN_Y, this->GetSCX(), this->GetSCY(), this->GetX(), this->GetY());
+				if (this->_entry_manager.GetSprite(PIXEL.first)->GetPalette() == OAMEntry::Palette::OBP0)
+				{
+					RET_FALSE_IF_FAIL(this->DrawPalette<OBP0>(DRAWN_X, DRAWN_Y, PIXEL.second),
+						"Failed drawing palette (%u, %u) for SCX %u and SCY %u, x %u y %u!",
+						DRAWN_X, DRAWN_Y, this->GetSCX(), this->GetSCY(), this->GetX(), this->GetY());
+				}
+				else
+				{
+					RET_FALSE_IF_FAIL(this->DrawPalette<OBP1>(DRAWN_X, DRAWN_Y, PIXEL.second),
+						"Failed drawing palette (%u, %u) for SCX %u and SCY %u, x %u y %u!",
+						DRAWN_X, DRAWN_Y, this->GetSCX(), this->GetSCY(), this->GetX(), this->GetY());
+				}
 			}
 			else if (lcdc_control.background_enable == LCDC_Control::Control::BACKGROUND_ON ||
 				     lcdc_control.window_enable == LCDC_Control::Control::WINDOW_ON)
 			{
 				RET_FALSE_IF_FAIL(this->DrawPalette<BGP>(DRAWN_X, DRAWN_Y, PIXEL.second),
-					"Failed drawing palette (%u, %u) for SCX %u and SCY %u, x %u y %u!",
-					DRAWN_X, DRAWN_Y, this->GetSCX(), this->GetSCY(), this->GetX(), this->GetY());
-			}
-			else
-			{
-				// If both bg and window are disabled, we draw the 0x00 palette.
-				RET_FALSE_IF_FAIL(this->DrawPalette(DRAWN_X, DRAWN_Y, PaletteColor::FIRST_PALETTE),
 					"Failed drawing palette (%u, %u) for SCX %u and SCY %u, x %u y %u!",
 					DRAWN_X, DRAWN_Y, this->GetSCX(), this->GetSCY(), this->GetX(), this->GetY());
 			}
@@ -153,7 +146,7 @@ public:
 		const API::data_t NEW_LY = static_cast<API::data_t>(GetWrappedAroundDistance(this->_y, this->_scy)) % 0x9A;
 		SANITY(this->_ppu.GetProcessor().GetMemory().WriteDirectly(LY::MEMORY_ADDRESS, NEW_LY), "Failed changing LY directly");
 
-		if (LY{} == 0)
+		if (NEW_LY == 0)
 		{
 			// Reset Y back to SCY
 			this->_scy = SCY{};
@@ -255,6 +248,7 @@ private:
 	IPPU&					  _ppu;
 	PixelRowContainer		  _lower_row{};
 	PixelRowContainer		  _upper_row{};
+	OAMEntryManager&          _entry_manager;
 	std::array<std::array<olc::Pixel, SCREEN_WIDTH_PIXELS>, SCREEN_HEIGHT_PIXELS> _screen{};
 };
 } // Core

@@ -68,6 +68,18 @@ public:
 		this->_upper = Tools::ReverseByte(this->_upper);
 	}
 
+	constexpr PixelColor GetColorAtIndex(const std::size_t index) const
+	{
+		SANITY(index < PIXEL_COUNT, "Invalid index");
+		return static_cast<PixelColor>(Tools::IsBitSet(this->_upper, index) << 1 | Tools::IsBitSet(this->_lower, index));
+	}
+
+	constexpr void SetColorAtIndex(const std::size_t index, const PixelColor color)
+	{
+		Tools::MutateBitByCondition(static_cast<size_t>(color) & 0b10, this->_upper, index);
+		Tools::MutateBitByCondition(static_cast<size_t>(color) & 0b01, this->_lower, index);
+	}
+
 public:
 	static constexpr API::data_t TOP_COLOR_INDEX{7};
 	static constexpr API::data_t PIXEL_COUNT{8};

@@ -11,7 +11,7 @@ using namespace API;
 
 namespace Core
 {
-OAMEntry::OAMEntry(IMemoryDeviceAccess& memory_accessor, std::size_t index) : _memory_accessor{memory_accessor}
+OAMEntry::OAMEntry(IMemoryDeviceAccess& memory_accessor, int32_t index) : _memory_accessor{memory_accessor}, _id{index}
 {
 	API::data_t attributes{0x00};
 	SANITY(memory_accessor.Read(OAMRAMDevice::START_ADDRESS + index * OAM_ENTRY_SIZE + X_POSITION_INDEX, this->_x),
@@ -70,7 +70,7 @@ PixelRow OAMEntry::GetSpritePixelRow(std::size_t y) const
 const bool OAMEntry::IsInScanline(std::size_t y) const
 {
 	const bool WIDE_SPRITES{static_cast<LCDC_Control::Control>(LCDC_Control{}).AreSpritesWide()};
-	return !(this->_x == 0 && this->_y == 0) &&
+	return this->_x != 0 &&
 		((y >= (this->_y - 16)) &&
 			(y < ((this->_y - 16) + (WIDE_SPRITES ? 16 : 8))));
 }

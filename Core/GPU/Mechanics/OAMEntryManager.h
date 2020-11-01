@@ -28,9 +28,10 @@ public:
 public:
 	void LoadSprites();
 	[[nodiscard]] sprites_in_line_t GetSpritesInLine(std::size_t y);
+	[[nodiscard]] OAMEntry* GetSprite(const int32_t index) { return this->_sprites[index].get(); }
 
 private:
-	[[nodiscard]] OAMEntry GetEntry(const std::size_t index) const;
+	[[nodiscard]] OAMEntry GetEntry(const int32_t index) const;
 
 private:
 	std::array<std::shared_ptr<OAMEntry>, AMOUNT_OF_SPRITES> _sprites{nullptr};

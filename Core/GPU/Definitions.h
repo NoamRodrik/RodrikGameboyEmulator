@@ -39,16 +39,6 @@ enum class [[nodiscard]] PaletteColor : API::data_t
 };
 
 /**
- * The source in which the pixel is written from.
- */
-enum class [[nodiscard]] PixelSource : API::data_t
-{
-	BGP = 0x00,
-	OBP0 = 0x01,
-	OBP1 = 0x02
-};
-
-/**
  * The state of the PPU.
  */
 enum class [[nodiscard]] PPUState : API::data_t
@@ -65,6 +55,7 @@ static constexpr size_t     SCREEN_WIDTH_PIXELS{160};
 static constexpr size_t     SCREEN_HEIGHT_PIXELS{144};
 static constexpr size_t     AMOUNT_OF_SPRITES{40};
 static constexpr size_t     AMOUNT_OF_SPRITES_PER_LINE{10};
+static constexpr int32_t    BGP_PIXEL{-1};
 
 #ifdef GREEN_DISPLAY
 static constexpr uint8_t    WHITE_PIXEL[]{143, 144, 85};

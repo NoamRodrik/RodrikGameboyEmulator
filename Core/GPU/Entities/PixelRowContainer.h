@@ -6,6 +6,9 @@
 #ifndef __LR35902_PIXEL_ROW_CONTAINER_H__
 #define __LR35902_PIXEL_ROW_CONTAINER_H__
 
+#include <Core/GPU/Entities/PaletteMap.h>
+#include <Core/GPU/Registers/OBP1.h>
+#include <Core/GPU/Registers/OBP0.h>
 #include <Core/GPU/Definitions.h>
 #include <Core/CPU/Processor.h>
 #include <API/Definitions.h>
@@ -21,7 +24,7 @@ public:
 	~PixelRowContainer() = default;
 
 public:
-	constexpr void InitializeSource(const PixelSource pixel_source = PixelSource::BGP)
+	constexpr void InitializeSource(const int32_t pixel_source)
 	{
 		for (auto&& current_pixel_source : this->_pixel_source)
 		{
@@ -46,7 +49,7 @@ public:
 	/**
 	 * Fetching left-most pixel from the pixel row.
 	 */
-	[[nodiscard]] constexpr std::pair<PixelSource, PaletteColor> GetNextPixel()
+	[[nodiscard]] constexpr std::pair<int32_t, PaletteColor> GetNextPixel()
 	{
 		SANITY(!this->IsEmpty() && this->_pixel_row_index <= PixelRow::PIXEL_COUNT,
 			"Got invalid values for pixel row index");
@@ -57,13 +60,13 @@ public:
 		{
 			this->_pixel_source[pixel_source_index] = this->_pixel_source[pixel_source_index + 1];
 		}
-		this->_pixel_source[PixelRow::PIXEL_COUNT - 1] = PixelSource::BGP;
+		this->_pixel_source[PixelRow::PIXEL_COUNT - 1] = BGP_PIXEL;
 
 		this->_pixel_row_index -= 1;
 		return {FETCHED_PIXEL_SOURCE, this->_current_pixel_row.StealTopColor()};
 	}
 
-	constexpr void SetLastPixel(PixelSource source, PaletteColor pixel_color)
+	constexpr void SetLastPixel(int32_t source, PaletteColor pixel_color)
 	{
 		SANITY(this->EmptyBitsAmount() >= 1, "Too full");
 		this->_pixel_source[this->_pixel_row_index] = source;
@@ -74,7 +77,7 @@ public:
 	constexpr void Clear()
 	{
 		this->SetPixelRow(PixelRow{});
-		this->InitializeSource();
+		this->InitializeSource(BGP_PIXEL);
 		this->_pixel_row_index = 0;
 	}
 
@@ -83,17 +86,53 @@ public:
 		return PixelRow::PIXEL_COUNT - this->_pixel_row_index;
 	}
 
+	void Combine(const PixelRowContainer& other, OAMEntryManager& entries)
+	{
+		for (size_t pixel_index = 0; pixel_index < PixelRow::PIXEL_COUNT; ++pixel_index)
+		{
+			const auto MY_SOURCE{this->_pixel_source[pixel_index]};
+			const auto HIS_SOURCE{other._pixel_source[pixel_index]};
+			bool swap{false};
+
+			if (MY_SOURCE == BGP_PIXEL)
+			{
+				// I'm a background pixel.
+				const auto& HIS_SPRITE{entries.GetSprite(HIS_SOURCE)};
+
+				if (HIS_SPRITE->GetPalette() == OAMEntry::Palette::OBP0)
+				{
+					swap = other._current_pixel_row.GetColorAtIndex(pixel_index) != PaletteMap::TransparentColor<OBP0>();
+				}
+				else
+				{
+					swap = other._current_pixel_row.GetColorAtIndex(pixel_index) != PaletteMap::TransparentColor<OBP1>();
+				}
+
+				if (HIS_SPRITE->GetPriority() == OAMEntry::Priority::BEHIND_BG_COLORS_1_TO_3)
+				{
+					swap = swap && this->_current_pixel_row.GetColorAtIndex(pixel_index) == PaletteMap::ColorOf<BGP>(PaletteColor::FIRST_PALETTE);
+				}
+			}
+
+			if (swap)
+			{
+				this->_pixel_source[pixel_index] = HIS_SOURCE;
+				this->_current_pixel_row.SetColorAtIndex(pixel_index, other._current_pixel_row.GetColorAtIndex(pixel_index));
+			}
+		}
+	}
+
 private:
 	PixelRow    _current_pixel_row{};
 	std::size_t _pixel_row_index{0};
-	PixelSource _pixel_source[PixelRow::PIXEL_COUNT]{PixelSource::BGP,
-													 PixelSource::BGP,
-													 PixelSource::BGP,
-													 PixelSource::BGP,
-													 PixelSource::BGP,
-													 PixelSource::BGP,
-													 PixelSource::BGP,
-													 PixelSource::BGP};
+	int32_t     _pixel_source[PixelRow::PIXEL_COUNT]{BGP_PIXEL,
+												     BGP_PIXEL,
+													 BGP_PIXEL,
+													 BGP_PIXEL,
+													 BGP_PIXEL,
+													 BGP_PIXEL,
+													 BGP_PIXEL,
+													 BGP_PIXEL};
 };
 } // Core
 

@@ -35,7 +35,7 @@ namespace Core
 class [[nodiscard]] Fetcher
 {
 public:
-	Fetcher(PixelFIFO& fifo, IPPU& ppu) : _fifo{fifo}, _ppu{ppu} {}
+	Fetcher(PixelFIFO& fifo, IPPU& ppu, OAMEntryManager& entry_manager) : _fifo{fifo}, _ppu{ppu}, _entry_manager{entry_manager} {}
 	~Fetcher() = default;
 
 private:
@@ -48,16 +48,6 @@ private:
 	};
 
 public:
-	OAMEntryManager& GetOAMEntryManager()
-	{
-		return this->_entry_manager;
-	}
-
-	const OAMEntryManager& GetOAMEntryManager() const
-	{
-		return this->_entry_manager;
-	}
-
 	PixelFIFO& GetPixelFIFO()
 	{
 		return this->_fifo;
@@ -116,29 +106,12 @@ private:
 	{
 		if (this->_clocks >= FETCH_TILE_CLOCKS)
 		{	
-			this->_fetching_sprite = false;
-
 			const API::data_t WINDOW_X{WX{}};
 			const API::data_t WINDOW_Y{WY{}};
 			const API::data_t SCREEN_X = static_cast<API::data_t>(GetWrappedAroundDistance(this->_fifo.GetX(), this->_fifo.GetSCX()));
 			const API::data_t SCREEN_Y = static_cast<API::data_t>(GetWrappedAroundDistance(this->_fifo.GetY(), this->_fifo.GetSCY()));
 
-			OAMEntry* entry{this->SpriteToDraw()};
-
-			Message("TODO: Sprite-Pixels merge with BG|WINDOW");
-			if (entry != nullptr)
-			{
-				// We have an entry to draw.
-				this->_building_pixel_row = entry->GetSpritePixelRow(SCREEN_Y);
-
-				Message("TODO: Merge only relevant pixels");
-				this->_pixel_row_container.InitializeSource(entry->GetSource());
-
-				this->_window_tile_offset_x = (this->_window_tile_offset_x + 8) % 0x100;
-				this->_tile_offset_x = (this->_tile_offset_x + 8) % 0x100;
-				this->_fetching_sprite = true;
-			}
-			else if (static_cast<LCDC_Control::Control>(LCDC_Control{}).IsWindowEnabled() &&
+			if (static_cast<LCDC_Control::Control>(LCDC_Control{}).IsWindowEnabled() &&
 				SCREEN_Y >= WINDOW_Y && SCREEN_X >= (WINDOW_X - 7))
 			{
 				// If they're equal, clear fifo
@@ -150,7 +123,7 @@ private:
 				const uint32_t TILE_OFFSET = ((SCREEN_Y - WINDOW_Y) / 8) * 32 + ((this->_window_tile_offset_x - (WINDOW_X - 7)) / 8);
 				this->_window_tile_offset_x = (this->_window_tile_offset_x + 8) % 0x100;
 				RET_FALSE_IF_FAIL(this->_ppu.GetProcessor().GetMemory().Read(this->GetWindowMapStart() + TILE_OFFSET, this->_tile_index), "Failed fetching tile index");
-				this->_pixel_row_container.InitializeSource(PixelSource::BGP);
+				this->_pixel_row_container.InitializeSource(BGP_PIXEL);
 			}
 			// If the window didn't succeed.
 			else
@@ -158,7 +131,7 @@ private:
 				const uint32_t TILE_OFFSET = (this->_fifo.GetY() / 8) * 32 + (this->_tile_offset_x / 8);
 				this->_tile_offset_x = (this->_tile_offset_x + 8) % 0x100;
 				RET_FALSE_IF_FAIL(this->_ppu.GetProcessor().GetMemory().Read(this->GetBackgroundMapStart() + TILE_OFFSET, this->_tile_index), "Failed fetching tile index");
-				this->_pixel_row_container.InitializeSource(PixelSource::BGP);
+				this->_pixel_row_container.InitializeSource(BGP_PIXEL);
 			}
 
 			this->_clocks -= FETCH_TILE_CLOCKS;
@@ -175,10 +148,7 @@ private:
 	{
 		if (this->_clocks >= READ_DATA_0_CLOCKS)
 		{
-			if (!this->_fetching_sprite)
-			{
-				this->_building_pixel_row.SetUpper(this->GetUpperTileByte());
-			}
+			this->_building_pixel_row.SetUpper(this->GetUpperTileByte());
 
 			this->_clocks -= READ_DATA_0_CLOCKS;
 			this->_state = State::READ_DATA_1;
@@ -194,10 +164,7 @@ private:
 	{
 		if (this->_clocks >= READ_DATA_1_CLOCKS)
 		{
-			if (!this->_fetching_sprite)
-			{
-				this->_building_pixel_row.SetLower(this->GetLowerTileByte());
-			}
+			this->_building_pixel_row.SetLower(this->GetLowerTileByte());
 
 			this->_clocks -= READ_DATA_1_CLOCKS;
 			this->_state = State::WAIT_FOR_FIFO;
@@ -219,6 +186,18 @@ private:
 			if (this->_fifo.NeedsFill())
 			{
 				this->_pixel_row_container.SetPixelRow(this->_building_pixel_row);
+
+				OAMEntry* entry{this->SpriteToDraw()};
+				if (entry != nullptr)
+				{
+					PixelRowContainer pixel_row_container{};
+					pixel_row_container.SetPixelRow(entry->GetSpritePixelRow(LY{}));
+					pixel_row_container.InitializeSource(entry->GetID());
+
+					// We have an entry to draw.
+					this->_pixel_row_container.Combine(pixel_row_container, this->_entry_manager);
+				}
+
 				this->_fifo.Fill(this->_pixel_row_container);
 				this->_pixel_row_container.Clear();
 				this->_state = State::FETCH_TILE;
@@ -231,7 +210,6 @@ private:
 private:
 	[[nodiscard]] OAMEntry* SpriteToDraw()
 	{
-		Message("TODO: OBJ-TO-BG Priority");
 		if (static_cast<LCDC_Control::Control>(LCDC_Control{}).IsSpriteEnabled())
 		{
 			auto iterator{std::find_if(this->_sprites.begin(), this->_sprites.end(), [this](const std::shared_ptr<OAMEntry>& entry)
@@ -312,9 +290,8 @@ private:
 	PixelRowContainer				   _pixel_row_container{};
 	PixelRow                           _building_pixel_row{};
 	std::size_t						   _clocks{0x00};
-	OAMEntryManager					   _entry_manager{this->_ppu.GetProcessor().GetMemory()};
+	OAMEntryManager&                   _entry_manager;
 	OAMEntryManager::sprites_in_line_t _sprites{};
-	bool                               _fetching_sprite{false};
 };
 } // Core
 

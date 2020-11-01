@@ -40,7 +40,7 @@ OAMEntryManager::sprites_in_line_t OAMEntryManager::GetSpritesInLine(std::size_t
 	return sprites;
 }
 
-OAMEntry OAMEntryManager::GetEntry(const std::size_t index) const
+OAMEntry OAMEntryManager::GetEntry(const int32_t index) const
 {
 	return {this->_memory_accessor, index};
 }

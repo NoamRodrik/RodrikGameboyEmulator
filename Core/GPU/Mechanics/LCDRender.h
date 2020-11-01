@@ -6,6 +6,7 @@
 #ifndef __LR35902_LCD_RENDER_H__
 #define __LR35902_LCD_RENDER_H__
 
+#include <Core/GPU/Mechanics/OAMEntryManager.h>
 #include <Core/GPU/Registers/LCDC_Status.h>
 #include <Core/GPU/Mechanics/PixelFIFO.h>
 #include <Core/GPU/Mechanics/Fetcher.h>
@@ -192,7 +193,7 @@ private:
 			{
 				// Going back to the beginning.
 				this->Reset();
-				this->_fetcher.GetOAMEntryManager().LoadSprites();
+				this->_entry_manager.LoadSprites();
 				this->ChangeState(PPUState::OAM_SEARCH);
 			}
 
@@ -345,8 +346,9 @@ public:
 public:
 	API::IMemoryDeviceAccess& _memory;
 	IPPU&                     _ppu;
-	PixelFIFO				  _fifo{this->_ppu};
-	Fetcher					  _fetcher{this->_fifo, this->_ppu};
+	OAMEntryManager		      _entry_manager{this->_memory};
+	PixelFIFO				  _fifo{this->_ppu, this->_entry_manager};
+	Fetcher					  _fetcher{this->_fifo, this->_ppu, this->_entry_manager};
 	PPUState				  _state{PPUState::OAM_SEARCH};
 	std::size_t				  _clocks{0x00};
 	bool                      _dma_occurred{false};

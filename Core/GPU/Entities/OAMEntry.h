@@ -16,7 +16,20 @@ namespace Core
 class OAMEntry
 {
 public:
-	OAMEntry(API::IMemoryDeviceAccess& memory_accessor, std::size_t index);
+	enum class [[nodiscard]] Palette : API::data_t
+	{
+		OBP0 = 0x00,
+		OBP1 = 0x01
+	};
+
+	enum class [[nodiscard]] Priority : API::data_t
+	{
+		ABOVE_BG = 0x00,
+		BEHIND_BG_COLORS_1_TO_3 = 0x01
+	};
+
+public:
+	OAMEntry(API::IMemoryDeviceAccess& memory_accessor, int32_t index);
 
 public:
 	/**
@@ -28,10 +41,9 @@ public:
 	[[nodiscard]] const bool IsInScanline(std::size_t y) const;
 	Message("Might need to be -8");
 	[[nodiscard]] const API::data_t GetX() const { return this->_x - 16; }
-	[[nodiscard]] const PixelSource GetSource() const
-	{
-		return this->_palette == Palette::OBP0 ? PixelSource::OBP0 : PixelSource::OBP1;
-	}
+	[[nodiscard]] const int32_t GetID() const { return this->_id; }
+	[[nodiscard]] const auto GetPalette() const { return this->_palette; }
+	[[nodiscard]] const auto GetPriority() const { return this->_priority; }
 
 private:
 	struct [[nodiscard]] OAMAttributes
@@ -61,22 +73,10 @@ private:
 	};
 
 private:
-	enum class [[nodiscard]] Priority : API::data_t
-	{
-		ABOVE_BG				= 0x00,
-		BEHIND_BG_COLORS_1_TO_3 = 0x01
-	};
-
 	enum class [[nodiscard]] Flip : API::data_t
 	{
 		NO  = 0x00,
 		YES = 0x01
-	};
-
-	enum class [[nodiscard]] Palette : API::data_t
-	{
-		OBP0 = 0x00,
-		OBP1 = 0x01
 	};
 
 private:
@@ -95,6 +95,7 @@ private:
 	API::data_t _tile_index{0x00};
 	Priority    _priority{Priority::ABOVE_BG};
 	Palette     _palette{Palette::OBP0};
+	int32_t     _id{0x00};
 };
 } // Core
 
