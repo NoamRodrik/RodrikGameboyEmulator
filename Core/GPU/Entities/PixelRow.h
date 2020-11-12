@@ -44,8 +44,8 @@ public:
 public:
 	[[nodiscard]] constexpr auto StealTopColor()
 	{
-		const auto COLOR = PaletteColor{(static_cast<uint8_t>(Tools::IsBitSet(this->_upper, TOP_COLOR_INDEX)) << 1) |
-					  				    (static_cast<uint8_t>(Tools::IsBitSet(this->_lower, TOP_COLOR_INDEX)))};
+		const auto COLOR = PaletteColor((static_cast<uint8_t>(Tools::IsBitSet(this->_upper, TOP_COLOR_INDEX)) << 1) |
+					  				    (static_cast<uint8_t>(Tools::IsBitSet(this->_lower, TOP_COLOR_INDEX))));
 		this->_lower <<= 1;
 		this->_upper <<= 1;
 		return COLOR;
