@@ -1,5 +1,5 @@
 /**
- * @file		MemoryRegister.h
+ * @file		DeviceRegister.h
  * @author		Noam Rodrik
  * @description LR35902 main memory registers definition header.
  */
@@ -15,26 +15,28 @@ namespace Core
  * A templated class that serves as an abstraction of registers to their destination.
  * A register can now be on the RAM and act as something independent on itself.
  */
-template <typename T>
-class [[nodiscard]] MemoryRegister
+template <API::address_t ADDRESS>
+class [[nodiscard]] DeviceRegister
 {
 public:
-	constexpr MemoryRegister(const API::address_t address) : MEMORY_ADDRESS{address} {}
+	constexpr DeviceRegister() = default;
+	DeviceRegister(const API::data_t value) { *this = value; }
 
-	MemoryRegister& operator=(const T other)
+public:
+	DeviceRegister& operator=(const API::data_t other)
 	{
 		static gsl::not_null<Processor*> processor{&Processor::GetInstance()};
 		SANITY(processor->GetMemory().Write(MEMORY_ADDRESS, other), "Failed writing to memory");
 		return *this;
 	}
 
-	[[nodiscard]] operator T() const
+	operator API::data_t() const
 	{
 		return READ_DATA_AT(MEMORY_ADDRESS);
 	}
 
-private:
-	const API::address_t MEMORY_ADDRESS;
+public:
+	static constexpr API::address_t MEMORY_ADDRESS{ADDRESS};
 };
 } // Core
 

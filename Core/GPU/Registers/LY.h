@@ -6,24 +6,20 @@
 #ifndef __LR35902_LY_H__
 #define __LR35902_LY_H__
 
-#include <Core/CPU/Registers/MemoryRegister.h>
+#include <Core/CPU/Registers/DeviceRegister.h>
 
 namespace Core
 {
 /* Read only (for the game!) */
-class [[nodiscard]] LY : public MemoryRegister<API::data_t>
+class [[nodiscard]] LY : public DeviceRegister<0xFF44>
 {
 public:
-	constexpr LY() : MemoryRegister{LY_ADDRESS} {}
-	LY(const API::data_t value) : MemoryRegister{LY_ADDRESS} { *this = value; }
+	using DeviceRegister::DeviceRegister;
+	using DeviceRegister::operator=;
+	using DeviceRegister::operator API::data_t;
 
 public:
-	using MemoryRegister::operator=;
-	using MemoryRegister::operator API::data_t;
-
-public:
-	static constexpr API::address_t LY_ADDRESS{0xFF44};
-	static constexpr API::address_t LY_DEFAULT_VALUE{0x00};
+	static constexpr API::data_t LY_DEFAULT_VALUE{0x00};
 };
 } // Core
 

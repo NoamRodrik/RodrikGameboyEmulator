@@ -13,6 +13,11 @@
 #include <cmath>
 #include <array>
 
+Message("Global control definitions!");
+//#define GREEN_DISPLAY
+//#define BEAUTIFUL_DISPLAY
+#define SERIAL_TRANSFER_PRINT_DEBUG
+
 namespace API
 {
 	/* Necessary mathematical constants */
@@ -23,6 +28,9 @@ namespace API
 	using address_t = uint16_t;
 	using data_t = uint8_t;
 	using r8_t = int8_t;
+
+	/* ROM folder definitions */
+	static constexpr std::string_view ROM_FOLDER{"TestROM"};
 
 	/* BATTERY files */
 	static constexpr std::string_view FILE_POSTFIX{".bin"};
@@ -36,6 +44,7 @@ namespace API
 	static constexpr int32_t   CANVAS_HEIGHT{0x20};
 	static constexpr int32_t   CANVAS_WIDTH{0x20};
 	static constexpr address_t CANVAS_SIZE{CANVAS_HEIGHT * CANVAS_WIDTH};
+	static constexpr size_t    DMA_CLOCKS_AMOUNT{160};
 
 	/* RAM */
 	static constexpr size_t MEMORY_SIZE{Tools::SlotsToBytes(std::numeric_limits<address_t>::digits)};
@@ -63,6 +72,7 @@ namespace API
 
 	/* Timer Definitions */
 	static constexpr auto		 LR35902_HZ_CLOCK{4'194'304};
+	static constexpr auto		 LR35902_HZ_CYCLE{4'194'304 / 4};
 	static constexpr std::size_t LR35902_HZ_CLOCK_256HZ{LR35902_HZ_CLOCK / 256};
 	static constexpr std::size_t LR35902_HZ_CLOCK_128HZ{LR35902_HZ_CLOCK / 128};
 	static constexpr std::size_t LR35902_HZ_CLOCK_64HZ{LR35902_HZ_CLOCK / 64};

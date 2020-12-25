@@ -6,15 +6,15 @@
 
 #include "DeviceManager.h"
 #include <Core/Bus/Devices/InterruptSwitch.h>
-#include <Core/Bus/Devices/CartridgeRAM.h>
-#include <Core/Bus/Devices/CloneWorkRAM.h>
-#include <Core/Bus/Devices/ExternalRAM.h>
-#include <Core/Bus/Devices/UnusedRAM.h>
-#include <Core/Bus/Devices/VideoRAM.h>
-#include <Core/Bus/Devices/HighRAM.h>
-#include <Core/Bus/Devices/WorkRAM.h>
-#include <Core/Bus/Devices/OAMRAM.h>
-#include <Core/Bus/Devices/IORAM.h>
+#include <Core/Bus/Devices/CartridgeROMDevice.h>
+#include <Core/Bus/Devices/CloneWorkRAMDevice.h>
+#include <Core/Bus/Devices/ExternalDevice.h>
+#include <Core/Bus/Devices/UnusedRAMDevice.h>
+#include <Core/Bus/Devices/VideoRAMDevice.h>
+#include <Core/Bus/Devices/HighRAMDevice.h>
+#include <Core/Bus/Devices/WorkRAMDevice.h>
+#include <Core/Bus/Devices/OAMRAMDevice.h>
+#include <Core/Bus/Devices/IODevice.h>
 #include <API/Definitions.h>
 #include <Tools/Tools.h>
 
@@ -40,20 +40,20 @@ void DeviceManager::SetMemoryBankController(std::unique_ptr<API::IMemoryBankCont
 
 void DeviceManager::StartDevices()
 {
-	static constexpr auto DEVICE_MEMORY_SIZE = CartridgeRAM::SIZE + VideoRAM::SIZE + ExternalRAM::SIZE + WorkRAM::SIZE + CloneWorkRAM::SIZE +
-		OAMRAM::SIZE + UnusedRAM::SIZE + IORAM::SIZE + HighRAM::SIZE + InterruptSwitch::SIZE;
+	static constexpr auto DEVICE_MEMORY_SIZE = CartridgeROMDevice::SIZE + VideoRAMDevice::SIZE + ExternalDevice::SIZE + WorkRAMDevice::SIZE + CloneWorkRAMDevice::SIZE +
+		OAMRAMDevice::SIZE + UnusedRAMDevice::SIZE + IODevice::SIZE + HighRAMDevice::SIZE + InterruptSwitch::SIZE;
 
 	static_assert(DEVICE_MEMORY_SIZE == MEMORY_SIZE, "Size of memory is invalid.");
 
-	std::unique_ptr<IMemoryDevice> devices_array[] = {std::make_unique<CartridgeRAM>(*this),
-	 											      std::make_unique<VideoRAM>(*this),
-	 											      std::make_unique<ExternalRAM>(*this),
-	 											      std::make_unique<WorkRAM>(*this),
-	 											      std::make_unique<CloneWorkRAM>(*this),
-	 											      std::make_unique<OAMRAM>(*this),
-	 											      std::make_unique<UnusedRAM>(*this),
-	 											      std::make_unique<IORAM>(*this),
-	 											      std::make_unique<HighRAM>(*this),
+	std::unique_ptr<IMemoryDevice> devices_array[] = {std::make_unique<CartridgeROMDevice>(*this),
+	 											      std::make_unique<VideoRAMDevice>(*this),
+	 											      std::make_unique<ExternalDevice>(*this),
+	 											      std::make_unique<WorkRAMDevice>(*this),
+	 											      std::make_unique<CloneWorkRAMDevice>(*this),
+	 											      std::make_unique<OAMRAMDevice>(*this),
+	 											      std::make_unique<UnusedRAMDevice>(*this),
+	 											      std::make_unique<IODevice>(*this),
+	 											      std::make_unique<HighRAMDevice>(*this),
 	 											      std::make_unique<InterruptSwitch>(*this)};
 
 	for (auto&& device : devices_array)

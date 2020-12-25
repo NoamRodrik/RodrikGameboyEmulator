@@ -117,7 +117,7 @@
       <AssemblerOutput>NoListing</AssemblerOutput>
       <PrecompiledHeaderFile />
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <PreprocessorDefinitions>PA_ENABLE_DEBUG_OUTPUT=0;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -174,7 +174,7 @@
       <AssemblerOutput>NoListing</AssemblerOutput>
       <PrecompiledHeaderFile />
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <PreprocessorDefinitions>PA_ENABLE_DEBUG_OUTPUT=0;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -258,18 +258,20 @@
     <ClInclude Include="Core\APU\Waves\WaveController.h" />
     <ClInclude Include="Core\Bus\Bus.h" />
     <ClInclude Include="Core\Bus\DeviceManager\DeviceManager.h" />
-    <ClInclude Include="Core\Bus\Devices\VideoRAM.h" />
-    <ClInclude Include="Core\Bus\IRAMDevice.h" />
-    <ClInclude Include="Core\Bus\RAMDevice.h" />
+    <ClInclude Include="Core\Bus\Devices\VideoRAMDevice.h" />
+    <ClInclude Include="Core\Bus\IInterceptor.h" />
+    <ClInclude Include="Core\Bus\MemoryDevice.h" />
     <ClInclude Include="Core\Cartridge\Implementation\MBC1_0x02.h" />
     <ClInclude Include="Core\Cartridge\Implementation\MBC1_0x03.h" />
     <ClInclude Include="Core\GPU\Definitions.h" />
+    <ClInclude Include="Core\GPU\Entities\OAMEntry.h" />
     <ClInclude Include="Core\GPU\Entities\PixelRowContainer.h" />
     <ClInclude Include="Core\GPU\IPPU.h" />
     <ClInclude Include="Core\GPU\Entities\PaletteMap.h" />
     <ClInclude Include="Core\GPU\Entities\PixelRow.h" />
     <ClInclude Include="Core\GPU\Mechanics\Fetcher.h" />
     <ClInclude Include="Core\GPU\Mechanics\LCDRender.h" />
+    <ClInclude Include="Core\GPU\Mechanics\OAMEntryManager.h" />
     <ClInclude Include="Core\GPU\Mechanics\PixelFIFO.h" />
     <ClInclude Include="Core\GPU\Registers\BGP.h" />
     <ClInclude Include="Core\GPU\Registers\DMA.h" />
@@ -299,15 +301,15 @@
     <ClInclude Include="Core\CPU\Interrupts\Types\Serial.h" />
     <ClInclude Include="Core\CPU\Interrupts\Types\Timer.h" />
     <ClInclude Include="Core\CPU\Interrupts\Types\VBlank.h" />
-    <ClInclude Include="Core\Bus\Devices\CartridgeRAM.h" />
-    <ClInclude Include="Core\Bus\Devices\CloneWorkRAM.h" />
-    <ClInclude Include="Core\Bus\Devices\ExternalRAM.h" />
-    <ClInclude Include="Core\Bus\Devices\HighRAM.h" />
+    <ClInclude Include="Core\Bus\Devices\CartridgeROMDevice.h" />
+    <ClInclude Include="Core\Bus\Devices\CloneWorkRAMDevice.h" />
+    <ClInclude Include="Core\Bus\Devices\ExternalDevice.h" />
+    <ClInclude Include="Core\Bus\Devices\HighRAMDevice.h" />
     <ClInclude Include="Core\Bus\Devices\InterruptSwitch.h" />
-    <ClInclude Include="Core\Bus\Devices\IORAM.h" />
-    <ClInclude Include="Core\Bus\Devices\OAMRAM.h" />
-    <ClInclude Include="Core\Bus\Devices\UnusedRAM.h" />
-    <ClInclude Include="Core\Bus\Devices\WorkRAM.h" />
+    <ClInclude Include="Core\Bus\Devices\IODevice.h" />
+    <ClInclude Include="Core\Bus\Devices\OAMRAMDevice.h" />
+    <ClInclude Include="Core\Bus\Devices\UnusedRAMDevice.h" />
+    <ClInclude Include="Core\Bus\Devices\WorkRAMDevice.h" />
     <ClInclude Include="API\Definitions.h" />
     <ClInclude Include="API\Memory\Device\IMemoryDeviceAccess.h" />
     <ClInclude Include="API\Memory\Device\IMemoryDevice.h" />
@@ -371,7 +373,7 @@
     <ClInclude Include="Core\Timers\Registers\TimerCounter.h" />
     <ClInclude Include="Core\Timers\Registers\TimerModulo.h" />
     <ClInclude Include="Core\Timers\Timer.h" />
-    <ClInclude Include="Core\CPU\Registers\MemoryRegister.h" />
+    <ClInclude Include="Core\CPU\Registers\DeviceRegister.h" />
     <ClInclude Include="Core\CPU\Registers\Types\LogicRegisters.h" />
     <ClInclude Include="Core\CPU\Registers\RegisterEngine.h" />
     <ClInclude Include="Core\CPU\Registers\Types\EFLRegisters.h" />
@@ -400,6 +402,8 @@
     <ClCompile Include="Core\Cartridge\Implementation\ROM_0x00.cpp" />
     <ClCompile Include="Core\CPU\Interrupts\InterruptHandler.cpp" />
     <ClCompile Include="Core\Clock\Clock.cpp" />
+    <ClCompile Include="Core\GPU\Entities\OAMEntry.cpp" />
+    <ClCompile Include="Core\GPU\Mechanics\OAMEntryManager.cpp" />
     <ClCompile Include="Core\Joypad\Joypad.cpp" />
     <ClCompile Include="Core\CPU\Processor.cpp" />
     <ClCompile Include="Core\Timers\Timer.cpp" />

@@ -6,23 +6,19 @@
 #ifndef __LR35902_OBP1_H__
 #define __LR35902_OBP1_H__
 
-#include <Core/CPU/Registers/MemoryRegister.h>
+#include <Core/CPU/Registers/DeviceRegister.h>
 
 namespace Core
 {
-class [[nodiscard]] OBP1 : public MemoryRegister<API::data_t>
+class [[nodiscard]] OBP1 : public DeviceRegister<0xFF49>
 {
 public:
-	constexpr OBP1() : MemoryRegister{OBP1_ADDRESS} {}
-	OBP1(const API::data_t value) : MemoryRegister{OBP1_ADDRESS} { *this = value; }
+	using DeviceRegister::DeviceRegister;
+	using DeviceRegister::operator=;
+	using DeviceRegister::operator API::data_t;
 
 public:
-	using MemoryRegister::operator=;
-	using MemoryRegister::operator API::data_t;
-
-public:
-	static constexpr API::address_t OBP1_ADDRESS{0xFF49};
-	static constexpr API::address_t OBP1_DEFAULT_VALUE{0xFF};
+	static constexpr API::data_t OBP1_DEFAULT_VALUE{0xFF};
 };
 } // Core
 

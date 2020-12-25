@@ -6,19 +6,16 @@
 #ifndef __LR35902_NR41_H__
 #define __LR35902_NR41_H__
 
-#include <Core/CPU/Registers/MemoryRegister.h>
+#include <Core/CPU/Registers/DeviceRegister.h>
 
 namespace Core
 {
-class [[nodiscard]] NR41 : public MemoryRegister<API::data_t>
+class [[nodiscard]] NR41 : public DeviceRegister<0xFF20>
 {
 public:
-	constexpr NR41() : MemoryRegister{NR41_ADDRESS} {}
-	NR41(const API::data_t value) : MemoryRegister{NR41_ADDRESS} { *this = value; }
-
-public:
-	using MemoryRegister::operator=;
-	using MemoryRegister::operator API::data_t;
+	using DeviceRegister::DeviceRegister;
+	using DeviceRegister::operator=;
+	using DeviceRegister::operator API::data_t;
 
 public:
 	[[nodiscard]] const API::data_t GetLength() const
@@ -27,9 +24,8 @@ public:
 	}
 
 public:
-	static constexpr API::data_t    NR41_LENGTH_BIT{0x00};
-	static constexpr API::address_t NR41_ADDRESS{0xFF20};
-	static constexpr API::address_t NR41_DEFAULT_VALUE{0xFF};
+	static constexpr API::data_t NR41_LENGTH_BIT{0x00};
+	static constexpr API::data_t NR41_DEFAULT_VALUE{0xFF};
 };
 } // Core
 

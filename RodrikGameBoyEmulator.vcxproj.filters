@@ -75,6 +75,12 @@
     <ClCompile Include="Core\APU\Mechanics\DAC.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Core\GPU\Mechanics\OAMEntryManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\GPU\Entities\OAMEntry.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tools\Tools.h">
@@ -116,31 +122,7 @@
     <ClInclude Include="Core\CPU\Processor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Bus\Devices\CartridgeRAM.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Bus\Devices\CloneWorkRAM.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Bus\Devices\ExternalRAM.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Bus\Devices\HighRAM.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Core\Bus\Devices\InterruptSwitch.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Bus\Devices\IORAM.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Bus\Devices\OAMRAM.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Bus\Devices\UnusedRAM.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Bus\Devices\WorkRAM.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Core\Clock\Clock.h">
@@ -192,9 +174,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Core\CPU\Registers\Types\StackRegisters.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CPU\Registers\MemoryRegister.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Core\CPU\Registers\RegisterEngine.h">
@@ -422,12 +401,6 @@
     <ClInclude Include="Core\GPU\Entities\PixelRowContainer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Bus\RAMDevice.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Bus\IRAMDevice.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Core\GPU\Mechanics\Fetcher.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -435,9 +408,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Core\GPU\Mechanics\LCDRender.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Bus\Devices\VideoRAM.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Core\Engine\MainPixelEngine.h">
@@ -576,6 +546,48 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Core\APU\Waves\Implementation\ASoundChannelSquare.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\GPU\Mechanics\OAMEntryManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\GPU\Entities\OAMEntry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Bus\MemoryDevice.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Bus\IInterceptor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Bus\Devices\CloneWorkRAMDevice.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Bus\Devices\ExternalDevice.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Bus\Devices\HighRAMDevice.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Bus\Devices\IODevice.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Bus\Devices\OAMRAMDevice.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Bus\Devices\UnusedRAMDevice.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Bus\Devices\VideoRAMDevice.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Bus\Devices\WorkRAMDevice.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPU\Registers\DeviceRegister.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Bus\Devices\CartridgeROMDevice.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

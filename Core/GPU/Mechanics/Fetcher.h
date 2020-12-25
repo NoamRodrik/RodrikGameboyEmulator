@@ -7,14 +7,16 @@
 #define __LR35902_FETCHER_H__
 
 #include <Core/GPU/Entities/PixelRowContainer.h>
+#include <Core/GPU/Mechanics/OAMEntryManager.h>
 #include <Core/GPU/Registers/LCDC_Control.h>
 #include <Core/GPU/Mechanics/PixelFIFO.h>
-#include <Core/Bus/Devices/VideoRAM.h>
+#include <Core/Bus/Devices/VideoRAMDevice.h>
 #include <Core/GPU/Registers/SCY.h>
 #include <Core/GPU/Registers/WY.h>
 #include <Core/GPU/Registers/WX.h>
 #include <API/Definitions.h>
 #include <Tools/Tools.h>
+#include <algorithm>
 
 namespace Core
 {
@@ -33,7 +35,7 @@ namespace Core
 class [[nodiscard]] Fetcher
 {
 public:
-	constexpr Fetcher(PixelFIFO& fifo, IPPU& ppu) : _fifo{fifo}, _ppu{ppu} {}
+	Fetcher(PixelFIFO& fifo, IPPU& ppu, OAMEntryManager& entry_manager) : _fifo{fifo}, _ppu{ppu}, _entry_manager{entry_manager} {}
 	~Fetcher() = default;
 
 private:
@@ -46,12 +48,21 @@ private:
 	};
 
 public:
+	PixelFIFO& GetPixelFIFO()
+	{
+		return this->_fifo;
+	}
+
 	void Reset()
 	{
 		this->_pixel_row_container.Clear();
 		this->_state = State::FETCH_TILE;
 		this->_tile_offset_x = this->_fifo.GetSCX();
 		this->_window_tile_offset_x = WX{} - 7;
+
+		// Reloading the sprites
+		std::fill(this->_sprites.begin(), this->_sprites.end(), nullptr);
+		this->_sprites = this->_entry_manager.GetSpritesInLine(this->_fifo.GetY());
 	}
 
 	[[nodiscard]] const bool Execute(std::size_t clocks)
@@ -81,7 +92,7 @@ public:
 
 			default:
 			{
-				MAIN_LOG("Got into an impossible state in the fetcher: %02X!", this->_state);
+				LOG("Got into an impossible state in the fetcher: %02X!", this->_state);
 				return false;
 			}
 		}
@@ -112,9 +123,7 @@ private:
 				const uint32_t TILE_OFFSET = ((SCREEN_Y - WINDOW_Y) / 8) * 32 + ((this->_window_tile_offset_x - (WINDOW_X - 7)) / 8);
 				this->_window_tile_offset_x = (this->_window_tile_offset_x + 8) % 0x100;
 				RET_FALSE_IF_FAIL(this->_ppu.GetProcessor().GetMemory().Read(this->GetWindowMapStart() + TILE_OFFSET, this->_tile_index), "Failed fetching tile index");
-				this->_pixel_row_container.Initialize(PixelSource::WIN);
-				this->_clocks -= FETCH_TILE_CLOCKS;
-				this->_state = State::READ_DATA_0;
+				this->_pixel_row_container.InitializeSource(BGP_PIXEL);
 			}
 			// If the window didn't succeed.
 			else
@@ -122,10 +131,11 @@ private:
 				const uint32_t TILE_OFFSET = (this->_fifo.GetY() / 8) * 32 + (this->_tile_offset_x / 8);
 				this->_tile_offset_x = (this->_tile_offset_x + 8) % 0x100;
 				RET_FALSE_IF_FAIL(this->_ppu.GetProcessor().GetMemory().Read(this->GetBackgroundMapStart() + TILE_OFFSET, this->_tile_index), "Failed fetching tile index");
-				this->_pixel_row_container.Initialize(PixelSource::BGP);
-				this->_clocks -= FETCH_TILE_CLOCKS;
-				this->_state = State::READ_DATA_0;
+				this->_pixel_row_container.InitializeSource(BGP_PIXEL);
 			}
+
+			this->_clocks -= FETCH_TILE_CLOCKS;
+			this->_state = State::READ_DATA_0;
 		}
 
 		return true;
@@ -138,7 +148,8 @@ private:
 	{
 		if (this->_clocks >= READ_DATA_0_CLOCKS)
 		{
-			this->_pixel_row_container.SetUpper(this->GetUpperTileByte());
+			this->_building_pixel_row.SetUpper(this->GetUpperTileByte());
+
 			this->_clocks -= READ_DATA_0_CLOCKS;
 			this->_state = State::READ_DATA_1;
 		}
@@ -153,7 +164,8 @@ private:
 	{
 		if (this->_clocks >= READ_DATA_1_CLOCKS)
 		{
-			this->_pixel_row_container.SetLower(this->GetLowerTileByte());
+			this->_building_pixel_row.SetLower(this->GetLowerTileByte());
+
 			this->_clocks -= READ_DATA_1_CLOCKS;
 			this->_state = State::WAIT_FOR_FIFO;
 		}
@@ -173,6 +185,37 @@ private:
 
 			if (this->_fifo.NeedsFill())
 			{
+				this->_pixel_row_container.SetPixelRow(this->_building_pixel_row);
+
+				OAMEntry* entry{this->SpriteToDraw()};
+				if (entry != nullptr)
+				{
+					const API::data_t SCREEN_X = static_cast<API::data_t>(GetWrappedAroundDistance(this->_fifo.GetX(), this->_fifo.GetSCX()));
+					const API::data_t SCREEN_Y = static_cast<API::data_t>(GetWrappedAroundDistance(this->_fifo.GetY(), this->_fifo.GetSCY()));
+					PixelRowContainer pixel_row_container{};
+					PixelRow sprite_pixel_row{entry->GetSpritePixelRow(SCREEN_Y)};
+					pixel_row_container.SetPixelRow(sprite_pixel_row);
+					pixel_row_container.InitializeSource(entry->GetID());
+
+					// Shift N transparent pixels from the left to the right.
+					const PaletteColor TRANSPARENT_COLOR = 
+						static_cast<PaletteColor>(entry->GetPalette() == OAMEntry::Palette::OBP0 ?
+						PaletteMap::TransparentColor<OBP0>() : PaletteMap::TransparentColor<OBP1>());
+
+					if (SCREEN_X != entry->GetX())
+					{
+						PixelRowContainer lower_half{};
+						lower_half.SetPixelRow(sprite_pixel_row);
+						lower_half.InitializeSource(entry->GetID());
+						lower_half.ShiftRightPixels(PixelRow::PIXEL_COUNT - (SCREEN_X - entry->GetX()), TRANSPARENT_COLOR);
+						this->_fifo._lower_row.Combine(lower_half, this->_entry_manager);
+						pixel_row_container.ShiftLeftPixels(SCREEN_X - entry->GetX(), TRANSPARENT_COLOR);
+					}
+
+					// We have an entry to draw.
+					this->_pixel_row_container.Combine(pixel_row_container, this->_entry_manager);
+				}
+
 				this->_fifo.Fill(this->_pixel_row_container);
 				this->_pixel_row_container.Clear();
 				this->_state = State::FETCH_TILE;
@@ -183,6 +226,28 @@ private:
 	}
 
 private:
+	[[nodiscard]] OAMEntry* SpriteToDraw()
+	{
+		if (static_cast<LCDC_Control::Control>(LCDC_Control{}).IsSpriteEnabled())
+		{
+			auto iterator{std::find_if(this->_sprites.begin(), this->_sprites.end(), [this](const std::shared_ptr<OAMEntry>& entry)
+			{
+				const int SCREEN_X{GetWrappedAroundDistance(this->GetPixelFIFO().GetX(), this->GetPixelFIFO().GetSCX())};
+				if (entry.get() != nullptr)
+				{
+					const int DISTANCE{SCREEN_X - entry->GetX()};
+					return DISTANCE >= 0 && DISTANCE < PixelRow::PIXEL_COUNT;
+				}
+
+				return false;
+			})};
+
+			return (iterator != this->_sprites.end()) ? iterator->get() : nullptr;
+		}
+
+		return nullptr;
+	}
+
 	[[nodiscard]] const API::address_t GetBackgroundMapStart() const
 	{
 		return static_cast<LCDC_Control::Control>(LCDC_Control{}).GetBackgroundMapStart();
@@ -240,14 +305,17 @@ private:
 	static constexpr std::size_t TILES_IN_ROW{0x20};
 
 private:
-	IPPU&             _ppu;
-	PixelFIFO&        _fifo;
-	State             _state{State::FETCH_TILE};
-	API::address_t    _tile_offset_x{0x00};
-	API::address_t    _window_tile_offset_x{0x00};
-	API::data_t       _tile_index{0x00};
-	PixelRowContainer _pixel_row_container{};
-	std::size_t       _clocks{0x00};
+	IPPU&							   _ppu;
+	PixelFIFO&						   _fifo;
+	State							   _state{State::FETCH_TILE};
+	API::address_t					   _tile_offset_x{0x00};
+	API::address_t					   _window_tile_offset_x{0x00};
+	API::data_t						   _tile_index{0x00};
+	PixelRowContainer				   _pixel_row_container{};
+	PixelRow                           _building_pixel_row{};
+	std::size_t						   _clocks{0x00};
+	OAMEntryManager&                   _entry_manager;
+	OAMEntryManager::sprites_in_line_t _sprites{};
 };
 } // Core
 

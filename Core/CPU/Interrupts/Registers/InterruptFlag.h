@@ -6,23 +6,19 @@
 #ifndef __LR35902_INTERRUPT_FLAG_H__
 #define __LR35902_INTERRUPT_FLAG_H__
 
-#include <Core/CPU/Registers/MemoryRegister.h>
+#include <Core/CPU/Registers/DeviceRegister.h>
 
 namespace Core
 {
-class [[nodiscard]] InterruptFlag : public MemoryRegister<API::data_t>
+class [[nodiscard]] InterruptFlag : public DeviceRegister<0xFF0F>
 {
 public:
-	InterruptFlag() : MemoryRegister{INTERRUPT_FLAG_ADDRESS} {}
-	InterruptFlag(const API::data_t value) : MemoryRegister{INTERRUPT_FLAG_ADDRESS} {*this = value;}
+	using DeviceRegister::DeviceRegister;
+	using DeviceRegister::operator=;
+	using DeviceRegister::operator API::data_t;
 
 public:
-	using MemoryRegister::operator=;
-	using MemoryRegister::operator API::data_t;
-
-public:
-	static constexpr API::address_t INTERRUPT_FLAG_ADDRESS{0xFF0F};
-	static constexpr API::data_t	INTERRUPT_FLAG_DEFAULT_VALUE{0x00};
+	static constexpr API::data_t INTERRUPT_FLAG_DEFAULT_VALUE{0x00};
 };
 } // Core
 

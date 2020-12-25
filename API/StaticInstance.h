@@ -14,7 +14,7 @@ template <typename T>
 class [[nodiscard]] StaticInstance
 {
 public:
-	static T& GetInstance()
+	[[nodiscard]] static T& GetInstance()
 	{
 		if (Instance == nullptr)
 		{

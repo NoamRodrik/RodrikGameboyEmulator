@@ -7,17 +7,17 @@
 #define __LR35902_MEMORY_DEVICE_INTERRUPT_SWITCH_H__
 
 #include <Core/CPU/Interrupts/Registers/InterruptEnable.h>
-#include <Core/Bus/RAMDevice.h>
+#include <Core/Bus/MemoryDevice.h>
 #include <API/Definitions.h>
 
 namespace Core
 {
-class [[nodiscard]] InterruptSwitch : public RAMDevice<0xFFFF, 0xFFFF>
+class [[nodiscard]] InterruptSwitch : public MemoryDevice<0xFFFF, 0xFFFF>
 {
 public:
-	InterruptSwitch(API::IMemoryDeviceAccess& memory_accessor) : RAMDevice{memory_accessor}
+	InterruptSwitch(API::IMemoryDeviceAccess& memory_accessor) : MemoryDevice{memory_accessor}
 	{
-		SANITY(this->Write(InterruptEnable::INTERRUPT_ENABLE_ADDRESS, InterruptEnable::INTERRUPT_ENABLE_DEFAULT_VALUE),
+		SANITY(this->Write(InterruptEnable::MEMORY_ADDRESS, InterruptEnable::INTERRUPT_ENABLE_DEFAULT_VALUE),
 			   "Failed setting interrupt switch");
 	}
 

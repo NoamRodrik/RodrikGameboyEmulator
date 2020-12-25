@@ -64,9 +64,9 @@ void SoundChannel1::SweepTick()
 				this->_sweep_time_elapsed = 0x00;
 
 				// Set frequency in memory
-				SANITY(Processor::GetInstance().GetMemory().WriteDirectly(NR13::NR13_ADDRESS, this->GetFrequency() & 0b11111111),
+				SANITY(Processor::GetInstance().GetMemory().WriteDirectly(NR13::MEMORY_ADDRESS, this->GetFrequency() & 0b11111111),
 					   "Failed writing to NR13");
-				SANITY(Processor::GetInstance().GetMemory().WriteDirectly(NR14::NR14_ADDRESS, (NR14{} & 0xF8) | ((this->GetFrequency() >> CHAR_BIT) & 0b111)),
+				SANITY(Processor::GetInstance().GetMemory().WriteDirectly(NR14::MEMORY_ADDRESS, (NR14{} & 0xF8) | ((this->GetFrequency() >> CHAR_BIT) & 0b111)),
 					"Failed writing to NR13");
 			}
 		}

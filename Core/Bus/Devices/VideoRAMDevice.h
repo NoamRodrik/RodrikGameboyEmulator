@@ -1,21 +1,21 @@
 /**
- * @file		Video.h
+ * @file		VideoRAMDevice.h
  * @author		Noam Rodrik
  * @description LR35902 main video RAM device header.
  */
 #ifndef __LR35902_MEMORY_DEVICE_VIDEO_RAM_H__
 #define __LR35902_MEMORY_DEVICE_VIDEO_RAM_H__
 
-#include <Core/Bus/RAMDevice.h>
+#include <Core/Bus/MemoryDevice.h>
 #include <API/Definitions.h>
 
 namespace Core
 {
-class [[nodiscard]] VideoRAM : public RAMDevice<0x8000, 0x9FFF>
+class [[nodiscard]] VideoRAMDevice : public MemoryDevice<0x8000, 0x9FFF>
 {
 public:
-	VideoRAM(API::IMemoryDeviceAccess& memory_accessor) : RAMDevice{memory_accessor} {}
-	virtual ~VideoRAM() override = default;
+	VideoRAMDevice(API::IMemoryDeviceAccess& memory_accessor) : MemoryDevice{memory_accessor} {}
+	virtual ~VideoRAMDevice() override = default;
 
 private:
 	friend class Fetcher;

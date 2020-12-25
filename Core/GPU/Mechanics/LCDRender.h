@@ -6,6 +6,7 @@
 #ifndef __LR35902_LCD_RENDER_H__
 #define __LR35902_LCD_RENDER_H__
 
+#include <Core/GPU/Mechanics/OAMEntryManager.h>
 #include <Core/GPU/Registers/LCDC_Status.h>
 #include <Core/GPU/Mechanics/PixelFIFO.h>
 #include <Core/GPU/Mechanics/Fetcher.h>
@@ -78,7 +79,7 @@ public:
 
 				default:
 				{
-					MAIN_LOG("Got into an impossible state in the lcd renderer!");
+					LOG("Got into an impossible state in the lcd renderer!");
 					return false;
 				}
 			}
@@ -110,21 +111,27 @@ public:
 
 	void InitiateDMA()
 	{
-		// The source address is represented by the data being written to address 0xFF46 except this value
+		// The source address is represented by the data being written to address of the DMA except this value
 		// is the source address divided by 100. So to get the correct start address it is the data being written to * 100.
 		// (to make it faster instead of multiplying by 100 we will shift left 8 places, it is the same thing)
-		const API::data_t DMA_START_ADDRESS = DMA{} << 8;
+		const API::address_t DMA_START_ADDRESS = DMA{} << 8;
 
 		// The destination address of the DMA is the sprite RAM between memory adddress (0xFE00-0xFE9F)
-		// which means that a total of 0xA0 bytes will be copied to this region
-		static constexpr API::address_t START_ADDRESS{0xFE00};
-		for (API::data_t index = 0x00; index < 0xA0; ++index)
+		// which means that a total of OAMRAMDevice size bytes will be copied to this region
+		for (API::data_t index = 0x00; index < OAMRAMDevice::SIZE; ++index)
 		{
 			API::data_t fetched_memory{0x00};
 
-			SANITY(this->_memory.Read(DMA_START_ADDRESS + 1, fetched_memory), "Failed fetching memory via DMA");
-			SANITY(this->_memory.WriteDirectly(START_ADDRESS + index, fetched_memory), "Failed writing directly via DMA");
+			SANITY(this->_memory.Read(DMA_START_ADDRESS + index, fetched_memory), "Failed fetching memory via DMA");
+			SANITY(this->_memory.WriteDirectly(OAMRAMDevice::START_ADDRESS + index, fetched_memory), "Failed writing directly via DMA");
 		}
+
+		this->_dma_occurred = true;
+	}
+
+	bool CheckOnceDMAOccurred()
+	{
+		return std::exchange(this->_dma_occurred, false);
 	}
 
 private:
@@ -186,6 +193,7 @@ private:
 			{
 				// Going back to the beginning.
 				this->Reset();
+				this->_entry_manager.LoadSprites();
 				this->ChangeState(PPUState::OAM_SEARCH);
 			}
 
@@ -268,7 +276,7 @@ private:
 		API::data_t new_lcdc_status{LCDC_Status{}};
 		new_lcdc_status &= 0xFC;
 		new_lcdc_status |= static_cast<API::data_t>(new_state);
-		SANITY(this->_ppu.GetProcessor().GetMemory().WriteDirectly(LCDC_Status::LCDC_ADDRESS, new_lcdc_status), "Failed changing lcdc status");
+		SANITY(this->_ppu.GetProcessor().GetMemory().WriteDirectly(LCDC_Status::MEMORY_ADDRESS, new_lcdc_status), "Failed changing lcdc status");
 
 		LCDC_Status lcdc_status{};
 		bool interrupt_state{false};
@@ -312,7 +320,7 @@ private:
 			InterruptHandler::IRQ(EInterrupts::LCDC);
 		}
 
-		SANITY(this->_ppu.GetProcessor().GetMemory().WriteDirectly(LCDC_Status::LCDC_ADDRESS, lcdc_status),
+		SANITY(this->_ppu.GetProcessor().GetMemory().WriteDirectly(LCDC_Status::MEMORY_ADDRESS, lcdc_status),
 			   "Failed writing directly to status");
 	}
 
@@ -338,10 +346,12 @@ public:
 public:
 	API::IMemoryDeviceAccess& _memory;
 	IPPU&                     _ppu;
-	PixelFIFO				  _fifo{this->_ppu};
-	Fetcher					  _fetcher{this->_fifo, this->_ppu};
+	OAMEntryManager		      _entry_manager{this->_memory};
+	PixelFIFO				  _fifo{this->_ppu, this->_entry_manager};
+	Fetcher					  _fetcher{this->_fifo, this->_ppu, this->_entry_manager};
 	PPUState				  _state{PPUState::OAM_SEARCH};
 	std::size_t				  _clocks{0x00};
+	bool                      _dma_occurred{false};
 };
 } // Core
 

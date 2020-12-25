@@ -23,21 +23,23 @@ public:
 	static_assert(std::is_integral<T>::value, "Got a non-integral register-base data type.");
 
 public:
-	constexpr explicit RegisterBase(T&& data) : _data{data} {};
+	constexpr explicit RegisterBase(T&& data) : _data{std::move(data)} {}
 
-	[[nodiscard]] operator T&()
+	constexpr operator T&()
 	{
 		return this->_data;
 	}
 
-	[[nodiscard]] operator T() const
+	constexpr operator T() const
 	{
 		return this->_data;
 	}
 
 protected:
 	using RegisterType = T;
-	T _data;
+
+protected:
+	T _data{};
 };
 
 /**

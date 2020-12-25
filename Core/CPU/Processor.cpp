@@ -40,6 +40,8 @@ const size_t Processor::Clock()
 	{
 		do
 		{
+			const bool HALT_BUG_WILL_OCCUR{!IME::IsEnabled() && (InterruptEnable{} & InterruptFlag{}) != 0};
+
 			// The CPU will be unhalted on any triggered interrupt
 			const auto& command_to_execute = Processor::IsPrefix() ?
 							PREFIX_LOOKUP_TABLE[READ_DATA_AT(PC_const)] :
@@ -51,8 +53,12 @@ const size_t Processor::Clock()
 			// If the command wants to forward the PC, we need to add the bytes size.
 			if (command_to_execute.Execute())
 			{
-				// Change the PC!
-				PC += command_to_execute.bytes_size;
+				// We halted, triggered halt bug.
+				if (!(HALT_BUG_WILL_OCCUR && Processor::IsHalted()))
+				{
+					// Change the PC!
+					PC += command_to_execute.bytes_size;
+				}
 
 				if (command_to_execute.extended_cycles_amount != 0)
 				{
@@ -85,6 +91,12 @@ const size_t Processor::Clock()
 	// Clock adjust
 	clock_cycle *= 4;
 
+	// DMA takes another DMA_CLOCKS_AMOUNT cycles if it occurred.
+	if (Processor::GetInstance().GetPPU()->CheckOnceDMAOccurred())
+	{
+		clock_cycle += API::DMA_CLOCKS_AMOUNT;
+	}
+
 	if (!Processor::IsStopped())
 	{
 		// If it's not stopped, update devices.
@@ -100,20 +112,20 @@ void Processor::LoadGame()
 {
     // Choose ROMS from GB folder
 	size_t index{1};
-	for (const auto& file : std::filesystem::directory_iterator("TestROM"))
+	for (const auto& file : std::filesystem::directory_iterator(ROM_FOLDER))
 	{
-		MAIN_LOG("%llu) %s", index++, file.path().string().c_str());
+		LOG("%llu) %s", index++, file.path().string().c_str());
 	}
 
 	uint32_t chosen_index{0};
 	do
 	{
-		MAIN_LOG("Choose a wanted file from the file list.");
+		LOG("Choose a wanted file from the file list.");
 		scanf_s("%u", &chosen_index);
 	} while (chosen_index >= index || chosen_index < 1);
 	index = chosen_index;
 
-	auto directory_iterator = std::filesystem::directory_iterator("TestROM");
+	auto directory_iterator = std::filesystem::directory_iterator(ROM_FOLDER);
 	while (index > 1)
 	{
 		++directory_iterator;

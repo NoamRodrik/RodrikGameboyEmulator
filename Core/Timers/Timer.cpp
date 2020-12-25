@@ -5,7 +5,7 @@
 #include "Registers/TimerCounter.h"
 #include "Registers/TimerModulo.h"
 #include "Registers/DividerRegister.h"
-#include <Core/Bus/Devices/IORAM.h>
+#include <Core/Bus/Devices/IODevice.h>
 
 using namespace API;
 
@@ -47,7 +47,7 @@ void Timer::Tick()
 	while (Timer::DividerPassedThreshold())
 	{
 		Timer::Divider().Lower(Timer::TIMER_THRESHOLD);
-		SANITY(Processor::GetInstance().GetMemory().WriteDirectly(DividerRegister::DIVIDER_REGISTER_ADDRESS, DividerRegister{} + 1),
+		SANITY(Processor::GetInstance().GetMemory().WriteDirectly(DividerRegister::MEMORY_ADDRESS, DividerRegister{} + 1),
 			   "Failed writing the div register value directly");
 	}
 
