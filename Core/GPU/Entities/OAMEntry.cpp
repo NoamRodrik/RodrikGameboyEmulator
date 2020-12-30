@@ -33,7 +33,7 @@ OAMEntry::OAMEntry(IMemoryDeviceAccess& memory_accessor, int32_t index) : _memor
 PixelRow OAMEntry::GetSpritePixelRow(std::size_t y) const
 {
 	const bool WIDE_SPRITES{static_cast<LCDC_Control::Control>(LCDC_Control{}).AreSpritesWide()};
-	API::data_t tile_index{this->_tile_index};
+	const API::data_t TILE_INDEX = this->_tile_index & (0xFE | !WIDE_SPRITES);
 
 	// Deciding which line to fetch from the sprite.
 	y -= (this->_y - 16) + 1;
@@ -42,14 +42,8 @@ PixelRow OAMEntry::GetSpritePixelRow(std::size_t y) const
 		y = (WIDE_SPRITES ? 2 * PixelRow::PIXEL_COUNT : PixelRow::PIXEL_COUNT) - y;
 	}
 
-	if (WIDE_SPRITES)
-	{
-		// In 8x16 mode, the lower bit of the tile number is ignored.
-		tile_index &= 0xFE;
-	}
-
 	// Fetching the sprite tile address.
-	const API::address_t SPRITE_TILE_ADDRESS = TILE_SET_BANK_0_OFFSET + (tile_index * 2 * PixelRow::PIXEL_COUNT) + 2 * y;
+	const API::address_t SPRITE_TILE_ADDRESS = TILE_SET_BANK_0_OFFSET + (TILE_INDEX * 2 * PixelRow::PIXEL_COUNT) + 2 * y;
 	API::data_t lower{0x00};
 	API::data_t upper{0x00};
 

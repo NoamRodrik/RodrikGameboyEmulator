@@ -20,9 +20,6 @@ public:
 	[[nodiscard]] static const PixelColor ColorOf(const PaletteColor color)
 	{
 		// Get the left bits of the chosen color index.
-		//const auto pixel_index{Tools::Pow(4, static_cast<const API::data_t>(color))};
-		//return static_cast<PixelColor>(((0b11 * pixel_index) & static_cast<const API::data_t>(PALETTE_REGISTER{})) / pixel_index);
-		//return static_cast<PixelColor>(((2 * static_cast<size_t>(color)) >> PALETTE_REGISTER{}) & 0b11);
 		return static_cast<PixelColor>((PALETTE_REGISTER{} >> (2 * static_cast<size_t>(color))) & 0b11);
 	}
 
