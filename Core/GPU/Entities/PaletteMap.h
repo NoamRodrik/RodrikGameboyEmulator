@@ -29,7 +29,7 @@ public:
 		static_assert(!std::is_same_v<PALETTE_REGISTER, BGP>, "BGP doesn't have a transparent color");
 
 		// Sprite data 00 is transparent.
-		return static_cast<PixelColor>(PALETTE_REGISTER{} & 0x03);
+		return static_cast<PixelColor>(PALETTE_REGISTER{} & 0b11);
 	}
 };
 } // Core

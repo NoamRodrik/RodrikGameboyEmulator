@@ -79,6 +79,15 @@ public:
 			return true;
 		}
 
+		// We want to ignore the first X pixels that are not aligned with SCX
+		if (this->GetX() == this->GetSCX() && this->_lower_row.GetNextPixelSource() != WIN_PIXEL)
+		{
+			for (std::size_t index = this->GetX() % PixelRow::PIXEL_COUNT; index > 0; --index)
+			{
+				this->FetchNextPixel();
+			}
+		}
+
 		const auto PIXEL{this->FetchNextPixel()};
 		if (!this->XPassedThreshold())
 		{

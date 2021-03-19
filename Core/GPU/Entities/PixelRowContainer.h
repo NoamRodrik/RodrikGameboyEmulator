@@ -24,6 +24,11 @@ public:
 	~PixelRowContainer() = default;
 
 public:
+	[[nodiscard]] constexpr int32_t GetNextPixelSource() const
+	{
+		return this->_pixel_source[0];
+	}
+
 	constexpr void InitializeSource(const int32_t pixel_source)
 	{
 		for (auto&& current_pixel_source : this->_pixel_source)
@@ -79,6 +84,16 @@ public:
 		this->SetPixelRow(PixelRow{});
 		this->InitializeSource(BGP_PIXEL);
 		this->_pixel_row_index = 0;
+	}
+
+	constexpr void RemoveTopColors(const std::size_t amount)
+	{
+		for (std::size_t index = 0; index < amount; ++index)
+		{
+			this->_current_pixel_row.StealTopColor();
+		}
+
+		this->_pixel_row_index -= amount;
 	}
 
 	[[nodiscard]] constexpr std::size_t EmptyBitsAmount()

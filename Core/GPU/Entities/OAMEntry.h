@@ -18,8 +18,8 @@ class OAMEntry
 public:
 	enum class [[nodiscard]] Palette : API::data_t
 	{
-		OBP0 = 0x00,
-		OBP1 = 0x01
+		OBP1 = 0x00,
+		OBP0 = 0x01
 	};
 
 	enum class [[nodiscard]] Priority : API::data_t
