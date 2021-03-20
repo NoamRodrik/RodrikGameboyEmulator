@@ -62,7 +62,7 @@ public:
 
 		// Reloading the sprites
 		std::fill(this->_sprites.begin(), this->_sprites.end(), nullptr);
-		this->_sprites = this->_entry_manager.GetSpritesInLine(this->_fifo.GetY());
+		this->_sprites = this->_entry_manager.GetSpritesInLine(GetWrappedAroundDistance(this->_fifo.GetY(), SCY{}));
 	}
 
 	[[nodiscard]] const bool Execute(std::size_t clocks)
@@ -115,7 +115,7 @@ private:
 				SCREEN_Y >= WINDOW_Y && SCREEN_X >= (WINDOW_X - 7))
 			{
 				// If they're equal, clear fifo
-				if (this->_window_tile_offset_x == (WINDOW_X - 7))
+				if (this->_window_tile_offset_x == WINDOW_X - 7)
 				{
 					this->_fifo.Reset();
 				}
@@ -123,15 +123,15 @@ private:
 				const uint32_t TILE_OFFSET = ((SCREEN_Y - WINDOW_Y) / 8) * 32 + ((this->_window_tile_offset_x - (WINDOW_X - 7)) / 8);
 				this->_window_tile_offset_x = (this->_window_tile_offset_x + 8) % 0x100;
 				RET_FALSE_IF_FAIL(this->_ppu.GetProcessor().GetMemory().Read(this->GetWindowMapStart() + TILE_OFFSET, this->_tile_index), "Failed fetching tile index");
-				this->_pixel_row_container.InitializeSource(BGP_PIXEL);
+				this->_pixel_row_container.InitializeSource(WIN_PIXEL);
 			}
 			// If the window didn't succeed.
 			else
 			{
 				const uint32_t TILE_OFFSET = (this->_fifo.GetY() / 8) * 32 + (this->_tile_offset_x / 8);
-				this->_tile_offset_x = (this->_tile_offset_x + 8) % 0x100;
 				RET_FALSE_IF_FAIL(this->_ppu.GetProcessor().GetMemory().Read(this->GetBackgroundMapStart() + TILE_OFFSET, this->_tile_index), "Failed fetching tile index");
 				this->_pixel_row_container.InitializeSource(BGP_PIXEL);
+				this->_tile_offset_x = (this->_tile_offset_x + 8) % 0x100;
 			}
 
 			this->_clocks -= FETCH_TILE_CLOCKS;
@@ -198,11 +198,11 @@ private:
 					pixel_row_container.InitializeSource(entry->GetID());
 
 					// Shift N transparent pixels from the left to the right.
-					const PaletteColor TRANSPARENT_COLOR = 
+					const PaletteColor TRANSPARENT_COLOR =
 						static_cast<PaletteColor>(entry->GetPalette() == OAMEntry::Palette::OBP0 ?
-						PaletteMap::TransparentColor<OBP0>() : PaletteMap::TransparentColor<OBP1>());
+							PaletteMap::TransparentColor<OBP0>() : PaletteMap::TransparentColor<OBP1>());
 
-					if (SCREEN_X != entry->GetX())
+					if (SCREEN_X > entry->GetX())
 					{
 						PixelRowContainer lower_half{};
 						lower_half.SetPixelRow(sprite_pixel_row);

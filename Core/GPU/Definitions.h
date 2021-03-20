@@ -56,6 +56,7 @@ static constexpr size_t     SCREEN_HEIGHT_PIXELS{144};
 static constexpr size_t     AMOUNT_OF_SPRITES{40};
 static constexpr size_t     AMOUNT_OF_SPRITES_PER_LINE{10};
 static constexpr int32_t    BGP_PIXEL{-1};
+static constexpr int32_t    WIN_PIXEL{-2};
 
 #ifdef GREEN_DISPLAY
 static constexpr uint8_t    WHITE_PIXEL[]{143, 144, 85};

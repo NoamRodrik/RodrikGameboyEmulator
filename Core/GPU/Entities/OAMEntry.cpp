@@ -6,6 +6,8 @@
 #include <Core/GPU/Registers/LCDC_Control.h>
 #include <Core/GPU/Entities/OAMEntry.h>
 #include <Core/Bus/Devices/OAMRAMDevice.h>
+#include <Core/GPU/Registers/SCY.h>
+#include <Core/GPU/Registers/SCX.h>
 
 using namespace API;
 
@@ -28,6 +30,7 @@ OAMEntry::OAMEntry(IMemoryDeviceAccess& memory_accessor, int32_t index) : _memor
 	this->_priority = static_cast<Priority>(OAM_ATTRIBUTES.priority);
 	this->_x_flip = static_cast<Flip>(OAM_ATTRIBUTES.x_flip);
 	this->_y_flip = static_cast<Flip>(OAM_ATTRIBUTES.y_flip);
+	this->_y = GetWrappedAroundDistance(this->_y, SCY{});
 }
 
 PixelRow OAMEntry::GetSpritePixelRow(std::size_t y) const
