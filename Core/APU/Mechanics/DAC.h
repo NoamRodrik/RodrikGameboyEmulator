@@ -38,8 +38,8 @@ private:
     void Populate(gsl::not_null<float*> buffer);
 
 private:
-	std::array<API::RingBuffer<float_t>, API::OUTPUT_TERMINALS_AMOUNT> _sample_buffer_per_terminal;
-	PaStream*														   _stream{nullptr};
+	std::array<API::RingBuffer<float_t, 1024 * 4>, API::OUTPUT_TERMINALS_AMOUNT> _sample_buffer_per_terminal{};
+	PaStream*														             _stream{nullptr};
 };
 } // Core
 
