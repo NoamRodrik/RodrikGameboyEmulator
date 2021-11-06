@@ -9,41 +9,36 @@
 #include <Tools/Tools.h>
 #include <cstdio>
 #include <memory>
-#include <mutex>
+#include <atomic>
 
 namespace API
 {
-template <typename T>
-class RingBuffer 
+template <typename T, size_t N>
+class [[nodiscard]] RingBuffer
 {
+    // Static assertion that N is a multiple of 2 for efficient modulo.
+    static_assert(N % 2 == 0, "N must be a multiple of 2");
+
 public:
-    explicit RingBuffer(const std::size_t size) :
-        _buffer{std::unique_ptr<T[]>{new T[size]}},
-        _max_size{size}
-    {
-        SANITY(this->_buffer.get() != nullptr, "Got an invalid buffer");
-    }
+    RingBuffer() = default;
 
     template <typename U>
     void Push(U&& item)
     {
-        std::lock_guard<std::mutex> lock{this->_mutex};
-
         this->_buffer[this->_head] = std::forward<T>(item);
 
-        if (this->_full)
+        if (this->IsFull())
         {
-            this->_tail = (this->_tail + 1) % this->_max_size;
+            this->_tail = (this->_tail + 1) & (N - 1);
         }
 
-        this->_head = (this->_head + 1) % this->_max_size;
+        this->_head = (this->_head + 1) & (N - 1);
 
         this->_full = this->_head == this->_tail;
     }
 
     [[nodiscard]] T Pop()
     {
-        std::lock_guard<std::mutex> lock{this->_mutex};
         T return_value{};
 
         if (!this->IsEmpty())
@@ -51,55 +46,35 @@ public:
             // Read data and advance the tail (we now have a free space)
             return_value = std::move(this->_buffer[this->_tail]);
             this->_full = false;
-            this->_tail = (this->_tail + 1) % this->_max_size;
+            this->_tail = (this->_tail + 1) & (N - 1);
         }
 
         return return_value;
     }
 
-    void Reset()
+    [[nodiscard]] const size_t GetCapacity() const
     {
-        std::lock_guard<std::mutex> lock{this->_mutex};
-        this->_head = this->_tail;
-        this->_full = false;
+        return this->IsFull() ? N : (((this->_head < this->_tail) * N) + (this->_head - this->_tail));
     }
 
+private:
     [[nodiscard]] const bool IsEmpty() const
     {
         // If head and tail are equal, we are empty
-        return (!this->_full && (this->_head == this->_tail));
+        return (!this->IsFull() && (this->_head == this->_tail));
     }
 
-    [[nodiscard]] const bool IsFull() const
+    [[nodiscard]] constexpr bool IsFull() const
     {
         // If tail is ahead the head by 1, we are full
         return this->_full;
     }
 
-    [[nodiscard]] const size_t GetCapacity() const
-    {
-        return this->_max_size;
-    }
-
-    [[nodiscard]] const size_t GetSize() const
-    {
-        size_t size{this->_max_size};
-
-        if (!this->_full)
-        {
-            size = ((this->_head < this->_tail) ? this->_max_size : 0) + this->_head - this->_tail;
-        }
-
-        return size;
-    }
-
 private:
-    std::mutex           _mutex{};
-    std::unique_ptr<T[]> _buffer{nullptr};
-    std::size_t          _head{0};
-    std::size_t          _tail{0};
-    const size_t         _max_size;
-    bool                 _full{false};
+    std::array<T, N>         _buffer{};
+    std::atomic<std::size_t> _head{0};
+    std::atomic<std::size_t> _tail{0};
+    std::atomic<bool>        _full{false};
 };
 } // API
 

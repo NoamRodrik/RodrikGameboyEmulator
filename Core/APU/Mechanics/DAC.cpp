@@ -11,7 +11,7 @@ using namespace API;
 
 namespace Core
 {
-DAC::DAC() : _sample_buffer_per_terminal{API::RingBuffer<float_t>{1024 * 4}, API::RingBuffer<float_t>{1024 * 4}}
+DAC::DAC()
 {
 #if !defined(_DEBUG) || _DEBUG 0
     const auto wave_callback = [](const void* input, void* output, unsigned long frames,
@@ -56,7 +56,7 @@ void DAC::FeedSamples(const SampleData& samples)
     
     // Wait with the start of the DAC until we filled the buffer a bit
     if (!Pa_IsStreamActive(this->_stream) &&
-        this->_sample_buffer_per_terminal[static_cast<std::size_t>(OutputTerminal::SO1)].GetSize() >= API::BUFFER_FRAMES * 2)
+        this->_sample_buffer_per_terminal[static_cast<std::size_t>(OutputTerminal::SO1)].GetCapacity() >= API::BUFFER_FRAMES * 2)
     {
         SANITY(Pa_StartStream(this->_stream) == PaErrorCode::paNoError, "Failed starting stream");
     }
