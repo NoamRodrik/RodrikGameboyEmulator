@@ -13,7 +13,7 @@ namespace Core
 {
 DAC::DAC()
 {
-#if !defined(_DEBUG) || _DEBUG 0
+#if !defined(DEBUG_COMPILATION)
     const auto wave_callback = [](const void* input, void* output, unsigned long frames,
                            const PaStreamCallbackTimeInfo* time_info, PaStreamCallbackFlags status_flags, void* user_data)
     {
@@ -35,7 +35,6 @@ DAC::DAC()
 
 void DAC::FeedSamples(const SampleData& samples)
 {
-#if !defined(_DEBUG) || _DEBUG 0
     for (std::size_t current_frame = 0; current_frame < API::BUFFER_FRAMES; ++current_frame)
     {
         Message("TODO! Make WaveController control this");
@@ -50,8 +49,11 @@ void DAC::FeedSamples(const SampleData& samples)
                 samples.SoundChannel3Right[current_frame] +
                 samples.SoundChannelNoiseRight[current_frame]) / 4;
     
-        this->_sample_buffer_per_terminal[static_cast<std::size_t>(OutputTerminal::SO1)].Push((RIGHT_CHANNEL_ACCUMULATED - 8) / 8);
-        this->_sample_buffer_per_terminal[static_cast<std::size_t>(OutputTerminal::SO2)].Push((LEFT_CHANNEL_ACCUMULATED - 8) / 8);
+        // Each channel sample is GetCurrentSample() / NR50_volume (typically 7),
+        // giving per-channel values of 0..2 (integer division).  The 4-channel
+        // average therefore spans [0, 2].  Map that to PortAudio's [-1, 1].
+        this->_sample_buffer_per_terminal[static_cast<std::size_t>(OutputTerminal::SO1)].Push(RIGHT_CHANNEL_ACCUMULATED - 1.0f);
+        this->_sample_buffer_per_terminal[static_cast<std::size_t>(OutputTerminal::SO2)].Push(LEFT_CHANNEL_ACCUMULATED - 1.0f);
     }
     
     // Wait with the start of the DAC until we filled the buffer a bit
@@ -60,17 +62,14 @@ void DAC::FeedSamples(const SampleData& samples)
     {
         SANITY(Pa_StartStream(this->_stream) == PaErrorCode::paNoError, "Failed starting stream");
     }
-#endif
 }
 
 void DAC::Populate(gsl::not_null<float*> buffer)    
 {
-#if !defined(_DEBUG) || _DEBUG 0
     for (std::size_t current_frame = 0; current_frame < API::BUFFER_FRAMES * API::OUTPUT_TERMINALS_AMOUNT; current_frame += API::OUTPUT_TERMINALS_AMOUNT)
     {
         buffer.get()[current_frame] = this->_sample_buffer_per_terminal[static_cast<std::size_t>(OutputTerminal::SO2)].Pop();
         buffer.get()[current_frame + 1] = this->_sample_buffer_per_terminal[static_cast<std::size_t>(OutputTerminal::SO1)].Pop();
     }
-#endif
 }
 } // Core

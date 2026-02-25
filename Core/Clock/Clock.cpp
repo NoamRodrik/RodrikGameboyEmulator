@@ -3,6 +3,7 @@
  * @author		Noam Rodrik
  * @description Main logic of the processor's clock
  */
+#include <Core/CPU/Processor.h>
 #include <Core/Clock/Clock.h>
 #include <thread>
 
@@ -10,8 +11,10 @@ namespace Core
 {
 void Clock::SyncClock()
 {
+#ifndef DEBUG_COMPILATION
 	// Sleep until one tick has passed.
 	std::this_thread::sleep_until(Clock::GetInstance()._last_tick);
+#endif
 
 	// Use time_point_cast to convert (via truncation towards zero) back to
 	// the "native" duration of high_resolution_clock
@@ -21,13 +24,11 @@ void Clock::SyncClock()
 
 void Clock::SyncGPUFrame()
 {
-	const time_point_t CURRENT{std::chrono::high_resolution_clock::now()};
+	const float targetFPS = 59.7f;
+	const std::chrono::duration<float> targetFrameDuration(1.0f / targetFPS);
 
-	const time_duration_t SLEEP_LEFT_BETWEEN_FRAMES{
-			std::max<float>(DELAYED_TIME - std::chrono::duration_cast<time_duration_t>(CURRENT - Clock::GetInstance()._previous).count(), 0)};
-
-	std::this_thread::sleep_for(SLEEP_LEFT_BETWEEN_FRAMES);
-
-	Clock::GetInstance()._previous = CURRENT;
+#ifndef DEBUG_COMPILATION
+	std::this_thread::sleep_for(targetFrameDuration);
+#endif
 }
 } // Core

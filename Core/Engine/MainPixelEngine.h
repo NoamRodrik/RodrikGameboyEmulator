@@ -37,6 +37,11 @@ public:
 	virtual ~MainPixelEngine() = default;
 
 public:
+	[[nodiscard]] virtual uint32_t GetFPS() override
+	{
+		return PixelGameEngine::GetFPS();
+	}
+
 	[[nodiscard]] virtual bool Startup() override
 	{
 		RET_FALSE_IF_FAIL(this->Construct(SCREEN_WIDTH_PIXELS, SCREEN_HEIGHT_PIXELS, 4, 4), "Failed constructing pixel engine");
@@ -95,7 +100,7 @@ private:
 		return true;
 	}
 
-	[[nodiscard]] virtual bool OnUserUpdate(float) override
+	[[nodiscard]] virtual bool OnUserUpdate(float elapsedTime) override
 	{
 		Clock::SyncGPUFrame();
 		this->HandleButtonPress();

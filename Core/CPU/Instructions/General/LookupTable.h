@@ -122,7 +122,7 @@ static const std::array<Instruction, 0x10 * 0x10> GENERAL_LOOKUP_TABLE =
 
     // 0x10 STOP 0
     // - - - -
-    Instruction{STOP_0x10, 1, 1, 0, "STOP 0"},
+    Instruction{STOP_0x10, 2, 1, 0, "STOP 0"},
 
     // 0x11 LD DE,d16
     // - - - -

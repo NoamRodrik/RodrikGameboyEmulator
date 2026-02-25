@@ -22,14 +22,14 @@ namespace Core
 {
 /**
  * The fetcher contains 3 important stages (if not working with sprites!):
- * 
+ *
  * First it reads the tile # from the vram. (Takes 2 clocks)
  * Second, it reads the first part of the data for the row. (Takes 2 clocks)
  * Finally, it reads the second part of the data for the row. (Takes 2 clocks)
- * 
+ *
  * Once it finishes these steps, it waits until the PixelFIFO has exactly 1 container empty and
  * fills it with it's own (Takes 2 clocks).
- * 
+ *
  * This process is looped over and over again.
  */
 class [[nodiscard]] Fetcher
@@ -59,6 +59,7 @@ public:
 		this->_state = State::FETCH_TILE;
 		this->_tile_offset_x = this->_fifo.GetSCX();
 		this->_window_tile_offset_x = WX{} - 7;
+		this->_effective_row_y = this->_fifo.GetY();
 
 		// Reloading the sprites
 		std::fill(this->_sprites.begin(), this->_sprites.end(), nullptr);
@@ -105,7 +106,7 @@ private:
 	[[nodiscard]] const bool FetchTile()
 	{
 		if (this->_clocks >= FETCH_TILE_CLOCKS)
-		{	
+		{
 			const API::data_t WINDOW_X{WX{}};
 			const API::data_t WINDOW_Y{WY{}};
 			const API::data_t SCREEN_X = static_cast<API::data_t>(GetWrappedAroundDistance(this->_fifo.GetX(), this->_fifo.GetSCX()));
@@ -114,16 +115,19 @@ private:
 			if (static_cast<LCDC_Control::Control>(LCDC_Control{}).IsWindowEnabled() &&
 				SCREEN_Y >= WINDOW_Y && SCREEN_X >= (WINDOW_X - 7))
 			{
-				// If they're equal, clear fifo
+				// Clear only the FIFO row data; do NOT reset X so window pixels are
+				// drawn at the correct screen position (WX-7), not overwriting from pixel 0.
 				if (this->_window_tile_offset_x == WINDOW_X - 7)
 				{
-					this->_fifo.Reset();
+					this->_fifo.ClearForWindow();
 				}
 
 				const uint32_t TILE_OFFSET = ((SCREEN_Y - WINDOW_Y) / 8) * 32 + ((this->_window_tile_offset_x - (WINDOW_X - 7)) / 8);
 				this->_window_tile_offset_x = (this->_window_tile_offset_x + 8) % 0x100;
 				RET_FALSE_IF_FAIL(this->_ppu.GetProcessor().GetMemory().Read(this->GetWindowMapStart() + TILE_OFFSET, this->_tile_index), "Failed fetching tile index");
 				this->_pixel_row_container.InitializeSource(WIN_PIXEL);
+				// Row within the window tile is relative to the window's own Y origin
+				this->_effective_row_y = static_cast<API::data_t>(SCREEN_Y - WINDOW_Y);
 			}
 			// If the window didn't succeed.
 			else
@@ -132,6 +136,8 @@ private:
 				RET_FALSE_IF_FAIL(this->_ppu.GetProcessor().GetMemory().Read(this->GetBackgroundMapStart() + TILE_OFFSET, this->_tile_index), "Failed fetching tile index");
 				this->_pixel_row_container.InitializeSource(BGP_PIXEL);
 				this->_tile_offset_x = (this->_tile_offset_x + 8) % 0x100;
+				// Row within the background tile uses absolute scroll Y
+				this->_effective_row_y = this->_fifo.GetY();
 			}
 
 			this->_clocks -= FETCH_TILE_CLOCKS;
@@ -214,6 +220,17 @@ private:
 
 					// We have an entry to draw.
 					this->_pixel_row_container.Combine(pixel_row_container, this->_entry_manager);
+
+					// Remove this sprite from the line list so it is not re-detected on
+					// the next tile fetch before fifo.GetX() has advanced past it.
+					for (auto& sprite : this->_sprites)
+					{
+						if (sprite.get() == entry)
+						{
+							sprite.reset();
+							break;
+						}
+					}
 				}
 
 				this->_fifo.Fill(this->_pixel_row_container);
@@ -260,19 +277,21 @@ private:
 
 	[[nodiscard]] const API::data_t GetUpperTileByte() const
 	{
-		return this->GetTileInformation(false);
+		// Byte 1 of each tile row = MSB of each pixel's 2-bit color = "upper" (high) bit
+		return this->GetTileInformation(true);
 	}
 
 	[[nodiscard]] const API::data_t GetLowerTileByte() const
 	{
-		return this->GetTileInformation(true);
+		// Byte 0 of each tile row = LSB of each pixel's 2-bit color = "lower" (low) bit
+		return this->GetTileInformation(false);
 	}
 
 	[[nodiscard]] const API::data_t GetTileInformation(bool lower = false) const
 	{
 		auto lcdc_control{static_cast<LCDC_Control::Control>(LCDC_Control{})};
 
-		// Tiles are ordered in the tile map in 16 bytes, so 
+		// Tiles are ordered in the tile map in 16 bytes, so
 		// in order for us to fetch the correct tile we need to
 		// understand what kind of addressing this tile needs.
 		// If the addressing is 0x8000, then the tile index offset
@@ -287,9 +306,9 @@ private:
 		const int32_t TILE_INDEX_OFFSET = lcdc_control.GetTileSelectOffset() +
 			SIZE_OF_TILE * ((lcdc_control.IsSigned() && (this->_tile_index > 127)) ? (static_cast<int32_t>(this->_tile_index) - 0x100) : this->_tile_index);
 
-		// Once we know where the tile index is, we need to get the relevant row in the tile.
-		// Fetching the tile according to the Y axis * 2 (2 bytes for each row, thus in jumps of 2)
-		const API::data_t ROW_INDEX_OFFSET = 2 * (this->_fifo.GetY() % PixelRow::PIXEL_COUNT);
+		// Use the row Y captured at FetchTile time so window tiles use (SCREEN_Y - WY)
+		// and background tiles use the absolute scroll Y — both mod 8 for the row within the tile.
+		const API::data_t ROW_INDEX_OFFSET = 2 * (this->_effective_row_y % PixelRow::PIXEL_COUNT);
 
 		// Setting pixel row's upper to the fetched tile byte.
 		API::data_t result{0x00};
@@ -311,6 +330,7 @@ private:
 	API::address_t					   _tile_offset_x{0x00};
 	API::address_t					   _window_tile_offset_x{0x00};
 	API::data_t						   _tile_index{0x00};
+	API::data_t						   _effective_row_y{0x00};
 	PixelRowContainer				   _pixel_row_container{};
 	PixelRow                           _building_pixel_row{};
 	std::size_t						   _clocks{0x00};

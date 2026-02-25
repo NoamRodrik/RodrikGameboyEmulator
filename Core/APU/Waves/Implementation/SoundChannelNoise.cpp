@@ -67,7 +67,8 @@ void SoundChannelNoise::UpdateSample()
 		this->_linear_shift_register = (XORED_SHIFTS << 6) | (this->_linear_shift_register & 0x7FBF);
 	}
 
-	this->SetCurrentSample((this->_linear_shift_register & 0x1) == 0 ? 1 : 0);
+	const uint8_t volume = this->_envelope.GetVolume();
+	this->SetCurrentSample((this->_linear_shift_register & 0x1) == 0 ? volume : 0);
 
 	if (!this->IsEnabled())
 	{

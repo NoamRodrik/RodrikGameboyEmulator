@@ -32,10 +32,6 @@ private:
 	static constexpr clock::duration one_clock_period{std::chrono::duration_cast<clock::duration>(lr35902_clock_period{1})};
 
 private:
-	static constexpr float FRAMES_PER_SECOND{59.7f};
-	static constexpr float DELAYED_TIME{1000.0f / FRAMES_PER_SECOND};
-
-private:
 	time_point_t _previous{std::chrono::high_resolution_clock::now()};
 	time_point_t _last_tick{std::chrono::time_point_cast<clock::duration>(clock::now() + one_clock_period)};
 };

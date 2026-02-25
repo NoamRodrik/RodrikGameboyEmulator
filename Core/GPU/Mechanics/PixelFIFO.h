@@ -38,6 +38,15 @@ public:
 		this->SetX(this->GetSCX());
 	}
 
+	// Clears only the pixel row data when transitioning to window rendering.
+	// Does NOT reset X, so window pixels start drawing at the window's screen position
+	// instead of overwriting from pixel 0.
+	void ClearForWindow()
+	{
+		this->_lower_row.Clear();
+		this->_upper_row.Clear();
+	}
+
 	void IncrementY()
 	{
 		this->SetY(this->GetY() + 1);
@@ -96,7 +105,7 @@ public:
 			const LCDC_Control::Control lcdc_control{LCDC_Control{}};
 
 			Message("TODO priority!");
-			if (PIXEL.first != BGP_PIXEL)
+			if (PIXEL.first >= 0)
 			{
 				if (this->_entry_manager.GetSprite(PIXEL.first)->GetPalette() == OAMEntry::Palette::OBP0)
 				{
