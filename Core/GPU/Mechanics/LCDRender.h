@@ -166,8 +166,8 @@ private:
 				this->ChangeState(PPUState::OAM_SEARCH);
 
 				// Increment Y value for FIFO
-				this->Reset();
 				this->_fifo.IncrementY();
+				this->Reset();
 
 				// Check LYC
 				this->CompareLYC();
