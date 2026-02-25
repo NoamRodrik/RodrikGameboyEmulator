@@ -30,7 +30,7 @@ OAMEntry::OAMEntry(IMemoryDeviceAccess& memory_accessor, int32_t index) : _memor
 	this->_priority = static_cast<Priority>(OAM_ATTRIBUTES.priority);
 	this->_x_flip = static_cast<Flip>(OAM_ATTRIBUTES.x_flip);
 	this->_y_flip = static_cast<Flip>(OAM_ATTRIBUTES.y_flip);
-	this->_y = GetWrappedAroundDistance(this->_y, SCY{});
+	// OAM Y is screen_y + 16. Sprites live in screen space; SCY scrolls the background only.
 }
 
 PixelRow OAMEntry::GetSpritePixelRow(std::size_t y) const

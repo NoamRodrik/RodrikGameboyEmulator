@@ -39,7 +39,8 @@ public:
 	 */
 	[[nodiscard]] PixelRow GetSpritePixelRow(std::size_t y) const;
 	[[nodiscard]] const bool IsInScanline(std::size_t y) const;
-	[[nodiscard]] const API::data_t GetX() const { return this->_x - 16; }
+	// OAM X byte = screen_x + 8, so screen_x = OAM_X - 8.
+	[[nodiscard]] const int32_t GetX() const { return static_cast<int32_t>(this->_x) - 8; }
 	[[nodiscard]] const int32_t GetID() const { return this->_id; }
 	[[nodiscard]] const auto GetPalette() const { return this->_palette; }
 	[[nodiscard]] const auto GetPriority() const { return this->_priority; }

@@ -131,9 +131,9 @@ public:
 					swap = other._current_pixel_row.GetColorAtIndex(pixel_index) != PaletteMap::TransparentColor<OBP1>();
 				}
 			}
-			else if (MY_SOURCE == BGP_PIXEL)
+			else if (MY_SOURCE < 0)
 			{
-				// I'm a background pixel.
+				// I'm a background or window pixel.
 				const auto& HIS_SPRITE{entries.GetSprite(HIS_SOURCE)};
 
 				if (HIS_SPRITE->GetPalette() == OAMEntry::Palette::OBP0)
