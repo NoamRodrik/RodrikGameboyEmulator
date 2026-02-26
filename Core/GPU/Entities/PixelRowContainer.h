@@ -150,6 +150,21 @@ public:
 					swap = swap && this->_current_pixel_row.GetColorAtIndex(pixel_index) == PaletteMap::ColorOf<BGP>(PaletteColor::FIRST_PALETTE);
 				}
 			}
+			else if (MY_SOURCE != HIS_SOURCE)
+			{
+				// I'm a SPRITE.
+				const auto& MY_SPRITE{ entries.GetSprite(MY_SOURCE) };
+				const auto& HIS_SPRITE{ entries.GetSprite(HIS_SOURCE) };
+
+				if (MY_SPRITE->GetPalette() == OAMEntry::Palette::OBP0)
+				{
+					swap = this->_current_pixel_row.GetColorAtIndex(pixel_index) == PaletteMap::TransparentColor<OBP0>();
+				}
+				else
+				{
+					swap = this->_current_pixel_row.GetColorAtIndex(pixel_index) == PaletteMap::TransparentColor<OBP1>();
+				}
+			}
 
 			if (swap)
 			{

@@ -194,7 +194,7 @@ private:
 				this->_pixel_row_container.SetPixelRow(this->_building_pixel_row);
 
 				OAMEntry* entry{this->SpriteToDraw()};
-				if (entry != nullptr)
+				while (entry != nullptr && !this->_fifo._lower_row.IsEmpty())
 				{
 					const API::data_t SCREEN_X = static_cast<API::data_t>(GetWrappedAroundDistance(this->_fifo.GetX(), this->_fifo.GetSCX()));
 					const API::data_t SCREEN_Y = static_cast<API::data_t>(GetWrappedAroundDistance(this->_fifo.GetY(), this->_fifo.GetSCY()));
@@ -231,6 +231,9 @@ private:
 							break;
 						}
 					}
+
+					// Check for additional sprites overlapping this same 8-pixel tile region.
+					entry = this->SpriteToDraw();
 				}
 
 				this->_fifo.Fill(this->_pixel_row_container);
@@ -253,7 +256,7 @@ private:
 				if (entry.get() != nullptr)
 				{
 					const int DISTANCE{SCREEN_X - entry->GetX()};
-					return DISTANCE >= 0 && DISTANCE < PixelRow::PIXEL_COUNT;
+					return DISTANCE >= 0 && DISTANCE <= PixelRow::PIXEL_COUNT;
 				}
 
 				return false;
