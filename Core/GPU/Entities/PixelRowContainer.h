@@ -117,6 +117,10 @@ public:
 		{
 			const auto MY_SOURCE{this->_pixel_source[pixel_index]};
 			const auto HIS_SOURCE{other._pixel_source[pixel_index]};
+			// _pixel_source[N] is left-to-right (N=0 = leftmost pixel), but PixelRow::GetColorAtIndex(N)
+			// uses bit N which is right-to-left (bit 7 = leftmost, bit 0 = rightmost).
+			// Use (PIXEL_COUNT - 1 - pixel_index) to align source-array index with the correct bit.
+			const size_t BIT_INDEX = PixelRow::PIXEL_COUNT - 1 - pixel_index;
 			bool swap{false};
 
 			if (MY_SOURCE == HIS_SOURCE)
@@ -124,11 +128,11 @@ public:
 				const auto& HIS_SPRITE{entries.GetSprite(HIS_SOURCE)};
 				if (HIS_SPRITE->GetPalette() == OAMEntry::Palette::OBP0)
 				{
-					swap = other._current_pixel_row.GetColorAtIndex(pixel_index) != PaletteMap::TransparentColor<OBP0>();
+					swap = other._current_pixel_row.GetColorAtIndex(BIT_INDEX) != PaletteMap::TransparentColor<OBP0>();
 				}
 				else
 				{
-					swap = other._current_pixel_row.GetColorAtIndex(pixel_index) != PaletteMap::TransparentColor<OBP1>();
+					swap = other._current_pixel_row.GetColorAtIndex(BIT_INDEX) != PaletteMap::TransparentColor<OBP1>();
 				}
 			}
 			else if (MY_SOURCE < 0)
@@ -138,16 +142,16 @@ public:
 
 				if (HIS_SPRITE->GetPalette() == OAMEntry::Palette::OBP0)
 				{
-					swap = other._current_pixel_row.GetColorAtIndex(pixel_index) != PaletteMap::TransparentColor<OBP0>();
+					swap = other._current_pixel_row.GetColorAtIndex(BIT_INDEX) != PaletteMap::TransparentColor<OBP0>();
 				}
 				else
 				{
-					swap = other._current_pixel_row.GetColorAtIndex(pixel_index) != PaletteMap::TransparentColor<OBP1>();
+					swap = other._current_pixel_row.GetColorAtIndex(BIT_INDEX) != PaletteMap::TransparentColor<OBP1>();
 				}
 
 				if (HIS_SPRITE->GetPriority() == OAMEntry::Priority::BEHIND_BG_COLORS_1_TO_3)
 				{
-					swap = swap && this->_current_pixel_row.GetColorAtIndex(pixel_index) == PaletteMap::ColorOf<BGP>(PaletteColor::FIRST_PALETTE);
+					swap = swap && this->_current_pixel_row.GetColorAtIndex(BIT_INDEX) == PaletteMap::ColorOf<BGP>(PaletteColor::FIRST_PALETTE);
 				}
 			}
 			else if (MY_SOURCE != HIS_SOURCE)
@@ -158,18 +162,18 @@ public:
 
 				if (MY_SPRITE->GetPalette() == OAMEntry::Palette::OBP0)
 				{
-					swap = this->_current_pixel_row.GetColorAtIndex(pixel_index) == PaletteMap::TransparentColor<OBP0>();
+					swap = this->_current_pixel_row.GetColorAtIndex(BIT_INDEX) == PaletteMap::TransparentColor<OBP0>();
 				}
 				else
 				{
-					swap = this->_current_pixel_row.GetColorAtIndex(pixel_index) == PaletteMap::TransparentColor<OBP1>();
+					swap = this->_current_pixel_row.GetColorAtIndex(BIT_INDEX) == PaletteMap::TransparentColor<OBP1>();
 				}
 			}
 
 			if (swap)
 			{
 				this->_pixel_source[pixel_index] = HIS_SOURCE;
-				this->_current_pixel_row.SetColorAtIndex(pixel_index, other._current_pixel_row.GetColorAtIndex(pixel_index));
+				this->_current_pixel_row.SetColorAtIndex(BIT_INDEX, other._current_pixel_row.GetColorAtIndex(BIT_INDEX));
 			}
 		}
 	}
