@@ -22,8 +22,8 @@ namespace Core
 enum class [[nodiscard]] PixelColor : API::data_t
 {
 	WHITE = 0x00,
-	DARK_GREY = 0x01,
-	LIGHT_GREY = 0x02,
+	LIGHT_GREY = 0x01,
+	DARK_GREY = 0x02,
 	BLACK = 0x03
 };
 
