@@ -210,12 +210,26 @@ private:
 
 					if (SCREEN_X > entry->GetX())
 					{
+						const auto DIST{static_cast<std::size_t>(SCREEN_X - entry->GetX())};
 						PixelRowContainer lower_half{};
 						lower_half.SetPixelRow(sprite_pixel_row);
 						lower_half.InitializeSource(entry->GetID());
-						lower_half.ShiftRightPixels(PixelRow::PIXEL_COUNT - (SCREEN_X - entry->GetX()), TRANSPARENT_COLOR);
-						this->_fifo._lower_row.Combine(lower_half, this->_entry_manager);
-						pixel_row_container.ShiftLeftPixels(SCREEN_X - entry->GetX(), TRANSPARENT_COLOR);
+						if (DIST <= PixelRow::PIXEL_COUNT)
+						{
+							// Sprite straddles lower_row/upper_row boundary.
+							lower_half.ShiftRightPixels(PixelRow::PIXEL_COUNT - DIST, TRANSPARENT_COLOR);
+							this->_fifo._lower_row.Combine(lower_half, this->_entry_manager);
+							pixel_row_container.ShiftLeftPixels(DIST, TRANSPARENT_COLOR);
+						}
+						else
+						{
+							// Sprite mostly off-screen left (OAM_X < 8): only lower_row has visible pixels.
+							// Shift left to discard the off-screen portion and place visible pixels at screen 0.
+							lower_half.ShiftLeftPixels(DIST - PixelRow::PIXEL_COUNT, TRANSPARENT_COLOR);
+							this->_fifo._lower_row.Combine(lower_half, this->_entry_manager);
+							// No pixels cross into upper_row for this case.
+							pixel_row_container.ShiftLeftPixels(PixelRow::PIXEL_COUNT, TRANSPARENT_COLOR);
+						}
 					}
 
 					// We have an entry to draw.
@@ -256,7 +270,7 @@ private:
 				if (entry.get() != nullptr)
 				{
 					const int DISTANCE{SCREEN_X - entry->GetX()};
-					return DISTANCE >= 0 && DISTANCE <= PixelRow::PIXEL_COUNT;
+					return DISTANCE >= 0 && DISTANCE < 2 * PixelRow::PIXEL_COUNT;
 				}
 
 				return false;

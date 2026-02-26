@@ -66,8 +66,8 @@ static constexpr uint8_t    DARK_GREY_PIXEL[]{55, 85, 76};
 #elif defined(BEAUTIFUL_DISPLAY)
 static constexpr uint8_t    WHITE_PIXEL[]{255, 255, 255};
 static constexpr uint8_t    BLACK_PIXEL[]{0, 0, 0};
-static constexpr uint8_t    LIGHT_GREY_PIXEL[]{97, 79, 76};
-static constexpr uint8_t    DARK_GREY_PIXEL[]{221, 180, 180};
+static constexpr uint8_t    LIGHT_GREY_PIXEL[]{221, 180, 180};
+static constexpr uint8_t    DARK_GREY_PIXEL[]{97, 79, 76};
 #else
 static constexpr uint8_t    WHITE_PIXEL[]{255, 255, 255};
 static constexpr uint8_t    BLACK_PIXEL[]{0, 0, 0};
